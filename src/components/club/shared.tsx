@@ -13,6 +13,7 @@ import { currentStint, ensureCareer, stintRecord } from '../../game/careerState'
 import { headCoachRows } from '../../game/headCoaches';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
 import { useState } from 'react';
+import { leagueName } from '../../data/leagueNames';
 
 export interface ClubTabProps {
   g: Game;
@@ -144,9 +145,10 @@ export function verdict(d: ClubProfileData): string {
 // -----------------------------------------------------------------------------
 // Verlaufslinie der Platzierungen über alle Ligaebenen
 // -----------------------------------------------------------------------------
-const TIER_NAME = (t: number) => (t >= 100 ? 'DDR' : `${t}. Liga`);
+/** Beschriftung einer Ebene: Ligenname des Landes (data/leagueNames.ts), DDR-Ebenen „DDR“. */
+const TIER_NAME = (t: number, cc?: string) => (t >= 100 ? 'DDR' : leagueName(cc, t));
 
-export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
+export function PlacementChart({ seasons, cc }: { seasons: SeasonPlacement[]; cc?: string }) {
   const [hov, setHov] = useState<number | null>(null);
   if (!seasons.length) return null;
   // Ebenen als Bänder untereinander (je Ebene so hoch wie ihre größte Liga).
@@ -157,7 +159,7 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
   let acc = 0;
   for (const t of tiers) { off[t] = acc; acc += bandH[t]; }
   const total = acc;
-  const W = 820, H = 240, padL = 64, padR = 14, padT = 20, padB = 26; // oben Platz für die Platz-Beschriftung über Punkten der 1. Liga
+  const W = 820, H = 240, padL = 96, padR = 14, padT = 20, padB = 26; // oben Platz für die Platz-Beschriftung über Punkten der 1. Liga
   const n = seasons.length;
   const x = (i: number) => padL + (n === 1 ? (W - padL - padR) / 2 : (i * (W - padL - padR)) / (n - 1));
   const y = (s: SeasonPlacement) => padT + ((off[s.tier] + s.pos - 0.5) / total) * (H - padT - padB);
@@ -183,7 +185,7 @@ export function PlacementChart({ seasons }: { seasons: SeasonPlacement[] }) {
           <g key={t}>
             <rect x={padL} y={y0} width={W - padL - padR} height={h} className={i % 2 ? 'cmx-band alt' : 'cmx-band'} />
             {i > 0 && <line x1={padL} x2={W - padR} y1={y0} y2={y0} className="cmx-sep" />}
-            <text x={padL - 8} y={y0 + 14} textAnchor="end" className="cmx-axis">{TIER_NAME(t)}</text>
+            <text x={padL - 8} y={y0 + 14} textAnchor="end" className="cmx-axis">{TIER_NAME(t, cc)}</text>
           </g>
         );
       })}

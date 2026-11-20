@@ -55,6 +55,7 @@ import { lowerStartDivision, materializeLowerStart } from './lowerTierStart';
 import { fillHomeDeep } from './homeDeep';
 import { amateurTownsFor, clampStartYear, fillLowerTiers, padSecondTier, reformsAppliedAt, seedPreStartHistory, seedStartPool, startEuroQualifiers } from './startYear';
 import { needsOverlay, worldOverlay } from '../engine/worldData';
+import { leagueLabel } from '../data/leagueNames';
 import { setHomeLabel, type LeagueDivision, type LeagueGroup } from '../engine/leagues';
 import { applyTimelineEffect, fireTimelineForSeason } from './season';
 import { Game, hashSeed, migrateCommerce } from './state';
@@ -99,7 +100,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   setRegHome(isGer ? 'GER' : (ORIGINS[countryOrigin(home)]?.nationality ?? 'GER'));
   // Anzeige in der Heimatwährung (data/currencies.ts) + Herkunft der Einheimischen; DDR: Mark der DDR, ostdeutsche Namen.
   applyHomeModules(ddrStart ? { ddrHome: true } : { homeCountry: isGer ? undefined : home });
-  setHomeLabel(COUNTRY_BY_CC[home].name);
+  setHomeLabel(COUNTRY_BY_CC[home].name, home);
   setEraYear(year);
   // Punktesystem historisch fest ableiten (Deutschland: 3 Punkte ab 1995/96 über den Meilenstein;
   // andere Länder nach ihrem Einführungsjahr, data/world/countries.ts).
@@ -125,7 +126,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // Start in einer unteren Liga (3. Liga/Regionalliga/NOFV-Oberliga, game/lowerTierStart.ts):
   // diese Liga wird Spielerliga mit vollen Kadern, 1. und 2. Liga laufen simuliert.
   const lowerStart = !startSim && comp && !world.clubs[opts.managedClubId] ? lowerStartDivision(home, year, opts.managedClubId) : null;
-  let playerDivMeta: DivisionMeta = { id: 'tier1', name: '1. Liga', tier: 1, group: null };
+  let playerDivMeta: DivisionMeta = { id: 'tier1', name: leagueLabel(home, 1), tier: 1, group: null };
   let tier1SimIds: string[] = [];
   if (startSim || lowerStart || ddrStart) {
     tier1SimIds = Object.keys(world.clubs);
@@ -143,7 +144,7 @@ export function createNewGame(opts: NewGameOptions): Game {
       world.clubs[sc.id] = buildProClub(sc, opts.managedClubId, startISO, world.players, world.youthPlayers);
       delete simClubs[sc.id];
     }
-    playerDivMeta = { id: secondId(group), name: seconds.find((x) => x.group === group)?.name ?? '2. Liga', tier: 2, group };
+    playerDivMeta = { id: secondId(group), name: seconds.find((x) => x.group === group)?.name ?? leagueLabel(home, 2), tier: 2, group };
   } else if (lowerStart) {
     materializeLowerStart(lowerStart, opts.managedClubId, startISO, world.clubs, world.players, world.youthPlayers);
     playerDivMeta = lowerStart.meta;
@@ -237,7 +238,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   // --- Mehrstufiges Ligasystem: 1. Liga/2. Liga (aggregiert simuliert) ---
   const ligaStart = fixtures[0]?.date ?? calendar.seasonStartDate;
   const otherDivisions: LeagueDivision[] = [];
-  if (startSim || lowerStart || ddrStart) otherDivisions.push(buildDivision({ id: 'tier1', name: '1. Liga', tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
+  if (startSim || lowerStart || ddrStart) otherDivisions.push(buildDivision({ id: 'tier1', name: leagueLabel(home, 1), tier: 1, group: null }, tier1SimIds, pointSystem, season, ligaStart));
   for (const sec of seconds) {
     if (startSim && sec.group === startSim.group) continue;
     otherDivisions.push(buildDivision(

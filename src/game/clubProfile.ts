@@ -2,7 +2,9 @@ import { seasonStartYear } from '../data/timeline';
 import { historicClubInfo, historicClubName } from '../data/history/historicClubs';
 import { EURO_COMP_NAMES } from '../data/europe';
 import { isLeagueClub, lastRevenue } from '../engine/clubEconomy';
-import { divisionLabel, simDisplayName } from '../engine/leagues';
+import { divisionTitle, simDisplayName } from '../engine/leagues';
+import { leagueName } from '../data/leagueNames';
+import { COUNTRY_BY_KEY } from '../data/world/countries';
 import { estimateRange } from '../engine/transferMarket';
 import { Club, LeagueTable, Match, Player, POSITION_GROUPS } from '../types';
 import { clubStrengthFor } from './season';
@@ -65,7 +67,7 @@ function foreignInfo(g: Game, id: string): ForeignInfo | undefined {
     for (const h of g.world?.history ?? []) {
       const t = h.tables?.[key];
       const pos = t ? t.indexOf(id) + 1 : 0;
-      if (pos > 0) seasons.push({ season: h.season, tier: 1, pos, size: t!.length, league: `1. Liga ${name}` });
+      if (pos > 0) seasons.push({ season: h.season, tier: 1, pos, size: t!.length, league: `${leagueName(COUNTRY_BY_KEY[key]?.cc, 1)} ${name}` });
     }
   }
   const cups = (g.world?.history ?? []).filter((h) => h.cupWinners?.[key] === id).length;
@@ -174,10 +176,10 @@ function findRow(g: Game, clubId: string) {
   const pd = g.leagues.playerDivision;
   const rowIn = (t: LeagueTable) => t.rows.find((r) => r.clubId === clubId);
   const own = rowIn(g.table);
-  if (own) return { row: own, label: divisionLabel(pd.tier, pd.group), tier: pd.tier, size: g.table.rows.length };
+  if (own) return { row: own, label: divisionTitle(pd), tier: pd.tier, size: g.table.rows.length };
   for (const d of g.leagues.otherDivisions) {
     const r = rowIn(d.table);
-    if (r) return { row: r, label: d.id.startsWith('ddr-') || d.tier >= 200 ? d.name : divisionLabel(d.tier, d.group), tier: d.tier >= 200 ? (d.tier % 100) || 1 : d.tier, size: d.table.rows.length };
+    if (r) return { row: r, label: d.id.startsWith('ddr-') || d.tier >= 200 ? d.name : divisionTitle(d), tier: d.tier >= 200 ? (d.tier % 100) || 1 : d.tier, size: d.table.rows.length };
   }
   return null;
 }
@@ -297,7 +299,7 @@ export function buildClubProfile(g: Game, clubId: string): ClubProfileData {
     founded: full?.founded,
     reputation: full?.reputation ?? (foreign ? foreignReputation(g, clubId) : undefined),
     strength: full || sim ? clubStrengthFor(g, clubId) : Math.round(info?.strength ?? g.euroClubs?.[clubId]?.strength ?? 50),
-    divisionLabel: found?.label ?? live?.label ?? (foreign && info?.level ? `${info.level}. Liga ${foreign.country}` : foreign ? foreign.country : undefined),
+    divisionLabel: found?.label ?? live?.label ?? (foreign && info?.level ? `${leagueName(COUNTRY_BY_KEY[foreign.countryKey]?.cc, info.level)} ${foreign.country}` : foreign ? foreign.country : undefined),
     tier: found?.tier ?? live?.tier ?? sim?.tier ?? info?.level,
     tablePosition: row?.position ?? live?.pos,
     tableSize: found?.size ?? live?.size,

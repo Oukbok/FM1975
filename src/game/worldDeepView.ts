@@ -3,8 +3,7 @@
 // (game/competitionCountry.ts): Wettbewerbswahl je Staffel, Ligen der Welt-Historie, Tabellenzonen.
 // Nur gelesen, nichts gespeichert.
 // =============================================================================
-import { historicTiers } from '../data/leagueTiers';
-import { deepLabel } from '../data/world/deepStructure';
+import { leagueLabel, leagueName } from '../data/leagueNames';
 import { seasonStartYear } from '../data/timeline';
 import { worldStructureOfKey } from '../data/world/structure';
 import type { LeanDiv, WorldSeasonRecord } from '../engine/world';
@@ -14,17 +13,17 @@ import type { CompOption } from './competitionView';
 import type { Game } from './state';
 import { leanTierOf } from './worldLeagues';
 
-/** Name der Ebene (3/4) eines Landes in der Saison (data/leagueTiers.ts), sonst „3. Liga“. */
+/** Name der Ebene (3/4) eines Landes in der Landessprache (data/leagueNames.ts): „3. League“, „4. Divisie“. */
 export function deepLevelName(cc: string | undefined, year: number, tier: number): string {
-  return (cc ? historicTiers(cc, year)?.[tier - 1]?.name : undefined) ?? `${tier}. Liga`;
+  return leagueName(cc, tier, year);
 }
 
 /** Wettbewerbe der tieferen Ebenen: `counts[k]` = Staffeln der Ebene 3+k; `p` = 'r' (laufend) bzw. 'w' (abgeschlossen). */
 export function deepOptions(cc: string, year: number, counts: number[], p: 'r' | 'w', section: (tier: number) => string): CompOption[] {
   const out: CompOption[] = [];
   counts.forEach((n, k) => {
-    const tier = k + 3, name = deepLevelName(cc, year, tier);
-    for (let i = 0; i < n; i++) out.push({ key: i === 0 ? `${p}${tier}` : `${p}${tier}:${i + 1}`, label: deepLabel(name, n, i), kind: 'league', section: section(tier), tier });
+    const tier = k + 3;
+    for (let i = 0; i < n; i++) out.push({ key: i === 0 ? `${p}${tier}` : `${p}${tier}:${i + 1}`, label: leagueLabel(cc, tier, { n, i, year }), kind: 'league', section: section(tier), tier });
   });
   return out;
 }

@@ -23,11 +23,11 @@ import { germanRank, initWorld } from '../engine/world';
 import { homeCountryOf, type Game } from './state';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY } from '../data/world/countries';
 import { historicTiers, tierText } from '../data/leagueTiers';
-import { groupNames, homeGroupKeys, secondLabel } from '../data/world/secondGroups';
+import { homeGroupKeys } from '../data/world/secondGroups';
+import { leagueLabel, leagueName, structTierName } from '../data/leagueNames';
 import { worldStructureOfKey } from '../data/world/structure';
 import { secondGroups } from '../engine/worldSecond';
 import { deepGroupsOf, updateWorldDepths } from '../engine/worldDeep';
-import { deepLabel } from '../data/world/deepStructure';
 import type { WorldCountry } from '../engine/worldTypes';
 
 export type PyramidSide = 'west' | 'ddr' | 'abroad';
@@ -144,23 +144,25 @@ function abroadSystems(countries: { name: string; tiers: string[][]; groups?: nu
   const pyr = (ids: string[]) => ids.map((id) => clubs[id]).filter(Boolean).map((e) => ({ id: e.id, name: e.name, shortName: e.shortName, city: e.city, colors: e.colors, strength: e.strength, dotOnly: true }));
   return [...gone, ...countries.filter((c) => c.active).map((c) => {
     const lv: PyrDivision[][] = [];
-    if (c.tiers[0]) { const l = pyr(c.tiers[0]); lv.push([div(`w:${c.name}:0`, '1. Liga', 1, null, ordered ? l : l.sort(byStrength), 'strength')]); }
+    // Namen in der Landessprache (data/leagueNames.ts): „1. League“, „2. Ligue Nord“ …
+    const cc = COUNTRY_BY_KEY[c.name]?.cc;
+    if (c.tiers[0]) { const l = pyr(c.tiers[0]); lv.push([div(`w:${c.name}:0`, leagueLabel(cc, 1), 1, null, ordered ? l : l.sort(byStrength), 'strength')]); }
     // 2. Ebene Staffel für Staffel (engine/worldSecond.ts).
     const groups = secondGroups(c as WorldCountry);
     const keys = homeGroupKeys(groups.length);
-    if (groups.length) lv.push(groups.map((ids, k) => { const l = pyr(ids); return div(`w:${c.name}:${k + 1}`, secondLabel(groups.length, k), 2, keys[k] ?? null, ordered ? l : l.sort(byStrength), 'strength'); }));
+    if (groups.length) lv.push(groups.map((ids, k) => { const l = pyr(ids); return div(`w:${c.name}:${k + 1}`, leagueLabel(cc, 2, { n: groups.length, i: k }), 2, keys[k] ?? null, ordered ? l : l.sort(byStrength), 'strength'); }));
     // Auf-/Abstieg zur Folgesaison nach der historischen Struktur (data/world/structure.ts), sonst 3 bzw. 2.
     const st = worldStructureOfKey(c.name, year + 1);
     const n = st ? st.down : (lv[0]?.[0]?.clubs.length ?? 0) >= 16 ? 3 : 2;
     const up = st ? st.up : n;
-    if (lv[0]) { lv[0][0].champion = 1; lv[0][0].down = n; lv[0][0].downTo = 'Abstieg in die 2. Liga'; }
+    if (lv[0]) { lv[0][0].champion = 1; lv[0][0].down = n; lv[0][0].downTo = `Abstieg in die ${leagueName(cc, 2)}`; }
     const G = lv[1]?.length ?? 1;
     for (const d of lv[1] ?? []) { d.up = Math.floor(up / G); d.upChance = up % G ? 1 : 0; }
     const pool = pyr(c.pool ?? []);
     const d2 = st?.down2 != null ? Math.max(1, Math.round(st.down2 / G)) : 2;
     // Tiefere Ebenen (engine/worldDeep.ts): echte Ligen statt Strukturkästen; Zahlen wie im Saisonwechsel.
     const wc = c as WorldCountry, deep = wc.deep ?? [];
-    if (lv[1] && deep.length) for (const d of lv[1]) { d.down = d2; d.downTo = 'Abstieg in die 3. Liga'; }
+    if (lv[1] && deep.length) for (const d of lv[1]) { d.down = d2; d.downTo = `Abstieg in die ${leagueName(cc, 3)}`; }
     deep.forEach((_, k) => {
       const gs = deepGroupsOf(wc, k), n = gs.length, keysK = homeGroupKeys(n);
       const size = gs.reduce((a, x) => a + x.length, 0);
@@ -170,9 +172,9 @@ function abroadSystems(countries: { name: string; tiers: string[][]; groups?: nu
       const below = last ? 0 : deepGroupsOf(wc, k + 1).length;
       const down = last ? 2 : Math.max(1, Math.round(Math.max(below, Math.round(size / 6)) / n));
       lv.push(gs.map((ids, i) => {
-        const d = div(`w:${c.name}:d${k + 3}:${i}`, deepLabel(`${k + 3}. Liga`, n, i), k + 3, keysK[i] ?? null, pyr(ids).sort(byStrength), 'strength');
+        const d = div(`w:${c.name}:d${k + 3}:${i}`, leagueLabel(cc, k + 3, { n, i, year }), k + 3, keysK[i] ?? null, pyr(ids).sort(byStrength), 'strength');
         d.up = Math.floor(upT / n); d.upChance = upT % n ? 1 : 0; d.down = down;
-        d.downTo = last ? 'Tausch mit dem Unterbau' : `Abstieg in die ${k + 4}. Liga`;
+        d.downTo = last ? 'Tausch mit dem Unterbau' : `Abstieg in die ${leagueName(cc, k + 4, year)}`;
         return d;
       }));
     });
@@ -182,7 +184,7 @@ function abroadSystems(countries: { name: string; tiers: string[][]; groups?: nu
       pd.pool = true;
       lv.push([pd]);
     }
-    return { side: 'abroad' as const, key: c.name, title: c.name, levels: withHistoricTiers(lv, COUNTRY_BY_KEY[c.name]?.cc, year, true), available: true };
+    return { side: 'abroad' as const, key: c.name, title: c.name, levels: withHistoricTiers(lv, cc, year, true), available: true };
   })];
 }
 
@@ -191,29 +193,19 @@ function abroadSystems(countries: { name: string; tiers: string[][]; groups?: nu
 // -----------------------------------------------------------------------------
 /**
  * Ergänzt eine Pyramide um die nicht simulierten Ebenen bis zur 4. Ebene (reine Strukturangabe vor
- * dem Unterbau). `rename` = simulierte eingleisige Ebenen tragen den historischen Ligennamen
- * (Auslandsligen heißen im Spiel sonst „1. Liga“/„2. Liga“).
+ * dem Unterbau, Name nach data/leagueNames.ts `structTierName`). `rename` = Auslandspyramide: der
+ * Abstieg der untersten simulierten Ebene führt in die erste Strukturebene. Simulierte Ebenen tragen
+ * schon ihren Namen in der Landessprache (keine geschützten historischen Namen mehr).
  */
 export function withHistoricTiers(levels: PyrDivision[][], cc: string | undefined, year: number, rename: boolean): PyrDivision[][] {
   const rows = cc ? historicTiers(cc, year) : null;
   if (!rows) return levels;
   const sim = levels.filter((lv) => !lv[0]?.pool);
   const pool = levels.filter((lv) => lv[0]?.pool);
-  if (rename) {
-    sim.forEach((lv, i) => {
-      if (!rows[i]) return;
-      // Mehrere Staffeln: historischer Name + Staffel („Division 2 Nord“).
-      const names = groupNames(lv.length);
-      lv.forEach((d, k) => {
-        d.name = lv.length > 1 ? `${rows[i].name} ${names[k]}` : rows[i].name;
-        if (d.downTo?.startsWith('Abstieg in die') && rows[i + 1]) d.downTo = `Abstieg in die ${rows[i + 1].name}`;
-      });
-    });
-  }
   const extra: PyrDivision[][] = [];
   for (let i = sim.length; i < rows.length; i++) {
     const r = rows[i];
-    const d = div(`struct:${cc}:${i + 1}`, r.name, i + 1, null, [], 'strength');
+    const d = div(`struct:${cc}:${i + 1}`, structTierName(cc, i + 1, year), i + 1, null, [], 'strength');
     d.struct = tierText(r);
     extra.push([d]);
   }

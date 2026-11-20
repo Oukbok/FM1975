@@ -10,7 +10,7 @@ import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, statusLevel, statusWo
 import { STYLE_DE } from '../../../components/lineup/LineupSide';
 import { getFormation } from '../../../data/formations';
 import type { InfoKey } from '../../../data/infoTexts';
-import { divisionLabel } from '../../../engine/leagues';
+import { divisionTitle } from '../../../engine/leagues';
 import type { Game } from '../../../game/state';
 import type { Screen } from '../../../shell/navigation';
 import { condBar, condColor, fmtDM, fmtPrice, vColor, zoneClass } from '../../../ui/format';
@@ -49,7 +49,7 @@ function TableWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
   const start = Math.max(0, Math.min(rows.length - n, p - 2));
   const cut = rows.slice(start, start + n);
   return (
-    <Widget title="Aktuelle Ligatabelle" to="table" onGoto={onGoto} right={divisionLabel(g.leagues.playerDivision.tier, g.leagues.playerDivision.group)}>
+    <Widget title="Aktuelle Ligatabelle" to="table" onGoto={onGoto} right={divisionTitle(g.leagues.playerDivision)}>
       <div className="dz-grid dz-tab">
         <span className="dz-th">Pl.</span><span className="dz-th">Verein</span><span className="dz-th dz-r">Diff.</span><span className="dz-th dz-r">Pkt.</span>
         {cut.map((r) => {

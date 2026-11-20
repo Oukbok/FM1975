@@ -1,3 +1,4 @@
+import { leagueName } from '../data/leagueNames';
 import { retireLibero } from './liberoEra';
 import { rescueLegends } from './legendsGame';
 import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
@@ -461,6 +462,7 @@ export function startNextSeason(g: Game): void {
         + `sofortigen Wiederaufstieg – Kader und Etat werden angepasst.`,
     }));
   }
+  const l1 = leagueName(homeCountryOf(g), 1);
   const ruleText = res.reform
     ? `Aufstiegsregel: ${res.reform.qualificationRule}`
     : `Aufstiegsregel: Die Staffelmeister der unteren Ebene steigen auf, die Schlechtesten der oberen `
@@ -468,9 +470,9 @@ export function startNextSeason(g: Game): void {
   pushMessage(g.messages, makeMessage({
     date: calendar.currentDate, category: 'media', from: 'Sportredaktion',
     subject: `Auf- und Abstieg ${oldSeason} → ${newSeason}`,
-    shortText: 'Aufsteiger in die 1. Liga und Absteiger stehen fest.',
-    bodyText: `Aufsteiger in die 1. Liga: ${promoted.map((id) => clubDisplayName(g, id)).join(', ') || '—'}.\n`
-      + `Absteiger aus der 1. Liga: ${relegated.map((id) => clubDisplayName(g, id)).join(', ') || '—'}.\n\n`
+    shortText: `Aufsteiger in die ${l1} und Absteiger stehen fest.`,
+    bodyText: `Aufsteiger in die ${l1}: ${promoted.map((id) => clubDisplayName(g, id)).join(', ') || '—'}.\n`
+      + `Absteiger aus der ${l1}: ${relegated.map((id) => clubDisplayName(g, id)).join(', ') || '—'}.\n\n`
       + `${ruleText}`,
   }));
 

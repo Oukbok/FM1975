@@ -23,7 +23,7 @@ import { HISTORIC_SEASONS, historicDivisions, historicFinal, HIST_RELEGATED } fr
 import type { CurrentDivision, TransitionResult } from '../data/reformTransition';
 import { fitsGroup } from '../data/regionGeo';
 import { seasonStartYear } from '../data/timeline';
-import { DivisionMeta, LeagueGroup, SimClub, divisionLabel, hashStr, mulberry32 } from '../engine/leagues';
+import { DivisionMeta, LeagueGroup, SimClub, divisionTitle, hashStr, mulberry32 } from '../engine/leagues';
 import { addHistoricSeason, addHistoricTitle } from './clubRecords';
 import { ensureArchive, leagueArchive } from './leagueArchive';
 import type { Game } from './state';
@@ -263,7 +263,7 @@ export function seedHistoricRecords(g: Game): void {
   for (const season of HISTORIC_SEASONS) {
     for (const d of historicDivisions(season)) {
       const ids = d.rows.map((r) => r[0]);
-      const label = d.tier === 101 ? 'DDR-Oberliga' : divisionLabel(d.tier, d.group);
+      const label = d.tier === 101 ? 'DDR-Oberliga' : divisionTitle(d);
       addHistoricSeason(g, season, label, d.tier, ids);
       if (d.tier === 1) addHistoricTitle(g, ids[0], 'meister', season);
       if (d.tier === 101) addHistoricTitle(g, ids[0], 'ddr', season);

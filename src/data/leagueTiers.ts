@@ -4,9 +4,11 @@
 // Je Land Epochen ab Saison-Startjahr (`from`, 1975 = 1975/76); eine Epoche gilt, bis die
 // nächste beginnt, die letzte wird fortgeschrieben. Je Epoche Ebene 1–4 mit Ligenname,
 // Zahl der Staffeln und Mannschaften je Staffel (`teams: null` = regional verschieden).
-// Genutzt von game/leaguePyramid.ts: simulierte Ebenen der Auslandsligen tragen den
-// historischen Namen, nicht simulierte Ebenen erscheinen als reine Strukturangabe.
-// Nur Ligennamen ohne Sponsorzusatz, keine Vereinsnamen.
+// Genutzt für Struktur (Staffeln, Größen) – game/leaguePyramid.ts, data/world/deepStructure.ts.
+// Die historischen Namen (`name`) dienen nur als Recherche-Beleg: ANGEZEIGT werden im Ausland die
+// Namen nach dem Schema in data/leagueNames.ts („1. League“, „3. Ligue“ – Wunsch Pascal, keine
+// geschützten Markennamen); nur regional verschiedene Amateurebenen (`teams: null`) behalten ihren
+// beschreibenden Namen. Deutschland nutzt die Namen hier weiter (Hintergrund ab Ebene 3).
 //
 // Quellen (abgerufen 11/2026):
 //  England: en.wikipedia.org/wiki/English_Football_League (1986–88 Verkleinerung der First Division

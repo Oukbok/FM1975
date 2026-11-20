@@ -18,7 +18,8 @@
 import { POOL_TIER } from '../data/history/historicClubs';
 import { COUNTRY_BY_CC, seasonLabelOf } from '../data/world/countries';
 import { worldDataVersion } from '../data/world/index';
-import { deepLabel, deepLevelsFor, startDepthOf } from '../data/world/deepStructure';
+import { deepLevelsFor, startDepthOf } from '../data/world/deepStructure';
+import { leagueLabel } from '../data/leagueNames';
 import { DEEP_TOWNS } from '../data/world/deepTowns';
 import { assignToGroups, dataZoneOf, homeGroupKeys } from '../data/world/secondGroups';
 import { buildDivision, hashStr, mulberry32, type DivisionMeta, type LeagueGroup, type SimClub } from '../engine/leagues';
@@ -101,7 +102,7 @@ function build(cc: string, year: number): { divs: HomeDeepDiv[]; extraPool: SimC
     const { buckets } = assignToGroups(list.map((s) => s.id), lv.groups, pref);
     buckets.forEach((ids, i) => {
       const group = (n > 1 ? keys[i] ?? null : null) as LeagueGroup;
-      const meta: DivisionMeta = { id: n > 1 ? `tier${lv.tier}-${keys[i] ?? i + 1}` : `tier${lv.tier}`, name: deepLabel(lv.name, n, i), tier: lv.tier, group };
+      const meta: DivisionMeta = { id: n > 1 ? `tier${lv.tier}-${keys[i] ?? i + 1}` : `tier${lv.tier}`, name: leagueLabel(cc, lv.tier, { n, i, year }), tier: lv.tier, group };
       divs.push({ meta, size: lv.groups[i], clubs: ids.map((id) => ({ ...list.find((x) => x.id === id)!, tier: lv.tier, group })) });
     });
   }

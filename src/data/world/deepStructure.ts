@@ -13,9 +13,9 @@
 // wird gerade abgerundet. Länder ohne Strukturdaten bleiben bei zwei Ebenen.
 // =============================================================================
 import { historicTiers, type TierRow } from '../leagueTiers';
+import { leagueName } from '../leagueNames';
 import { LEAGUE_REP_CURVES, repTargetAt } from '../leagueReputation';
 import { COUNTRY_BY_KEY, countryExists } from './countries';
-import { groupNames } from './secondGroups';
 
 export const DEEP_MAX_GROUPS = 4;
 export const DEEP_DEFAULT_TEAMS = 16;
@@ -23,7 +23,7 @@ export const DEEP_DEFAULT_TEAMS = 16;
 export interface DeepLevel {
   /** Ebene 3 oder 4. */
   tier: number;
-  /** Historischer Name der Ebene (data/leagueTiers.ts). */
+  /** Anzeigename der Ebene in der Landessprache (data/leagueNames.ts, „3. League“). */
   name: string;
   /** Staffelgrößen im Spiel (gerade, höchstens DEEP_MAX_GROUPS Staffeln). */
   groups: number[];
@@ -34,11 +34,11 @@ export interface DeepLevel {
 
 const even = (n: number) => Math.max(8, n - (n % 2));
 
-function levelOf(r: TierRow, tier: number): DeepLevel {
+function levelOf(r: TierRow, tier: number, cc: string, year: number): DeepLevel {
   const regional = r.teams == null;
   const n = Math.min(DEEP_MAX_GROUPS, regional && r.groups <= 1 ? DEEP_MAX_GROUPS : Math.max(1, r.groups));
   const size = even(r.teams ?? DEEP_DEFAULT_TEAMS);
-  return { tier, name: r.name, groups: Array.from({ length: n }, () => size), realGroups: r.groups, realTeams: r.teams };
+  return { tier, name: leagueName(cc, tier, year), groups: Array.from({ length: n }, () => size), realGroups: r.groups, realTeams: r.teams };
 }
 
 /** Ebenen 3 … `depth` eines Landes (Code) in der Saison `year` (Startjahr); leer = keine Strukturdaten. */
@@ -46,17 +46,12 @@ export function deepLevelsFor(cc: string | undefined, year: number, depth: numbe
   const rows = cc ? historicTiers(cc, year) : null;
   if (!rows || depth < 3) return [];
   const out: DeepLevel[] = [];
-  for (let t = 3; t <= Math.min(4, depth); t++) if (rows[t - 1]) out.push(levelOf(rows[t - 1], t));
+  for (let t = 3; t <= Math.min(4, depth); t++) if (rows[t - 1]) out.push(levelOf(rows[t - 1], t, cc!, year));
   return out;
 }
 
 /** Hat das Land Strukturdaten für die tieferen Ebenen? */
 export const hasDeepData = (cc: string | undefined) => !!cc && !!historicTiers(cc, 2000);
-
-/** Name einer Staffel der tieferen Ebene: „League One“ bzw. „Segunda División B Staffel 2“. */
-export function deepLabel(name: string, n: number, i: number): string {
-  return n > 1 ? `${name} ${groupNames(n)[i] ?? `Staffel ${i + 1}`}` : name;
-}
 
 /** Tiefe nach Rang (1 = bestes Land), ohne Puffer. */
 export const depthForRank = (rank: number) => (rank <= 5 ? 4 : rank <= 7 ? 3 : 2);

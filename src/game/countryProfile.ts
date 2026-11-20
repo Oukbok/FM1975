@@ -10,6 +10,7 @@
 //     oder Hintergrund-Land (engine/world.ts + game/worldLeagues.ts), sonst keine.
 // Oberfläche: components/country/ (CountryModal.tsx + Reiter).
 // =============================================================================
+import { leagueName } from '../data/leagueNames';
 import { countryInfo } from '../data/countryFlags';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, type WorldCountryDef } from '../data/world/countries';
 import { worldSeason, worldYears } from '../data/world/index';
@@ -87,7 +88,7 @@ export function countryFacts(g: Game, ref: CountryRef): CountryFacts {
   else if (to != null) exists = `bis ${to + 1}`;
   const ligen = ref.kind === 'home' ? 'Heimatland – alle Ligen mit vollen Kadern'
     : ref.kind === 'ddr' ? (g.leagues?.otherDivisions.some((x) => x.id.startsWith('ddr-')) ? 'Oberliga und Liga laufen mit deinem Spielstand' : 'aufgegangen in der gesamtdeutschen Pyramide')
-      : ref.kind === 'world' ? (g.world?.countries[ref.key]?.active ? '1. und 2. Liga Spieltag für Spieltag' : 'keine Ligen mehr (Archiv)')
+      : ref.kind === 'world' ? (g.world?.countries[ref.key]?.active ? `${leagueName(ref.cc, 1)} und ${leagueName(ref.cc, 2)} Spieltag für Spieltag` : 'keine Ligen mehr (Archiv)')
         : 'keine Liga im Spiel – nur Nationalmannschaft';
   return {
     conf: n ? CONF_LABEL[confOf(n, y)] : d ? 'Europa' : null,

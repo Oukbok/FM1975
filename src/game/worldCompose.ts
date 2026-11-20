@@ -15,7 +15,8 @@ import { COUNTRY_BY_CC, countryExists, seasonLabelOf, WORLD_COUNTRIES } from '..
 import { structureForSeason } from '../data/reforms';
 import { realClub, realClubName, worldSeason } from '../data/world/index';
 import type { SeasonRow } from '../data/world/types';
-import { dataZoneOf, gapGroups, homeGroupKeys, rowGroups, secondLabel } from '../data/world/secondGroups';
+import { dataZoneOf, gapGroups, homeGroupKeys, rowGroups } from '../data/world/secondGroups';
+import { leagueLabel } from '../data/leagueNames';
 import { worldStructureFor } from '../data/world/structure';
 import type { LeagueGroup, SimClub } from '../engine/leagues';
 
@@ -142,7 +143,7 @@ export function composeHome(cc: string, year: number): ComposedHome | null {
   // Datenlücke: Staffeln der nächstgelegenen mehrgleisigen Saison (`gapGroups`).
   const groups = (cc !== 'ger' && !raw.t2?.length ? gapGroups(cc, year, row.t1) : null) ?? rowGroups(row);
   const keys = homeGroupKeys(groups.length);
-  groups.forEach((ids, i) => second.push({ group: keys[i] ?? null, name: secondLabel(groups.length, i), clubs: mk(ids) }));
+  groups.forEach((ids, i) => second.push({ group: keys[i] ?? null, name: leagueLabel(cc, 2, { n: groups.length, i }), clubs: mk(ids) }));
   // Gerade Vereinszahl (Spielplan-Generator): überzählige schwächste fallen weg.
   if (tier1.length % 2) tier1.pop();
   for (const s of second) if (s.clubs.length % 2) s.clubs.pop();

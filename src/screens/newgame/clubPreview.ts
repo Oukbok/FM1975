@@ -1,4 +1,5 @@
 import { historicTiers } from '../../data/leagueTiers';
+import { leagueLabel, structTierName } from '../../data/leagueNames';
 // =============================================================================
 // Vorschau-Daten für die Vereinswahl (vor dem Erzeugen des Spiels)
 // -----------------------------------------------------------------------------
@@ -85,9 +86,9 @@ export function leaguesFor(cc = 'ger', year = 1975): { key: LeagueKey; name: str
   const comp = compOf(cc, year);
   if (!comp) return LEAGUES;
   const note2 = 'Der lange Weg nach oben: kleines Budget, kleine Stadien.';
-  const note3 = 'Ganz unten im Profifußball: winzige Stadien, kaum Geld – und ein weiter Weg in die 1. Liga.';
+  const note3 = `Ganz unten im Profifußball: winzige Stadien, kaum Geld – und ein weiter Weg in die ${leagueLabel(cc, 1)}.`;
   return [
-    LEAGUES[0],
+    { ...LEAGUES[0], name: leagueLabel(cc, 1) },
     ...comp.second.map((s) => ({ key: (s.group ?? 'tier2') as LeagueKey, name: s.name, tier: 2, note: note2 })),
     ...planOf(cc, year).filter((d) => d.clubs.length).map((d) => ({ key: d.meta.id as LeagueKey, name: d.meta.name, tier: d.meta.tier, note: note3 })),
   ];
@@ -105,7 +106,7 @@ export function backgroundLevels(cc = 'ger', year = 1975): BackgroundLevel[] {
   // die historischen Ebenen ohne Spielbetrieb im Spiel (data/leagueTiers.ts) und der Unterbau.
   if (cc !== 'ger') {
     const deepest = planOf(cc, year).reduce((a, d) => Math.max(a, d.meta.tier), 2);
-    const rows = (historicTiers(cc, year) ?? []).slice(deepest, 4).map((r, i) => ({ tier: deepest + i + 1, name: r.name, staffeln: r.groups, clubs: null, teams: r.teams }));
+    const rows = (historicTiers(cc, year) ?? []).slice(deepest, 4).map((r, i) => ({ tier: deepest + i + 1, name: structTierName(cc, deepest + i + 1, year), staffeln: r.groups, clubs: null, teams: r.teams }));
     return [...rows, { tier: deepest + rows.length + 1, name: 'Unterbau', staffeln: 0, clubs: null }];
   }
   const lower = structureForSeason(seasonLabelOf(year)).filter((t) => t.tier >= 3);

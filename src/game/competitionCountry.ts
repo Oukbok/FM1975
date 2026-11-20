@@ -26,12 +26,11 @@ import { DDR_POOL_TIER, POOL_TIER } from '../data/history/historicClubs';
 import { simDisplayName } from '../engine/leagues';
 import { leagueRepInfo } from './leagueRepGame';
 import { accessSlots } from '../data/euroFormats';
-import { historicTiers } from '../data/leagueTiers';
 import { countryRanking, germanRank, type LeanCup, type LeanDiv } from '../engine/world';
 import type { ResTuple } from './leagueResults';
 import { deepIdx, leanTierOf, ensureWorldLive, leanGames, leanMatchdays, leanResTuples, leanTable, leanWinPts, worldLiveDiv, type LeanGame } from './worldLeagues';
 import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner, roundName } from './worldCups';
-import { secondLabel } from '../data/world/secondGroups';
+import { leagueLabel, leagueName } from '../data/leagueNames';
 import { secondGroups } from '../engine/worldSecond';
 import { worldStructureOfKey } from '../data/world/structure';
 import { deepGroupsOf } from '../engine/worldDeep';
@@ -147,11 +146,10 @@ export function pickSeason(list: CSeasonOption[], want: string): string {
 function dataLeagueOpts(cc: string, year: number): CompOption[] {
   const row = worldSeason(cc, year);
   if (!row) return [];
-  const out: CompOption[] = [{ key: 'd1', label: cc === 'gdr' ? 'DDR-Oberliga' : '1. Liga', kind: 'league', section: levelSection(1), tier: 1 }];
+  const out: CompOption[] = [{ key: 'd1', label: leagueLabel(cc, 1), kind: 'league', section: levelSection(1), tier: 1 }];
   const gs = rowGroups(row);
-  const base = cc === 'gdr' ? 'DDR-Liga' : '2. Liga';
-  // Mehrere Staffeln: eine Wahl je Staffel (Nord/Süd bzw. Nord/Mitte/Süd, data/world/secondGroups.ts).
-  gs.forEach((_, i) => out.push({ key: groupKey('d2', i), label: secondLabel(gs.length, i, base), kind: 'league', section: levelSection(2), tier: 2 }));
+  // Mehrere Staffeln: eine Wahl je Staffel (Nord/Süd bzw. Nord/Mitte/Süd in der Landessprache, data/leagueNames.ts).
+  gs.forEach((_, i) => out.push({ key: groupKey('d2', i), label: leagueLabel(cc, 2, { n: gs.length, i }), kind: 'league', section: levelSection(2), tier: 2 }));
   return out;
 }
 
@@ -169,14 +167,14 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
     const leagues = base.filter((o) => o.kind === 'league'), rest = base.filter((o) => o.kind !== 'league');
     return c.mode === 'home' ? [...leagues, ...pool, ...rest] : [...leagues, ...pool, ...rest, cup];
   }
-  const l1 = c.cc === 'gdr' ? 'DDR-Oberliga' : '1. Liga', l2 = c.cc === 'gdr' ? 'DDR-Liga' : '2. Liga';
+  const l1 = leagueLabel(c.cc, 1);
   const s1 = levelSection(1), s2 = levelSection(2);
   const wc = g.world?.countries[c.worldKey!];
   if (source === 'roster') {
     const n = wc ? secondGroups(wc).length : 0;
     return [
       { key: 'r1', label: l1, kind: 'league', section: s1, tier: 1 },
-      ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('r2', i), label: secondLabel(n, i, l2), kind: 'league', section: s2, tier: 2 })),
+      ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('r2', i), label: leagueLabel(c.cc, 2, { n, i }), kind: 'league', section: s2, tier: 2 })),
       ...deepOptions(c.cc, y, wc ? (wc.deep ?? []).map((_, k) => deepGroupsOf(wc, k).length) : [], 'r', levelSection),
       ...pool,
       cup,
@@ -187,7 +185,7 @@ export function countryOptions(g: Game, c: StatsCountry, season: string, source:
   const n = stored.length > 1 ? stored.length : stored[0] || archivedSeason(g, season)?.divisions.some((d) => d.id === `x-${c.cc}-2`) ? 1 : 0;
   return [
     { key: 'w1', label: l1, kind: 'league', section: s1, tier: 1 },
-    ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('w2', i), label: secondLabel(n, i, l2), kind: 'league', section: s2, tier: 2 })),
+    ...Array.from({ length: n }, (_, i): CompOption => ({ key: groupKey('w2', i), label: leagueLabel(c.cc, 2, { n, i }), kind: 'league', section: s2, tier: 2 })),
     ...deepOptions(c.cc, y, (rec?.deep?.[c.worldKey!] ?? []).map((lv) => lv.length), 'w', levelSection),
     cup,
   ];
@@ -201,7 +199,7 @@ function poolInfo(g: Game, c: StatsCountry): PoolInfo | null {
   if (c.mode === 'world') {
     const wc = g.world?.countries[c.worldKey!];
     const ids = wc?.active ? wc.pool ?? [] : [];
-    return ids.length ? { ids, label: 'Unterbau', strength: (id) => g.euroClubs?.[id]?.strength ?? 0, above: '2. Liga' } : null;
+    return ids.length ? { ids, label: 'Unterbau', strength: (id) => g.euroClubs?.[id]?.strength ?? 0, above: leagueLabel(c.cc, Math.max(2, ...(wc?.deep ?? []).map((_, k) => k + 3))) } : null;
   }
   const ddr = c.cc === 'gdr';
   const pd = g.leagues.playerDivision;
@@ -291,7 +289,7 @@ export function worldLeagueOverview(g: Game): WorldLeagueRow[] {
     if (!d) continue;
     const rep = leagueRepInfo(g, c.worldKey, year) ?? undefined;
     const wc = g.world?.countries[c.worldKey];
-    out.push({ cc: c.cc, key: c.worldKey, name: c.name, league: historicTiers(c.cc, year)?.[0].name ?? '1. Liga', groups: wc ? secondGroups(wc).length : 0, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined, rep });
+    out.push({ cc: c.cc, key: c.worldKey, name: c.name, league: leagueLabel(c.cc, 1), groups: wc ? secondGroups(wc).length : 0, md: d.md, total: d.n, leader: d.md ? leanTable(d, c.worldKey, g.season)[0]?.clubId : undefined, rep });
   }
   // Mit Ligaruf (Option „Entwicklung der Ligen“): stärkste Ligen zuerst.
   if (out.some((r) => r.rep)) out.sort((a, b) => (b.rep?.rep ?? -1) - (a.rep?.rep ?? -1));
@@ -423,7 +421,7 @@ export function countrySnapshot(g: Game, c: StatsCountry, season: string, source
         ...base, source: lc.live ? 'live' : 'archive', rounds, winner, stats, finals: list,
         clubStats: { cw: cupCounts(list), ...(all.length ? { gf: topOf((e) => e.gf), ga: topOf((e) => e.ga, true, Math.max(1, most - 1)), w: topOf((e) => e.w) } : {}) },
         facts: [
-          { k: 'Teilnehmer', text: `${lc.cup.ids.length} Vereine der 1. und 2. Liga` },
+          { k: 'Teilnehmer', text: `${lc.cup.ids.length} Vereine der ${leagueName(c.cc, 1)} und ${leagueName(c.cc, 2)}` },
           ...(winner ? [{ k: 'Pokalsieger', id: winner }] : next ? [{ k: 'Nächste Runde', text: `${next.name} am ${next.date.slice(8)}.${next.date.slice(5, 7)}.` }] : []),
           ...(winner && final ? [{ k: 'Finalgegner', id: final.winner === final.home ? final.away : final.home }] : []),
           ...(byes ? [{ k: 'Freilose 1. Runde', text: String(byes) }] : []),

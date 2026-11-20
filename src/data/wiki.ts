@@ -282,7 +282,7 @@ Das System ist bewusst datengetrieben: weitere Reformen (z. B. die **DDR-Integra
     id: 'leagues-reforms-abroad',
     category: 'leagues',
     title: 'Ligareformen im Ausland',
-    keywords: ['reform', 'ausland', 'ligagröße', 'aufsteiger', 'absteiger', 'england', 'italien', 'spanien', 'frankreich', 'portugal', 'niederlande', 'premier league', 'serie a', 'staffel', 'struktur', 'heimatland', 'zone', 'nord', 'süd', 'mitte', 'mehrgleisig', 'zweigleisig', '3. liga', '4. liga', 'dritte liga', 'vierte liga', 'ebene', 'tiefe', 'league one', 'segunda división b', 'serie c', 'länderwertung'],
+    keywords: ['reform', 'ausland', 'ligagröße', 'aufsteiger', 'absteiger', 'england', 'italien', 'spanien', 'frankreich', 'portugal', 'niederlande', 'ligennamen', 'landessprache', '1. league', '1. ligue', '1. lega', '1. división', 'staffel', 'struktur', 'heimatland', 'zone', 'nord', 'süd', 'mitte', 'mehrgleisig', 'zweigleisig', '3. liga', '4. liga', 'dritte liga', 'vierte liga', 'ebene', 'tiefe', 'länderwertung', 'namen'],
     body: `## Ligen wachsen und schrumpfen – auch im Ausland
 Auch außerhalb Deutschlands haben sich die Ligen über die Jahrzehnte verändert. Das Spiel liest die **Größe jeder Liga und die Zahl der Auf- und Absteiger je Saison** aus den Weltdaten ab und stellt beim Saisonwechsel genau diese Struktur her – für alle Länder im Hintergrund und für dein Heimatland, wenn du außerhalb Deutschlands spielst.
 
@@ -305,15 +305,37 @@ Einige Beispiele:
 
 ## 3. und 4. Liga in den stärksten Ländern
 Wie tief ein Land simuliert wird, hängt von seinem **Rang in der Länderwertung** (Ligaruf) ab – Deutschland zählt mit:
-- **Rang 1–5:** Ligen bis zur **4. Ebene**, z. B. England mit Second/Third Division (ab 1992/93 Second/Third Division unter der neuen First Division, ab 2004/05 League One und League Two), Spanien mit Segunda División B und Tercera División, Italien mit Serie C1/C2 bzw. ab 2014/15 Serie C und Serie D.
+- **Rang 1–5:** Ligen bis zur **4. Ebene**, z. B. England mit 3. und 4. League, Spanien mit 3. und 4. División (bis zu vier Staffeln), Italien mit 3. und 4. Lega.
 - **Rang 6–7:** bis zur **3. Ebene**. **Übrige Länder:** 1. und 2. Liga wie bisher.
 - Die Tiefe steht beim Spielstart fest (so, wie sie ein 1975 begonnenes Spiel bis dahin hätte) und wird **alle fünf Jahre** neu geprüft. Eine Ebene kommt dazu, sobald der Rang reicht, und bleibt danach für immer bestehen – auch wenn das Land in der Wertung zurückfällt. Eine Liga verschwindet also nie mitten im Spiel.
-- **Namen, Staffeln und Größen** folgen der Geschichte des Landes. Vereinfachung: höchstens **vier Staffeln** je Ebene (Spanien hatte zeitweise 18 Tercera-Staffeln), regional verschiedene Staffelgrößen gelten als 16.
+- **Staffeln und Größen** folgen der Geschichte des Landes, die Namen dem Schema unten. Vereinfachung: höchstens **vier Staffeln** je Ebene (Spanien hatte zeitweise 18 Tercera-Staffeln), regional verschiedene Staffelgrößen gelten als 16.
 - **Vereine:** Echte Daten gibt es nur für die 1. und 2. Liga. Darunter spielen zuerst die übrigen Vereine des Landes aus den Weltdaten (die irgendwann einmal oben waren), danach Vereine aus Städten des Landes – benannt nach der Stadt, bei einem zweiten Verein mit Farbe.
 - **Auf- und Abstieg** zwischen allen Ebenen: Die Staffelsieger steigen zuerst auf, dann die Zweiten (der stärkste zuerst); aus jeder Staffel steigen die Letzten ab, die unterste Ebene tauscht mit dem Unterbau. Ändert sich die Struktur, steigen entsprechend mehr oder weniger auf und ab.
 - Die tieferen Ligen spielen **Spieltag für Spieltag** mit Tabelle und Begegnungen (Statistiken › Liga, Gruppen „3. Ebene“/„4. Ebene“), stehen in der Ligapyramide und in den Platzierungen der Vereinsprofile. Ihre Vereine haben im Spiel **keine Kader** – deshalb gibt es dort keine Torschützen und Karten, und die Ergebnisse bleiben nur für die letzten drei Saisons gespeichert.
 
-Ältere Spielstände laufen weiter; die neue Struktur – auch die Aufteilung der 2. Liga in Staffeln und die tieferen Ligen – gilt ab dem nächsten Saisonwechsel.`,
+Ältere Spielstände laufen weiter; die neue Struktur – auch die Aufteilung der 2. Liga in Staffeln und die tieferen Ligen – gilt ab dem nächsten Saisonwechsel.
+
+## Ligennamen in der Landessprache
+Jede Liga im Ausland heißt nach ihrer **Ebene und dem Wort der Landessprache** – ohne geschützte Markennamen der echten Ligen, aber sofort erkennbar:
+
+| Land | Ligen |
+|---|---|
+| England, Schottland, Wales, Nordirland, Irland | 1. League, 2. League, 3. League … |
+| Frankreich, Luxemburg | 1. Ligue, 2. Ligue … |
+| Belgien, Malta | 1. Division … |
+| Italien | 1. Lega, 2. Lega … |
+| Spanien | 1. División … · Portugal: 1. Divisão … |
+| Niederlande | 1. Divisie … |
+| Schweden · Norwegen · Dänemark · Finnland · Island | 1. Divisionen · 1. Divisjon · 1. Division · 1. Divisioona · 1. Deild |
+| Sowjetunion, Russland · Ukraine | 1. Divizion · 1. Liha |
+| Jugoslawien · Serbien, Kroatien, Tschechien, Slowakei, Polen, Österreich, Schweiz, Israel | 1. Savezna Liga · 1. Liga |
+| Ungarn · Rumänien · Bulgarien · Albanien | 1. Osztály · 1. Divizia · 1. Grupa · 1. Kategoria |
+| Griechenland · Zypern · Türkei | 1. Ethniki · 1. Katigoria · 1. Lig |
+
+- **Staffeln** tragen den Zusatz in der Landessprache: zwei Staffeln Nord/Süd (North/South, Nord/Sud, Norte/Sur …), drei Nord/Mitte/Süd, ab vier „Group 1“, „Groupe 2“, „Grupo 3“ ….
+- **Deutschland** behält 1. Liga, 2. Liga, 3. Liga und Regionalliga, die **DDR** DDR-Oberliga und DDR-Liga.
+- Nicht simulierte, regional zersplitterte Amateurebenen behalten in der Ligapyramide ihren beschreibenden Namen (z. B. „Regional Preferente“, „Distritais“).
+- Spielst du **außerhalb Deutschlands**, heißen auch deine eigenen Ligen so (z. B. 1. League in England). Ältere Spielstände bekommen die Namen beim Laden; Vereine, Tabellen und Ergebnisse bleiben unverändert.`,
   },
 
   {
@@ -894,7 +916,7 @@ Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) sie
 
 - **Kasten:** Name der Liga, Zahl der Vereine, Meister-/Europapokalplätze, Auf- und Absteiger. „Dein Verein“ markiert deine Liga.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
-- **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Namen (z. B. England bis 1992 First bis Fourth Division, danach Premier League; Spanien ab 1977 mit Segunda División B; Italien ab 1978 Serie C1/C2; Frankreich ab 1993 National), Zahl der Staffeln und Mannschaften. Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
+- **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Zahl der Ebenen, Staffeln und Mannschaften (z. B. Spanien ab 1977 mit einer zusätzlichen dritten Ebene in Staffeln). Die Namen folgen dem Schema in der Landessprache (1. League, 2. Ligue, 3. División …, Artikel „Ligareformen im Ausland“). Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
 - **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
 - **Ligareformen:** Unten stehen die kommenden Umbauten (z. B. eingleisige 2. Liga, Wiedervereinigung, 3. Liga); vergangene sind blass.
 
@@ -917,7 +939,7 @@ Im Assistenten „Neues Spiel“ wählst du unter **Spielwelt** das **Startjahr*
 ### Heimatland
 Unter **Verein** wählst du zuerst das **Land**: Deutschland immer, bis 1990 auch die **DDR** (Oberliga oder DDR-Liga, Wiedervereinigung 1991/92 – siehe „DDR-Ligen & Wiedervereinigung“), dazu jedes Land, für das im Startjahr Weltdaten vorliegen. In einem anderen Land spielen die Einheimischen dieses Landes, es gilt dessen Punkteregel und dessen historische Ligastruktur (Größen, Auf- und Absteiger je Saison, Artikel „Ligareformen im Ausland“), es gibt keine deutschen Ligareformen, keine Hallenturniere und keine deutschen Jugendwettbewerbe; Deutschland läuft dann im Hintergrund mit.
 
-**Start in der 3. oder 4. Liga im Ausland:** In den stärksten Ländern (Rang 1–5 der Länderwertung bis zur 4. Ebene, Rang 6–7 bis zur 3. Ebene – Artikel „Ligareformen im Ausland“) kannst du unter **Verein** auch eine Liga der 3./4. Ebene wählen, z. B. England 1995 Second oder Third Division, Spanien 2010 eine Staffel der Segunda División B. Deine Liga bekommt beim Start volle Kader (kleine Stadien, wenig Geld, Ansehen einer unteren Liga), die 1. und 2. Liga und die übrigen Staffeln laufen simuliert mit. Im Heimatland behalten die 3./4. Ebene beim Saisonwechsel Staffelzahl und Größen des Startjahres, nur ihr Name folgt der Geschichte (England 2004: League One).
+**Start in der 3. oder 4. Liga im Ausland:** In den stärksten Ländern (Rang 1–5 der Länderwertung bis zur 4. Ebene, Rang 6–7 bis zur 3. Ebene – Artikel „Ligareformen im Ausland“) kannst du unter **Verein** auch eine Liga der 3./4. Ebene wählen, z. B. England 1995 die 3. oder 4. League, Spanien 2010 eine Staffel der 3. División. Deine Liga bekommt beim Start volle Kader (kleine Stadien, wenig Geld, Ansehen einer unteren Liga), die 1. und 2. Liga und die übrigen Staffeln laufen simuliert mit. Im Heimatland behalten die 3./4. Ebene beim Saisonwechsel die Staffelzahl des Startjahres, die Größen folgen der Geschichte; die Namen bleiben im Schema (3. League, 4. League).
 
 Weltdaten gibt es für alle Länder, die im Europapokal spielten (40 Länder einschließlich der Staaten, die es heute nicht mehr gibt, und ihrer Nachfolger). Bei den großen Ländern stammen die 1. Ligen meist aus Ergebnisdaten; bei vielen kleineren Ländern und bei älteren 2. Ligen sind Meister, Europapokalplätze und Absteiger gesichert, die Reihenfolge im Mittelfeld ist dagegen eine Annäherung. Im Editor kannst du jede Saison korrigieren.
 

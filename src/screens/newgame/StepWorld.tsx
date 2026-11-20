@@ -3,6 +3,7 @@ import { InfoTip } from '../../ui/InfoTip';
 import { activeDatasetIdCached, cachedSummaries } from '../../data/dataset/storage';
 import { COUNTRY_SEEDS } from '../../data/worldSeed';
 import { WORLD_COUNTRIES, countryExists, countryPointSystem, seasonLabelOf } from '../../data/world/countries';
+import { leagueName } from '../../data/leagueNames';
 import { worldSeason } from '../../data/world/index';
 import { MAX_START_YEAR, MIN_START_YEAR } from '../../game/startYear';
 import { ERA_NAME, eraKey, HISTORIC_LEVELS, LEAGUE_LEVELS, rangePct, type NewGameDraft } from './draft';
@@ -47,12 +48,12 @@ function leaguesText(cc: string, key: string, y: number): { text: string; clubs:
   if (row && cc === 'gdr') return { text: `Oberliga ${row.t1.length} · DDR-Liga ${(row.t2?.length ?? 0) + (row.t2b?.length ?? 0)}`, clubs: row.t1.length + (row.t2?.length ?? 0) + (row.t2b?.length ?? 0), data: true };
   if (row) {
     const t2 = (row.t2?.length ?? 0) + (row.t2b?.length ?? 0);
-    return { text: `1. Liga ${row.t1.length}${t2 ? ` · 2. Liga ${t2}` : ''}`, clubs: row.t1.length + t2, data: true };
+    return { text: `${leagueName(cc, 1)} ${row.t1.length}${t2 ? ` · ${leagueName(cc, 2)} ${t2}` : ''}`, clubs: row.t1.length + t2, data: true };
   }
   if (cc === 'ger') return { text: y < 1981 ? '1. Liga 18 · 2. Liga Nord/Süd 40' : '1. Liga 18 · 2. Liga 20 · Unterbau', clubs: y < 1981 ? 58 : 38, data: false };
   if (cc === 'gdr') return { text: 'DDR-Oberliga 14 · DDR-Liga', clubs: 26, data: false };
   const s = COUNTRY_SEEDS.find((x) => x.name === key);
-  return s ? { text: `1. Liga ${s.tier1} · 2. Liga ${s.tier2}`, clubs: s.tier1 + s.tier2, data: false } : { text: 'nach der Teilung', clubs: 0, data: false };
+  return s ? { text: `${leagueName(cc, 1)} ${s.tier1} · ${leagueName(cc, 2)} ${s.tier2}`, clubs: s.tier1 + s.tier2, data: false } : { text: 'nach der Teilung', clubs: 0, data: false };
 }
 
 export function StepWorld({ d, set, chooseDataset, chooseYear }: {

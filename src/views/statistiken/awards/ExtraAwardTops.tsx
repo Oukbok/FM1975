@@ -3,6 +3,7 @@
 // (Wahl oben in AwardsView.tsx). Daten: game.extraAwards (game/extraAwardsGame.ts),
 // CSS 28-awards.css (.gs-*, .tdj-*).
 // =============================================================================
+import { leagueName } from '../../../data/leagueNames';
 import type { CSSProperties } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import { ClubLink } from '../../../components/club/ClubLink';
@@ -54,7 +55,7 @@ export function GoldenShoeTop({ g, y }: { g: Game; y: GSSeason }) {
               <div key={k} className="aw-kpi"><b>{v}</b><span>{k}</span></div>
             ))}
           </div>
-          <p className="aw-why">{w.ap ? `${dec(Math.round((w.gl / w.ap) * 100) / 100)} Tore je Spiel – ${w.h ? 'in deiner Liga' : `in der 1. Liga (${landOf(w.k)})`}.` : ''}</p>
+          <p className="aw-why">{w.ap ? `${dec(Math.round((w.gl / w.ap) * 100) / 100)} Tore je Spiel – ${w.h ? 'in deiner Liga' : `in der ${leagueName(COUNTRY_BY_KEY[w.k]?.cc, 1)} (${landOf(w.k)})`}.` : ''}</p>
         </article>
         <div className="gs-table-wrap">
           <table className="dtable rl-players gs-table">

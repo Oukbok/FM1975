@@ -11,7 +11,7 @@
 // =============================================================================
 import { titleExperience } from '../engine/experience';
 import type { CurrentDivision } from '../data/reformTransition';
-import { divisionLabel } from '../engine/leagues';
+import { divisionTitle } from '../engine/leagues';
 import { Game } from './state';
 
 /** [Saison, Ebene, Platz, Ligagröße, Liga-Index in `divs`] */
@@ -140,7 +140,7 @@ export function recordSeasonEnd(g: Game, season: string, divisions: CurrentDivis
 
   for (const d of divisions) {
     const ddr = d.id.startsWith('ddr-');
-    const label = ddr ? d.name : divisionLabel(d.tier, d.group);
+    const label = ddr ? d.name : divisionTitle(d);
     const di = divIdx(label);
     d.orderedIds.forEach((id, i) => {
       const list = (book.seasons[id] ??= []);

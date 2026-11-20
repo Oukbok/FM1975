@@ -2,6 +2,7 @@
 // Meister & Pokalsieger je Saison · Rekordmeister + Sprung zu Statistiken › Liga.
 // Daten: game/countryProfile.ts (countryLeagues → game/competitionCountry.ts countrySnapshot).
 import { useMemo } from 'react';
+import { leagueLabel, leagueName } from '../../data/leagueNames';
 import { countryHolders, countryLeagues, titleCounts } from '../../game/countryProfile';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { TeamName } from '../../views/statistiken/competition/parts';
@@ -20,10 +21,10 @@ export default function LeaguesTab({ g, c, onGoto }: CountryTabProps) {
 
   return (
     <>
-      <DashBox title={a?.label ?? '1. Liga'} rows={2} flush right={a ? lg?.season : undefined}>
+      <DashBox title={a?.label ?? leagueLabel(c.cc, 1)} rows={2} flush right={a ? lg?.season : undefined}>
         {a ? <MiniTable g={g} snap={a} /> : <Empty icon="stats">Keine Tabelle gespeichert.</Empty>}
       </DashBox>
-      <DashBox title={b?.label ?? '2. Liga'} rows={2} flush right={b ? lg?.season : undefined}>
+      <DashBox title={b?.label ?? leagueLabel(c.cc, 2)} rows={2} flush right={b ? lg?.season : undefined}>
         {b ? <MiniTable g={g} snap={b} /> : <Empty icon="stats">Keine zweite Liga im Spiel.</Empty>}
       </DashBox>
       <DashBox title="Meister & Pokalsieger" flush right={holders.length ? `${holders.length} Saisons` : undefined}>
@@ -48,7 +49,7 @@ export default function LeaguesTab({ g, c, onGoto }: CountryTabProps) {
         {record.length ? record.map((r) => <KV key={r.clubId} k={<TeamName g={g} id={r.clubId} season={g.season} size={16} />} v={`${r.champ}× Meister${r.cup ? ` · ${r.cup}× Pokal` : ''}`} />)
           : <div className="dnote">Keine Daten.</div>}
         <div className="dnote mt8">Bekannte Saisons: Weltdaten vor deinem Start (grau) und alle seitdem.</div>
-        {!!lg?.moreGroups.length && <div className="dnote mt8">Die 2. Liga spielt in Staffeln – {lg.moreGroups.join(', ')} unter Statistiken › Liga.</div>}
+        {!!lg?.moreGroups.length && <div className="dnote mt8">Die {leagueName(c.cc, 2)} spielt in Staffeln – {lg.moreGroups.join(', ')} unter Statistiken › Liga.</div>}
         {lg && onGoto && <button type="button" className="b3 b3-s cnx-goto" onClick={open}>Statistiken › Liga öffnen</button>}
       </DashBox>
     </>

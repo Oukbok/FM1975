@@ -14,7 +14,8 @@
 // höchstens verliehen; ein Verkauf (auch mit späterem Rückkauf) beendet den Status.
 // Spielminuten-Hürde 1.500 bei 34 Spieltagen, anteilig bei anderer Ligagröße.
 // =============================================================================
-import { playerLevel } from './state';
+import { homeCountryOf, playerLevel } from './state';
+import { leagueName } from '../data/leagueNames';
 import { HG_MINUTES_34, HONOURS, HONOUR_BY_ID, HONOUR_YEARS, TIER_NAME, type HonourId } from '../data/clubHonours';
 import { seasonStartYear } from '../data/timeline';
 import { setHonourTable, type HonourEffects } from '../engine/honourEffects';
@@ -334,7 +335,7 @@ export function honourProgress(g: Game, clubId: string, id: HonourId): string | 
     case 'huette': return `Letzte Saison: ${Math.round(f.att * 100)} % Auslastung bei ${f.cap.toLocaleString('de-DE')} Plätzen`;
     case 'transfer': return f.trf ? 'Letzte Saison: Transfersaldo positiv, Mannschaft stärker' : 'Letzte Saison: Hürde verpasst';
     case 'ruhe': return `Cheftrainer seit ${f.coachY} ${f.coachY === 1 ? 'Jahr' : 'Jahren'}`;
-    case 'spitzenklub': return `Letzte Saison: Platz ${f.pos} (${f.tier}. Liga)`;
+    case 'spitzenklub': return `Letzte Saison: Platz ${f.pos} (${leagueName(homeCountryOf(g), f.tier)})`;
     case 'europa': return ['Letzte Saison: nicht im Europapokal', 'Letzte Saison: im Europapokal ausgeschieden', 'Letzte Saison: Halbfinale', 'Letzte Saison: Endspiel', 'Letzte Saison: Europapokalsieger'][f.eu];
     case 'pokalschreck': return f.out ? `Außenseiter · Landespokal: ${['früh ausgeschieden', 'Finale', 'Sieger'][f.cup]}` : 'Kein Außenseiter (großer Titel in 15 Jahren oder unter den ersten 6 der Liga)';
   }

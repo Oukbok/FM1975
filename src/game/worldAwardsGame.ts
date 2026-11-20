@@ -14,6 +14,7 @@
 // Anzeige über `awardsBySeason`/`worldTeamsOf`, Umrechnung alter Stände
 // `migrateWorldAwards` (game/worldAwardsMigration.ts).
 // =============================================================================
+import { leagueName } from '../data/leagueNames';
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import { seasonStartYear } from '../data/timeline';
 import { AWARD_CATS, type AwardCandidate, type AwardCat, computeAwards, reasonText } from '../engine/seasonAwards';
@@ -103,7 +104,7 @@ export function ensureWorldStore(g: Game): WorldAwardsStore {
 }
 
 /** Anzeigename einer Auslandsliga. */
-export const worldDivName = (key: string) => `${COUNTRY_BY_KEY[key]?.name ?? key} · 1. Liga`;
+export const worldDivName = (key: string) => `${COUNTRY_BY_KEY[key]?.name ?? key} · ${leagueName(COUNTRY_BY_KEY[key]?.cc, 1)}`;
 
 /** Saisonende: Die Besten der Saison + Elf der Saison der 1. Ligen im Ausland (einmal je Saison). */
 export function worldSeasonAwards(g: Game, season: string, divs: Record<string, (LeanDiv | null)[]>): number {

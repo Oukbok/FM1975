@@ -9,6 +9,7 @@ import { applyHomeModules } from './ddrHome';
 import { bindRegistration } from './registrationGame';
 import { COUNTRY_BY_CC } from '../data/world/countries';
 import { setHomeLabel } from '../engine/leagues';
+import { migrateLeagueNames } from './leagueNamesMigration';
 import { applyDataset } from '../data/dataset/apply';
 import { BUILTIN_ID } from '../data/dataset/builtin';
 import { cachedDataset } from '../data/dataset/storage';
@@ -105,7 +106,9 @@ export function prepareLoadedGame(g: Game): void {
   // DDR-Start (game/ddrHome.ts): Mark der DDR, ostdeutsche Namen.
   applyHomeModules(g);
   bindRegistration(g);
-  setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland');
+  setHomeLabel(COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? 'Deutschland', g.homeCountry ?? 'ger');
+  // Ligen des Heimatlandes in der Landessprache (data/leagueNames.ts; IDs bleiben).
+  migrateLeagueNames(g, COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.name ?? '');
   // Positionsbewertung auf das Spieljahr einstellen; ältere Spielstände auf Entwicklung 2.0 heben.
   setEraYear(Number(g.calendar.currentDate.slice(0, 4)));
   setFormationYear(Number(g.calendar.currentDate.slice(0, 4)));

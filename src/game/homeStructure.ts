@@ -25,8 +25,9 @@ import type { CurrentDivision, TransitionResult } from '../data/reformTransition
 import { makePlaceholder, type DivisionTarget } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
 import { worldStructureFor } from '../data/world/structure';
-import { deepLabel, deepLevelsFor } from '../data/world/deepStructure';
-import { assignToGroups, dataZoneOf, homeGroupKeys, secondLabel } from '../data/world/secondGroups';
+import { deepLevelsFor } from '../data/world/deepStructure';
+import { assignToGroups, dataZoneOf, homeGroupKeys } from '../data/world/secondGroups';
+import { homeDivisionName, leagueLabel } from '../data/leagueNames';
 import type { Region } from '../data/regionGeo';
 import { homeCountryOf, type Game } from './state';
 
@@ -61,29 +62,31 @@ export function homeSeasonPlan(cc: string, current: CurrentDivision[], newSeason
   let merge: HomePlan['merge'] = null;
   let regroup: HomePlan['regroup'] = null;
   const second = divs.filter((d) => d.tier === 2);
-  for (const d of divs.filter((x) => x.tier === 1)) targets.push({ ...keep(d), teamCount: st.t1, upSlots: second.length ? st.up : undefined });
-  if (!st.groups || !second.length) targets.push(...second.map(keep));
-  else if (st.groups.length === 1 && second.length === 1) targets.push({ ...keep(second[0]), teamCount: st.t2! });
+  // Namen in der Landessprache (data/leagueNames.ts, Wunsch Pascal).
+  const named = (d: CurrentDivision): DivisionTarget => ({ ...keep(d), name: homeDivisionName(cc, d.tier, d.group, divs.filter((x) => x.tier === d.tier).length, divs.filter((x) => x.tier === d.tier).indexOf(d)) });
+  for (const d of divs.filter((x) => x.tier === 1)) targets.push({ ...named(d), teamCount: st.t1, upSlots: second.length ? st.up : undefined });
+  if (!st.groups || !second.length) targets.push(...second.map(named));
+  else if (st.groups.length === 1 && second.length === 1) targets.push({ ...named(second[0]), teamCount: st.t2! });
   else if (st.groups.length === 1) {
-    const into: DivisionTarget = { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: st.t2! };
+    const into: DivisionTarget = { id: 'tier2', tier: 2, group: null, name: leagueLabel(cc, 2), teamCount: st.t2! };
     merge = { ids: second.map((d) => d.id), into };
     targets.push(into);
-  } else if (st.groups.length === second.length) second.forEach((d, i) => targets.push({ ...keep(d), teamCount: st.groups![i] }));
+  } else if (st.groups.length === second.length) second.forEach((d, i) => targets.push({ ...named(d), teamCount: st.groups![i] }));
   else {
     // Andere Staffelzahl: neue Staffeln Nord/(Mitte)/Süd …, Verteilung nach dem Auf-/Abstieg (applyHomePlan).
     const n = st.groups.length, keys = homeGroupKeys(n);
-    const into = st.groups.map((size, i): DivisionTarget => ({ id: keys[i] ? `tier2-${keys[i]}` : `tier2-${i + 1}`, tier: 2, group: keys[i] ?? null, name: secondLabel(n, i), teamCount: size }));
+    const into = st.groups.map((size, i): DivisionTarget => ({ id: keys[i] ? `tier2-${keys[i]}` : `tier2-${i + 1}`, tier: 2, group: keys[i] ?? null, name: leagueLabel(cc, 2, { n, i }), teamCount: size }));
     regroup = { ids: second.map((d) => d.id), into };
     targets.push(...into);
   }
-  // Ebenen 3/4 (game/homeDeep.ts): Staffeln und Größen wie bisher, Name der Saison aus data/leagueTiers.ts.
+  // Ebenen 3/4 (game/homeDeep.ts): Staffeln wie bisher, Größe der Saison aus data/leagueTiers.ts, Name nach Schema.
   const deepNames = deepLevelsFor(cc, y, 4);
   for (const d of divs.filter((x) => x.tier > 2)) {
     const lv = deepNames[d.tier - 3];
     const same = divs.filter((x) => x.tier === d.tier);
     // Gleiche Staffelzahl wie in der Struktur der Saison: deren Größe (England 1995/96 Third Division 22 → 24).
     const size = lv && lv.groups.length === same.length ? lv.groups[same.indexOf(d)] : undefined;
-    targets.push({ ...keep(d), ...(lv ? { name: deepLabel(lv.name, same.length, same.indexOf(d)) } : {}), ...(size ? { teamCount: size } : {}) });
+    targets.push({ ...named(d), ...(size ? { teamCount: size } : {}) });
   }
   const lowest = Math.max(...divs.map((d) => d.tier));
   const singleBoth = (st.groups?.length ?? 0) === 1 && (prev?.groups?.length ?? 0) === 1;

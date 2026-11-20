@@ -15,6 +15,7 @@
 // Wiedervereinigung 1991/92) ohne Bruch angedockt werden können.
 // -----------------------------------------------------------------------------
 
+import { groupWordOfKey, leagueName } from '../data/leagueNames';
 import { Club, Match, LeagueTable, PointSystem, MatchResult } from '../types';
 import { generateFixtures, calculateTable } from './league';
 
@@ -96,11 +97,22 @@ export function groupLabel(group: LeagueGroup): string {
 
 /** Name des Heimatlandes für Beschriftungen (Weltdaten; Standard Deutschland). */
 let homeLabel = 'Deutschland';
-export function setHomeLabel(name: string): void { homeLabel = name || 'Deutschland'; }
+let homeCc = 'ger';
+/** Name + Code des Heimatlandes; außerhalb Deutschlands heißen die Ligen nach data/leagueNames.ts. */
+export function setHomeLabel(name: string, cc = 'ger'): void { homeLabel = name || 'Deutschland'; homeCc = cc || 'ger'; }
+
+/** Anzeigename einer Division: außerhalb Deutschlands der gespeicherte Name (data/leagueNames.ts), sonst `divisionLabel`. */
+export function divisionTitle(d: { tier: number; group: LeagueGroup; name: string }): string {
+  return homeCc !== 'ger' && d.tier < 100 && d.name ? d.name : divisionLabel(d.tier, d.group);
+}
 
 export function divisionLabel(tier: number, group: LeagueGroup): string {
   if (tier === 101) return 'DDR-Oberliga';
   if (tier === 102) return 'DDR-Liga';
+  if (homeCc !== 'ger' && tier < 100) {
+    const w = groupWordOfKey(homeCc, group);
+    return tier === 1 ? `${homeLabel} ${leagueName(homeCc, 1)}` : `${leagueName(homeCc, tier)}${w ? ` ${w}` : ''}`;
+  }
   if (tier === 1) return `${homeLabel} 1. Liga`;
   if (tier === 2) {
     if (group) return `2. Liga ${groupLabel(group)}`;

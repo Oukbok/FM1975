@@ -3,7 +3,8 @@ import { SeasonPlacement, TITLE_DE, TitleKind, h2hOf, seasonsOf, titlesOf } from
 import { foreignTitles } from '../../game/foreignClub';
 import { worldTransferRecords } from '../../game/worldTransfers';
 import { Player } from '../../types';
-import type { Game } from '../../game/state';
+import { homeCountryOf, type Game } from '../../game/state';
+import { COUNTRY_BY_KEY } from '../../data/world/countries';
 import { ClubByName } from '../../ui/LinkedText';
 import { ClubLink } from './ClubLink';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
@@ -76,7 +77,7 @@ export default function HistoryTab({ g, d, openPlayer }: ClubTabProps) {
       <DashBox title="Platzierungen" icon="stats" span={2} right={seasons.length > 1 ? <span className="dbtnrow"><span className="dnote">{past.length} Saisons</span><RangeSeg value={range} onChange={setRange} span={span} minRange="3" minTitle="Endplätze gibt es je Saison – ab 3 Jahren" /></span> : past.length ? `${past.length} Saisons` : undefined}>
         {seasons.length ? <>
           <div className="cmx-chart-wrap">
-            <PlacementChart seasons={shownSeasons.length ? shownSeasons : seasons} />
+            <PlacementChart seasons={shownSeasons.length ? shownSeasons : seasons} cc={d.foreign ? COUNTRY_BY_KEY[d.foreign.countryKey]?.cc : homeCountryOf(g)} />
             {past.length === 0 && <div className="dnote">Die Historie beginnt mit deinem Spielstart; nach jeder Saison kommt der Endplatz hinzu. Ein offener Punkt zeigt den aktuellen Tabellenplatz der laufenden Saison.</div>}
           </div>
         </> : <Empty icon="stats">Noch keine abgeschlossene Saison. Nach jedem Saisonende erscheint hier der Endplatz – über alle Ligaebenen hinweg.</Empty>}

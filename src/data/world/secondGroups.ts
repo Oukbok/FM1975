@@ -17,7 +17,7 @@
 //   3. die Staffel, in der die meisten Vereine seiner Stadt laut Weltdaten spielten, sonst
 //   4. die Staffel mit den meisten freien Plätzen.
 // Ist die Wunsch-Staffel voll, rückt der Verein in die Staffel mit den meisten freien Plätzen.
-// Namen: zwei Staffeln Nord/Süd, drei Nord/Mitte/Süd, sonst Staffel 1, 2, …
+// Namen: data/leagueNames.ts (Landessprache; zwei Staffeln Nord/Süd, drei Nord/Mitte/Süd, sonst Staffel 1, 2, …).
 // =============================================================================
 import type { LeagueGroup } from '../../engine/leagues';
 import { realClub, worldDataVersion, worldSeason, worldYears } from './index';
@@ -33,26 +33,8 @@ export function rowGroups(r: SeasonRow): string[][] {
   return [a, ...Array.from({ length: k }, (_, i) => b.slice(i * n, (i + 1) * n))];
 }
 
-/** Namen der Staffeln (ohne „2. Liga“). */
-export function groupNames(n: number): string[] {
-  if (n === 2) return ['Nord', 'Süd'];
-  if (n === 3) return ['Nord', 'Mitte', 'Süd'];
-  return Array.from({ length: n }, (_, i) => `Staffel ${i + 1}`);
-}
-
-/** Anzeigename einer Staffel der 2. Ebene: „2. Liga“ (eingleisig) bzw. „2. Liga Nord“. */
-export function secondLabel(n: number, i: number, base = '2. Liga'): string {
-  return n > 1 ? `${base} ${groupNames(n)[i] ?? `Staffel ${i + 1}`}` : base;
-}
-
-/** Staffelkennungen im Heimatland (Divisionen `tier2-<kennung>`). */
-export function homeGroupKeys(n: number): LeagueGroup[] {
-  if (n <= 1) return [null];
-  if (n === 2) return ['nord', 'sued'];
-  if (n === 3) return ['nord', 'west', 'sued'];
-  if (n === 4) return ['nord', 'west', 'suedwest', 'sued'];
-  return (['nord', 'nordost', 'west', 'suedwest', 'sued', 'bayern'] as LeagueGroup[]).slice(0, Math.min(6, n));
-}
+/** Staffelkennungen im Heimatland (Divisionen `tier2-<kennung>`) – liegt in data/leagueNames.ts. */
+export { homeGroupKeys } from '../leagueNames';
 
 // -----------------------------------------------------------------------------
 // Zonen aus den Weltdaten

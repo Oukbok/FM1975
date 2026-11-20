@@ -1,6 +1,8 @@
 // =============================================================================
 // Spielerpool/Scouting: gemeinsame Anzeige-Bausteine (Schätzspannen, Verein, Gesicht)
 // =============================================================================
+import { leagueName } from '../../../data/leagueNames';
+import { COUNTRY_BY_KEY } from '../../../data/world/countries';
 import ClubCrest from '../../../components/ClubCrest';
 import FaceThumb from '../../../components/FaceThumb';
 import { ClubLink } from '../../../components/club/ClubLink';
@@ -55,5 +57,6 @@ export function Face({ r, size = 26 }: { r: PoolRow; size?: number }) {
 
 export function leagueLabel(r: PoolRow): string {
   const land = countryName(r.country);
-  return `${land} · ${r.level <= 1 ? '1. Liga' : r.level === 2 ? '2. Liga' : 'unterklassig'}`;
+  const cc = COUNTRY_BY_KEY[r.country]?.cc;
+  return `${land} · ${r.level <= 1 ? leagueName(cc, 1) : r.level === 2 ? leagueName(cc, 2) : 'unterklassig'}`;
 }

@@ -11,6 +11,7 @@
 // Saisonwechsel (`careerSeasonStart`): Ansehen, Trainerbilanz, Managerbilanz
 // (managerLog.ts).
 // =============================================================================
+import { leagueName } from '../data/leagueNames';
 import { CalendarEngine } from '../engine/calendar';
 import { yearOf } from '../engine/economy';
 import { expectedPosition } from '../engine/environment';
@@ -28,7 +29,7 @@ import { addRecord, leagueRecordSince } from './coachRecord';
 import { boardPressureDaily } from './boardPressure';
 import { headCoachSeasonEnd, syncHeadCoach } from './headCoaches';
 import { ensureMgr, mgrSeasonEnd } from './managerLog';
-import { Game } from './state';
+import { Game, homeCountryOf } from './state';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const r5k = (v: number) => Math.round(v / 5000) * 5000;
@@ -82,7 +83,7 @@ export function makeOffer(g: Game, clubId: string, when: JobOffer['when'], why: 
 }
 
 function offerText(g: Game, o: JobOffer): string {
-  const league = o.tier === 1 ? '1. Liga' : o.tier === 2 ? '2. Liga' : `${o.tier}. Ebene`;
+  const league = o.tier < 100 ? leagueName(homeCountryOf(g), o.tier) : `${o.tier % 100}. Ebene`;
   return `Verein: ${o.clubName} (${league})\n`
     + `Wechsel: ${o.when === 'sofort' ? 'sofort – du übernimmst mitten in der Saison' : 'zum Saisonende (1. Juli)'}\n`
     + `Jahresgehalt: ${fmtPrice(o.wage)}\n`
