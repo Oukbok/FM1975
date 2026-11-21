@@ -78,6 +78,7 @@
     "test:worlddeep": "node scripts/run-ts.mjs tests/world-deep-test.ts",
     "test:newgame-repro": "node scripts/run-ts.mjs tests/newgame-repro.ts",
     "test:popups": "node scripts/build.mjs && node tests/popup-size.mjs",
+    "test:audit": "node scripts/build.mjs && node tests/audit.mjs",
     "test:walk": "node scripts/build.mjs && node tests/season-walk.mjs",
     "test:honours": "node scripts/run-ts.mjs tests/honours-test.ts",
     "test:legends": "node scripts/run-ts.mjs tests/legends-test.ts && node tests/legends-ui.mjs"

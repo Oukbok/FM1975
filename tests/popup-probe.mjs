@@ -13,7 +13,7 @@ export function serveDist() {
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (path.endsWith('/')) path += 'index.html';
     let body = null;
-    try { body = await readFile(join('dist', path)); } catch { /* fehlt */ }
+    try { body = await readFile(join(process.env.DIST || 'dist', path)); } catch { /* fehlt */ }
     try {
       if (body) res.writeHead(200, { 'Content-Type': TYPES[extname(path)] || 'application/octet-stream' }).end(body);
       else res.writeHead(404).end();
