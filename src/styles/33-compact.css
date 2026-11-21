@@ -17,8 +17,8 @@
 [data-ui] .hd-club-name { max-width: 150px; }
 [data-ui] .hd-right > .hd-continue { width: 220px; }
 [data-ui] .tn-date { width: 220px; }
-[data-ui="narrow"] .hd-logo-title,
-[data-ui="narrow"] .hd-logo-div { display: none; }
+[data-ui] .hd-logo-title,
+[data-ui] .hd-logo-div { display: none; } /* 1366×768 mit langem Vereinsnamen: sonst „Privat“ verdeckt */
 [data-ui="narrow"] .hd-nav-item { font-size: 15px; padding: 0 5px; letter-spacing: 0.3px; }
 
 /* ---- Untermenü: neun Unterpunkte + Datum in einer Zeile ------------------------ */
