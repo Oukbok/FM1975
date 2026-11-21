@@ -70,7 +70,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     society: [
       { topic: 'alltag', title: 'Jahrhundertflut an der Elbe', text: 'Im August 2002 überflutet das Hochwasser von Elbe und Mulde weite Teile Sachsens und Sachsen-Anhalts. Die Spendenbereitschaft ist riesig.' },
       { topic: 'politik', title: 'Bundestagswahl 2002', text: 'Im September 2002 wird die rot-grüne Koalition knapp bestätigt.' },
-      { topic: 'politik', title: 'Agenda 2010', text: 'Im März 2003 kündigt Kanzler Gerhard Schröder umfassende Reformen bei Arbeitsmarkt und Sozialsystemen an.' },
+      { topic: 'politik', title: 'Agenda 2010', text: 'Im März 2003 kündigt der Bundeskanzler umfassende Reformen bei Arbeitsmarkt und Sozialsystemen an.' },
       { topic: 'alltag', title: 'Pfand auf Dosen', text: 'Seit dem 1. Januar 2003 gibt es Pfand auf Einweg-Getränkedosen und -flaschen.' },
       { topic: 'politik', title: 'Irak-Krieg', text: 'Im März 2003 beginnt der Irak-Krieg; Deutschland beteiligt sich nicht. Hunderttausende gehen gegen den Krieg auf die Straße.' },
     ],
@@ -109,8 +109,8 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     society: [
       { topic: 'politik', title: 'Hartz IV startet', text: 'Seit dem 1. Januar 2005 gibt es das Arbeitslosengeld II. Die Reform bleibt heftig umstritten.' },
       { topic: 'alltag', title: 'Tsunami im Indischen Ozean', text: 'Die Flutwelle vom 26. Dezember 2004 trifft auch viele deutsche Urlauber. Die Spendenbereitschaft erreicht Rekordwerte.' },
-      { topic: 'kultur', title: '„Wir sind Papst“', text: 'Im April 2005 wird Joseph Ratzinger als Benedikt XVI. zum Papst gewählt.' },
-      { topic: 'politik', title: 'Neuwahl angekündigt', text: 'Im Mai 2005 kündigt Kanzler Schröder vorgezogene Bundestagswahlen für den Herbst an.' },
+      { topic: 'kultur', title: '„Wir sind Papst“', text: 'Im April 2005 wird ein Kardinal aus Bayern zum Papst gewählt – der erste Deutsche seit fast 500 Jahren.' },
+      { topic: 'politik', title: 'Neuwahl angekündigt', text: 'Im Mai 2005 kündigt der Bundeskanzler vorgezogene Bundestagswahlen für den Herbst an.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -125,7 +125,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'medien', title: 'Überraschung beim Pay-TV', text: 'Im Dezember 2005 sichert sich ein Kabelnetzbetreiber mit neuem Sender die Pay-TV-Rechte ab 2006/07; der bisherige Bezahlsender geht leer aus.' },
     ],
     society: [
-      { topic: 'politik', title: 'Erste Kanzlerin', text: 'Im November 2005 wird Angela Merkel als erste Frau Bundeskanzlerin einer großen Koalition.' },
+      { topic: 'politik', title: 'Erste Kanzlerin', text: 'Im November 2005 wird die CDU-Vorsitzende als erste Frau Bundeskanzlerin einer großen Koalition.' },
       { topic: 'alltag', title: 'Mehrwertsteuer soll steigen', text: 'Die Koalition beschließt, die Mehrwertsteuer zum 1. Januar 2007 von 16 auf 19 Prozent anzuheben.' },
       { topic: 'alltag', title: 'Vogelgrippe auf Rügen', text: 'Im Februar 2006 werden auf Rügen tote Wildvögel mit Vogelgrippe gefunden; Geflügel muss in den Stall.' },
       { topic: 'kultur', title: 'Fahnen und Fanmeilen', text: 'Im Juni 2006 hängen Deutschlandfahnen an Autos und Balkonen, Public Viewing auf Fanmeilen wird zum Massenerlebnis.' },
@@ -161,10 +161,10 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'liga', title: 'EM in den Alpen', text: 'Im Juni 2008 richten Österreich und die Schweiz gemeinsam die EM aus.' },
     ],
     society: [
-      { topic: 'alltag', title: 'iPhone in Deutschland', text: 'Am 9. November 2007 kommt das iPhone nach Deutschland. Das Smartphone verändert, wie Fans Ergebnisse, Videos und Nachrichten verfolgen.' },
+      { topic: 'alltag', title: 'Telefon ohne Tasten', text: 'Am 9. November 2007 kommt das erste Smartphone mit Berührungsbildschirm nach Deutschland. Es verändert, wie Fans Ergebnisse, Videos und Nachrichten verfolgen.' },
       { topic: 'alltag', title: 'Rauchverbote in Kneipen', text: 'Bund und Länder verbieten 2007/08 das Rauchen in Behörden, Bahnhöfen und den meisten Gaststätten.' },
-      { topic: 'politik', title: 'Streik bei der Bahn', text: 'Die Lokführergewerkschaft GDL legt den Bahnverkehr im Herbst und Winter mehrfach lahm – auch Auswärtsfahrer stranden.' },
-      { topic: 'politik', title: 'Die Bankenkrise beginnt', text: 'Die US-Immobilienkrise erreicht deutsche Banken wie die IKB und die Sachsen LB.' },
+      { topic: 'politik', title: 'Streik bei der Bahn', text: 'Die Lokführergewerkschaft legt den Bahnverkehr im Herbst und Winter mehrfach lahm – auch Auswärtsfahrer stranden.' },
+      { topic: 'politik', title: 'Die Bankenkrise beginnt', text: 'Die US-Immobilienkrise erreicht deutsche Mittelstands- und Landesbanken.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -178,10 +178,10 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'geld', title: 'Krise erreicht Sponsoren', text: 'Die Finanzkrise trifft Banken und Konzerne, die als Sponsoren auftreten. Neue Verträge werden vorsichtiger verhandelt.' },
     ],
     society: [
-      { topic: 'politik', title: 'Lehman-Pleite', text: 'Mit der Pleite der US-Bank Lehman Brothers im September 2008 eskaliert die Finanzkrise. Die Regierung garantiert die Spareinlagen.' },
+      { topic: 'politik', title: 'Bankenpleite in New York', text: 'Mit der Pleite einer großen US-Investmentbank im September 2008 eskaliert die Finanzkrise. Die Regierung garantiert die Spareinlagen.' },
       { topic: 'alltag', title: 'Prämie fürs Abwracken', text: 'Ab Januar 2009 gibt es 2.500 Euro, wer sein altes Auto verschrotten lässt und ein neues kauft.' },
       { topic: 'alltag', title: 'Kurzarbeit statt Kündigung', text: 'Hunderttausende Beschäftigte gehen in Kurzarbeit, um Entlassungen zu vermeiden.' },
-      { topic: 'kultur', title: 'Soziale Netzwerke', text: 'StudiVZ, wer-kennt-wen und Facebook ziehen Millionen Nutzer an. Fanclubs organisieren sich zunehmend online.' },
+      { topic: 'kultur', title: 'Soziale Netzwerke', text: 'Deutsche und amerikanische Online-Netzwerke ziehen Millionen Nutzer an. Fanclubs organisieren sich zunehmend online.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -199,7 +199,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'politik', title: 'Bundestagswahl 2009', text: 'Im September 2009 bilden Union und FDP eine neue Regierung.' },
       { topic: 'alltag', title: 'Aschewolke über Europa', text: 'Im April 2010 legt ein isländischer Vulkan den Flugverkehr lahm; Barcelona fährt mit dem Bus zum Halbfinale nach Mailand.' },
       { topic: 'politik', title: 'Euro-Krise', text: 'Im Mai 2010 erhält Griechenland das erste Hilfspaket. Der Euro gerät unter Druck.' },
-      { topic: 'alltag', title: 'Tablets und Apps', text: 'Smartphones und das erste iPad machen Apps zum Alltag, auch für Liveticker und Tabellen.' },
+      { topic: 'alltag', title: 'Tablets und Apps', text: 'Smartphones und die ersten Tablet-Computer machen Apps zum Alltag, auch für Liveticker und Tabellen.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -236,7 +236,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'politik', title: 'Euro-Rettungsschirm', text: 'Rettungspakete und der dauerhafte Rettungsschirm ESM bestimmen die Nachrichten.' },
       { topic: 'politik', title: 'Freiwillige statt Zivis', text: 'Die erste Saison ohne Wehr- und Zivildienst: Auch Sportvereine werben um Bundesfreiwillige.' },
       { topic: 'alltag', title: 'Energiewende auf dem Dach', text: 'Solaranlagen und Windräder breiten sich aus; die Ökostrom-Umlage auf der Stromrechnung steigt.' },
-      { topic: 'kultur', title: 'Musik aus dem Netz', text: 'Im März 2012 startet Spotify in Deutschland; Streaming löst CD und Download langsam ab.' },
+      { topic: 'kultur', title: 'Musik aus dem Netz', text: 'Im März 2012 startet ein schwedischer Musik-Streamingdienst in Deutschland; Streaming löst CD und Download langsam ab.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -253,7 +253,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     society: [
       { topic: 'alltag', title: 'Rundfunkbeitrag für alle', text: 'Seit Januar 2013 zahlt jeder Haushalt den Rundfunkbeitrag, egal ob mit oder ohne Fernseher.' },
       { topic: 'alltag', title: 'Fernbusse rollen', text: 'Seit 2013 dürfen Fernbusse im Inland fahren – günstige Tickets auch für Auswärtsfahrten.' },
-      { topic: 'politik', title: 'NSA-Enthüllungen', text: 'Im Juni 2013 machen die Snowden-Dokumente die Massenüberwachung im Netz öffentlich.' },
+      { topic: 'politik', title: 'NSA-Enthüllungen', text: 'Im Juni 2013 machen die Dokumente eines früheren Geheimdienstmitarbeiters die Massenüberwachung im Netz öffentlich.' },
       { topic: 'alltag', title: 'Hochwasser 2013', text: 'Im Juni 2013 treten Elbe, Donau und Saale über die Ufer; erneut sind viele Orte im Osten und Süden betroffen.' },
     ],
   },
@@ -271,7 +271,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'politik', title: 'Große Koalition', text: 'Nach der Wahl im September 2013 regieren Union und SPD; ein gesetzlicher Mindestlohn wird vereinbart.' },
       { topic: 'politik', title: 'Rente mit 63', text: 'Ab Juli 2014 können langjährig Versicherte früher abschlagsfrei in Rente gehen.' },
       { topic: 'politik', title: 'Krim-Krise', text: 'Im März 2014 annektiert Russland die Krim; die EU verhängt Sanktionen.' },
-      { topic: 'alltag', title: 'Messenger statt SMS', text: 'WhatsApp und Co. verdrängen die SMS; Gruppenchats ersetzen den Anruf beim Fanclub.' },
+      { topic: 'alltag', title: 'Messenger statt SMS', text: 'Messenger-Apps verdrängen die SMS; Gruppenchats ersetzen den Anruf beim Fanclub.' },
     ],
   },
   // ---------------------------------------------------------------------------
@@ -300,7 +300,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'regeln', title: 'Torlinientechnik im Einsatz', text: 'Ab 2015/16 erkennen Kameras in der Bundesliga, ob der Ball die Linie überschritten hat; das Signal kommt in unter einer Sekunde.', inGame: 'In der 1. Liga gibt es keine Phantomtore mehr.' },
       { topic: 'taktik', title: 'Sommertour nach Asien', text: 'Spitzenvereine verlegen Teile der Vorbereitung nach China und Japan – Millionen-Erlöse, aber Jetlag.', inGame: 'Asienreisen im Sommer sind für die größten Vereine buchbar.' },
-      { topic: 'medien', title: 'Social Media bestimmt die Stimmung', text: 'Vereine, Spieler und Fans kommunizieren über Facebook, Twitter und Instagram. Krisen und Hypes entstehen in Stunden.', inGame: 'Neue Fan-Epoche „Soziale Medien“: Die Stimmung schwankt so stark wie nie.' },
+      { topic: 'medien', title: 'Social Media bestimmt die Stimmung', text: 'Vereine, Spieler und Fans kommunizieren über soziale Netzwerke, Kurznachrichten- und Foto-Apps. Krisen und Hypes entstehen in Stunden.', inGame: 'Neue Fan-Epoche „Soziale Medien“: Die Stimmung schwankt so stark wie nie.' },
       { topic: 'liga', title: 'Affären bei FIFA und DFB', text: 'Im Herbst 2015 wird der FIFA-Präsident gesperrt und Zahlungen rund um die WM 2006 untersucht; der DFB-Präsident tritt zurück.' },
       { topic: 'geld', title: 'Die TV-Milliarde', text: 'Im Juni 2016 vergibt die DFL die Rechte ab 2017/18 für gut eine Milliarde Euro pro Saison.' },
       { topic: 'liga', title: 'EM mit 24 Teams', text: 'Im Sommer 2016 spielt die EM in Frankreich erstmals mit 24 Mannschaften.' },
@@ -323,7 +323,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'geld', title: 'China lockt', text: 'Klubs der chinesischen Super League locken im Winter mit Rekordgehältern und hohen Ablösen.' },
     ],
     society: [
-      { topic: 'kultur', title: 'Pokémon Go', text: 'Im Sommer 2016 jagen Millionen mit dem Smartphone virtuelle Monster durch Parks und Innenstädte.' },
+      { topic: 'kultur', title: 'Monsterjagd mit dem Handy', text: 'Im Sommer 2016 jagen Millionen mit dem Smartphone virtuelle Monster durch Parks und Innenstädte.' },
       { topic: 'politik', title: 'Mehr Sicherheit bei Großveranstaltungen', text: 'Nach dem Anschlag auf den Berliner Weihnachtsmarkt im Dezember 2016 werden Sicherheitskonzepte weiter verschärft.' },
       { topic: 'alltag', title: 'Smarte Lautsprecher', text: 'Smarte Lautsprecher ziehen in Wohnzimmer ein und lesen auf Zuruf die Bundesliga-Ergebnisse vor.' },
       { topic: 'alltag', title: 'Mindestlohn steigt', text: 'Seit Januar 2017 liegt der Mindestlohn bei 8,84 Euro.' },
@@ -337,7 +337,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'regeln', title: 'Der Video-Assistent', text: 'Seit 2017/18 überprüft der Video-Assistent in der Bundesliga Tore, Elfmeter, Rote Karten und Verwechslungen.', inGame: 'In der 1. Liga gibt es Video-Überprüfungen.' },
       { topic: 'liga', title: 'Fußball am Montag', text: 'Erstmals finden einzelne Bundesligaspiele am Montagabend statt. Fans protestieren mit Bannern und Boykotten.' },
       { topic: 'geld', title: 'TV-Geld über einer Milliarde', text: 'Der neue Medienvertrag bringt im Schnitt rund 1,16 Milliarden Euro pro Saison; ein Sportsender zeigt Freitags- und Montagsspiele.' },
-      { topic: 'geld', title: '222 Millionen', text: 'Im August 2017 wechselt Neymar für 222 Mio. Euro nach Paris. Die Preise im ganzen Markt ziehen an.' },
+      { topic: 'geld', title: '222 Millionen', text: 'Im August 2017 wechselt ein brasilianischer Stürmerstar für 222 Mio. Euro nach Paris. Die Preise im ganzen Markt ziehen an.' },
       { topic: 'liga', title: 'WM in Russland', text: 'Im Sommer 2018 setzt die FIFA bei einer WM erstmals den Video-Assistenten ein.' },
     ],
     society: [
@@ -411,7 +411,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'liga', title: 'Montagsspiele abgeschafft', text: 'Seit 2021/22 gibt es in der Bundesliga keine Montagsspiele mehr.' },
       { topic: 'liga', title: 'Conference League', text: 'Die UEFA startet mit der Conference League einen dritten Europapokal.' },
       { topic: 'regeln', title: 'Auswärtstorregel fällt', text: 'In den Europapokalen zählen Auswärtstore bei Gleichstand nicht mehr doppelt.' },
-      { topic: 'medien', title: 'Klubs als Medienhäuser', text: 'Instagram, TikTok und eigene Apps werden zu Hauptkanälen; Vereine stellen Social-Media-Redaktionen und Datenwissenschaftler ein.', inGame: 'Neue Fachkräfte für Social Media und Datenwissenschaft im Mitarbeiterstab.' },
+      { topic: 'medien', title: 'Klubs als Medienhäuser', text: 'Foto- und Kurzvideo-Plattformen und eigene Apps werden zu Hauptkanälen; Vereine stellen Social-Media-Redaktionen und Datenwissenschaftler ein.', inGame: 'Neue Fachkräfte für Social Media und Datenwissenschaft im Mitarbeiterstab.' },
     ],
     society: [
       { topic: 'alltag', title: 'Flut im Ahrtal', text: 'Im Juli 2021 zerstören Sturzfluten im Ahrtal und in Teilen Nordrhein-Westfalens ganze Orte.' },
@@ -434,7 +434,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     society: [
       { topic: 'alltag', title: 'Hohe Inflation', text: 'Die Preise steigen so stark wie seit Jahrzehnten nicht; Entlastungspakete und Energiepreisbremsen sollen helfen.' },
       { topic: 'alltag', title: 'Das Deutschlandticket', text: 'Seit Mai 2023 gilt das Deutschlandticket für 49 Euro im Monat im ganzen Nahverkehr.' },
-      { topic: 'alltag', title: 'Künstliche Intelligenz', text: 'Ende November 2022 erscheint ChatGPT; KI-Chatbots werden in wenigen Monaten zum Massenthema.' },
+      { topic: 'alltag', title: 'Künstliche Intelligenz', text: 'Ende November 2022 erscheint ein frei zugänglicher KI-Chatbot; in wenigen Monaten wird die Technik zum Massenthema.' },
       { topic: 'politik', title: 'Bürgergeld und Atomausstieg', text: 'Im Januar 2023 löst das Bürgergeld Hartz IV ab, im April gehen die letzten drei Atomkraftwerke vom Netz.' },
     ],
   },
@@ -487,7 +487,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'liga', title: 'WM mit 48 Teams', text: 'Im Sommer 2026 spielen in den USA, Kanada und Mexiko erstmals 48 Nationen in 104 Spielen um den Titel.' },
     ],
     society: [
-      { topic: 'politik', title: 'Neue Bundesregierung', text: 'Seit Mai 2025 regiert eine Koalition aus Union und SPD mit Kanzler Friedrich Merz.' },
+      { topic: 'politik', title: 'Neue Bundesregierung', text: 'Seit Mai 2025 regiert eine Koalition aus Union und SPD unter einem CDU-Kanzler.' },
       { topic: 'politik', title: 'Neuer Wehrdienst', text: 'Seit Januar 2026 bekommen alle 18-Jährigen einen Fragebogen der Bundeswehr; für Männer ist die Antwort Pflicht.' },
       { topic: 'alltag', title: 'Mindestlohn 13,90 Euro', text: 'Seit dem 1. Januar 2026 liegt der Mindestlohn bei 13,90 Euro.' },
       { topic: 'alltag', title: 'Deutschlandticket 63 Euro', text: 'Seit Januar 2026 kostet das Deutschlandticket 63 Euro im Monat.' },
