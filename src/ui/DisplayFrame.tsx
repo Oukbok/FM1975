@@ -110,11 +110,15 @@ export function DisplayFrame({ resolution, uiScale, children }: {
   // sähen nur die echte Fensterbreite, nicht die Fläche hinter Zoom und Skalierung.
   const cssW = box.w / designZoom;
   const ui = cssW < 2100 ? 'narrow' : cssW < 2400 ? 'compact' : undefined;
+  // Lesbarkeit: unter 0,7 Bildschirm-Pixeln je CSS-Pixel (Steam Deck, 1366×768) hebt
+  // styles/34-compact-fonts.css (erzeugt von scripts/compact-fonts.mjs) kleine Schrift an.
+  const fs = fit * designZoom < FONT_LIFT_BELOW ? 'lift' : undefined;
 
   return (
     <div className="display-outer">
       <div
         data-ui={ui}
+        data-fs={fs}
         className="display-inner"
         style={{
           width: box.w,
@@ -137,6 +141,9 @@ export function DisplayFrame({ resolution, uiScale, children }: {
  * (DashPage-Raster in %, Boxen scrollen intern), Schrift wird 25 % größer als bei 0,5.
  */
 export const MIN_AUTO_SCALE = 0.625;
+
+/** Unter diesem Maßstab wird kleine Schrift angehoben (`data-fs="lift"`, 34-compact-fonts.css). */
+export const FONT_LIFT_BELOW = 0.7;
 
 /** Canvas im Modus „Automatisch“: 4K-Design, auf kleinen Bildschirmen kleiner (siehe oben). */
 export function autoCanvas(vp: { w: number; h: number }, designZoom: number): { w: number; h: number } {

@@ -1,0 +1,2526 @@
+/* ERZEUGT von scripts/compact-fonts.mjs – nicht von Hand ändern.
+   Kleine Bildschirme (Maßstab < 0,7, Spielrahmen data-fs="lift"): Schrift ab 12 CSS-px auf 17.6 px
+   (= 11 px bei 0,625), kleinere Nebentexte +4 px. Reihenfolge und Spezifität wie im Original + [data-fs]. */
+
+/* 00-base.css */
+[data-fs] { --btn-font: 17.6px; }
+[data-fs] { font-size: var(--font-size-base); }
+[data-fs] .brand-name { font-size: 17.6px; }
+[data-fs] .brand-sub { font-size: 15px; }
+[data-fs] .date-center .lbl { font-size: 14px; }
+[data-fs] .date-center .val { font-size: 21px; }
+[data-fs] .cal-next-lbl { font-size: 12.5px; }
+[data-fs] .cal-next-date { font-size: 17.6px; }
+[data-fs] .cal-next-txt { font-size: 14px; }
+[data-fs] .cal-next-empty { font-size: 14px; }
+[data-fs] .cal-sheet-head { font-size: 13px; }
+[data-fs] .cal-sheet-day { font-size: 23px; }
+[data-fs] .cal-sheet-wd { font-size: 13px; }
+[data-fs] .cal-sheet-ev-txt { font-size: 14px; }
+@media (max-width: 1340px) {
+  [data-fs] .cal-sheet-day { font-size: 24px; }
+}
+@media (max-width: 1180px) {
+  [data-fs] .cal-sheet-day { font-size: 22px; }
+  [data-fs] .cal-sheet-ev-txt { font-size: 14px; }
+}
+@media (max-width: 1040px) {
+  [data-fs] .cal-sheet-day { font-size: 20px; }
+  [data-fs] .cal-sheet-head { font-size: 13px; }
+  [data-fs] .cal-sheet-ev-txt { font-size: 13px; }
+}
+@media (max-width: 900px) {
+  [data-fs] .cal-sheet-day { font-size: 19px; }
+}
+[data-fs] button { font-size: 17.6px; }
+[data-fs] .btn-continue { font-size: 17.6px; }
+[data-fs] .btn-sm { font-size: 17.6px; }
+[data-fs] .card-title { font-size: 17.6px; }
+[data-fs] .card-title .ico { font-size: 17.6px; }
+[data-fs] .section-title { font-size: 20px; }
+[data-fs] .page-head-title { font-size: var(--page-head-title-size); }
+[data-fs] .page-head-right { font-size: var(--page-head-meta-size); }
+[data-fs] .nav-item { font-size: 15px; }
+[data-fs] .nav-item .nav-ico { font-size: 19px; }
+[data-fs] table { font-size: 17.6px; }
+[data-fs] th { font-size: 14.5px; }
+[data-fs] .pos-badge { font-size: 17.6px; }
+[data-fs] .form-pill { font-size: 14px; }
+[data-fs] .attr-bar-row .lbl { font-size: 17.6px; }
+[data-fs] .attr-bar-row .attr-num { font-size: 17.6px; }
+[data-fs] .stars { font-size: 17.6px; }
+[data-fs] .big-num { font-size: 40px; }
+[data-fs] .mini { font-size: 15px; }
+[data-fs] .pill { font-size: 15px; }
+[data-fs] input,
+[data-fs] select { font-size: 17.6px; }
+[data-fs] .ticker-item { font-size: 17.6px; }
+[data-fs] .modal-close { font-size: 18px; }
+[data-fs] .tab { font-size: 17.6px; }
+[data-fs] .setup-hero h1 { font-size: 34px; }
+
+/* 01-misc-widgets.css */
+[data-fs] .btn-continue.fixed { font-size: 17.6px; }
+[data-fs] .next-ev-hint { font-size: 15px; }
+[data-fs] .save-toast { font-size: 17.6px; }
+[data-fs] .nav-badge { font-size: 14px; }
+
+/* 02-startmenu.css */
+[data-fs] .menu-hero h1 { font-size: 40px; }
+[data-fs] .menu-hero p { font-size: 17.6px; }
+[data-fs] .menu-hero h1.menu-year { font-size: 88px; }
+[data-fs] .menu-hero p.menu-slogan { font-size: 22px; }
+[data-fs] .menu-badge { font-size: 15px; }
+[data-fs] .menu-btn { font-size: 17.6px; }
+[data-fs] .mi { font-size: 18px; }
+[data-fs] .menu-tag { font-size: 15px; }
+[data-fs] .field-label { font-size: 17.6px; }
+[data-fs] .field-input { font-size: 17.6px; }
+[data-fs] .chip { font-size: 17.6px; }
+[data-fs] .toggle-item { font-size: 17.6px; }
+[data-fs] .st-logo .y { font-size: 132px; }
+[data-fs] .st-logo .n { font-size: 21px; }
+[data-fs] .st-logo .t { font-size: 19px; }
+[data-fs] .st-btn { font-size: 19px; }
+[data-fs] .st-btn .cnt { font-size: 17.6px; }
+[data-fs] .st-era .lbl { font-size: 15px; }
+[data-fs] .st-era button { font-size: 17.6px; }
+[data-fs] .st-note { font-size: 17.6px; }
+
+/* 03-squad-table.css */
+[data-fs] .squad-table { font-size: 17.6px; }
+[data-fs] .squad-table th { font-size: 15px; }
+[data-fs] .pos-tag { font-size: 15px; }
+
+/* 04-news.css */
+[data-fs] .msg-ico { font-size: 20px; }
+[data-fs] .msg-from { font-size: 17.6px; }
+[data-fs] .msg-cat { font-size: 14px; }
+[data-fs] .msg-date { font-size: 15px; }
+[data-fs] .msg-subject { font-size: 17.6px; }
+[data-fs] .msg-preview { font-size: 17.6px; }
+
+/* 05-wiki.css */
+[data-fs] .wiki-search { font-size: 17.6px; }
+[data-fs] .wiki-cat { font-size: 17.6px; }
+[data-fs] .wiki-h { font-size: 22px; }
+[data-fs] .wiki-h5 { font-size: 17.6px; }
+[data-fs] .wiki-p { font-size: 17.6px; }
+[data-fs] .wiki-ul li { font-size: 17.6px; }
+[data-fs] .wiki-table { font-size: 17.6px; }
+[data-fs] .wiki-code { font-size: 17.6px; }
+[data-fs] .wiki-inline-code { font-size: 17.6px; }
+
+/* 06-training.css */
+[data-fs] .week-summary .ws-item b { font-size: 19px; }
+[data-fs] .pd-name { font-size: 17.6px; }
+[data-fs] .pd-full { font-size: 15px; }
+[data-fs] .pd-today-badge { font-size: 13px; }
+[data-fs] .pd-slot-lbl { font-size: 14px; }
+[data-fs] .pd-select { font-size: 17.6px; }
+[data-fs] .pd-fitness { font-size: 17.6px; }
+[data-fs] .pd-md-ico { font-size: 30px; }
+[data-fs] .pd-md-sub { font-size: 17.6px; }
+[data-fs] .pd-md-note { font-size: 14px; }
+[data-fs] .int-tag { font-size: 13px; }
+[data-fs] .bc-ico { font-size: 18px; }
+[data-fs] .bc-name { font-size: 17.6px; }
+[data-fs] .bc-desc { font-size: 17.6px; }
+[data-fs] .bc-attr { font-size: 14px; }
+
+/* 07-rating-ceremony.css */
+[data-fs] .reveal-close { font-size: 18px; }
+[data-fs] .reveal-progress { font-size: 17.6px; }
+[data-fs] .reveal-name { font-size: 20px; }
+[data-fs] .reveal-pos { font-size: 17.6px; }
+[data-fs] .drumroll-txt { font-size: 17.6px; }
+[data-fs] .reveal-badge { font-size: 17.6px; }
+[data-fs] .ro-lbl { font-size: 15px; }
+[data-fs] .ro-vals { font-size: 34px; }
+[data-fs] .ro-arrow { font-size: 24px; }
+[data-fs] .ra-row { font-size: 17.6px; }
+[data-fs] .ra-arrow { font-size: 15px; }
+[data-fs] .reveal-reason { font-size: 17.6px; }
+[data-fs] .le-tag { font-size: 13px; }
+
+/* 08-lineup-match.css */
+[data-fs] .lu-mlabel { font-size: 17.6px; }
+[data-fs] .lu-cap { font-size: 17.6px; }
+[data-fs] .lu-flag { font-size: 17.6px; }
+[data-fs] .lu-formation,
+[data-fs] .lu-role .sel3 { font-size: 17.6px; }
+[data-fs] .lu-check { font-size: 17.6px; }
+[data-fs] .lu-table { font-size: 17.6px; }
+[data-fs] .lu-table thead th { font-size: 17.6px; }
+[data-fs] .lu-sec-head td { font-size: 17.6px; }
+[data-fs] .lu-row-empty td { font-size: 17.6px; }
+[data-fs] .lu-pos { font-size: 17.6px; }
+[data-fs] .lu-live-pos { font-size: 17.6px; }
+[data-fs] .lu-card-top { font-size: 17.6px; }
+[data-fs] .lu-card-top .lu-cap { font-size: 14px; }
+[data-fs] .lu-card-name { font-size: 17.6px; }
+[data-fs] .lu-bench-head { font-size: 17.6px; }
+[data-fs] .lu-card.sm .lu-card-name { font-size: 17.6px; }
+[data-fs] .lu-ghost { font-size: 17.6px; }
+[data-fs] .lu-ghost-st { font-size: 17.6px; }
+[data-fs] .lu-ghost-to { font-size: 17.6px; }
+[data-fs] .lu-reserve-box { font-size: 17.6px; }
+[data-fs] .lu-zone-note { font-size: 17.6px; }
+[data-fs] .lu-seg button { font-size: 17.6px; }
+[data-fs] .lu-tsum b { font-size: 22px; }
+[data-fs] .lu-instr .dkv { font-size: 17.6px; }
+[data-fs] .lu-meters .dmeter { font-size: 17.6px; }
+[data-fs] .lu-role { font-size: 17.6px; }
+[data-fs] .lu-hints { font-size: 17.6px; }
+[data-fs] .tx-eff { font-size: 17.6px; }
+[data-fs] .live-min { font-size: 17.6px; }
+[data-fs] .live-line { font-size: 17.6px; }
+[data-fs] .live-watch-min { font-size: 21px; }
+[data-fs] .live-etlabel { font-size: 14px; }
+[data-fs] .live-group-min { font-size: 15px; }
+[data-fs] .live-gline { font-size: 17.6px; }
+[data-fs] .live-box-head { font-size: 17.6px; }
+[data-fs] .live-info-row { font-size: 17.6px; }
+[data-fs] .live-squad { font-size: 17.6px; }
+[data-fs] .live-prekick-title { font-size: 17.6px; }
+[data-fs] .lu-saved-head h2 { font-size: 24px; }
+[data-fs] .lu-saved-in { font-size: 17.6px; }
+[data-fs] .lu-saved-msg { font-size: 17.6px; }
+[data-fs] .lu-saved-main b { font-size: 17.6px; }
+[data-fs] .lu-saved-sub { font-size: 17.6px; }
+[data-fs] .lu-saved-foot { font-size: 17.6px; }
+[data-fs] .lu-table { font-size: 17.6px; }
+[data-fs] .lu-table thead th { font-size: 17.6px; }
+[data-fs] .lu-sec-head td { font-size: 17.6px; }
+[data-fs] .lu-taker { font-size: 17.6px; }
+[data-fs] .lu-taker-n { font-size: 17.6px; }
+[data-fs] .lu-takpop-note { font-size: 17.6px; }
+[data-fs] .lu-takpop-i { font-size: 17.6px; }
+
+/* 09-finances.css */
+[data-fs] .section-head > h2 { font-size: var(--page-head-title-size); }
+[data-fs] .fin-balance { font-size: 34px; }
+[data-fs] .fin-hero-sub { font-size: 17.6px; }
+[data-fs] .fin-budget-val { font-size: 18px; }
+[data-fs] .fin-warn li { font-size: 17.6px; }
+[data-fs] .fin-bar-label { font-size: 17.6px; }
+[data-fs] .fin-bar-val { font-size: 17.6px; }
+[data-fs] .fin-fc-val { font-size: 18px; }
+[data-fs] .fin-tx-table td { font-size: 17.6px; }
+
+/* 10-youth.css */
+[data-fs] .youth-hero-title { font-size: 22px; }
+[data-fs] .youth-hero-sub { font-size: 17.6px; }
+[data-fs] .youth-class-badge { font-size: 20px; }
+[data-fs] .youth-class-name { font-size: 17.6px; }
+[data-fs] .youth-attr-label { font-size: 17.6px; }
+[data-fs] .ac-kv2 .dkv { font-size: 17.6px; }
+
+/* 11-facilities.css */
+[data-fs] .fac-ico { font-size: 30px; }
+[data-fs] .fac-name { font-size: 17.6px; }
+
+/* 12-cup.css */
+[data-fs] .cup-col-head { font-size: 17.6px; }
+[data-fs] .cup-tie { font-size: 17.6px; }
+[data-fs] .cup-badge { font-size: 13px; }
+[data-fs] .cup-pens { font-size: 13px; }
+[data-fs] .chronicle-dot { font-size: 17.6px; }
+[data-fs] .chronicle-icon { font-size: 18px; }
+[data-fs] .chronicle-year { font-size: 17.6px; }
+[data-fs] .chronicle-season { font-size: 17.6px; }
+[data-fs] .chronicle-tag { font-size: 14px; }
+[data-fs] .chronicle-badge { font-size: 14px; }
+[data-fs] .chronicle-title { font-size: 17.6px; }
+[data-fs] .chronicle-desc { font-size: 17.6px; }
+
+/* 13-staff-marketing-calendar.css */
+[data-fs] .future-toggle { font-size: 17.6px; }
+[data-fs] .staff-fx-val { font-size: 19px; }
+[data-fs] .staff-name { font-size: 17.6px; }
+[data-fs] .mkt-summary > div > div:last-child { font-size: 18px; }
+[data-fs] .cal-days { font-size: 17.6px; }
+[data-fs] .cal-month-title { font-size: 17.6px; }
+[data-fs] .cal-wd { font-size: 15px; }
+[data-fs] .cal-dom { font-size: 20px; }
+[data-fs] .cal-cell-ev-txt { font-size: 15.5px; }
+@media (max-width: 720px) {
+  [data-fs] .cal-dom { font-size: 17.6px; }
+  [data-fs] .cal-cell-ev-txt { font-size: 14px; }
+}
+[data-fs] .micro { font-size: 14.5px; }
+[data-fs] .seg-btn { font-size: 17.6px; }
+
+/* 14-navigation.css */
+[data-fs] .tn-main-item { font-size: 17.6px; }
+[data-fs] .tn-sub-item { font-size: 17.6px; }
+[data-fs] .tn-date { font-size: 17.6px; }
+@media (max-width: 720px) {
+  [data-fs] .tn-main-item { font-size: 15px; }
+}
+
+/* 15-header-menu.css */
+[data-fs] .menu-dd-item { font-size: 17.6px; }
+[data-fs] .rc-head .reveal-close { font-size: 17.6px; }
+[data-fs] .rc-summary { font-size: 17.6px; }
+[data-fs] .rc-ovr { font-size: 17.6px; }
+[data-fs] .rc-delta { font-size: 17.6px; }
+
+/* 16-player-modal.css */
+[data-fs] .pm-head-club { font-size: 17.6px; }
+[data-fs] .pm-head-no { font-size: 19px; }
+[data-fs] .pm-head-name { font-size: 24px; }
+[data-fs] .pm-head-sub { font-size: 17.6px; }
+[data-fs] .pm-pt-row { font-size: 17.6px; }
+[data-fs] .pm-pt-head { font-size: 14px; }
+[data-fs] .pm-col-title { font-size: 17.6px; }
+[data-fs] .pm-skill-gt { font-size: 14px; }
+[data-fs] .pm-skill-lbl { font-size: 17.6px; }
+[data-fs] .pm-skill-val { font-size: 17.6px; }
+[data-fs] .pm-pitch-pos { font-size: 14px; }
+[data-fs] .pm-pitch-val { font-size: 17.6px; }
+[data-fs] .pm-pitch-leg { font-size: 15px; }
+[data-fs] .pm-gen-title { font-size: 17.6px; }
+[data-fs] .pm-tile-num { font-size: 26px; }
+[data-fs] .pm-tile-lbl { font-size: 15px; }
+[data-fs] .pm-tile-sub { font-size: 14px; }
+[data-fs] .pm-statbox-num { font-size: 24px; }
+
+/* 17-club-modal.css */
+[data-fs] .cmx-mine { font-size: 17.6px; }
+[data-fs] .cmx-back { font-size: 17.6px; }
+[data-fs] .cmx-date { font-size: 17.6px; }
+[data-fs] .cmx-comp { font-size: 15px; }
+[data-fs] .cmx-coach-name { font-size: 22px; }
+[data-fs] .cmx-cmp-row { font-size: 17.6px; }
+[data-fs] .cmx-cmp-name { font-size: 17.6px; }
+[data-fs] .cmx-cmp-lbl { font-size: 17.6px; }
+[data-fs] .cmx-tag { font-size: 15px; }
+[data-fs] .cmx-stadium-name { font-size: 20px; }
+[data-fs] .cmx-kit-lbl { font-size: 17.6px; }
+[data-fs] .cmx-axis { font-size: 17.6px; }
+[data-fs] .cmx-val { font-size: 15px; }
+[data-fs] .cmx-tip-a { font-size: 17.6px; }
+[data-fs] .cmx-tip-b { font-size: 17.6px; }
+[data-fs] .cmx-title-n { font-size: 22px; }
+[data-fs] .ctr-sum { font-size: 17.6px; }
+[data-fs] .cmx-fac .dmeter { font-size: 17.6px; }
+[data-fs] .cmx-lt { font-size: 17.6px; }
+[data-fs] .cmx-lt-cap { font-size: 17.6px; }
+[data-fs] .cmx-lt-row.head { font-size: 15px; }
+
+/* 18-header.css */
+[data-fs] .hd-logo-year { font-size: 46px; }
+[data-fs] .hd-logo-title span { font-size: 17.6px; }
+[data-fs] .hd-nav-item { font-size: 18px; }
+[data-fs] .hd-balance-lbl { font-size: 17.6px; }
+[data-fs] .hd-balance-val { font-size: 18px; }
+[data-fs] .hd-club-name { font-size: 17.6px; }
+[data-fs] .hd-continue-lbl { font-size: 21px; }
+[data-fs] .hd-continue-lbl.long,
+[data-fs] .hd-continue.pm-next .hd-continue-lbl { font-size: 18px; }
+
+/* 19-dashboard.css */
+[data-fs] .dxh-title { font-size: 24px; }
+[data-fs] .dxh-right { font-size: 17.6px; }
+[data-fs] .dxh-comp { font-size: 17.6px; }
+[data-fs] .dxh-round { font-size: 17.6px; }
+[data-fs] .dxt { font-size: 20px; }
+[data-fs] .dxt thead th { font-size: 17.6px; }
+[data-fs] .dxt-club-name { font-size: 19px; }
+[data-fs] .dxt-row td.dxt-pos { font-size: 20px; }
+[data-fs] .dxt-row td.dxt-pkt { font-size: 21.5px; }
+[data-fs] .dxt-legend { font-size: 17.6px; }
+[data-fs] .dxf-balance-lbl { font-size: 17.6px; }
+[data-fs] .dxf-balance-val { font-size: 31px; }
+[data-fs] .dxf-lbl { font-size: 18px; }
+[data-fs] .dxf-val { font-size: 18.5px; }
+[data-fs] .cvb2-name { font-size: 25px; }
+[data-fs] .cvb2-k { font-size: 17.6px; }
+[data-fs] .cvb2-v { font-size: 17.6px; }
+[data-fs] .cvb2-lrow { font-size: 17.6px; }
+[data-fs] .cvb2-frow { font-size: 17.6px; }
+[data-fs] .cns-vs { font-size: 39px; }
+[data-fs] .cns-nm { font-size: 18px; }
+[data-fs] .cns-meta-type { font-size: 17.6px; }
+[data-fs] .cns-meta-row { font-size: 18px; }
+[data-fs] .cns-cmp-l { font-size: 17.6px; }
+[data-fs] .cns-cmp-v { font-size: 18px; }
+[data-fs] .cns-fp { font-size: 17.6px; }
+[data-fs] .ctm-row { font-size: 18.5px; }
+[data-fs] .cnw-subj { font-size: 17.6px; }
+[data-fs] .cnw-text { font-size: 17.6px; }
+[data-fs] .cnw-date { font-size: 17.6px; }
+[data-fs] .ckd2-pos-lbl { font-size: 20px; }
+[data-fs] .ckd2-pos-num { font-size: 27px; }
+[data-fs] .ckd-donut-val { font-size: 28.5px; }
+[data-fs] .ckd-donut-lbl { font-size: 17.6px; }
+[data-fs] .ckd3-cap { font-size: 17.6px; }
+[data-fs] .ckd3-pos-lbl { font-size: 17.6px; }
+[data-fs] .ckd3-pos-num { font-size: 20px; }
+[data-fs] .ckd3-donuts .ckd-donut-val { font-size: 18px; }
+[data-fs] .ckd3-donuts .ckd-donut-lbl { font-size: 15px; }
+[data-fs] .ckd3-donuts .ckd-donut-num { font-size: 26px; }
+[data-fs] .cvb2-edit { font-size: 17.6px; }
+
+/* 20-club-editor.css */
+[data-fs] .ce-title { font-size: 20px; }
+[data-fs] .ce-sec-title { font-size: 17.6px; }
+[data-fs] .ce-hint { font-size: 17.6px; }
+[data-fs] .ce-err { font-size: 17.6px; }
+[data-fs] .ce-kit-cap { font-size: 17.6px; }
+[data-fs] .ce-field-lbl { font-size: 17.6px; }
+[data-fs] .ce-select { font-size: 17.6px; }
+[data-fs] .ce-mode { font-size: 17.6px; }
+[data-fs] .ce-note { font-size: 17.6px; }
+[data-fs] .ce-saved { font-size: 17.6px; }
+[data-fs] .dxlink { font-size: 18.5px; }
+[data-fs] .dashx-foot-l,
+[data-fs] .dashx-foot-c,
+[data-fs] .dashx-foot-r { font-size: 17.6px; }
+
+/* 21-player-profile.css */
+[data-fs] .pp-club { font-size: 17.6px; }
+[data-fs] .modal .pp-name { font-size: 34px; }
+[data-fs] .pp-sub { font-size: 17.6px; }
+[data-fs] .pp-status { font-size: 17.6px; }
+[data-fs] .pp-tag { font-size: 15px; }
+[data-fs] .pp-fact-lbl { font-size: 14.5px; }
+[data-fs] .pp-fact-val { font-size: 17.6px; }
+[data-fs] .pp-fact.big .pp-fact-val { font-size: 30px; }
+[data-fs] .pp-fact-sub { font-size: 15px; }
+[data-fs] .pp-section-title { font-size: 15.5px; }
+[data-fs] .pp-line { font-size: 17.6px; }
+[data-fs] .pp-line-lbl { font-size: 17.6px; }
+[data-fs] .pp-bar-lbl { font-size: 17.6px; }
+[data-fs] .pp-bar-val { font-size: 17.6px; }
+[data-fs] .pp-key-hint { font-size: 15px; }
+[data-fs] .pp-stat-num { font-size: 24px; }
+[data-fs] .pp-stat-lbl { font-size: 15px; }
+[data-fs] .pp-stat-sub { font-size: 15px; }
+[data-fs] .pp-note { font-size: 17.6px; }
+[data-fs] .pp-empty { font-size: 17.6px; }
+[data-fs] .pp-skill-gt { font-size: 15px; }
+[data-fs] .pp-attr-lbl { font-size: 17.6px; }
+[data-fs] .pp-attr-val { font-size: 17.6px; }
+[data-fs] .pp-pitch-pos { font-size: 15px; }
+[data-fs] .pp-pitch-val { font-size: 17.6px; }
+[data-fs] .pp-sw-item { font-size: 17.6px; }
+[data-fs] .pp-radar-lbl { font-size: 17.6px; }
+[data-fs] .pp-posbtn-code { font-size: 17.6px; }
+[data-fs] .pp-posbtn-val { font-size: 17.6px; }
+[data-fs] .pp-posbtn-kind { font-size: 14px; }
+[data-fs] .pp-pos-name { font-size: 17.6px; }
+[data-fs] .pp-pos-suit { font-size: 17.6px; }
+[data-fs] .pp-pos-suit b { font-size: 22px; }
+[data-fs] .pp-legend { font-size: 15.5px; }
+[data-fs] .pp-chart-axis { font-size: 15px; }
+[data-fs] .pp-stars { font-size: 24px; }
+[data-fs] .pp-phase { font-size: 22px; }
+[data-fs] .pp-table { font-size: 17.6px; }
+[data-fs] .pp-table th { font-size: 15px; }
+[data-fs] .pp-avail { font-size: 22px; }
+[data-fs] .pp-text { font-size: 17.6px; }
+[data-fs] .pp-bullets { font-size: 17.6px; }
+[data-fs] .pp-change { font-size: 17.6px; }
+[data-fs] .talk-row { font-size: 17.6px; }
+
+/* 22-pages.css */
+[data-fs] .dbox-body { font-size: 17.6px; }
+[data-fs] .dbox-link { font-size: 17.6px; }
+[data-fs] .dkpi-val { font-size: 30px; }
+[data-fs] .dkpi-lbl { font-size: 17.6px; }
+[data-fs] .dkpi-sub { font-size: 17.6px; }
+[data-fs] .dkv { font-size: 17.6px; }
+[data-fs] .dmeter { font-size: 17.6px; }
+[data-fs] .dselect { font-size: 17.6px; }
+[data-fs] .dzones { font-size: 17.6px; }
+[data-fs] .dtable { font-size: 17.6px; }
+[data-fs] .dtable thead th { font-size: 17.6px; }
+[data-fs] .dlist-row { font-size: 17.6px; }
+[data-fs] .dlist-row .meta { font-size: 17.6px; }
+[data-fs] .dempty { font-size: 17.6px; }
+[data-fs] .dnote { font-size: 17.6px; }
+[data-fs] .dchip { font-size: 17.6px; }
+[data-fs] .dsec { font-size: 17.6px; }
+[data-fs] .mx-head h2 { font-size: 28px; }
+[data-fs] .mx-head .mx-sub { font-size: 17.6px; }
+[data-fs] .dvs-side { font-size: 18px; }
+[data-fs] .dvs-mid { font-size: 34px; }
+[data-fs] .dvs-mid span { font-size: 17.6px; }
+[data-fs] .dform i { font-size: 17.6px; }
+[data-fs] .dbox .stars { font-size: 17.6px; }
+[data-fs] .dmsg-top { font-size: 17.6px; }
+[data-fs] .dmsg-subj { font-size: 17.6px; }
+[data-fs] .dbox .cal-days { font-size: 17.6px; }
+[data-fs] .bench-drop .bench-name { font-size: 17.6px; }
+[data-fs] .setpiece-grid .setpiece select { font-size: 17.6px; }
+[data-fs] .setpiece-grid .setpiece .mini { font-size: 17.6px; }
+[data-fs] .tac-dot b { font-size: 17.6px; }
+[data-fs] .tac-dot span { font-size: 17.6px; }
+[data-fs] .dbox .pd-name { font-size: 17.6px; }
+[data-fs] .dbox .pd-slot-lbl { font-size: 17.6px; }
+[data-fs] .dbox .pd-select { font-size: 17.6px; }
+[data-fs] .dbox .pd-fitness { font-size: 17.6px; }
+[data-fs] .dbox .pd-md-sub { font-size: 17.6px; }
+[data-fs] .dbox .int-tag { font-size: 15px; }
+[data-fs] .dmkt-main b { font-size: 17.6px; }
+[data-fs] .dmkt-goals i { font-size: 17.6px; }
+[data-fs] .dmkt-pull span { font-size: 17.6px; }
+[data-fs] .dmkt-pull b { font-size: 18px; }
+[data-fs] .dmkt-pull i { font-size: 17.6px; }
+[data-fs] .dmkt-fx-h { font-size: 17.6px; }
+[data-fs] .dmkt-fx-row { font-size: 17.6px; }
+[data-fs] .dmkt-fx-row.sum { font-size: 17.6px; }
+[data-fs] .dmkt-legend { font-size: 17.6px; }
+[data-fs] .dfac-name b { font-size: 17.6px; }
+[data-fs] .dfac-fx { font-size: 17.6px; }
+[data-fs] .dcup-bracket .cup-tie { font-size: 17.6px; }
+[data-fs] .dcup-bracket .cup-col-head { font-size: 17.6px; }
+[data-fs] .dcup-bracket .cup-team-name { font-size: 17.6px; }
+[data-fs] .deuro-head b { font-size: 17.6px; }
+[data-fs] .wiki-search-d { font-size: 17.6px; }
+[data-fs] .dbox .wiki-body { font-size: 17.6px; }
+[data-fs] .modal-xl.ce-modal .ce-title { font-size: 28px; }
+[data-fs] .talk-who { font-size: 17.6px; }
+[data-fs] .gr-hint { font-size: 17.6px; }
+[data-fs] .gr-panel-head { font-size: 20px; }
+[data-fs] .gr-pips { font-size: 17.6px; }
+[data-fs] .st-sec { font-size: 17.6px; }
+[data-fs] .st-tier-head { font-size: 17.6px; }
+[data-fs] .st-rows { font-size: 17.6px; }
+[data-fs] .fx-tag { font-size: 17.6px; }
+[data-fs] .opp-units-head { font-size: 17.6px; }
+[data-fs] .opp-unit { font-size: 17.6px; }
+[data-fs] .opp-unit b { font-size: 20px; }
+[data-fs] .dmkt-cat-exp span { font-size: 17.6px; }
+[data-fs] .dmkt-cat-exp b { font-size: 18px; }
+[data-fs] .dmkt-cat-exp i { font-size: 17.6px; }
+[data-fs] .dmkt-cat-opt span b { font-size: 17.6px; }
+[data-fs] .dmkt-cat-opt span small { font-size: 17.6px; }
+[data-fs] .dmkt-cat-opt em { font-size: 17.6px; }
+[data-fs] .dmkt-cat-opt em small { font-size: 17.6px; }
+
+/* 23-match-screen.css */
+[data-fs] .hd-continue.compact .hd-continue-lbl { font-size: 19px; }
+[data-fs] .ms-top-l,
+[data-fs] .ms-top-r { font-size: 19px; }
+[data-fs] .ms-comp { font-size: 22px; }
+[data-fs] .ms-pill { font-size: 17.6px; }
+[data-fs] .ms-speed .seg-btn { font-size: 17.6px; }
+[data-fs] .ms-toggle { font-size: 17.6px; }
+[data-fs] .ms-btn { font-size: 17.6px; }
+[data-fs] .ms-tname { font-size: 34px; }
+[data-fs] .ms-scorers { font-size: 17.6px; }
+[data-fs] .ms-score { font-size: 96px; }
+[data-fs] .ms-pens { font-size: 20px; }
+[data-fs] .ms-clock { font-size: 28px; }
+[data-fs] .ms-panel-head { font-size: 20px; }
+[data-fs] .ms-subs { font-size: 18px; }
+[data-fs] .ms-panel-sub { font-size: 17.6px; }
+[data-fs] .ms-row { font-size: 18px; }
+[data-fs] .ms-pos { font-size: 17.6px; }
+[data-fs] .ms-ovr { font-size: 17.6px; }
+[data-fs] .ms-tag { font-size: 17.6px; }
+[data-fs] .ms-grade { font-size: 17.6px; }
+[data-fs] .ms-empty { font-size: 17.6px; }
+[data-fs] .ms-now-min { font-size: 26px; }
+[data-fs] .ms-now-txt { font-size: 33px; }
+[data-fs] .ms-susp { font-size: 64px; }
+[data-fs] .ms-reveal { font-size: 78px; }
+[data-fs] .ms-line { font-size: 20px; }
+[data-fs] .ms-tabs button { font-size: 18px; }
+[data-fs] .ms-stat-v { font-size: 17.6px; }
+[data-fs] .ms-stat-v b { font-size: 21px; }
+[data-fs] .ms-note { font-size: 17.6px; }
+[data-fs] .ms-sec { font-size: 17.6px; }
+[data-fs] .ms-chip { font-size: 17.6px; }
+[data-fs] .ms-shout-t { font-size: 17.6px; }
+[data-fs] .ms-shout-h { font-size: 17.6px; }
+[data-fs] .ms-dialog-head { font-size: 30px; }
+[data-fs] .ms-dialog-p { font-size: 20px; }
+[data-fs] .ms-verdict { font-size: 44px; }
+[data-fs] .ms-talk b { font-size: 22px; }
+[data-fs] .ms-talk span { font-size: 17.6px; }
+[data-fs] .ms-gr { font-size: 18px; }
+[data-fs] .ms-continue { font-size: 20px; }
+[data-fs] .mr-meta { font-size: 17.6px; }
+[data-fs] .mr-team { font-size: 26px; }
+[data-fs] .mr-big { font-size: 66px; }
+[data-fs] .mr-sub { font-size: 17.6px; }
+[data-fs] .mr-motm { font-size: 17.6px; }
+[data-fs] .mr-box-h { font-size: 17.6px; }
+[data-fs] .mr-ev { font-size: 17.6px; }
+[data-fs] .mr-ev-tag { font-size: 15px; }
+[data-fs] .mr-stat-v { font-size: 17.6px; }
+[data-fs] .mr-stat-v b { font-size: 17.6px; }
+[data-fs] .mr-lu-row { font-size: 17.6px; }
+[data-fs] .mr-pos { font-size: 17.6px; }
+[data-fs] .mr-in { font-size: 17.6px; }
+[data-fs] .mr-tag { font-size: 14px; }
+[data-fs] .mr-grade { font-size: 17.6px; }
+[data-fs] .mr-empty { font-size: 17.6px; }
+[data-fs] .tm-end-verdict { font-size: 26px; }
+[data-fs] .tm-end-motm { font-size: 17.6px; }
+[data-fs] .tm-end-grades .ms-gr { font-size: 17.6px; }
+[data-fs] .tm-end-grades .ms-grade { font-size: 17.6px; }
+[data-fs] .tm-end-bar .tm-end-verdict { font-size: 30px; }
+[data-fs] .tm-end-btn { font-size: 22px; }
+
+/* 24-newgame.css */
+[data-fs] .ng-brand-y { font-size: 34px; }
+[data-fs] .ng-brand-t { font-size: 17.6px; }
+[data-fs] .ng-brand-t small { font-size: 17.6px; }
+[data-fs] .ng-step-no { font-size: 17.6px; }
+[data-fs] .ng-step-txt b { font-size: 17.6px; }
+[data-fs] .ng-step-txt small { font-size: 17.6px; }
+[data-fs] .ng-title h1 { font-size: 44px; }
+[data-fs] .ng-title p { font-size: 17.6px; }
+[data-fs] .ng-h { font-size: 17.6px; }
+[data-fs] .ng-h-side { font-size: 17.6px; }
+[data-fs] .ng-sublabel { font-size: 17.6px; }
+[data-fs] .ng-note { font-size: 17.6px; }
+[data-fs] .ng-kv { font-size: 17.6px; }
+[data-fs] .ng-field { font-size: 17.6px; }
+[data-fs] .ng-input { font-size: 17.6px; }
+[data-fs] .ng-seg button { font-size: 17.6px; }
+[data-fs] .ng-seg.small button { font-size: 17.6px; }
+[data-fs] .ng-opt b { font-size: 17.6px; }
+[data-fs] .ng-opt small,
+[data-fs] .ng-opt span { font-size: 17.6px; }
+[data-fs] .ng-toggle-txt b { font-size: 17.6px; }
+[data-fs] .ng-toggle-txt small { font-size: 17.6px; }
+[data-fs] .ng-speed-val { font-size: 17.6px; }
+[data-fs] .ng-speed-val b { font-size: 20px; }
+[data-fs] .ng-story small { font-size: 17.6px; }
+[data-fs] .ng-modecard-txt b { font-size: 23px; }
+[data-fs] .ng-modecard-txt small { font-size: 17.6px; }
+[data-fs] .ng-crow { font-size: 17.6px; }
+[data-fs] .ng-crow.head { font-size: 17.6px; }
+[data-fs] .ng-ccountry em { font-size: 17.6px; }
+[data-fs] .ng-cleagues small { font-size: 17.6px; }
+[data-fs] .ng-cmode { font-size: 17.6px; }
+[data-fs] .ng-badge { font-size: 17.6px; }
+[data-fs] .ng-tree-row .rl-num { font-size: 17.6px; }
+[data-fs] .ng-club-role { font-size: 17.6px; }
+[data-fs] .ng-detail-name { font-size: 38px; }
+[data-fs] .ng-detail-sub { font-size: 17.6px; }
+[data-fs] .ng-tag { font-size: 17.6px; }
+[data-fs] .ng-stat span { font-size: 17.6px; }
+[data-fs] .ng-stat b { font-size: 20px; }
+[data-fs] .ng-kits small { font-size: 17.6px; }
+[data-fs] .ng-offer-txt b { font-size: 22px; }
+[data-fs] .ng-offer-txt small { font-size: 17.6px; }
+[data-fs] .ng-offer-txt em { font-size: 17.6px; }
+[data-fs] .ng-welcome-mgr b { font-size: 18px; }
+[data-fs] .ng-welcome-mgr small { font-size: 17.6px; }
+[data-fs] .ng-welcome-title { font-size: 26px; }
+[data-fs] .ng-welcome-title span { font-size: 52px; }
+[data-fs] .ng-welcome-sub { font-size: 17.6px; }
+[data-fs] .ng-kpi b { font-size: 36px; }
+[data-fs] .ng-kpi span { font-size: 17.6px; }
+[data-fs] .ng-best b { font-size: 22px; }
+[data-fs] .ng-best small { font-size: 17.6px; }
+[data-fs] .ng-best-ovr { font-size: 44px; }
+[data-fs] .ng-best-ovr span { font-size: 17.6px; }
+[data-fs] .ng-status-head span { font-size: 17.6px; }
+[data-fs] .ng-status-head b { font-size: 24px; }
+[data-fs] .ng-status-head small { font-size: 17.6px; }
+[data-fs] .ng-status p { font-size: 17.6px; }
+[data-fs] .ng-wait b { font-size: 26px; }
+[data-fs] .ng-wait small { font-size: 17.6px; }
+[data-fs] .ng-foot-info { font-size: 17.6px; }
+[data-fs] .ng-btn { font-size: 17.6px; }
+[data-fs] .ng-btn.small { font-size: 17.6px; }
+[data-fs] .ng-year-step { font-size: 24px; }
+[data-fs] .ng-year-val b { font-size: 56px; }
+[data-fs] .ng-year-val small { font-size: 17.6px; }
+[data-fs] .ng-era { font-size: 17.6px; }
+[data-fs] .ng-hint::before { font-size: 15.5px; }
+[data-fs] .ng-era-tag { font-size: 17.6px; }
+
+/* 26-winter.css */
+[data-fs] .camp-dest .camp-ai { font-size: 17.6px; }
+[data-fs] .camp-facts { font-size: 17.6px; }
+[data-fs] .camp-facts em { font-size: 15px; }
+[data-fs] .camp-table { font-size: 17.6px; }
+[data-fs] .camp-table .camp-lsub { font-size: 17.6px; }
+[data-fs] .camp-trade span { font-size: 17.6px; }
+[data-fs] .camp-oblig { font-size: 17.6px; }
+[data-fs] .dlist-row .grow.camp-wrap { font-size: 17.6px; }
+[data-fs] .camp-cell span { font-size: 15px; }
+[data-fs] .camp-cell b { font-size: 17.6px; }
+[data-fs] .camp-climate-lbl { font-size: 15px; }
+[data-fs] .camp-month b { font-size: 15px; }
+[data-fs] .mst-hint { font-size: 17.6px; }
+[data-fs] .mst-table .mst-st { font-size: 17.6px; }
+[data-fs] .hk-foot { font-size: 17.6px; }
+
+/* 26-grounds.css */
+[data-fs] .gp-body .dmeter,
+[data-fs] .gd .dmeter { font-size: 17.6px; }
+[data-fs] .gp-body .dkv,
+[data-fs] .gd .dkv { font-size: 17.6px; }
+[data-fs] .gp-body .btn-sm,
+[data-fs] .gd .btn-sm { font-size: 17.6px; }
+[data-fs] .gp-sec { font-size: 17.6px; }
+[data-fs] .gp-row { font-size: 17.6px; }
+[data-fs] .gp-row small { font-size: 17.6px; }
+[data-fs] .gp-st { font-size: 17.6px; }
+[data-fs] .gp-cond { font-size: 17.6px; }
+[data-fs] .gp-log { font-size: 17.6px; }
+[data-fs] .gd-cat { font-size: 17.6px; }
+[data-fs] .gd-back { font-size: 17.6px; }
+[data-fs] .gd-title { font-size: 22px; }
+[data-fs] .gd-eff { font-size: 17.6px; }
+[data-fs] .gd-proj { font-size: 17.6px; }
+[data-fs] .gd-src { font-size: 17.6px; }
+[data-fs] .gpl-name { font-size: 17.6px; }
+[data-fs] .gpl-name small { font-size: 17.6px; }
+[data-fs] .gpl-price { font-size: 17.6px; }
+
+/* 27-briefing.css */
+[data-fs] .bf-head-id h2 { font-size: 30px; }
+[data-fs] .bf-tabs .tab { font-size: 17.6px; }
+[data-fs] .bf-count { font-size: 17.6px; }
+[data-fs] .bf-body { font-size: 17.6px; }
+[data-fs] .bf-foot-hint { font-size: 17.6px; }
+[data-fs] .bf-continue { font-size: 17.6px; }
+[data-fs] .bf-kicker { font-size: 17.6px; }
+[data-fs] .bf-title { font-size: 22px; }
+[data-fs] .bf-lead { font-size: 17.6px; }
+[data-fs] .bf-empty { font-size: 17.6px; }
+[data-fs] .bf-sec-title { font-size: 17.6px; }
+[data-fs] .bf-hl-title { font-size: 19px; }
+[data-fs] .bf-hl-text { font-size: 17.6px; }
+[data-fs] .bf-hl.compact .bf-hl-title { font-size: 17.6px; }
+[data-fs] .bf-hl.compact .bf-hl-text { font-size: 17.6px; }
+[data-fs] .bf-sit-row { font-size: 17.6px; }
+[data-fs] .bf-jump-btn { font-size: 17.6px; }
+[data-fs] .bf-item h3 { font-size: 20px; }
+[data-fs] .bf-item p { font-size: 17.6px; }
+[data-fs] .bf-ingame { font-size: 17.6px; }
+[data-fs] .bf-diff-head { font-size: 17.6px; }
+[data-fs] .bf-diff-group h4 { font-size: 17.6px; }
+[data-fs] .bf-diff-row { font-size: 17.6px; }
+[data-fs] .bf-diff-title small { font-size: 17.6px; }
+[data-fs] .bf-toggle { font-size: 17.6px; }
+[data-fs] .bf-caret { font-size: 18px; }
+[data-fs] .bf-change b { font-size: 17.6px; }
+[data-fs] .bf-change p { font-size: 17.6px; }
+[data-fs] .bf-where { font-size: 17.6px; }
+[data-fs] .bf-arch-item { font-size: 17.6px; }
+[data-fs] .bf-arch-season { font-size: 17.6px; }
+[data-fs] .bf-arch-tag { font-size: 15px; }
+[data-fs] .bf-arch-title { font-size: 17.6px; }
+[data-fs] .bf-arch-change { font-size: 17.6px; }
+[data-fs] .bf-arch-change small { font-size: 17.6px; }
+[data-fs] .bf-kicker { font-size: 17.6px; }
+[data-fs] .bf-hl.compact .bf-hl-title { font-size: 19px; }
+[data-fs] .bf-hl.compact .bf-hl-text { font-size: 17.6px; }
+[data-fs] .bf-arch-title { font-size: 19px; }
+[data-fs] .bf-arch-change { font-size: 17.6px; }
+[data-fs] .bf-arch-change small { font-size: 17.6px; }
+[data-fs] .bf-change b { font-size: 17.6px; }
+[data-fs] .bf-change p { font-size: 17.6px; }
+
+/* 28-season-intro.css */
+[data-fs] .si-kicker { font-size: 26px; }
+[data-fs] .si-era { font-size: 24px; }
+[data-fs] .si-year { font-size: 270px; }
+[data-fs] .si-slash { font-size: 120px; }
+[data-fs] .si-year.flap { font-size: 230px; }
+[data-fs] .si-headline { font-size: 66px; }
+[data-fs] .si-club-name { font-size: 68px; }
+[data-fs] .si-chip { font-size: 22px; }
+[data-fs] .si-head-kicker { font-size: 17.6px; }
+[data-fs] .si-head-id h2 { font-size: 34px; }
+[data-fs] .si-head-season { font-size: 58px; }
+[data-fs] .si-foot .bf-continue { font-size: 18px; }
+[data-fs] .si-sum { font-size: 17.6px; }
+[data-fs] .si-more { font-size: 17.6px; }
+[data-fs] .si-task-head b { font-size: 17.6px; }
+[data-fs] .si-task-text { font-size: 17.6px; }
+[data-fs] .si-level { font-size: 15px; }
+[data-fs] .si-jump { font-size: 17.6px; }
+[data-fs] .si-where { font-size: 17.6px; }
+[data-fs] .si-era-name { font-size: 17.6px; }
+[data-fs] .si-era-card b { font-size: 17.6px; }
+[data-fs] .si-era-card p { font-size: 17.6px; }
+[data-fs] .si-tip h3 { font-size: 18px; }
+[data-fs] .si-tip p { font-size: 17.6px; }
+[data-fs] .si-next .bf-continue { font-size: 22px; }
+
+/* 28-stadium.css */
+[data-fs] .sv-muted { font-size: 17.6px; }
+[data-fs] .sv-sub { font-size: 17.6px; }
+[data-fs] .sv-kpis b { font-size: 19px; }
+[data-fs] .sv-kpis span { font-size: 15.5px; }
+[data-fs] .sv-hint { font-size: 17.6px; }
+[data-fs] .sv-seg button { font-size: 17.6px; }
+[data-fs] .sv-pop-head { font-size: 18px; }
+[data-fs] .sv-sec { font-size: 15.5px; }
+[data-fs] .sv-tier-h { font-size: 17.6px; }
+[data-fs] .sv-rows { font-size: 17.6px; }
+[data-fs] .sv-step { font-size: 17.6px; }
+[data-fs] .sv-check { font-size: 17.6px; }
+[data-fs] .sv-cmp { font-size: 17.6px; }
+[data-fs] .sv-note { font-size: 17.6px; }
+[data-fs] .sv-link { font-size: 17.6px; }
+[data-fs] .sv-kpis .sv-kpi-name b { font-size: 17.6px; }
+[data-fs] .bc-title b { font-size: 21px; }
+[data-fs] .bc-title span { font-size: 17.6px; }
+[data-fs] .bc-x { font-size: 18px; }
+[data-fs] .bc-scope button { font-size: 17.6px; }
+[data-fs] .bc-scope em { font-size: 15.5px; }
+[data-fs] .bc-sec-h { font-size: 15.5px; }
+[data-fs] .bc-mini { font-size: 17.6px; }
+[data-fs] .bc-tier-name { font-size: 17.6px; }
+[data-fs] .bc-tier-cap { font-size: 17.6px; }
+[data-fs] .bc-tier-cap small { font-size: 15.5px; }
+[data-fs] .bc-chips button { font-size: 17.6px; }
+[data-fs] .bc-range { font-size: 17.6px; }
+[data-fs] .bc-range b { font-size: 17.6px; }
+[data-fs] .bc-roofs button { font-size: 17.6px; }
+[data-fs] .bc-opt b { font-size: 17.6px; }
+[data-fs] .bc-opt small { font-size: 17.6px; }
+[data-fs] .bc-step button { font-size: 17.6px; }
+[data-fs] .bc-step b { font-size: 17.6px; }
+[data-fs] .bc-note { font-size: 17.6px; }
+[data-fs] .bc-idle { font-size: 17.6px; }
+[data-fs] .bc-kpis span,
+[data-fs] .bc-cost span { font-size: 14.5px; }
+[data-fs] .bc-kpis b { font-size: 19px; }
+[data-fs] .bc-kpis small { font-size: 15.5px; }
+[data-fs] .bc-cost b { font-size: 17.6px; }
+[data-fs] .bc-fin button b { font-size: 17.6px; }
+[data-fs] .bc-fin button small { font-size: 15.5px; }
+[data-fs] .bc-reset { font-size: 17.6px; }
+[data-fs] .bc-fine { font-size: 15.5px; }
+[data-fs] .rb-part { font-size: 17.6px; }
+[data-fs] .bc-look small { font-size: 15.5px; }
+[data-fs] .sv-kpis .sv-kpi-comfort b small { font-size: 17.6px; }
+[data-fs] .bc-kpis b.rb-cost { font-size: 17.6px; }
+[data-fs] .pz-ctl .b3-icon { font-size: 20px; }
+[data-fs] .pz-zoom { font-size: 17.6px; }
+[data-fs] .pz-hint { font-size: 17.6px; }
+[data-fs] .sv-plan-btn em { font-size: 17.6px; }
+[data-fs] .spl-name { font-size: 17.6px; }
+[data-fs] .spl-add,
+[data-fs] .spl-cost { font-size: 17.6px; }
+[data-fs] .spl-cats { font-size: 17.6px; }
+[data-fs] .spl-cats th { font-size: 15px; }
+[data-fs] .spl-kv { font-size: 17.6px; }
+[data-fs] .spl-check b { font-size: 17.6px; }
+[data-fs] .spl-check small { font-size: 17.6px; }
+[data-fs] .spl-estline { font-size: 17.6px; }
+[data-fs] .spx-lbl { font-size: 17.6px; }
+[data-fs] .spx-note { font-size: 17.6px; }
+[data-fs] .spf-now { font-size: 15px; }
+[data-fs] .spf-mood > b { font-size: 22px; }
+[data-fs] .spf-mood span { font-size: 17.6px; }
+[data-fs] .spf-mood small { font-size: 15.5px; }
+[data-fs] .spl-modes button b { font-size: 17.6px; }
+[data-fs] .spl-modes button small { font-size: 15.5px; }
+[data-fs] .spx-cat-h > span { font-size: 17.6px; }
+[data-fs] .spx-cat-h > b { font-size: 17.6px; }
+[data-fs] .spx-tile b { font-size: 17.6px; }
+[data-fs] .spx-tile small { font-size: 15.5px; }
+[data-fs] .spx-tile em { font-size: 15px; }
+[data-fs] .spx-map .cap { font-size: 13px; }
+[data-fs] .spx-map .spot text { font-size: 14px; }
+[data-fs] .spf-pick b { font-size: 17.6px; }
+[data-fs] .spf-pick small { font-size: 15.5px; }
+[data-fs] .spf-map .stand-pick text { font-size: 13.5px; }
+[data-fs] .spf-list { font-size: 17.6px; }
+[data-fs] .spf-list b { font-size: 17.6px; }
+
+/* 28-draw.css */
+[data-fs] .dr-pill { font-size: 17.6px; }
+[data-fs] .dr-top-l,
+[data-fs] .dr-top-r { font-size: 19px; }
+[data-fs] .dr-comp { font-size: 26px; }
+[data-fs] .dr-speed .seg-btn { font-size: 17.6px; }
+[data-fs] .dg-head .dr-comp { font-size: 46px; }
+[data-fs] .dg-count { font-size: 22px; }
+[data-fs] .dg-xl { --dg-fs: 20px; }
+[data-fs] .dg-l { --dg-fs: 23px; }
+[data-fs] .dg-m { --dg-fs: 26px; }
+[data-fs] .dg-s { --dg-fs: 30px; }
+[data-fs] .dg-pool.big.dg-xl { --dg-fs: 22px; }
+[data-fs] .dg-pool.big.dg-l { --dg-fs: 25px; }
+[data-fs] .dg-pool.big.dg-m { --dg-fs: 36px; }
+[data-fs] .dg-pool.big.dg-s { --dg-fs: 42px; }
+[data-fs] .dg-pot-head { font-size: 18px; }
+[data-fs] .dg-cell { font-size: var(--dg-fs); }
+[data-fs] .dg-pool.dense .dg-cell { font-size: calc(var(--dg-fs) - 2px); }
+[data-fs] .dg-prow { font-size: var(--dg-pfs); }
+[data-fs] .dg-pno { font-size: 0.8em; }
+[data-fs] .dg-qm { font-size: 0.8em; }
+[data-fs] .dg-gname { font-size: 19px; }
+[data-fs] .dg-groups .dr-gslot { font-size: 21px; }
+[data-fs] .dg-groups.many .dr-gslot { font-size: 18px; }
+[data-fs] .dg-lrow { font-size: 20px; }
+[data-fs] .dg-lopp b { font-size: 17.6px; }
+[data-fs] .dg-band-txt { font-size: 30px; }
+[data-fs] .dg-skip { font-size: 18px; }
+[data-fs] .dg-go { font-size: 30px; }
+[data-fs] .dr-intro-facts { font-size: 17.6px; }
+[data-fs] .dr-rulebox-head { font-size: 18px; }
+[data-fs] .dr-rule-t { font-size: 17.6px; }
+[data-fs] .dr-rule-x { font-size: 17.6px; }
+[data-fs] .dr-rule-h { font-size: 17.6px; }
+[data-fs] .dr-side-name { font-size: 50px; }
+[data-fs] .dr-side-lbl { font-size: 19px; }
+[data-fs] .dr-vs { font-size: 34px; }
+[data-fs] .dr-tag { font-size: 17.6px; }
+[data-fs] .dr-sum-kicker { font-size: 30px; }
+[data-fs] .dr-sum-date { font-size: 24px; }
+[data-fs] .dr-bar { font-size: 20px; }
+[data-fs] .dr-sum-line { font-size: 23px; }
+[data-fs] .dr-close { font-size: 24px; }
+[data-fs] .dr-ov-head { font-size: 19px; }
+[data-fs] .dr-ov-mid .dr-pdash { font-size: 26px; }
+[data-fs] .dr-ov-name { font-size: 24px; }
+[data-fs] .dr-ov-sub { font-size: 17.6px; }
+[data-fs] .dr-ov-grid.dr-ov-big .dr-ov-name { font-size: 32px; }
+[data-fs] .dr-ov-grid.dr-ov-big .dr-ov-sub { font-size: 18px; }
+[data-fs] .cb-head-name { font-size: 20px; }
+[data-fs] .cb-head-date { font-size: 17.6px; }
+[data-fs] .cb-tie.empty { font-size: 17.6px; }
+[data-fs] .cb-row { font-size: 18px; }
+[data-fs] .cb-goals sup { font-size: 17.6px; }
+[data-fs] .cb-badge { font-size: 17.6px; }
+[data-fs] .cb-root.dense .cb-row { font-size: 17.6px; }
+[data-fs] .gt-legend { font-size: 17.6px; }
+[data-fs] .gt-head { font-size: 17.6px; }
+[data-fs] .gt-head span:first-child { font-size: 17.6px; }
+[data-fs] .gt-row { font-size: 17.6px; }
+[data-fs] .dr-ov-grid.dr-ov-small .dr-ov-name { font-size: 22px; }
+[data-fs] .dg-body .cb-root.dense .cb-row { font-size: 17.6px; }
+[data-fs] .dg-body .dr-ov-grid.dr-ov-mid .dr-ov-name { font-size: 26px; }
+
+/* 28-indoor.css */
+[data-fs] .ix-kicker { font-size: 18px; }
+[data-fs] .ix-title { font-size: 38px; }
+[data-fs] .ix-sub { font-size: 20px; }
+[data-fs] .ix-h { font-size: 19px; }
+[data-fs] .ix-h-note { font-size: 17.6px; }
+[data-fs] .ix-sched .ix-h { font-size: 17.6px; }
+[data-fs] .ix-k { font-size: 17.6px; }
+[data-fs] .ix-trow { font-size: 18px; }
+[data-fs] .ix-foot { font-size: 17.6px; }
+[data-fs] .ix-srow { font-size: 17.6px; }
+[data-fs] .ix-sno { font-size: 17.6px; }
+[data-fs] .ix-stg { font-size: 17.6px; }
+[data-fs] .ix-sres { font-size: 19px; }
+[data-fs] .ix-erow { font-size: 18px; }
+[data-fs] .ix-prow { font-size: 18px; }
+[data-fs] .ix-facts b,
+[data-fs] .ix-cer-facts b { font-size: 28px; }
+[data-fs] .ix-facts .ix-dim { font-size: 17.6px; }
+[data-fs] .ix-pick-bar { font-size: 17.6px; }
+[data-fs] .ix-pick-bar b { font-size: 21px; }
+[data-fs] .ix-pick-pre .seg-btn { font-size: 17.6px; }
+[data-fs] .ix-pick-t { font-size: 17.6px; }
+[data-fs] .ix-pick-t th { font-size: 17.6px; }
+[data-fs] .ix-pick-hall { font-size: 19px; }
+[data-fs] .ix-btn { font-size: 19px; }
+[data-fs] .ix-btn.big { font-size: 23px; }
+[data-fs] .ix-nx-stage { font-size: 26px; }
+[data-fs] .ix-nx-name { font-size: 32px; }
+[data-fs] .ix-nx-side .ix-dim { font-size: 17.6px; }
+[data-fs] .ix-nx-vs { font-size: 40px; }
+[data-fs] .ix-nx-note { font-size: 19px; }
+[data-fs] .ix-plan .seg-btn,
+[data-fs] .ix-ctrl .seg-btn { font-size: 17.6px; }
+[data-fs] .ix-plan-hint { font-size: 17.6px; }
+[data-fs] .ix-last { font-size: 17.6px; }
+[data-fs] .ix-last b { font-size: 21px; }
+[data-fs] .ix-stage .tm-bar-team { font-size: 25px; }
+[data-fs] .ix-stage .tm-scorers { font-size: 17.6px; }
+[data-fs] .ix-stage .tm-clock-txt b { font-size: 20px; }
+[data-fs] .ix-cer-champ { font-size: 34px; }
+[data-fs] .ix-cer-fin { font-size: 17.6px; }
+[data-fs] .ix-cer-facts .ix-dim { font-size: 17.6px; }
+[data-fs] .ix-cer-inj > span:not(.ix-k) { font-size: 17.6px; }
+[data-fs] .ix-esq-meta { font-size: 17.6px; }
+[data-fs] .ix-sq-tag { font-size: 17.6px; }
+[data-fs] .ix-esq-sub { font-size: 17.6px; }
+[data-fs] .ix-esq-row { font-size: 17.6px; }
+[data-fs] .ix-esq-note { font-size: 17.6px; }
+[data-fs] .ix-esq-empty { font-size: 17.6px; }
+[data-fs] .ix-hs { font-size: 15.5px; }
+[data-fs] .ix-pick-drill { font-size: 17.6px; }
+
+/* 28-transfer2.css */
+[data-fs] .wish-title { font-size: 17.6px; }
+[data-fs] .wish-light-text { font-size: 17.6px; }
+[data-fs] .wish-block { font-size: 17.6px; }
+[data-fs] .wish-reasons li,
+[data-fs] .wish-list li { font-size: 17.6px; }
+[data-fs] .wish-weight,
+[data-fs] .wish-imp { font-size: 15px; }
+[data-fs] .wish-trait { font-size: 17.6px; }
+[data-fs] .wish-trait-val { font-size: 17.6px; }
+[data-fs] .talk-checklist li { font-size: 17.6px; }
+[data-fs] .talk-select { font-size: 17.6px; }
+
+/* 28-subtabs.css */
+[data-fs] .sub3-tabs .tab { font-size: 17.6px; }
+[data-fs] .sub3-n { font-size: 17.6px; }
+@media (max-width: 1500px) {
+  [data-fs] .sub3-tabs .tab { font-size: 17.6px; }
+}
+
+/* 28-pool.css */
+[data-fs] .pool-filter > label { font-size: 17.6px; }
+[data-fs] .pool-card-name { font-size: 17.6px; }
+[data-fs] .pool-jobmeter .muted { font-size: 17.6px; }
+[data-fs] .reg-rule { font-size: 17.6px; }
+[data-fs] .reg-era { font-size: 17.6px; }
+[data-fs] .reg-st { font-size: 17.6px; }
+[data-fs] .reg-head-r { font-size: 17.6px; }
+[data-fs] .reg-p { font-size: 17.6px; }
+[data-fs] .reg-p-tags { font-size: 17.6px; }
+[data-fs] .reg-frow { font-size: 17.6px; }
+[data-fs] .res-check { font-size: 17.6px; }
+[data-fs] .res-fit { font-size: 17.6px; }
+[data-fs] .res-row { font-size: 17.6px; }
+[data-fs] .res-age,
+[data-fs] .res-date { font-size: 17.6px; }
+[data-fs] .res-tag { font-size: 15.5px; }
+[data-fs] .res-from { font-size: 17.6px; }
+
+/* 28-market.css */
+[data-fs] .mk-bar { font-size: 17.6px; }
+[data-fs] .mk-count b { font-size: 24px; }
+[data-fs] .mk-need { font-size: 17.6px; }
+[data-fs] .mk-sort-dir { font-size: 13px; }
+[data-fs] .mk-tag { font-size: 17.6px; }
+[data-fs] .mk-nat > span:last-child { font-size: 17.6px; }
+[data-fs] .mk-money { font-size: 17.6px; }
+[data-fs] .mk-tip-note { font-size: 17.6px; }
+[data-fs] .mk-rec-c { font-size: 17.6px; }
+[data-fs] .mk-rec-t { font-size: 17.6px; }
+[data-fs] .mk-table td.mk-num { font-size: inherit; }
+[data-fs] .mk-filter-head b { font-size: 18px; }
+[data-fs] .mk-filter-body > label { font-size: 17.6px; }
+
+/* 28-national.css */
+[data-fs] .nt-prow,
+[data-fs] .nt-arow { font-size: 17.6px; }
+[data-fs] .nt-club { font-size: 17.6px; }
+[data-fs] .nt-next { font-size: 17.6px; }
+[data-fs] .nt-mrow { font-size: 17.6px; }
+[data-fs] .nt-score { font-size: 17.6px; }
+[data-fs] .nt-date,
+[data-fs] .nt-lab { font-size: 17.6px; }
+[data-fs] .nt-grow { font-size: 17.6px; }
+[data-fs] .nt-champ { font-size: 17.6px; }
+
+/* 28-ranking.css */
+[data-fs] .wr-kpis b,
+[data-fs] .wr-kpis .wr-d.wide { font-size: 26px; }
+[data-fs] .wr-kpis span:not(.wr-d) { font-size: 17.6px; }
+[data-fs] .wr-row { font-size: 17.6px; }
+[data-fs] .wr-d,
+[data-fs] .wr-dp { font-size: 17.6px; }
+[data-fs] .wr-spark .wr-ax { font-size: 17.6px; }
+[data-fs] .wr-foot { font-size: 17.6px; }
+[data-fs] .wr-trow { font-size: 17.6px; }
+[data-fs] .wr-trow .wr-d,
+[data-fs] .wr-trow .wr-dp { font-size: 17.6px; }
+[data-fs] .wr-thead { font-size: 17.6px; }
+[data-fs] .wr-conf { font-size: 17.6px; }
+
+/* 28-privat.css */
+[data-fs] .pv-sub { font-size: 17.6px; }
+[data-fs] .pv-mrow { font-size: 17.6px; }
+[data-fs] .pv-plan-k b { font-size: 17.6px; }
+[data-fs] .pv-step-btn { font-size: 18px; }
+[data-fs] .pv-plan-mini-row { font-size: 17.6px; }
+[data-fs] .pv-deltas { font-size: 17.6px; }
+[data-fs] .pv-choice-r { font-size: 17.6px; }
+[data-fs] .pv-vac { font-size: 17.6px; }
+[data-fs] .pv-toggle-row { font-size: 17.6px; }
+[data-fs] .pv-kidrow { font-size: 17.6px; }
+[data-fs] .pv-tree-card { font-size: 17.6px; }
+[data-fs] .pv-tree-mgr { font-size: 17.6px; }
+[data-fs] .pv-feedback { font-size: 17.6px; }
+[data-fs] .pv-story { font-size: 17.6px; }
+[data-fs] .pv-logrow { font-size: 17.6px; }
+
+/* 28-briefing2.css */
+[data-fs] .bf2-search input { font-size: 17.6px; }
+[data-fs] .bf2-lbl { font-size: 17.6px; }
+[data-fs] .bf2-arch-item b { font-size: 19px; }
+[data-fs] .bf2-arch-item span { font-size: 17.6px; }
+[data-fs] .bf2-link { font-size: 17.6px; }
+[data-fs] .bf2-hero-box .dxh-right { font-size: 21px; }
+[data-fs] .bf2-lead h2 { font-size: 46px; }
+[data-fs] .bf2-lead > p { font-size: 17.6px; }
+[data-fs] .bf2-lead figcaption { font-size: 17.6px; }
+[data-fs] .bf2-lead figcaption b { font-size: 17.6px; }
+[data-fs] .bf2-feat h3 { font-size: 25px; }
+[data-fs] .bf2-kick { font-size: 17.6px; }
+[data-fs] .bf2-feat p { font-size: 17.6px; }
+[data-fs] .bf2-sit .bf-sit-row { font-size: 17.6px; }
+[data-fs] .bf2-card-h b { font-size: 18px; }
+[data-fs] .bf2-card-h small { font-size: 17.6px; }
+[data-fs] .bf2-card p { font-size: 17.6px; }
+
+/* 28-sponsor.css */
+[data-fs] .sp-meta { font-size: 17.6px; }
+[data-fs] .sp-clauses { font-size: 17.6px; }
+[data-fs] .sp-none { font-size: 17.6px; }
+[data-fs] .sp-warn { font-size: 17.6px; }
+[data-fs] .sp-reply { font-size: 17.6px; }
+[data-fs] .sp-crow { font-size: 17.6px; }
+[data-fs] .sp3-hint { font-size: 17.6px; }
+[data-fs] .sp3-inc-row { font-size: 17.6px; }
+[data-fs] .sp3-inc-row.total b { font-size: 19px; }
+[data-fs] .sp3-inc-row.sub { font-size: 17.6px; }
+[data-fs] .sp3-log { font-size: 17.6px; }
+[data-fs] .sp3-shirt-cap { font-size: 17.6px; }
+[data-fs] .sp3-sheet-name { font-size: 24px; }
+[data-fs] .sp3-empty-title { font-size: 22px; }
+[data-fs] .sp3-zone-txt { font-size: 13px; }
+[data-fs] .sp3-pchip-txt b { font-size: 17.6px; }
+[data-fs] .sp3-pchip-txt .dnote { font-size: 17.6px; }
+[data-fs] .sp3-pchip-lbl { font-size: 15.5px; }
+[data-fs] .sp3-scard-lbl { font-size: 17.6px; }
+[data-fs] .sp3-scard-name { font-size: 24px; }
+[data-fs] .sp3-scard-kv { font-size: 17.6px; }
+[data-fs] .sp3-ocl { font-size: 17.6px; }
+[data-fs] .sp3-scard-best { font-size: 17.6px; }
+[data-fs] .sp3-scard-desc { font-size: 17.6px; }
+[data-fs] .sp3-hp-empty { font-size: 17.6px; }
+[data-fs] .sp3-orow-name b { font-size: 17.6px; }
+[data-fs] .sp3-orow-name span { font-size: 17.6px; }
+[data-fs] .sp3-freenote { font-size: 17.6px; }
+[data-fs] .sp3-level-lbl span { font-size: 17.6px; }
+[data-fs] .sp3-level-lbl b { font-size: 17.6px; }
+[data-fs] .sp3-tile-cap b { font-size: 17.6px; }
+[data-fs] .sp3-tile-cap span { font-size: 17.6px; }
+[data-fs] .sp3-badge { font-size: 17.6px; }
+[data-fs] .sp3-lock { font-size: 17.6px; }
+[data-fs] .sp3-stand-name { font-size: 13.5px; }
+[data-fs] .sp3-stand-sub { font-size: 12.5px; }
+[data-fs] .sp3-np-name { font-size: 17.6px; }
+[data-fs] .sp3-np-sub { font-size: 13px; }
+[data-fs] .sp3-legend { font-size: 17.6px; }
+[data-fs] .sp3-board-free { font-size: 17.6px; }
+[data-fs] .sp3-board.led .sp3-board-free { font-size: 17.6px; }
+[data-fs] .sp3-banner.blank { font-size: 17.6px; }
+[data-fs] .sp3-card-title h2 { font-size: 28px; }
+[data-fs] .sp3-kicker { font-size: 17.6px; }
+[data-fs] .sp3-card-sub { font-size: 17.6px; }
+[data-fs] .sp3-card-body { font-size: 17.6px; }
+[data-fs] .sp3-confirm { font-size: 17.6px; }
+[data-fs] .sp3-mini-name b { font-size: 17.6px; }
+[data-fs] .sp3-mini-name span { font-size: 17.6px; }
+
+/* 28-positions.css */
+[data-fs] .psk-hint { font-size: 15px; }
+[data-fs] .psk-chip-code { font-size: 17.6px; }
+[data-fs] .psk-legend { font-size: 15.5px; }
+[data-fs] .psk-tag { font-size: 14.5px; }
+[data-fs] .psk-fam-head { font-size: 17.6px; }
+[data-fs] .psk-fam-head b { font-size: 17.6px; }
+[data-fs] .psk-status { font-size: 17.6px; }
+[data-fs] .psk-note { font-size: 17.6px; }
+[data-fs] .tx-effect .tx-eff { font-size: 17.6px; }
+
+/* 28-leagues.css */
+[data-fs] .cmp-tie { font-size: 17.6px; }
+[data-fs] .cmp-res b { font-size: 17.6px; }
+[data-fs] .rb-head { font-size: 17.6px; }
+[data-fs] .rb-tie { font-size: 17.6px; }
+[data-fs] .rb-note { font-size: 15px; }
+[data-fs] .rb-score-txt { font-size: 17.6px; }
+[data-fs] .rb-dec { font-size: 15px; }
+[data-fs] .cmp-stat { font-size: 17.6px; }
+[data-fs] .cmp-pos { font-size: 14px; }
+[data-fs] .cmp-pclub { font-size: 17.6px; }
+[data-fs] .cmp-val { font-size: 17.6px; }
+[data-fs] .cmp-apps { font-size: 17.6px; }
+[data-fs] .cmp-statbox .dxh-title { font-size: 17.6px; }
+[data-fs] .cmp-statbox .cmp-stat { font-size: 17.6px; }
+[data-fs] .cmp-statbox .cmp-val { font-size: 17.6px; }
+[data-fs] .cmp-statbox .cmp-pclub { font-size: 17.6px; }
+[data-fs] .cmp-caption { font-size: 17.6px; }
+[data-fs] .cmp-mdlabel { font-size: 17.6px; }
+[data-fs] .cmp-mdnone { font-size: 17.6px; }
+[data-fs] .md-date { font-size: 17.6px; }
+[data-fs] .md-score b { font-size: 17.6px; }
+[data-fs] .md-score small { font-size: 17.6px; }
+
+/* 28-worldcups.css */
+[data-fs] .wcx-team { font-size: 17.6px; }
+[data-fs] .wcx-winners .nt-club { font-size: 17.6px; }
+
+/* 28-calendar.css */
+[data-fs] .co-date { font-size: 30px; }
+[data-fs] .co-hint { font-size: 17.6px; }
+[data-fs] .co-today-frame span { font-size: 15px; }
+[data-fs] .co-wd { font-size: 17.6px; }
+[data-fs] .co-day { font-size: 34px; }
+[data-fs] .co-mon { font-size: 15px; }
+[data-fs] .co-opp { font-size: 17.6px; }
+[data-fs] .co-sub { font-size: 15px; }
+[data-fs] .co-res { font-size: 17.6px; }
+[data-fs] .co-comp { font-size: 14.5px; }
+[data-fs] .co-ev-lbl { font-size: 17.6px; }
+[data-fs] .co-more-row { font-size: 14.5px; }
+
+/* 28-calpage.css */
+[data-fs] .cal-wd { font-size: 17.6px; }
+[data-fs] .cal-grid-fill .cal-dom { font-size: 22px; }
+[data-fs] .cal-today-tag { font-size: 17.6px; }
+[data-fs] .cal-code { font-size: 17.6px; }
+[data-fs] .cal-ev-txt { font-size: 17.6px; }
+[data-fs] .cal-k-info .cal-ev-txt,
+[data-fs] .cal-k-plan .cal-ev-txt { font-size: 17.6px; }
+[data-fs] .cal-legend { font-size: 17.6px; }
+[data-fs] .lg2-today { font-size: 17.6px; }
+[data-fs] .calm-more { font-size: 17.6px; }
+[data-fs] .calm-kind { font-size: 17.6px; }
+[data-fs] .calm-comp { font-size: 17.6px; }
+
+/* 28-kabine.css */
+[data-fs] .kb-kpis .dkpi-val { font-size: 28px; }
+[data-fs] .kb-kpis .dkpi-lbl { font-size: 15.5px; }
+[data-fs] .kb-factor { font-size: 17.6px; }
+[data-fs] .kb-legend { font-size: 17.6px; }
+[data-fs] .kp-band-lbl { font-size: 15.5px; }
+[data-fs] .kp-empty { font-size: 17.6px; }
+[data-fs] .kp-name { font-size: 17.6px; }
+[data-fs] .kp-tag { font-size: 14.5px; }
+[data-fs] .kp-grp { font-size: 14.5px; }
+[data-fs] .kp-leg { font-size: 17.6px; }
+[data-fs] .kb-table td { font-size: 17.6px; }
+[data-fs] .kb-focus-name { font-size: 19px; }
+[data-fs] .kb-pill { font-size: 15.5px; }
+[data-fs] .kb-big-val { font-size: 30px; }
+[data-fs] .kb-big-lbl { font-size: 17.6px; }
+[data-fs] .kb-jolt .meta { font-size: 17.6px; }
+[data-fs] .kb-j-left { font-size: 17.6px; }
+[data-fs] .kb-reason { font-size: 17.6px; }
+[data-fs] .kb-talk small { font-size: 15px; }
+[data-fs] .kb-result { font-size: 17.6px; }
+
+/* 28-training.css */
+[data-fs] .td-day-name { font-size: 15px; }
+[data-fs] .tt-select { font-size: 17.6px; }
+[data-fs] .tt-table { font-size: 17.6px; }
+[data-fs] .tt-table th { font-size: 15px; }
+
+/* 28-training3.css */
+[data-fs] .tr3-lbl { font-size: 17.6px; }
+[data-fs] .tr3-btn { font-size: 17.6px; }
+[data-fs] .tr3-sec { font-size: 17.6px; }
+[data-fs] .tr3-ftab { font-size: 17.6px; }
+[data-fs] .tr3-ftab-d { font-size: 15.5px; }
+[data-fs] .tr3-folder-note { font-size: 17.6px; }
+[data-fs] .tr3-dname { font-size: 17.6px; }
+[data-fs] .tr3-ddate { font-size: 17.6px; }
+[data-fs] .tr3-mc-comp { font-size: 15.5px; }
+[data-fs] .tr3-mc-opp { font-size: 17.6px; }
+[data-fs] .tr3-mc-opp b { font-size: 17.6px; }
+[data-fs] .tr3-mc-ha { font-size: 15.5px; }
+[data-fs] .tp-cell-slot { font-size: 14px; }
+[data-fs] .tp-cell-name { font-size: 17.6px; }
+[data-fs] .tp-cell-free { font-size: 17.6px; }
+[data-fs] .tr3-kv { font-size: 17.6px; }
+[data-fs] .tr3-kv b { font-size: 18px; }
+[data-fs] .tr3-int em { font-size: 17.6px; }
+[data-fs] .tr3-hint { font-size: 17.6px; }
+[data-fs] .tr3-ktab { font-size: 17.6px; }
+[data-fs] .tr3-setnote { font-size: 17.6px; }
+[data-fs] .tp-tile-lbl { font-size: 17.6px; }
+[data-fs] .tp-tile-sub { font-size: 17.6px; }
+[data-fs] .tp-ghost { font-size: 17.6px; }
+[data-fs] .tr3-state > div { font-size: 17.6px; }
+[data-fs] .tr3-state b { font-size: 17.6px; }
+[data-fs] .tr3-eff { font-size: 17.6px; }
+[data-fs] .tr3-eff em { font-size: 17.6px; }
+[data-fs] .tr3-star { font-size: 17.6px; }
+[data-fs] .tr3-prog-txt { font-size: 17.6px; }
+[data-fs] .tr3-injtxt { font-size: 17.6px; }
+[data-fs] .tr3-ptext { font-size: 17.6px; }
+[data-fs] .tr3-glead { font-size: 17.6px; }
+[data-fs] .tr3-gnote { font-size: 17.6px; }
+[data-fs] .tr3-empty td { font-size: 17.6px; }
+[data-fs] .tr3-month td { font-size: 17.6px; }
+[data-fs] .tr3-mark { font-size: 15.5px; }
+[data-fs] .tr3-tpl b { font-size: 17.6px; }
+[data-fs] .tr3-tpl span { font-size: 17.6px; }
+[data-fs] .tr3-hallnote { font-size: 17.6px; }
+
+/* 28-icons.css */
+[data-fs] .st-icon .st-val { font-size: 0.95em; }
+[data-fs] .itip { font-size: 13.5px; }
+[data-fs] .itip-pop { font-size: 17.6px; }
+[data-fs] .itip-title { font-size: 17.6px; }
+[data-fs] .itip-wiki { font-size: 15.5px; }
+[data-fs] .dkpi-lbl .itip { font-size: 12.5px; }
+[data-fs] .st-line .st-line-word { font-size: 17.6px; }
+[data-fs] .ckd-donut-lbl .itip { font-size: 12px; }
+[data-fs] .st-tip { font-size: 17.6px; }
+
+/* 28-camp.css */
+[data-fs] .cp-kicker { font-size: 17.6px; }
+[data-fs] .cp-sec { font-size: 15.5px; }
+[data-fs] .cp-hint { font-size: 17.6px; }
+[data-fs] .cp-pill { font-size: 15px; }
+[data-fs] .cp-card-name { font-size: 24px; }
+[data-fs] .cp-card-sub { font-size: 17.6px; }
+[data-fs] .cp-card-empty { font-size: 17.6px; }
+[data-fs] .cp-card .cp-bars .tx-eff { font-size: 17.6px; }
+[data-fs] .cp-card-kv { font-size: 17.6px; }
+[data-fs] .cp-card-kv em { font-size: 14.5px; }
+[data-fs] .cp-plan-btn { font-size: 17.6px; }
+[data-fs] .cp-hist-row { font-size: 17.6px; }
+[data-fs] .cp-hist-when { font-size: 17.6px; }
+[data-fs] .cp-hd-title { font-size: 24px; }
+[data-fs] .cp-hd-sub { font-size: 17.6px; }
+[data-fs] .cp-hd-score b { font-size: 34px; }
+[data-fs] .cp-hd-score span { font-size: 17.6px; }
+[data-fs] .cp-hd-grid .dkv { font-size: 17.6px; }
+[data-fs] .cp-hd-row { font-size: 17.6px; }
+[data-fs] .cp-hd-v { font-size: 17.6px; }
+[data-fs] .cp-ba { font-size: 17.6px; }
+[data-fs] .cp-ba-v { font-size: 17.6px; }
+[data-fs] .cp-step { font-size: 17.6px; }
+[data-fs] .cp-step-n { font-size: 17.6px; }
+[data-fs] .cp-side .cp-bars .tx-eff { font-size: 17.6px; }
+[data-fs] .cp-side .cp-bars .tx-eff-v { font-size: 17.6px; }
+[data-fs] .cp-side .dkv { font-size: 17.6px; }
+[data-fs] .cp-check { font-size: 17.6px; }
+[data-fs] .cp-foot-msg { font-size: 17.6px; }
+[data-fs] .cp-dates-win { font-size: 26px; }
+[data-fs] .cp-dur { font-size: 17.6px; }
+[data-fs] .cp-month-name { font-size: 17.6px; }
+[data-fs] .cp-wd span { font-size: 15px; }
+[data-fs] .cp-day { font-size: 17.6px; }
+[data-fs] .cp-legend { font-size: 17.6px; }
+[data-fs] .cp-dates-sum { font-size: 17.6px; }
+[data-fs] .cp-dates-next { font-size: 17.6px; }
+[data-fs] .cp-map-tab { font-size: 17.6px; }
+[data-fs] .cp-map-n { font-size: 15.5px; }
+[data-fs] .cp-map-tip { font-size: 17.6px; }
+[data-fs] .cp-map-tip b { font-size: 17.6px; }
+[data-fs] .cp-map-legend { font-size: 17.6px; }
+[data-fs] .cp-dest.empty { font-size: 17.6px; }
+[data-fs] .cp-dest-name { font-size: 26px; }
+[data-fs] .cp-dest-place { font-size: 17.6px; }
+[data-fs] .cp-dest-facts { font-size: 17.6px; }
+[data-fs] .cp-dest-facts em { font-size: 14.5px; }
+[data-fs] .cp-locked { font-size: 17.6px; }
+[data-fs] .cp-pc li { font-size: 17.6px; }
+[data-fs] .cp-l-top { font-size: 17.6px; }
+[data-fs] .cp-l-sub { font-size: 17.6px; }
+[data-fs] .cp-l-note { font-size: 17.6px; }
+[data-fs] .cp-dest-note { font-size: 17.6px; }
+[data-fs] .cp-pl { font-size: 17.6px; }
+[data-fs] .cp-pl.head { font-size: 15px; }
+[data-fs] .cp-pl-st { font-size: 17.6px; }
+[data-fs] .cp-focus-b { font-size: 17.6px; }
+[data-fs] .cp-focus-text { font-size: 17.6px; }
+[data-fs] .cr-kicker { font-size: 22px; }
+[data-fs] .cr-place { font-size: 84px; }
+[data-fs] .cr-sub { font-size: 22px; }
+[data-fs] .cr-g-num b { font-size: 104px; }
+[data-fs] .cr-g-num span { font-size: 18px; }
+[data-fs] .cr-grade { font-size: 30px; }
+[data-fs] .cr-tile-k { font-size: 17.6px; }
+[data-fs] .cr-tile-v { font-size: 22px; }
+[data-fs] .cr-tile-v b { font-size: 32px; }
+[data-fs] .cr-tile-d { font-size: 17.6px; }
+[data-fs] .cr-list h3 { font-size: 22px; }
+[data-fs] .cr-pl .pos-badge { font-size: 17.6px; }
+[data-fs] .cr-pl-name { font-size: 20px; }
+[data-fs] .cr-pl-name em { font-size: 17.6px; }
+[data-fs] .cr-pl-what { font-size: 17.6px; }
+[data-fs] .cr-none { font-size: 17.6px; }
+[data-fs] .cr-alt { font-size: 17.6px; }
+[data-fs] .cr-skip { font-size: 17.6px; }
+
+/* 28-camp2.css */
+[data-fs] .pp-k { font-size: 17.6px; }
+[data-fs] .pp-title { font-size: 22px; }
+[data-fs] .pp-sec { font-size: 17.6px; }
+[data-fs] .pp-sec-v { font-size: 17.6px; }
+[data-fs] .pp-label { font-size: 17.6px; }
+[data-fs] .pp-val { font-size: 17.6px; }
+[data-fs] .pp-step button { font-size: 17.6px; }
+[data-fs] .pp-left { font-size: 17.6px; }
+[data-fs] .pp-left b { font-size: 20px; }
+[data-fs] .pp-area-text { font-size: 17.6px; }
+[data-fs] .pp-drill { font-size: 17.6px; }
+[data-fs] .pp-hint { font-size: 17.6px; }
+[data-fs] .cs-title h3 { font-size: 26px; }
+[data-fs] .cs-title span { font-size: 17.6px; }
+[data-fs] .cs-polaroid figcaption { font-size: 17.6px; }
+[data-fs] .cs-facts dt { font-size: 17.6px; }
+[data-fs] .cs-facts dd { font-size: 20px; }
+[data-fs] .cs-facts dd small { font-size: 17.6px; }
+[data-fs] .sk-building text { font-size: 14.5px; }
+[data-fs] .sk-note { font-size: 15px; }
+
+/* 28-youthcomp.css */
+[data-fs] .yc-card-name { font-size: 24px; }
+[data-fs] .yc-fest-title { font-size: 17.6px; }
+[data-fs] .yc-fest-banner .dnote { font-size: 17.6px; }
+[data-fs] .yc-fest-state { font-size: 17.6px; }
+[data-fs] .yc-team-row { font-size: 17.6px; }
+[data-fs] .yc-team-strip { font-size: 17.6px; }
+
+/* 28-euro2.css */
+[data-fs] .rb-head-sub { font-size: 14px; }
+[data-fs] .rb-lg { font-size: 15px; }
+[data-fs] .rb-legs-txt { font-size: 15px; }
+[data-fs] .cmp-md-head { font-size: 17.6px; }
+[data-fs] .cmp-md .cmp-tie { font-size: 17.6px; }
+[data-fs] .cmp-grp { font-size: 17.6px; }
+[data-fs] .cb-legs { font-size: 17.6px; }
+[data-fs] .dr-gname { font-size: 17.6px; }
+[data-fs] .dr-gslot { font-size: 17.6px; }
+[data-fs] .dr-ov-groups .dr-gslot { font-size: 24px; }
+[data-fs] .dr-ov-groups.dense .dr-gslot { font-size: 20px; }
+[data-fs] .dr-ov-groups .dr-gname { font-size: 20px; }
+[data-fs] .dr-gsum .dr-gslot { font-size: 26px; }
+[data-fs] .dr-opp-row { font-size: 19px; }
+[data-fs] .dr-opp-row > span:last-child { font-size: 17.6px; }
+[data-fs] .ms-agg { font-size: 18px; }
+
+/* 28-status2.css */
+[data-fs] .st-tip-note { font-size: 15.5px; }
+[data-fs] .hid-word { font-size: 17.6px; }
+[data-fs] .hid-src { font-size: 15px; }
+[data-fs] .itip.itip-attr { font-size: 12.5px; }
+[data-fs] .attr-tip-h { font-size: 14.5px; }
+[data-fs] .attr-tip-note { font-size: 15.5px; }
+[data-fs] .susp b { font-size: 17.6px; }
+
+/* 28-misc.css */
+[data-fs] .dashx-foot-link { font-size: 17.6px; }
+[data-fs] .chm-modal .mx-head h2 { font-size: 24px; }
+[data-fs] .chm-search { font-size: 17.6px; }
+[data-fs] .chm-nowbtn { font-size: 17.6px; }
+[data-fs] .chm-dec { font-size: 17.6px; }
+[data-fs] .chm-n { font-size: 17.6px; }
+[data-fs] .chm-dechead { font-size: 18px; }
+[data-fs] .chm-year { font-size: 18px; }
+[data-fs] .chm-season { font-size: 17.6px; }
+[data-fs] .chm-title { font-size: 17.6px; }
+[data-fs] .chm-fict { font-size: 15px; }
+[data-fs] .chm-desc { font-size: 17.6px; }
+[data-fs] .chm-type { font-size: 17.6px; }
+[data-fs] .chm-state { font-size: 14.5px; }
+[data-fs] .chm-now-lbl { font-size: 17.6px; }
+[data-fs] .chm-cur { font-size: 17.6px; }
+[data-fs] .chm-side .dmeter { font-size: 17.6px; }
+[data-fs] .chm-side .dkv { font-size: 17.6px; }
+[data-fs] .pcm-name { font-size: 17.6px; }
+[data-fs] .pcm-sub { font-size: 17.6px; }
+[data-fs] .pcm-item { font-size: 17.6px; }
+[data-fs] .pcm-note { font-size: 17.6px; }
+[data-fs] .chw-rel { font-size: 17.6px; }
+
+/* 28-opponent.css */
+[data-fs] .opx-strip-tag { font-size: 26px; }
+[data-fs] .opx-strip-club { font-size: 20px; }
+[data-fs] .opx-strip-vs { font-size: 30px; }
+[data-fs] .opx-strip-info { font-size: 18px; }
+[data-fs] .opx-strip-none { font-size: 17.6px; }
+[data-fs] .opx-side b { font-size: 22px; }
+[data-fs] .opx-vs-mid { font-size: 24px; }
+[data-fs] .opx-where { font-size: 17.6px; }
+[data-fs] .opx-h2h { font-size: 20px; }
+[data-fs] .opx-last-c { font-size: 17.6px; }
+[data-fs] .opx-last-c .dres { font-size: 17.6px; }
+[data-fs] .opx-radar .tick { font-size: 13px; }
+[data-fs] .opx-radar .lab { font-size: 17.6px; }
+[data-fs] .opx-radar .val { font-size: 19px; }
+[data-fs] .opx-legend { font-size: 17.6px; }
+[data-fs] .opx-dcard-t b { font-size: 17.6px; }
+[data-fs] .opx-dcard-ov { font-size: 17.6px; }
+[data-fs] .opx-dcard-ov b { font-size: 17.6px; }
+[data-fs] .opx-hurt { font-size: 14.5px; }
+[data-fs] .opx-pitch .dot text { font-size: 8.2px; }
+
+/* 28-fixtures.css */
+[data-fs] .fxp-kicker { font-size: 17.6px; }
+[data-fs] .fxp-date { font-size: 28px; }
+[data-fs] .fxp-place { font-size: 17.6px; }
+[data-fs] .fxp-none { font-size: 17.6px; }
+[data-fs] .fxp-team b { font-size: 36px; }
+[data-fs] .fxp-score { font-size: 28px; }
+[data-fs] .fxp-go { font-size: 19px; }
+[data-fs] .fxp-flabel { font-size: 17.6px; }
+[data-fs] .fxp-table tbody td { font-size: 17.6px; }
+[data-fs] .fxp-table tr.fxp-month td { font-size: 17.6px; }
+[data-fs] .fxp-rep { font-size: 17.6px; }
+[data-fs] .fxp-kpis b { font-size: 34px; }
+[data-fs] .fxp-kpis span { font-size: 17.6px; }
+[data-fs] .fxp-wdl span { font-size: 17.6px; }
+[data-fs] .fxp-cname { font-size: 19px; }
+[data-fs] .fxp-cstat { font-size: 17.6px; }
+[data-fs] .fxp-pill { font-size: 15.5px; }
+[data-fs] .fxp-prog span { font-size: 15.5px; }
+[data-fs] .fxp-cline { font-size: 17.6px; }
+[data-fs] .fxp-cline > .fxp-clab { font-size: 15.5px; }
+[data-fs] .fxp-cline em { font-size: 17.6px; }
+[data-fs] .fxp-cline.none { font-size: 17.6px; }
+
+/* 28-engine.css */
+[data-fs] .mr-lu-st { font-size: 17.6px; }
+[data-fs] .mr-lu-toggle button { font-size: 17.6px; }
+
+/* 28-tactics.css */
+[data-fs] .tx-headr > .tx-form { font-size: 17.6px; }
+[data-fs] .txb-cap { font-size: 17.6px; }
+[data-fs] .txb-disc { font-size: 20.5px; }
+[data-fs] .txb-name { font-size: 17.6px; }
+[data-fs] .txb-role { font-size: 17.6px; }
+[data-fs] .txr-head b { font-size: 22px; }
+[data-fs] .txr-head i { font-size: 17.6px; }
+[data-fs] .txr-row { font-size: 19px; }
+[data-fs] .txr-tag { font-size: 17.6px; }
+[data-fs] .txr-text b { font-size: 17.6px; }
+[data-fs] .txr-text p { font-size: 18px; }
+[data-fs] .txi-h { font-size: 19px; }
+[data-fs] .txi-label { font-size: 20px; }
+[data-fs] .txi-step { font-size: 17.6px; }
+[data-fs] .txi-foot-h b { font-size: 22px; }
+[data-fs] .txi-foot-h span { font-size: 18px; }
+[data-fs] .txi-foot p { font-size: 18.5px; }
+[data-fs] .txi-foot p.txi-foot-note { font-size: 17.6px; }
+[data-fs] .txi-era { font-size: 18px; }
+[data-fs] .txp-new input { font-size: 19px; }
+[data-fs] .txp-hint { font-size: 17.6px; }
+[data-fs] .txp-load { font-size: 19px; }
+[data-fs] .txp-empty { font-size: 18px; }
+[data-fs] .txc-ring text { font-size: 38px; }
+[data-fs] .txc-sum > b { font-size: 26px; }
+[data-fs] .txc-sum > span { font-size: 17.6px; }
+[data-fs] .txc-bar { font-size: 17.6px; }
+[data-fs] .txc-foot p { font-size: 17.6px; }
+[data-fs] .txo-head b { font-size: 22px; }
+[data-fs] .txo-head span { font-size: 17.6px; }
+[data-fs] .txo-row { font-size: 18px; }
+[data-fs] .txo-row > i { font-size: 17.6px; }
+[data-fs] .txo-row.head > span { font-size: 17.6px; }
+[data-fs] .dbox .tx-form { font-size: 17.6px; }
+[data-fs] .txb-land .txb-cap { font-size: 17.6px; }
+[data-fs] .txb-land .txb-cap.sm { font-size: 17.6px; }
+[data-fs] .txb-land .txb-disc { font-size: 17.6px; }
+[data-fs] .txb-land .txb-name { font-size: 17.6px; }
+[data-fs] .txb-land .txb-role { font-size: 15.5px; }
+[data-fs] .txb-land .txr-head b { font-size: 17.6px; }
+[data-fs] .txb-land .txr-head i { font-size: 17.6px; }
+[data-fs] .txb-land .txr-row { font-size: 17.6px; }
+[data-fs] .txb-land .txr-tag { font-size: 17.6px; }
+[data-fs] .txb-land .txr-text b { font-size: 17.6px; }
+[data-fs] .txb-land .txr-text p { font-size: 17.6px; }
+[data-fs] .tx-instr-box .txi-h { font-size: 17.6px; }
+[data-fs] .tx-instr-box .txi-label { font-size: 17.6px; }
+[data-fs] .tx-instr-box .txi-step { font-size: 17.6px; }
+[data-fs] .tx-instr-box .txi-foot p { font-size: 17.6px; }
+[data-fs] .txh-trait i { font-size: 17.6px; }
+[data-fs] .txh-trait b { font-size: 17.6px; }
+[data-fs] .txh-tone { font-size: 17.6px; }
+[data-fs] .txh-area { font-size: 17.6px; }
+[data-fs] .txh-hint p { font-size: 17.6px; }
+[data-fs] .txh-who { font-size: 17.6px; }
+[data-fs] .txh-note { font-size: 17.6px; }
+
+/* 28-staff.css */
+[data-fs] .sf-count { font-size: 17.6px; }
+[data-fs] .sf-lvl { font-size: 19px; }
+[data-fs] .sf-lvl.big { font-size: 50px; }
+[data-fs] .sf-kpi span { font-size: 17.6px; }
+[data-fs] .sf-kpi b { font-size: 32px; }
+[data-fs] .sf-kpi i { font-size: 17.6px; }
+[data-fs] .sf-msg { font-size: 17.6px; }
+[data-fs] .sf-group-h { font-size: 18px; }
+[data-fs] .sf-group-h i { font-size: 17.6px; }
+[data-fs] .sf-slot-role { font-size: 17.6px; }
+[data-fs] .sf-slot-name { font-size: 19px; }
+[data-fs] .sf-slot-sub { font-size: 17.6px; }
+[data-fs] .sf-slot-end { font-size: 17.6px; }
+[data-fs] .sf-later { font-size: 17.6px; }
+[data-fs] .sf-sg-h { font-size: 18px; }
+[data-fs] .sf-sg-h span { font-size: 17.6px; }
+[data-fs] .sf-fx-line { font-size: 17.6px; }
+[data-fs] .sf-fx-line > i { font-size: 17.6px; }
+[data-fs] .sf-fx-line > b { font-size: 19px; }
+[data-fs] .sf-fx-row { font-size: 17.6px; }
+[data-fs] .sf-fx-txt { font-size: 17.6px; }
+[data-fs] .sf-fx-none,
+[data-fs] .sf-fx-more { font-size: 17.6px; }
+[data-fs] .sf-fx-note { font-size: 17.6px; }
+[data-fs] .sf-filter { font-size: 17.6px; }
+[data-fs] .sf-table { font-size: 17.6px; }
+[data-fs] .sf-table thead th { font-size: 17.6px; }
+[data-fs] .sf-td-name b { font-size: 17.6px; }
+[data-fs] .sf-td-name i { font-size: 17.6px; }
+[data-fs] .sf-td-skills span { font-size: 17.6px; }
+[data-fs] .sf-prof-role { font-size: 26px; }
+[data-fs] .sf-prof-word { font-size: 17.6px; }
+[data-fs] .sf-fact { font-size: 17.6px; }
+[data-fs] .sf-trait { font-size: 17.6px; }
+[data-fs] .sf-trait b { font-size: 17.6px; }
+[data-fs] .sf-prof-note { font-size: 17.6px; }
+[data-fs] .sf-skill { font-size: 17.6px; }
+[data-fs] .sf-skill-l i { font-size: 17.6px; }
+[data-fs] .sf-skills-note { font-size: 17.6px; }
+[data-fs] .sf-fit { font-size: 17.6px; }
+[data-fs] .sf-fit-s { font-size: 17.6px; }
+
+/* 28-presse.css */
+[data-fs] .np-mast-l,
+[data-fs] .np-mast-r { font-size: 17.6px; }
+[data-fs] .np-name { font-size: 64px; }
+[data-fs] .np-claim { font-size: 17.6px; }
+[data-fs] .np-e2 .np-name { font-size: 56px; }
+[data-fs] .np-e3 .np-name { font-size: 50px; }
+[data-fs] .np-e4 .np-name { font-size: 46px; }
+[data-fs] .np-sec { font-size: 17.6px; }
+[data-fs] .np-rubric { font-size: 17.6px; }
+[data-fs] .np-tag { font-size: 15px; }
+[data-fs] .np-text { font-size: 17.6px; }
+[data-fs] .np-dek { font-size: 17.6px; }
+[data-fs] .np-caption { font-size: 17.6px; }
+[data-fs] .np-h1 { font-size: 38px; }
+[data-fs] .np-more { font-size: 17.6px; }
+[data-fs] .np-empty { font-size: 17.6px; }
+[data-fs] .np-h3 { font-size: 22px; }
+[data-fs] .np-face-cap { font-size: 17.6px; }
+[data-fs] .np-brief { font-size: 17.6px; }
+[data-fs] .np-res { font-size: 17.6px; }
+[data-fs] .np-res-score { font-size: 17.6px; }
+[data-fs] .np-res-date { font-size: 17.6px; }
+[data-fs] .np-res-score small { font-size: 14.5px; }
+[data-fs] .np-table { font-size: 17.6px; }
+[data-fs] .np-scorer { font-size: 17.6px; }
+[data-fs] .np-scorer b { font-size: 17.6px; }
+[data-fs] .np-article .mx-head h2 { font-size: 34px; }
+[data-fs] .np-art-note { font-size: 17.6px; }
+[data-fs] .np-art-first { font-size: 18px; }
+[data-fs] .np-art-p { font-size: 17.6px; }
+[data-fs] .np-who > span:last-child { font-size: 17.6px; }
+[data-fs] .np-who small { font-size: 17.6px; }
+
+/* 28-rows.css */
+[data-fs] { --rl-fs: 18px; }
+[data-fs] .rl-row { font-size: var(--rl-fs); }
+[data-fs] .rl-main { font-size: calc(var(--rl-fs) + 2px); }
+[data-fs] .rl-sm { --rl-fs: 17.6px; }
+[data-fs] .dtable { font-size: var(--rl-fs); }
+[data-fs] .dtable thead th { font-size: 17.6px; }
+[data-fs] .dtable td.rl-main { font-size: calc(var(--rl-fs) + 2px); }
+[data-fs] .rl-tie .cmp-res b { font-size: calc(var(--rl-fs) + 2px); }
+[data-fs] .rl-meta { font-size: calc(var(--rl-fs) - 3px); }
+[data-fs] .cmp-statlist .cmp-stat,
+[data-fs] .cmp-statbox .cmp-stat { font-size: 17.6px; }
+[data-fs] .cmp-statlist .cmp-stat .cmp-pclub,
+[data-fs] .cmp-statbox .cmp-stat .cmp-pclub { font-size: 17.6px; }
+[data-fs] .cmp-statlist .cmp-stat .cmp-val,
+[data-fs] .cmp-statbox .cmp-stat .cmp-val { font-size: 18px; }
+[data-fs] .gt-row { font-size: 17.6px; }
+[data-fs] .gt-pts { font-size: 19px; }
+[data-fs] .dxt-row td.dxt-pos { font-size: 18px; }
+[data-fs] .dxt-row td.dxt-pkt { font-size: 21px; }
+[data-fs] .lu-table { font-size: 17.6px; }
+[data-fs] .lu-strong { font-size: 17.6px; }
+[data-fs] .tt-table { font-size: 17.6px; }
+[data-fs] .rb-head { font-size: 17.6px; }
+[data-fs] .rb-tie { font-size: 18px; }
+[data-fs] .rb-g { font-size: 19px; }
+[data-fs] .rb-lg { font-size: 17.6px; }
+[data-fs] .rb-note,
+[data-fs] .rb-dec,
+[data-fs] .rb-legs-txt { font-size: 17.6px; }
+[data-fs] .rb-score-txt { font-size: 17.6px; }
+[data-fs] .sq-legend { font-size: 17.6px; }
+[data-fs] .cflag-code { font-size: 17.6px; }
+[data-fs] .lu-table td.lu-strong { font-size: 17.6px; }
+
+/* 28-ratings.css */
+[data-fs] .rb2-title { font-size: 34px; }
+[data-fs] .rb2-subtitle { font-size: 18px; }
+[data-fs] .rb2-line { font-size: 18px; }
+[data-fs] .rb2-kicker { font-size: 17.6px; }
+[data-fs] .rb2-name { font-size: 42px; }
+[data-fs] .rb2-old { font-size: 44px; }
+[data-fs] .rb2-new { font-size: 56px; }
+[data-fs] .rb2-delta { font-size: 26px; }
+[data-fs] .rb2-verdict { font-size: 20px; }
+[data-fs] .rb2-reasons li { font-size: 17.6px !important; }
+[data-fs] .rb2-reasons li.note { font-size: 17.6px !important; }
+[data-fs] .rb2-sum-title { font-size: 34px; }
+[data-fs] .rb2-sum-lines { font-size: 19px; }
+[data-fs] .rb2-sum-prev { font-size: 17.6px; }
+[data-fs] .rb2-stage .rt-intro .dr-intro-kicker { font-size: 17.6px; }
+[data-fs] .rb2-stage .rt-intro .dr-intro-round { font-size: 26px; }
+[data-fs] .rb2-stage .rt-intro .dr-intro-facts { font-size: 17.6px; }
+[data-fs] .rb2-stage .rt-intro .dr-rule-t { font-size: 17.6px; }
+[data-fs] .rb2-stage .rt-intro .dr-rule-x { font-size: 17.6px; }
+[data-fs] .rb2-head { font-size: 20px; }
+[data-fs] .rb2-dim { font-size: 17.6px; }
+[data-fs] .rb2-top-rank { font-size: 34px; }
+[data-fs] .rb2-top-name { font-size: 24px; }
+[data-fs] .rb2-top-sub { font-size: 17.6px; }
+[data-fs] .rb2-top-d { font-size: 32px; }
+[data-fs] .rb2-top-new { font-size: 17.6px; }
+[data-fs] .rb2-empty { font-size: 17.6px; }
+[data-fs] .rb2-table td:nth-child(6) { font-size: 17.6px; }
+[data-fs] .rb2-reason { font-size: 17.6px; }
+[data-fs] .rb2-reason-more { font-size: 17.6px; }
+[data-fs] .rb2-foot { font-size: 17.6px; }
+[data-fs] .rb2-ok { font-size: 20px; }
+[data-fs] .rt-reasons li { font-size: 23px; }
+[data-fs] .rt-reasons li.note { font-size: 20px; }
+[data-fs] .pp-rating-head { font-size: 17.6px; }
+[data-fs] .pp-rating-why { font-size: 17.6px; }
+
+/* 28-dash2.css */
+[data-fs] .dz-wt { font-size: 17.6px; }
+[data-fs] .dz-wr { font-size: 17.6px; }
+[data-fs] .dz-wb { font-size: 17.6px; }
+[data-fs] .dz-empty { font-size: 17.6px; }
+[data-fs] .dz-more { font-size: 17.6px; }
+[data-fs] .dz-th { font-size: 17.6px; }
+[data-fs] .dz-main { font-size: 18px; }
+[data-fs] .dz-comp { font-size: 17.6px; }
+[data-fs] .dz-ha { font-size: 17.6px; }
+[data-fs] .dz-abs .pos-badge { font-size: 15px; }
+[data-fs] .dz-tag { font-size: 17.6px; }
+[data-fs] .dz-kv-sum > b { font-size: 19px; }
+[data-fs] .dz-big { font-size: 22px; }
+[data-fs] .dz-st-mid { font-size: 17.6px; }
+[data-fs] .dz-nh-title { font-size: 30px; }
+[data-fs] .dz-nh-count { font-size: 19px; }
+[data-fs] .dz-ntable td { font-size: 17.6px; }
+[data-fs] .dz-ntable .dz-ncol-grp { font-size: 17.6px; }
+[data-fs] .dz-rdate { font-size: 34px; }
+[data-fs] .dz-rdate > span { font-size: 20px; }
+[data-fs] .dz-rsubj { font-size: 23px; }
+[data-fs] .dz-rmeta { font-size: 17.6px; }
+[data-fs] .dz-rlead { font-size: 18px; }
+[data-fs] .dz-rbody { font-size: 17.6px; }
+[data-fs] .ev-choices.ev-row .ev-choice-l { font-size: 17.6px; }
+[data-fs] .ev-choices.ev-row .ev-choice-h { font-size: 17.6px; }
+[data-fs] .dz-rface-name { font-size: 17.6px; }
+[data-fs] .dz-rfaces.n3 .dz-rface-name,
+[data-fs] .dz-rfaces.n4 .dz-rface-name { font-size: 17.6px; }
+[data-fs] .dz-rface-sub,
+[data-fs] .dz-rface-mor,
+[data-fs] .dz-rface-w { font-size: 17.6px; }
+[data-fs] .dz-rface-sub .pos-badge,
+[data-fs] .dz-rface-sub .posb { font-size: 15px; }
+[data-fs] .dz-nfoot { font-size: 17.6px; }
+[data-fs] .dz-nfoot > .dz-dim { font-size: 17.6px; }
+[data-fs] .dz-ov-head { font-size: 17.6px; }
+[data-fs] .dz-ov-head .dz-dim { font-size: 17.6px; }
+[data-fs] .dz-ov-item { font-size: 17.6px; }
+[data-fs] .dz-fan-empty { font-size: 17.6px; }
+[data-fs] .dz-fn-title { font-size: 18px; }
+[data-fs] .dz-fn-sub { font-size: 17.6px; }
+[data-fs] .dz-fn-date { font-size: 17.6px; }
+[data-fs] .dz-fn-text { font-size: 17.6px; }
+[data-fs] .dz-fn-tag { font-size: 17.6px; }
+[data-fs] .dz-nm-teams { font-size: 22px; }
+[data-fs] .dz-nm-date { font-size: 17.6px; }
+[data-fs] .dz-nm-cmp { font-size: 17.6px; }
+[data-fs] .dz-fr { font-size: 15px; }
+[data-fs] .dz-bp-val b { font-size: 20px; }
+[data-fs] .dz-bp-val small { font-size: 17.6px; }
+[data-fs] .dz-zg-era { font-size: 17.6px; }
+[data-fs] .dz-zg-title { font-size: 17.6px; }
+[data-fs] .dz-zg-text { font-size: 17.6px; }
+
+/* 28-profile2.css */
+[data-fs] .pp2-navpos { font-size: 17.6px; }
+[data-fs] .modal .pp2-name { font-size: 34px; }
+[data-fs] .pp2-club { font-size: 18px; }
+[data-fs] .pp2-kv > span { font-size: 14.5px; }
+[data-fs] .pp2-kv > b { font-size: 17.6px; }
+[data-fs] .pp2-kv > b.pp2-big { font-size: 30px; }
+[data-fs] .pp2-nat { font-size: 15px; }
+[data-fs] .pp2-postable th { font-size: 17.6px; }
+[data-fs] .pp2-poscell { font-size: 17.6px; }
+[data-fs] .pp2-posval { font-size: 17.6px; }
+[data-fs] .pp2-fl { font-size: 17.6px; }
+[data-fs] .pp2-spot-lbl { font-size: 15.5px; }
+[data-fs] .pp2-legend { font-size: 14.5px; }
+[data-fs] .pp2-bt { font-size: 17.6px; }
+[data-fs] .pp2-bt-sub { font-size: 17.6px; }
+[data-fs] .pp2-bilanz th { font-size: 15px; }
+[data-fs] .pp2-bilanz td { font-size: 17.6px; }
+[data-fs] .pp2-kvl { font-size: 17.6px; }
+[data-fs] .pp2-posline { font-size: 17.6px; }
+[data-fs] .pp2-posline > b { font-size: 17.6px; }
+[data-fs] .modal .pp2-h { font-size: 22px; }
+[data-fs] .pp2-forpos { font-size: 17.6px; }
+[data-fs] .pp2-select { font-size: 17.6px; }
+[data-fs] .pp2-sgt { font-size: 15.5px; }
+[data-fs] .pp2-srow .pp-attr-lbl { font-size: 17.6px; }
+[data-fs] .pp2-sval { font-size: 17.6px; }
+[data-fs] .pp2-prog { font-size: 17.6px; }
+[data-fs] .pp2-check { font-size: 17.6px; }
+[data-fs] .pp2-tabs .tab { font-size: 17.6px; }
+[data-fs] .pp2-tabs.many .tab { font-size: 17.6px; }
+[data-fs] .pp2-tabbody .pp-stat-num { font-size: 20px; }
+[data-fs] .pp2-tile-lbl { font-size: 15px; }
+[data-fs] .pp2-tile-big { font-size: 32px; }
+[data-fs] .pp2-tile-sub { font-size: 17.6px; }
+[data-fs] .pp3-axis { font-size: 15px; }
+[data-fs] .pp3-tip-d { font-size: 15.5px; }
+[data-fs] .pp3-tip-row { font-size: 17.6px; }
+[data-fs] .pp3-tip-row em { font-size: 15.5px; }
+[data-fs] .pp3-chk { font-size: 17.6px; }
+[data-fs] .pp3-note { font-size: 17.6px; }
+[data-fs] .pp3-kv3 > * { font-size: 17.6px; }
+[data-fs] .pp3-kv3 .h { font-size: 14.5px; }
+[data-fs] .pp3-serie > * { font-size: 17.6px; }
+[data-fs] .pp3-honsum b { font-size: 22px; }
+[data-fs] .pp3-honsum span { font-size: 17.6px; }
+[data-fs] .pp3-hon { font-size: 17.6px; }
+[data-fs] .pp3-hon .dim { font-size: 17.6px; }
+[data-fs] .pp3-acttip { font-size: 17.6px; }
+[data-fs] .pp3-actnote { font-size: 17.6px; }
+
+/* 28-playercard.css */
+[data-fs] .pc-card { font-size: 17.6px; }
+[data-fs] .pc-sh { font-size: 15px; }
+[data-fs] .pc-name { font-size: 30px; }
+[data-fs] .pc-posline { font-size: 17.6px; }
+[data-fs] .pc-meta { font-size: 17.6px; }
+[data-fs] .pc-tag { font-size: 15px; }
+[data-fs] .pc-ovr > span { font-size: 15px; }
+[data-fs] .pc-ovr > b { font-size: 36px; }
+[data-fs] .pc-arow { font-size: 17.6px; }
+[data-fs] .pc-arow > b { font-size: 17.6px; }
+[data-fs] .pc-attrs.gk .pc-arow { font-size: 17.6px; }
+[data-fs] .pc-side > .pc-fact { font-size: 17.6px; }
+[data-fs] .pc-posrow { font-size: 17.6px; }
+[data-fs] .pc-posrow > b { font-size: 17.6px; }
+[data-fs] .pc-posrow .psk-tag { font-size: 14px; }
+[data-fs] .pc-fk > span { font-size: 15px; }
+[data-fs] .pc-fk > b { font-size: 17.6px; }
+[data-fs] .pc-sat { font-size: 20px; }
+
+/* 28-transfer3.css */
+[data-fs] .tw-title { font-size: 32px; }
+[data-fs] .tw-head-sub { font-size: 17.6px; }
+[data-fs] .tw-select { font-size: 17.6px; }
+[data-fs] .tw-select .sel3 { font-size: 17.6px; }
+[data-fs] .tw-tab { font-size: 17.6px; }
+[data-fs] .tw-table { --rl-fs: 17.6px; }
+[data-fs] .tw-pot { font-size: 17.6px; }
+[data-fs] .tw-empty { font-size: 17.6px; }
+[data-fs] .tw-empty.sm { font-size: 17.6px; }
+[data-fs] .tw-league-name { font-size: 30px; }
+[data-fs] .tw-league-sub { font-size: 17.6px; }
+[data-fs] .tw-sec { font-size: 17.6px; }
+[data-fs] .tw-totw-name { font-size: 25px; }
+[data-fs] .tw-kv { font-size: 17.6px; }
+[data-fs] .tw-posv { font-size: 17.6px; }
+[data-fs] .tw-totw-text { font-size: 17.6px; }
+[data-fs] .tw-filters-h { font-size: 18px; }
+[data-fs] .tw-filters-n { font-size: 17.6px; }
+[data-fs] .tw-chk { font-size: 17.6px; }
+[data-fs] .tw-step { font-size: 17.6px; }
+[data-fs] .tw-step-b { font-size: 17.6px; }
+[data-fs] .tw-box-h { font-size: 17.6px; }
+[data-fs] .tw-news-text { font-size: 17.6px; }
+[data-fs] .tw-foot-note { font-size: 17.6px; }
+[data-fs] .tt-title { font-size: 48px; }
+[data-fs] .tt-dek { font-size: 17.6px; }
+[data-fs] .tt-empty { font-size: 17.6px; }
+[data-fs] .tt-pod-n { font-size: 132px; }
+[data-fs] .tt-pod-name { font-size: 24px; }
+[data-fs] .tt-pod-club { font-size: 17.6px; }
+[data-fs] .tt-pod-from { font-size: 17.6px; }
+[data-fs] .tt-pod-kv { font-size: 17.6px; }
+[data-fs] .tt-lead .np-text { font-size: 17.6px; }
+[data-fs] .tt-facts-h { font-size: 17.6px; }
+[data-fs] .tt-fact b { font-size: 26px; }
+[data-fs] .tt-fact span { font-size: 17.6px; }
+[data-fs] .tt-facts-rec { font-size: 17.6px; }
+[data-fs] .tt-table { --rl-fs: 17.6px; }
+[data-fs] .tt-pl > small { font-size: 17.6px; }
+[data-fs] .tt-sec-row th { font-size: 17.6px; }
+[data-fs] .ps-sec-h { font-size: 20px; }
+[data-fs] .ps-row { font-size: 17.6px; }
+[data-fs] .ps-row input[type="text"],
+[data-fs] .ps-row .sel3,
+[data-fs] .ps-pair .sel3,
+[data-fs] .ps-attr .sel3 { font-size: 17.6px; }
+[data-fs] .ps-pair > span { font-size: 17.6px; }
+[data-fs] .ps-num { font-size: 17.6px; }
+[data-fs] .ps-chk { font-size: 17.6px; }
+[data-fs] .ps-hint { font-size: 17.6px; }
+[data-fs] .ps-save-row input,
+[data-fs] .ps-save-row .sel3 { font-size: 17.6px; }
+[data-fs] .ps-count { font-size: 17.6px; }
+[data-fs] .ioff-name b { font-size: 17.6px; }
+[data-fs] .ioff-sub { font-size: 17.6px; }
+[data-fs] .ioff-deal { font-size: 17.6px; }
+[data-fs] .ioff-due { font-size: 17.6px; }
+[data-fs] .ioff-counter-l { font-size: 17.6px; }
+[data-fs] .ioff-done { font-size: 17.6px; }
+
+/* 28-prematch.css */
+[data-fs] .pm-title { font-size: 30px; }
+[data-fs] .pm-comp { font-size: 21px; }
+[data-fs] .pm-bar-side { font-size: 25px; }
+[data-fs] .pm-venue-name { font-size: 31px; }
+[data-fs] .pm-venue-date { font-size: 20px; }
+[data-fs] .pm-quick-l { font-size: 19px; }
+[data-fs] .pm-quick-warn { font-size: 17.6px; }
+[data-fs] .pm-select { font-size: 18.5px; }
+[data-fs] .pm-h { font-size: 18px; }
+[data-fs] .pm-h-note { font-size: 17.6px; }
+[data-fs] .pm-frow { font-size: 20px; }
+[data-fs] .pm-fl b,
+[data-fs] .pm-fr b { font-size: 25px; }
+[data-fs] .pm-fc { font-size: 18px; }
+[data-fs] .pm-rank { font-size: 17.6px; }
+[data-fs] .pm-form-x { font-size: 17.6px; }
+[data-fs] .pm-leg { font-size: 19px; }
+[data-fs] .pm-h2h { font-size: 19px; }
+[data-fs] .pm-h2h th { font-size: 17.6px; }
+[data-fs] .pm-h2h-none { font-size: 17.6px; }
+[data-fs] .pm-pin-label { font-size: 19px; }
+[data-fs] .pm-dist { font-size: 19px; }
+[data-fs] .pm-kv { font-size: 19px; }
+[data-fs] .pm-kv b { font-size: 25px; }
+[data-fs] .pm-wx-l { font-size: 19px; }
+[data-fs] .pm-wx-n { font-size: 17.6px; }
+[data-fs] .pm-about-city { font-size: 25px; }
+[data-fs] .pm-about p { font-size: 19.5px; }
+[data-fs] .pm-hide { font-size: 18px; }
+[data-fs] .pm-go-btn { font-size: 25px; }
+
+/* 28-textmode2.css */
+[data-fs] .tm-change-btn { font-size: 18px; }
+[data-fs] .tm-sec { font-size: 17.6px; }
+[data-fs] .tm-box-head { font-size: 19px; }
+[data-fs] .tm-ev-empty { font-size: 17.6px; }
+[data-fs] .tm-comp { font-size: 20px; }
+[data-fs] .tm-agg { font-size: 17.6px; }
+[data-fs] .tm-bar-team { font-size: 27px; }
+[data-fs] .tm-rank { font-size: 22px; }
+[data-fs] .tm-bar-score > div { font-size: 50px; }
+[data-fs] .tm-bar-score small { font-size: 17.6px; }
+[data-fs] .tm-tinfo { font-size: 17.6px; }
+[data-fs] .tm-scorers { font-size: 17.6px; }
+[data-fs] .tm-clock-txt b { font-size: 25px; }
+[data-fs] .tm-clock-txt span { font-size: 17.6px; }
+[data-fs] .tm-chev { font-size: 22px; }
+[data-fs] .tm-meter-word { font-size: 17.6px; }
+[data-fs] .tm-tl-tick em { font-size: 17.6px; }
+[data-fs] .tm-tabs button { font-size: 18px; }
+[data-fs] .tm-tk-head { font-size: 17.6px; }
+[data-fs] .tm-tk-row { font-size: 19px; }
+[data-fs] .tm-tk-goal { font-size: 20px; }
+[data-fs] .tm-tk-susp { font-size: 30px; }
+[data-fs] .tm-ref-grid { font-size: 17.6px; }
+[data-fs] .tm-ref-bar em { font-size: 17.6px; }
+[data-fs] .tm-lt-row { font-size: 17.6px; }
+[data-fs] .tm-lt-row.head { font-size: 17.6px; }
+[data-fs] .tm-lt-sec { font-size: 17.6px; }
+[data-fs] .tm-pos { font-size: 17.6px; }
+[data-fs] .tm-tag { font-size: 17.6px; }
+[data-fs] .tm-lt-foot { font-size: 17.6px; }
+[data-fs] .tm-lt-foot .tm-dim { font-size: 17.6px; }
+[data-fs] .tm-tb-row { font-size: 17.6px; }
+[data-fs] .tm-tb-row.head { font-size: 17.6px; }
+[data-fs] .tm-tb-pl em { font-size: 17.6px; }
+[data-fs] .tm-act-grid .ms-btn { font-size: 17.6px; }
+[data-fs] .tm-check { font-size: 17.6px; }
+[data-fs] .tm-speed { font-size: 17.6px; }
+[data-fs] .tm-cs-title { font-size: 24px; }
+[data-fs] .tm-cs-tn { font-size: 22px; }
+[data-fs] .tm-cs-score b { font-size: 44px; }
+[data-fs] .tm-cs-x { font-size: 28px; }
+[data-fs] .tm-cs-tabs > button { font-size: 19px; }
+[data-fs] .tm-cs-minute { font-size: 30px; }
+[data-fs] .tm-cs-reason { font-size: 17.6px; }
+[data-fs] .tm-cs-lhead { font-size: 17.6px; }
+[data-fs] .tm-cs-lhead b { font-size: 22px; }
+[data-fs] .tm-cs-lhead .sel3,
+[data-fs] .tm-sys-head .sel3 { font-size: 17.6px; }
+[data-fs] .tm-cs-row { font-size: 17.6px; }
+[data-fs] .tm-cs-row.head { font-size: 17.6px; }
+[data-fs] .tm-pot .dscout { font-size: 17.6px; }
+[data-fs] .tm-cs-lfoot { font-size: 17.6px; }
+[data-fs] .tm-cs-left-n b { font-size: 22px; }
+[data-fs] .tm-cs-auto { font-size: 17.6px; }
+[data-fs] .tm-cs-msg { font-size: 17.6px; }
+[data-fs] .tm-cs-foot .tm-dim { font-size: 17.6px; }
+[data-fs] .tm-cs-ok { font-size: 19px; }
+[data-fs] .tm-sys-name { font-size: 17.6px; }
+[data-fs] .tm-sys-ps { font-size: 17.6px; }
+[data-fs] .tm-sys-empty { font-size: 17.6px; }
+[data-fs] .tm-sys-ghost { font-size: 17.6px; }
+[data-fs] .tm-talk-lead { font-size: 19px; }
+[data-fs] .tm-talk-opt b { font-size: 22px; }
+[data-fs] .tm-talk-opt span { font-size: 17.6px; }
+[data-fs] .tm-pt-row { font-size: 17.6px; }
+[data-fs] .tm-pt-res { font-size: 17.6px; }
+[data-fs] .tm-chip { font-size: 17.6px; }
+[data-fs] .tm-slider { font-size: 17.6px; }
+[data-fs] .tm-slider em { font-size: 17.6px; }
+[data-fs] .tm-dnd-ghost { font-size: 17.6px; }
+
+/* 28-report.css */
+[data-fs] .mr2-top .ms-top-l { font-size: 18px; }
+[data-fs] .mr2-pill { font-size: 17.6px; }
+[data-fs] .mr2 > .mr2-top > .modal-close.mr2-close { font-size: 30px; }
+[data-fs] .mr2-motm-h { font-size: 17.6px; }
+[data-fs] .mr2-motm-p { font-size: 19px; }
+[data-fs] .mr2-motm-p em { font-size: 17.6px; }
+[data-fs] .mr2-tkhead { font-size: 17.6px; }
+[data-fs] .mr2-tkhead b { font-size: 20px; }
+[data-fs] .mr2-team { font-size: 19px; }
+
+/* 28-awards.css */
+[data-fs] .aw-foot-note { font-size: 17.6px; }
+[data-fs] .aw-none { font-size: 17.6px; }
+[data-fs] .aw-cat { font-size: 17.6px; }
+[data-fs] .aw-tag { font-size: 15px; }
+[data-fs] .aw-name { font-size: 24px; }
+[data-fs] button.aw-name { font-size: 24px; }
+[data-fs] .aw-meta { font-size: 17.6px; }
+[data-fs] .aw-club { font-size: 17.6px; }
+[data-fs] .aw-kpi b { font-size: 24px; }
+[data-fs] .aw-kpi span { font-size: 15px; }
+[data-fs] .aw-why { font-size: 17.6px; }
+[data-fs] .aw-rest li { font-size: 17.6px; }
+[data-fs] .aw-rest-name { font-size: 17.6px; }
+[data-fs] .aw-rest-club { font-size: 17.6px; }
+[data-fs] .aw-honour-title { font-size: 17.6px; }
+[data-fs] .aw-honour-n { font-size: 18px; }
+[data-fs] .aw-honour-club { font-size: 17.6px; }
+[data-fs] .aw-honour-sub { font-size: 17.6px; }
+[data-fs] .aw-card.compact .aw-name,
+[data-fs] .aw-card.compact button.aw-name { font-size: 20px; }
+[data-fs] .aw-card.compact .aw-kpi b { font-size: 20px; }
+[data-fs] .aw-card.compact .aw-why { font-size: 17.6px; }
+[data-fs] .aw-card.compact .aw-rest li { font-size: 17.6px; }
+[data-fs] .aw-pick-div { font-size: 17.6px; }
+[data-fs] .aw-pick .dselect { font-size: 17.6px; }
+[data-fs] .aw-years td .muted { font-size: 17.6px; }
+@media (max-width: 1500px) {
+  [data-fs] .aw-name,
+  [data-fs] button.aw-name { font-size: 21px; }
+  [data-fs] .aw-kpi b { font-size: 21px; }
+}
+[data-fs] .gb-kicker { font-size: 18px; }
+[data-fs] .gb-title { font-size: 56px; }
+[data-fs] .gb-sub { font-size: 18px; }
+[data-fs] .gb-intro p { font-size: 19px; }
+[data-fs] .gb-pod-place { font-size: 40px; }
+[data-fs] .gb-pod-hidden { font-size: 18px; }
+[data-fs] .gb-pod-name { font-size: 28px; }
+[data-fs] .gb-pod.p1 .gb-pod-name { font-size: 34px; }
+[data-fs] .gb-pod-meta { font-size: 17.6px; }
+[data-fs] .gb-pod-club { font-size: 17.6px; }
+[data-fs] .gb-kpi b { font-size: 22px; }
+[data-fs] .gb-kpi span { font-size: 15px; }
+[data-fs] .gb-honor { font-size: 17.6px; }
+[data-fs] .gb-why { font-size: 17.6px; }
+[data-fs] .gb-est { font-size: 17.6px; }
+[data-fs] .gb-list h3 { font-size: 17.6px; }
+[data-fs] .gb-foot-note { font-size: 17.6px; }
+@media (max-height: 820px) {
+  [data-fs] .gb-title { font-size: 42px; }
+  [data-fs] .gb-pod-name { font-size: 22px; }
+  [data-fs] .gb-pod.p1 .gb-pod-name { font-size: 26px; }
+  [data-fs] .gb-why { font-size: 17.6px; }
+  [data-fs] .gb-kpi b { font-size: 18px; }
+}
+[data-fs] .gbt-sub { font-size: 17.6px; }
+[data-fs] .tos-chip-n { font-size: 17.6px; }
+[data-fs] .tos-chip-g { font-size: 17.6px; }
+[data-fs] .tos-list li { font-size: 17.6px; }
+[data-fs] .tos-list-n { font-size: 17.6px; }
+[data-fs] .tos-list-c { font-size: 17.6px; }
+@media (max-width: 1500px) {
+  [data-fs] .tos-chip-n { font-size: 17.6px; }
+  [data-fs] .tos-chip-g { font-size: 15px; }
+  [data-fs] .tos-list li { font-size: 17.6px; }
+}
+[data-fs] .aw-page .gbt-sub { font-size: 17.6px; }
+[data-fs] .aw-page .aw-cat { font-size: 17.6px; }
+[data-fs] .aw-page .aw-tag { font-size: 17.6px; }
+[data-fs] .aw-page .aw-card.compact .aw-name { font-size: 24px; }
+[data-fs] .aw-page .aw-meta { font-size: 17.6px; }
+[data-fs] .aw-page .aw-club { font-size: 17.6px; }
+[data-fs] .aw-page .aw-card.compact .aw-kpi b { font-size: 24px; }
+[data-fs] .aw-page .aw-kpi span { font-size: 17.6px; }
+[data-fs] .aw-page .aw-card.compact .aw-why { font-size: 17.6px; }
+[data-fs] .aw-page .aw-card.compact .aw-rest li { font-size: 17.6px; }
+[data-fs] .aw-page .aw-rest-name { font-size: 17.6px; }
+[data-fs] .aw-page .aw-rest-club { font-size: 17.6px; }
+[data-fs] .aw-page .gs-table td { font-size: 17.6px; }
+[data-fs] .aw-page .tos-list li { font-size: 17.6px; }
+[data-fs] .aw-page .tos-list-n { font-size: 17.6px; }
+[data-fs] .aw-page .tos-list-c { font-size: 17.6px; }
+[data-fs] .aw-page .tos-chip-n { font-size: 17.6px; }
+[data-fs] .aw-page .tos-chip-g { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-name { font-size: 21px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-meta { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-club { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-kpi b { font-size: 21px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-why { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest li { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest-name { font-size: 17.6px; }
+[data-fs] .aw-page .aw-grid.compact:not(.gbt-grid):not(.tdj-grid) .aw-rest-club { font-size: 17.6px; }
+[data-fs] .aw-page .aw-honour-title { font-size: 17.6px; }
+[data-fs] .aw-page .aw-honour-n { font-size: 17.6px; }
+[data-fs] .aw-page .aw-honour-club { font-size: 17.6px; }
+[data-fs] .aw-page .aw-honour-sub { font-size: 17.6px; }
+[data-fs] .aw-modal .aw-kpi span { font-size: 17.6px; }
+[data-fs] .aw-modal .aw-why { font-size: 17.6px; }
+[data-fs] .aw-modal .aw-tag { font-size: 17.6px; }
+[data-fs] .aw-modal .aw-honour-sub { font-size: 17.6px; }
+[data-fs] .gb-est { font-size: 17.6px; }
+[data-fs] .gb-kpi span { font-size: 17.6px; }
+
+/* 28-promises.css */
+[data-fs] .ft-sec { font-size: 17.6px; }
+[data-fs] .ft-intro p { font-size: 17.6px; }
+[data-fs] .ft-face-name { font-size: 17.6px; }
+[data-fs] .ft-face-role { font-size: 17.6px; }
+[data-fs] .ft-face-word { font-size: 17.6px; }
+[data-fs] .ft-face-say { font-size: 17.6px; }
+[data-fs] .ft-sum-label { font-size: 17.6px; }
+[data-fs] .ft-sum-val { font-size: 20px; }
+[data-fs] .ft-card-label { font-size: 17.6px; }
+[data-fs] .ft-card-check { font-size: 17.6px; }
+[data-fs] .ft-tag { font-size: 15px; }
+[data-fs] .ft-count { font-size: 17.6px; }
+[data-fs] .ft-count b { font-size: 22px; }
+[data-fs] .ft-foot-note { font-size: 17.6px; }
+[data-fs] .ft-line-label { font-size: 17.6px; }
+[data-fs] .ft-line-text { font-size: 17.6px; }
+[data-fs] .ft-line-state { font-size: 17.6px; }
+
+/* 28-talk.css */
+[data-fs] .ptk-name { font-size: 40px; }
+[data-fs] .ptk-club { font-size: 21px; }
+[data-fs] .ptk-facts-top { font-size: 17.6px; }
+[data-fs] .ptk-row { font-size: 17.6px; }
+[data-fs] .ptk-h3 { font-size: 21px; }
+[data-fs] .ptk-h4 { font-size: 17.6px; }
+[data-fs] .ptk-state-word { font-size: 17.6px; }
+[data-fs] .ptk-delta { font-size: 19px; }
+[data-fs] .ptk-book .ptk-round.modal-close { font-size: 0; }
+[data-fs] .ptk-title { font-size: 40px; }
+[data-fs] .ptk-lead { font-size: 19px; }
+[data-fs] .ptk-topics-h { font-size: 17.6px; }
+[data-fs] .ptk-topic { font-size: 17.6px; }
+[data-fs] .ptk-hint { font-size: 17.6px; }
+[data-fs] .ptk-note { font-size: 17.6px; }
+[data-fs] .ptk-said,
+[data-fs] .ptk-reply { font-size: 18px; }
+[data-fs] .ptk-who { font-size: 17.6px; }
+[data-fs] .ptk-reply blockquote { font-size: 23px; }
+[data-fs] .ptk-gesture { font-size: 17.6px; }
+[data-fs] .ptk-eff { font-size: 17.6px; }
+[data-fs] .ptk-week { font-size: 17.6px; }
+[data-fs] .ptk-act { font-size: 18px; }
+
+/* 28-trophies.css */
+[data-fs] .tro-cat { font-size: 17.6px; }
+[data-fs] .tro-cat-n { font-size: 17.6px; }
+[data-fs] .tro-cats-sum { font-size: 17.6px; }
+[data-fs] .tro-sub { font-size: 0.85em; }
+[data-fs] .tro-hist { font-size: 15px; }
+[data-fs] .tro-none { font-size: 17.6px; }
+[data-fs] .tro-tally { font-size: 17.6px; }
+[data-fs] .tro-kicker { font-size: 17.6px; }
+[data-fs] .tro-season { font-size: 30px; }
+[data-fs] .tro-title { font-size: 17.6px; }
+[data-fs] .tro-subline { font-size: 17.6px; }
+[data-fs] .tro-fk { font-size: 17.6px; }
+[data-fs] .tro-fv { font-size: 17.6px; }
+[data-fs] .tro-note { font-size: 17.6px; }
+@media (max-width: 1500px) {
+  [data-fs] .tro-season { font-size: 26px; }
+  [data-fs] .tro-fv { font-size: 17.6px; }
+}
+
+/* 28-merch.css */
+[data-fs] .mc-tag { font-size: 17.6px; }
+[data-fs] .mc-item-desc { font-size: 17.6px; }
+[data-fs] .mc-step-btn { font-size: 17.6px; }
+[data-fs] .mc-step-val { font-size: 17.6px; }
+[data-fs] .mc-auto { font-size: 17.6px; }
+[data-fs] .mc-face-name { font-size: 20px; }
+[data-fs] .mc-face-n { font-size: 30px; }
+[data-fs] .mc-face-n span { font-size: 17.6px; }
+[data-fs] .mc-chart-title { font-size: 17.6px; }
+[data-fs] .mc-chart-unit { font-size: 17.6px; }
+[data-fs] .mc-tick { font-size: 17.6px; }
+[data-fs] .mc-chart-empty { font-size: 17.6px; }
+[data-fs] .mc-tip-h { font-size: 17.6px; }
+[data-fs] .mc-tip-v { font-size: 17.6px; }
+
+/* 28-tickets.css */
+[data-fs] .tk-right { font-size: 17.6px; }
+[data-fs] .tk-kv .dkv { font-size: 17.6px; }
+[data-fs] .tk-tip { font-size: 17.6px; }
+[data-fs] .tk-ptab { font-size: 17.6px; }
+[data-fs] .tk-ptab th { font-size: 15.5px; }
+[data-fs] .tk-ptab tfoot .tk-strong { font-size: 18px; }
+[data-fs] .tk-ssub { font-size: 17.6px; }
+[data-fs] .tk-step button { font-size: 17.6px; }
+[data-fs] .tk-cell-sub { font-size: 17.6px; }
+[data-fs] .tk-cat { font-size: 17.6px; }
+[data-fs] .tk-cat i { font-size: 14.5px; }
+[data-fs] .tk-detail-h { font-size: 17.6px; }
+[data-fs] .tk-detail-h b { font-size: 17.6px; }
+[data-fs] .tk-chip { font-size: 17.6px; }
+[data-fs] .tk-chip-k { font-size: 15.5px; }
+[data-fs] .tk-special { font-size: 17.6px; }
+[data-fs] .tk-mini { font-size: 17.6px; }
+[data-fs] .tk-sec { font-size: 15.5px; }
+[data-fs] .tk-rec-txt { font-size: 17.6px; }
+[data-fs] .tk-staff { font-size: 17.6px; }
+
+/* 28-budget.css */
+[data-fs] .bud-sec { font-size: 17.6px; }
+[data-fs] .bud-foot-note { font-size: 17.6px; }
+[data-fs] .bud-goal-t { font-size: 17.6px; }
+[data-fs] .bud-goal-v { font-size: 17.6px; }
+[data-fs] .bud-adv-id { font-size: 17.6px; }
+[data-fs] .bud-adv-id b { font-size: 17.6px; }
+[data-fs] .bud-adv-text { font-size: 17.6px; }
+[data-fs] .bud-react-row { font-size: 17.6px; }
+[data-fs] .bud-board { font-size: 17.6px; }
+[data-fs] .bud-inc,
+[data-fs] .bud-soll { font-size: 17.6px; }
+[data-fs] .bud-inc th,
+[data-fs] .bud-soll th { font-size: 17.6px; }
+[data-fs] .bud-stack-lbl { font-size: 17.6px; }
+[data-fs] .bud-grid i { font-size: 15px; }
+[data-fs] .bud-colf-name { font-size: 17.6px; }
+[data-fs] .bud-colf-val { font-size: 17.6px; }
+[data-fs] .bud-colf-fixed { font-size: 17.6px; }
+[data-fs] .bud-step { font-size: 17.6px; }
+[data-fs] .bud-edit-head b { font-size: 17.6px; }
+[data-fs] .bud-edit-head span { font-size: 20px; }
+[data-fs] .bud-tip { font-size: 17.6px; }
+
+/* 28-pyramid.css */
+[data-fs] .lp-seg button { font-size: 17.6px; }
+[data-fs] .lp-countries button { font-size: 17.6px; }
+[data-fs] .lp-season { font-size: 17.6px; }
+[data-fs] .lp-list-title { font-size: 24px; }
+[data-fs] .lp-list-sub { font-size: 17.6px; }
+[data-fs] .lp-list-note { font-size: 17.6px; }
+[data-fs] .lp-rows .rl-num { font-size: 17.6px; }
+[data-fs] .lp-legend { font-size: 17.6px; }
+[data-fs] .lp-empty { font-size: 17.6px; }
+[data-fs] .lp-empty.big { font-size: 18px; }
+[data-fs] .lp-level-no { font-size: 17.6px; }
+[data-fs] .lp-boxes:has(> .lp-box:nth-child(4)) .lp-box b { font-size: 17.6px; }
+[data-fs] .lp-boxes:has(> .lp-box:nth-child(4)) .lp-box small { font-size: 17.6px; }
+[data-fs] .lp-box b { font-size: 24px; }
+[data-fs] .lp-box small { font-size: 17.6px; }
+[data-fs] .lp-flow em { font-size: 17.6px; }
+[data-fs] .lp-box.mine::after { font-size: 14.5px; }
+[data-fs] .lp-box.struct b { font-size: 19px; }
+[data-fs] .lp-box.struct .lp-flow em { font-size: 17.6px; }
+[data-fs] .lp-note { font-size: 17.6px; }
+[data-fs] .lp-reforms-lbl { font-size: 17.6px; }
+[data-fs] .lp-reform { font-size: 17.6px; }
+[data-fs] .lsv-row { font-size: 17.6px; }
+[data-fs] .lsv-headrow { font-size: 17.6px; }
+[data-fs] .lsv-groups { font-size: 15.5px; }
+[data-fs] .lsv-md small { font-size: 17.6px; }
+[data-fs] .lsv-rep small { font-size: 17.6px; }
+[data-fs] .lsv-foot { font-size: 17.6px; }
+
+/* 28-country.css */
+[data-fs] .cnx-sub2 { font-size: 17.6px; }
+[data-fs] .cnx-caption { font-size: 17.6px; }
+[data-fs] .cnx-crow { font-size: 17.6px; }
+[data-fs] .cnx-prow { font-size: 17.6px; }
+[data-fs] .cnx-age { font-size: 17.6px; }
+[data-fs] .cnx-club { font-size: 17.6px; }
+[data-fs] .cnx-caps { font-size: 17.6px; }
+[data-fs] .cnx-num { font-size: 17.6px; }
+[data-fs] .cnx-prow.head .cnx-num { font-size: 17.6px; }
+[data-fs] .cnx-prow.head { font-size: 17.6px; }
+[data-fs] .cnx-prow.head .cnx-pname,
+[data-fs] .cnx-prow.head .cnx-club,
+[data-fs] .cnx-prow.head .cnx-ov,
+[data-fs] .cnx-prow.head .cnx-age,
+[data-fs] .cnx-prow.head .cnx-caps { font-size: 17.6px; }
+[data-fs] .cnx-dec-col { font-size: 17.6px; }
+[data-fs] .cnx-dec-col b { font-size: 17.6px; }
+[data-fs] .cnx-delta { font-size: 17.6px; }
+[data-fs] .cnx-holders td { font-size: 17.6px; }
+[data-fs] .cnx-pyr .lp-lock { font-size: 20px; }
+
+/* 28-natjob.css */
+[data-fs] .hd-bar:has(.hd-switch) .hd-nav-item { font-size: 17.6px; }
+[data-fs] .ntj-tag { font-size: 15.5px; }
+[data-fs] .ntj-row { font-size: 17.6px; }
+[data-fs] .ntj-prow { font-size: 17.6px; }
+[data-fs] .ntj-hrow { font-size: 17.6px; }
+[data-fs] .ntj-hrow.head { font-size: 17.6px; }
+[data-fs] .ntj-tools { font-size: 17.6px; }
+[data-fs] .ntj-hurt { font-size: 17.6px; }
+[data-fs] .ntj-confirm h3 { font-size: 24px; }
+[data-fs] .ntj-confirm p { font-size: 17.6px; }
+[data-fs] .ntw-row { font-size: 17.6px; }
+[data-fs] .ng-natrow { font-size: 17.6px; }
+[data-fs] .ng-natrow small { font-size: 17.6px; }
+
+/* 28-career.css */
+[data-fs] .car-tick { font-size: 17.6px; }
+[data-fs] .car-tip { font-size: 17.6px; }
+[data-fs] .car-rec-k { font-size: 17.6px; }
+[data-fs] .car-rec-v { font-size: 17.6px; }
+[data-fs] .car-rec-sub { font-size: 17.6px; }
+[data-fs] .car-next-v { font-size: 34px; }
+[data-fs] .car-next-k { font-size: 17.6px; }
+[data-fs] .car-mile-when,
+[data-fs] .car-game-when { font-size: 17.6px; }
+[data-fs] .car-pl-name .car-dim { font-size: 17.6px; }
+[data-fs] .car-tr-who .car-dim { font-size: 17.6px; }
+
+/* 28-career-binder.css */
+[data-fs] .bnd-h { font-size: 30px; }
+[data-fs] .bnd-h3 { font-size: 21px; }
+[data-fs] .bnd-h3 small { font-size: 17.6px; }
+[data-fs] .bnd-empty { font-size: 17.6px; }
+[data-fs] .bnd-sec { font-size: 17.6px; }
+[data-fs] .bnd-tab { font-size: 19px; }
+[data-fs] .bnd-sheet .bnd-h { font-size: 3.5cqh; }
+[data-fs] .bnd-sheet .bnd-kpis b { font-size: 3cqh; }
+[data-fs] .bnd-sheet .bnd-kpis span { font-size: 1.25cqh; }
+[data-fs] .bnd-sheet .bnd-kv { font-size: 1.85cqh; }
+[data-fs] .bnd-kpis b { font-size: 30px; }
+[data-fs] .bnd-kpis span { font-size: 17.6px; }
+[data-fs] .bnd-kv { font-size: 17.6px; }
+[data-fs] .bnd-polaroid figcaption { font-size: 17.6px; }
+[data-fs] .bnd-comp .bnd-h3 { font-size: 5.6cqh; }
+[data-fs] .bnd-comp .bnd-table { font-size: 4.3cqh; }
+[data-fs] .bnd-comp .bnd-table th { font-size: 3.2cqh; }
+[data-fs] .bnd-comp .bnd-scribble { font-size: 3.9cqh; }
+[data-fs] .bnd-table { font-size: 17.6px; }
+[data-fs] .bnd-table th { font-size: 17.6px; }
+[data-fs] .bnd-scribble { font-size: 17.6px; }
+[data-fs] .bnd-chart .car-tick { font-size: 17.6px; }
+[data-fs] .bnd-rec .bnd-titles .bnd-kv { font-size: 1.5cqh; }
+[data-fs] .bnd-mini b { font-size: 30px; }
+[data-fs] .bnd-mini span { font-size: 17.6px; }
+[data-fs] .bnd-paper-mast { font-size: 22px; }
+[data-fs] .bnd-paper-h { font-size: 19px; }
+[data-fs] .bnd-paper-t { font-size: 17.6px; }
+[data-fs] .bnd-miles .bnd-h3 { font-size: 17.6px; }
+[data-fs] .bnd-mile { font-size: 17.6px; }
+[data-fs] .bnd-mile b { font-size: 17.6px; }
+[data-fs] .bnd-opps .bnd-h3 { font-size: 17.6px; }
+[data-fs] .bnd-opp { font-size: 17.6px; }
+
+/* 28-linechart.css */
+[data-fs] .lc-ytitle { font-size: 14.5px; }
+[data-fs] .lc-tip { font-size: 17.6px; }
+[data-fs] .lc-compact .lc-tip { font-size: 17.6px; }
+[data-fs] .rseg .seg3-s > button { font-size: 17.6px; }
+
+/* 28-honours.css */
+[data-fs] .hb-name { font-size: 17.6px; }
+[data-fs] .hb-sub { font-size: 17.6px; }
+[data-fs] .hon-name b { font-size: 17.6px; }
+[data-fs] .hon-name span { font-size: 17.6px; }
+[data-fs] .hon-name em { font-size: 17.6px; }
+[data-fs] .hon-tier-txt b { font-size: 15px; }
+[data-fs] .hon-need { font-size: 17.6px; }
+[data-fs] .hon-fx { font-size: 17.6px; }
+[data-fs] .hm-tip { font-size: 17.6px; }
+[data-fs] .hm-tip-h b { font-size: 17.6px; }
+[data-fs] .hm-tip-tier b { font-size: 17.6px; }
+[data-fs] .hm-tip-tier em { font-size: 17.6px; }
+[data-fs] .hm-tip-foot { font-size: 17.6px; }
+
+/* 28-verhandlung.css */
+[data-fs] .vt-title { font-size: 32px; }
+[data-fs] .vt-ctx { font-size: 20px; }
+[data-fs] .vt-step { font-size: 19px; }
+[data-fs] .vt-step-n { font-size: 17.6px; }
+[data-fs] .vt-card-h { font-size: 21px; }
+[data-fs] .vt-card-r { font-size: 17.6px; }
+[data-fs] .vt-h { font-size: 17.6px; }
+[data-fs] .vt-kv { font-size: 17.6px; }
+[data-fs] .vt-kv > b em { font-size: 17.6px; }
+[data-fs] .vt-kv.strong > b { font-size: 21px; }
+[data-fs] .vt-kv.wrap > b { font-size: 17.6px; }
+[data-fs] .vt-blank { font-size: 21px; }
+[data-fs] .vt-who-name { font-size: 28px; }
+[data-fs] .vt-who-sub { font-size: 17.6px; }
+[data-fs] .vt-kpis b { font-size: 20px; }
+[data-fs] .vt-kpis span { font-size: 17.6px; }
+[data-fs] .vt-subject-n { font-size: 23px; }
+[data-fs] .vt-bal-ends { font-size: 17.6px; }
+[data-fs] .vt-bal-word { font-size: 17.6px; }
+[data-fs] .vt-levers li { font-size: 17.6px; }
+[data-fs] .vt-lever-sign { font-size: 20px; }
+[data-fs] .vt-pos-num > span { font-size: 17.6px; }
+[data-fs] .vt-pos-num > b { font-size: 40px; }
+[data-fs] .vt-pos-num.gap > b { font-size: 22px; }
+[data-fs] .vt-pos-legend { font-size: 17.6px; }
+[data-fs] .vt-pos-chart-h { font-size: 17.6px; }
+[data-fs] .vt-pos-chart-h span { font-size: 17.6px; }
+[data-fs] .vt-tick { font-size: 17.6px; }
+[data-fs] .vt-thead { font-size: 17.6px; }
+[data-fs] .vt-lab { font-size: 17.6px; }
+[data-fs] .vt-ask { font-size: 20px; }
+[data-fs] .vt-row.tall .vt-ask { font-size: 17.6px; }
+[data-fs] .vt-ctl-note { font-size: 17.6px; }
+[data-fs] .vt-nudge { font-size: 20px; }
+[data-fs] .vt-val { font-size: 20px; }
+[data-fs] .vt-chip { font-size: 17.6px; }
+[data-fs] .vt-pill { font-size: 17.6px; }
+[data-fs] .vt-hint { font-size: 17.6px; }
+[data-fs] .vt-src { font-size: 17.6px; }
+[data-fs] .vt-stack-h { font-size: 17.6px; }
+[data-fs] .vt-stack-h b { font-size: 21px; }
+[data-fs] .vt-stack-ask em { font-size: 17.6px; }
+[data-fs] .vt-stack-leg { font-size: 17.6px; }
+[data-fs] .vt-mood-word { font-size: 31px; }
+[data-fs] .vt-mood-l { font-size: 17.6px; }
+[data-fs] .vt-mood-n { font-size: 17.6px; }
+[data-fs] .vt-log-empty { font-size: 17.6px; }
+[data-fs] .vt-say { font-size: 17.6px; }
+[data-fs] .vt-say-who { font-size: 17.6px; }
+[data-fs] .vt-say.who-info { font-size: 17.6px; }
+[data-fs] .vt-effect { font-size: 17.6px; }
+[data-fs] .vt-notice { font-size: 17.6px; }
+[data-fs] .vt-out-kicker { font-size: 17.6px; }
+[data-fs] .vt-out-title { font-size: 56px; }
+[data-fs] .vt-out-text { font-size: 21px; }
+[data-fs] .vt-out-grid h3 { font-size: 19px; }
+[data-fs] .vt-out-terms > div { font-size: 18px; }
+[data-fs] .vt-out-next { font-size: 17.6px; }
+[data-fs] .vt-sign i { font-size: 19px; }
+[data-fs] .vt-sign span { font-size: 17.6px; }
+[data-fs] .vt-stamp b { font-size: 50px; }
+[data-fs] .vt-stamp span { font-size: 17.6px; }
+
+/* 28-loans.css */
+[data-fs] .ln-cond { font-size: 17.6px; }
+[data-fs] .ln-kv { font-size: 17.6px; }
+[data-fs] .ln-notes { font-size: 17.6px; }
+
+/* 28-scoutx.css */
+[data-fs] .scx-bar-n { font-size: 17.6px; }
+[data-fs] .scx-cost { font-size: 17.6px; }
+[data-fs] .scx-reg-head { font-size: 17.6px; }
+[data-fs] .scx-reg { font-size: 17.6px; }
+[data-fs] .scx-desc { font-size: 17.6px; }
+[data-fs] .scx-lab { font-size: 17.6px; }
+[data-fs] .ycm-label { font-size: 17.6px; }
+[data-fs] .ycm-legend { font-size: 17.6px; }
+[data-fs] .ycx-lv-head { font-size: 17.6px; }
+[data-fs] .ycx-lv-head .muted { font-size: 17.6px; }
+[data-fs] .ycx-lv-desc { font-size: 17.6px; }
+[data-fs] .ycx-lv-foot .muted { font-size: 17.6px; }
+[data-fs] .ycx-state { font-size: 17.6px; }
+
+/* 28-lazy.css */
+[data-fs] .lazy-note { font-size: 17.6px; }
+
+/* 29-look.css */
+[data-fs] .dkpi-lbl { font-size: 15.5px; }
+[data-fs] .pos-badge { font-size: 15.5px; }
+[data-fs] .pos-badge.pb-c { font-size: 14.5px; }
+[data-fs] .pb-more { font-size: 17.6px; }
+[data-fs] .pb-tip-head { font-size: 15px; }
+[data-fs] .pb-tip-tier { font-size: 15.5px; }
+[data-fs] .pb-tip-games { font-size: 15.5px; }
+[data-fs] .pb-tip-note { font-size: 15.5px; }
+[data-fs] .dform i { font-size: 14.5px; }
+
+/* 29-buttons.css */
+[data-fs] .b3,
+[data-fs] .dchip,
+[data-fs] .chip,
+[data-fs] .ms-chip,
+[data-fs] .tm-chip,
+[data-fs] .cp-map-tab,
+[data-fs] .lp-countries button,
+[data-fs] .pp-preset,
+[data-fs] .bf-toggle { font-size: var(--btn-font); }
+[data-fs] .b3-s,
+[data-fs] .dchip.b3-s { font-size: 17.6px; }
+[data-fs] .b3-l { font-size: 17.6px; }
+[data-fs] .b3-n { font-size: 0.9em; }
+[data-fs] .btn-sm { font-size: 17.6px; }
+[data-fs] .seg3 > button,
+[data-fs] .seg-group > .seg-btn,
+[data-fs] .seg-group > button,
+[data-fs] .lu-seg > button,
+[data-fs] .ng-seg > button,
+[data-fs] .lp-seg > button,
+[data-fs] .sv-seg > button,
+[data-fs] .mr-lu-toggle > button { font-size: var(--btn-font); }
+[data-fs] .seg3-s > button { font-size: 17.6px; }
+[data-fs] .seg3-l > button { font-size: 17.6px; }
+[data-fs] .sel3 { font-size: var(--btn-font); }
+[data-fs] .sel3-s { font-size: 17.6px; }
+[data-fs] .sel3-l { font-size: 17.6px; }
+[data-fs] .sel3-opt { font-size: 17.6px; }
+[data-fs] .sel3-group { font-size: 17.6px; }
+[data-fs] .sel3-empty { font-size: 17.6px; }
+[data-fs] .ms-speed > .seg-btn,
+[data-fs] .dr-speed > .seg-btn,
+[data-fs] .ix-plan .seg-group > .seg-btn,
+[data-fs] .ix-ctrl .seg-group > .seg-btn { font-size: 17.6px; }
+[data-fs] button.sel3.sel3 { font-size: var(--btn-font); }
+[data-fs] button.sel3.sel3.sel3-s { font-size: 17.6px; }
+[data-fs] button.sel3.sel3.sel3-l { font-size: 17.6px; }
+[data-fs] .dz-act { font-size: 17.6px; }
+[data-fs] .ev-choice-l { font-size: 17.6px; }
+[data-fs] .ev-choice-h { font-size: 17.6px; }
+[data-fs] .ev-result { font-size: 17.6px; }
+[data-fs] .dz-ntable td.dz-ncol-cat { font-size: 17.6px; }
+
+/* 31-akte.css */
+[data-fs] .hd-nav-item { font-size: 17.6px; }
+[data-fs] .tn-sub-item { font-size: 17.6px; }
+[data-fs] .dbox > .dxh .dxh-title { font-size: 22px; }
+[data-fs] .dz-wt { font-size: 19px; }
+[data-fs] .dz-fn-title { font-size: 19px; }
+[data-fs] .dz-nh-title { font-size: 40px; }
+[data-fs] .dz-nh-count { font-size: 17.6px; }
+[data-fs] .dz-nh-act .b3 { font-size: 17.6px; }
+[data-fs] .dz-news > .inbox-filter .seg3 > * { font-size: 17.6px; }
+[data-fs] .dz-news > .inbox-filter .inbox-cat .sel3-btn,
+[data-fs] .dz-news > .inbox-filter .inbox-cat button { font-size: 17.6px; }
+[data-fs] .dz-rdate { font-size: 28px; }
+[data-fs] .dz-rsubj { font-size: 30px; }
+[data-fs] .cal-box .cal-wd { font-size: 17.6px; }
+[data-fs] .cal-box .cal-legend { font-size: 17.6px; }
+[data-fs] .cal-box .cal-grid-fill .cal-dom { font-size: 24px; }
+[data-fs] .cal-box .cal-ev-txt { font-size: 17.6px; }
+
+/* 33-compact.css */
+[data-fs][data-ui] .hd-nav-item { font-size: 17.6px; }
+[data-fs][data-ui="narrow"] .hd-nav-item { font-size: 17.6px; }
+[data-fs][data-ui] .sf-kpi b { font-size: 26px; }
+[data-fs][data-ui] .sf-kpi span,
+[data-fs][data-ui] .sf-kpi i { font-size: 17.6px; }
+[data-fs][data-ui="narrow"] .dz-news > .inbox-filter .seg3 > * { font-size: 17.6px; }

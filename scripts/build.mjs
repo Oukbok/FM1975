@@ -3,10 +3,13 @@
 //   node scripts/build.mjs --serve  -> Entwicklungsserver mit Auto-Rebuild (http://localhost:5173)
 import * as esbuild from 'esbuild';
 import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 const serve = process.argv.includes('--serve');
 const out = 'dist';
 
+// Lesbare Schrift auf kleinen Bildschirmen: styles/34-compact-fonts.css aus allen Stylesheets erzeugen.
+execFileSync(process.execPath, ['scripts/compact-fonts.mjs'], { stdio: 'inherit' });
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 cpSync('public', out, { recursive: true });
