@@ -65,3 +65,14 @@
 [data-fs] .mk-table .mk-rec-t { display: none; }
 [data-fs] .mk-table .mk-c-know { display: none; }
 [data-fs] .mk-rec { max-width: none; }
+/* Mitarbeiter-Markt bei angehobener Schrift: nur die stärkste Fähigkeit (alle im Profil) */
+[data-fs] .sf-td-skills span:nth-child(n + 2) { display: none; }
+/* Kopfleiste bei angehobener Schrift: 10 Punkte à 17,6 px passen nur ohne Sperrung und mit
+   schmalen Abständen (harte Prüfung „Menü passt nicht“, lange Vereinsnamen) */
+[data-fs] .hd-bar { gap: 10px; }
+[data-fs] .hd-logo { padding-right: 18px; }
+[data-fs][data-ui] .hd-nav .hd-nav-item { padding: 0 2px; letter-spacing: 0; }
+[data-fs] .hd-club-name { max-width: 140px; }
+/* Tabellen bei angehobener Schrift auch auf 1366×768 mit schmalem Zellabstand */
+[data-fs] .dtable thead th,
+[data-fs] .dtable td { padding-left: 5px; padding-right: 5px; }

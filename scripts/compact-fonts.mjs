@@ -17,6 +17,9 @@ const OUT_NAME = '34-compact-fonts.css';
 const ATTR = '[data-fs]';
 /** Haupttext ≥ 17,6 CSS-px = 11 px auf dem Bildschirm bei 0,625. */
 const MAIN = 17.6;
+/** Nicht anheben: dichte Raster mit fest berechneter Zeilenhöhe (Fähigkeiten im Spielerprofil,
+ *  `--sk-lh` passt die Zeilen in die feste Box) – größer überlappen die Zeilen. */
+const NO_LIFT = /\.pp2-s(row|val)\b|\.pp-attr-lbl\b/;
 
 /** Neue Größe in CSS-px: Text ab 12 px auf die Lesegrenze, kleinere Nebentexte (Etiketten,
  *  Fußnoten, Achsen) um 4 px größer, aber unter der Grenze. */
@@ -115,7 +118,8 @@ function walk(css, indent = '') {
       continue; // @keyframes, @font-face, @property …
     }
     const decl = fontSizes(body);
-    if (!decl.length || !prelude) continue;
+    // Regeln mit [data-fs] (33-compact.css) gelten schon nur für angehobene Schrift – nicht spiegeln.
+    if (!decl.length || !prelude || prelude.includes('[data-fs') || NO_LIFT.test(prelude)) continue;
     out += `${indent}${mirrorSelector(prelude).split('\n').join('\n' + indent)} { ${decl.join('; ')}; }\n`;
   }
   return out;

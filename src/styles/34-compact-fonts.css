@@ -401,7 +401,6 @@
 [data-fs] .pp-note { font-size: 17.6px; }
 [data-fs] .pp-empty { font-size: 17.6px; }
 [data-fs] .pp-skill-gt { font-size: 15px; }
-[data-fs] .pp-attr-lbl { font-size: 17.6px; }
 [data-fs] .pp-attr-val { font-size: 17.6px; }
 [data-fs] .pp-pitch-pos { font-size: 15px; }
 [data-fs] .pp-pitch-val { font-size: 17.6px; }
@@ -1768,8 +1767,6 @@
 [data-fs] .pp2-forpos { font-size: 17.6px; }
 [data-fs] .pp2-select { font-size: 17.6px; }
 [data-fs] .pp2-sgt { font-size: 15.5px; }
-[data-fs] .pp2-srow .pp-attr-lbl { font-size: 17.6px; }
-[data-fs] .pp2-sval { font-size: 17.6px; }
 [data-fs] .pp2-prog { font-size: 17.6px; }
 [data-fs] .pp2-check { font-size: 17.6px; }
 [data-fs] .pp2-tabs .tab { font-size: 17.6px; }
