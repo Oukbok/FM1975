@@ -41,11 +41,21 @@ function aliveInCup(g: Game, id: string): boolean {
  * Verein nach heutigem Stand noch spielen kann.
  */
 export function clubCommitments(g: Game, id: string, conservative: boolean, exclude?: Match): Commitment[] {
+  return [...leagueCommitments(g, id, exclude), ...otherCommitments(g, id, conservative)];
+}
+
+function leagueCommitments(g: Game, id: string, exclude?: Match): Commitment[] {
   const out: Commitment[] = [];
   for (const m of g.fixtures) {
     if (m === exclude || (m.homeClubId !== id && m.awayClubId !== id)) continue;
     out.push({ date: m.date, kind: 'liga' });
   }
+  return out;
+}
+
+/** Pokal-, Europapokal- und Hallentermine (ohne Liga) – ändern sich beim Verlegen von Ligaspielen nicht. */
+function otherCommitments(g: Game, id: string, conservative: boolean): Commitment[] {
+  const out: Commitment[] = [];
   for (const ev of g.calendar.events) {
     if (ev.type === 'cup_matchday' && g.cup?.participantIds.includes(id)) {
       if (conservative || cupPossible(g, ev, id)) out.push({ date: ev.date, kind: 'pokal' });
@@ -164,9 +174,16 @@ function weekendOptions(m: Match, base: string): string[] {
 function weekendRepair(g: Game, today: string): void {
   const base = matchdayBaseDates(g.fixtures);
   const horizon = addD(today, LOOKAHEAD);
+  // Nicht-Liga-Termine je Verein einmal je Tag (Verlegungen ändern nur Ligatermine); Liga frisch.
+  const other = new Map<string, Commitment[]>();
+  const commits = (id: string, m: Match) => {
+    let o = other.get(id);
+    if (!o) { o = otherCommitments(g, id, false); other.set(id, o); }
+    return [...leagueCommitments(g, id, m), ...o];
+  };
   for (const m of g.fixtures) {
     if (m.status !== 'scheduled' || m.date <= today || m.date > horizon) continue;
-    const list = [...clubCommitments(g, m.homeClubId, false, m), ...clubCommitments(g, m.awayClubId, false, m)];
+    const list = [...commits(m.homeClubId, m), ...commits(m.awayClubId, m)];
     const now = slack(m.date, list);
     if (now >= WANT_GAP_DAYS) continue;
     const b = m.moved?.makeup ? m.date : base.get(m.matchday) ?? m.date;

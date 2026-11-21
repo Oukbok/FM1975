@@ -201,7 +201,14 @@ export function ensureWorldPool(g: Game): WorldPool {
   const clubs = worldClubs(g);
   const have = new Set<string>();
   const gone: WP[] = [];
-  pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) { gone.push(w); return false; } have.add(w[W.club]); return true; });
+  // Montags für alle Weltspieler: erst nur prüfen (Kader liegen am Stück → Verein nur beim Wechsel
+  // nachschlagen), neu aufbauen nur, wenn jemand ohne Verein in der Welt ist. Ergebnis wie vorher.
+  let lastClub: string | undefined, lastOk = false, anyGone = false;
+  for (const w of pool.p) {
+    if (w[W.club] !== lastClub) { lastClub = w[W.club]; lastOk = clubs.has(lastClub); if (lastOk) have.add(lastClub); }
+    if (!lastOk) anyGone = true;
+  }
+  if (anyGone) pool.p = pool.p.filter((w) => { if (!clubs.has(w[W.club])) { gone.push(w); return false; } return true; });
   noteGone(g, gone);
   for (const c of clubs.values()) if (!have.has(c.id)) pool.p.push(...squadFor(g, pool, c, year));
   numberWorldPool(pool, year);
@@ -283,6 +290,9 @@ export function worldPoolSeason(g: Game): void {
   // Nachführen an die Vereinsstärke (Median-Abstand der Stammkräfte, höchstens ±3 je Saison)
   byClub.clear();
   for (const w of pool.p) { const l = byClub.get(w[W.club]); if (l) l.push(w); else byClub.set(w[W.club], [w]); }
+  // Überzählige aller Vereine erst am Ende herausnehmen (einmal statt je Verein durch den ganzen Pool;
+  // Nachrücker sind neue IDs – Reihenfolge wie vorher).
+  const surplus = new Set<string>();
   for (const [cid, l] of byClub) {
     const club = clubs.get(cid);
     if (!club) continue;
@@ -295,12 +305,12 @@ export function worldPoolSeason(g: Game): void {
     const prosList = l.filter((w) => !w[W.youth]).sort((a, b) => b[W.ov] - a[W.ov]);
     if (prosList.length > 24) {
       left.push(...prosList.slice(24));
-      const gone = new Set(prosList.slice(24).map((w) => w[W.id]));
-      pool.p = pool.p.filter((w) => !gone.has(w[W.id]));
+      for (const w of prosList.slice(24)) surplus.add(w[W.id]);
     }
     const pros = Math.min(24, prosList.length);
     for (let i = pros; i < 20; i++) pool.p.push(makeWP(g, pool, club, SLOTS[Math.floor(r() * SLOTS.length)], club.strength - 4 - r() * 8, 19 + Math.floor(r() * 10), year, false, r));
   }
+  if (surplus.size) pool.p = pool.p.filter((w) => !surplus.has(w[W.id]));
   noteGone(g, left);
   ensureWorldPool(g);
 }

@@ -102,14 +102,33 @@ function realRoster(g: LightGame, club: Club): Pl[] {
     .sort((a, b) => b.overall - a.overall).map((p) => ({ id: p.id, pos: p.naturalPosition, q: p.overall }));
 }
 
+type WTuple = [string, string, string, string, string, string, number, Position, number, number, number, number, number];
+/**
+ * Weltspieler je Verein für die Dauer eines Spieltags (`withWorldRosters`): sonst filtert jedes
+ * Hintergrundspiel zweimal den ganzen Pool. Gleiche Reihenfolge wie der Filter (Pool-Reihenfolge).
+ */
+let rosterIndex: { p: WTuple[]; n: number; by: Map<string, WTuple[]> } | null = null;
+/** Zwischenspeicher leeren (game/resetModuleState.ts). */
+export function clearWorldRosters(): void { rosterIndex = null; }
+/** `fn` mit Vereins-Index der Weltspieler ausführen (der Pool darf sich dabei nicht ändern). */
+export function withWorldRosters<T>(g: LightGame, fn: () => T): T {
+  const wp = (g as LightGame & { worldPool?: { p: WTuple[] } }).worldPool;
+  if (!wp || rosterIndex) return fn();
+  const by = new Map<string, WTuple[]>();
+  for (const w of wp.p) { if (w[12]) continue; const l = by.get(w[1]); if (l) l.push(w); else by.set(w[1], [w]); }
+  rosterIndex = { p: wp.p, n: wp.p.length, by };
+  try { return fn(); } finally { rosterIndex = null; }
+}
+
 function rosterOf(g: LightGame, cup: CupState, id: string, year: number): Pl[] {
   const c = g.clubs[id];
   if (c && c.playerIds.length >= 11) return realRoster(g, c);
   const eu = g.euroClubs?.[id];
   // Weltspieler (game/worldPool.ts): dieselben Namen wie im Spielerpool.
-  const wp = (g as LightGame & { worldPool?: { p: [string, string, string, string, string, string, number, Position, number, number, number, number, number][] } }).worldPool;
+  const wp = (g as LightGame & { worldPool?: { p: WTuple[] } }).worldPool;
   if (wp) {
-    const list = wp.p.filter((w) => w[1] === id && !w[12]).sort((a, b) => b[8] - a[8]).slice(0, 18);
+    const idx = rosterIndex && rosterIndex.p === wp.p && rosterIndex.n === wp.p.length ? rosterIndex : null;
+    const list = (idx ? [...(idx.by.get(id) ?? [])] : wp.p.filter((w) => w[1] === id && !w[12])).sort((a, b) => b[8] - a[8]).slice(0, 18);
     if (list.length >= 14) {
       const people = (cup.xpeople ??= {});
       return list.map((w) => { if (!people[w[0]]) people[w[0]] = [`${w[2]} ${w[3]}`, id, w[7]]; return { id: w[0], pos: w[7], q: w[8] }; });

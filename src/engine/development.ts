@@ -575,7 +575,15 @@ export function ratingTendencies(players: Player[], staffQuality: number): { pla
 /** Aktualisiert das Alter aller Spieler zum aktuellen Datum (UTC). */
 export function updateAges(players: Record<string, Player>, currentDateISO: string): void {
   const now = new Date(currentDateISO + 'T00:00:00Z');
+  // Schneller Weg ohne Date-Objekte (täglich für alle Spieler): nur für eindeutige Daten „JJJJ-MM-TT“
+  // mit Tag ≤ 28 (immer gültig) – sonst wie bisher über Date (normalisiert z. B. den 30.2.).
+  const ny = now.getUTCFullYear(), nmd = (now.getUTCMonth() + 1) * 100 + now.getUTCDate();
   for (const p of Object.values(players)) {
+    const d = p.dateOfBirth;
+    if (typeof d === 'string' && d.length === 10 && d[4] === '-' && d[7] === '-') {
+      const y = +d.slice(0, 4), m = +d.slice(5, 7), day = +d.slice(8, 10);
+      if (y >= 1000 && m >= 1 && m <= 12 && day >= 1 && day <= 28) { p.age = ny - y - (nmd < m * 100 + day ? 1 : 0); continue; }
+    }
     const dob = new Date(p.dateOfBirth + 'T00:00:00Z');
     let age = now.getUTCFullYear() - dob.getUTCFullYear();
     const m = now.getUTCMonth() - dob.getUTCMonth();

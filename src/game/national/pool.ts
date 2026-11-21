@@ -18,7 +18,8 @@ export interface Cand { id: string; name: string; nat: string; pos: Position; ov
 const yearOf = (iso: string) => parseInt(iso.slice(0, 4), 10);
 
 /** Nation, für die ein Kürzel im Jahr spielt (Nachfolger bei zerfallenen Staaten). */
-export function nationFor(code: string, year: number): string | null {
+export function nationFor(code: string, year: number): string | null { return nationForCode(code, year); }
+function nationForCode(code: string, year: number): string | null {
   let c = code;
   for (let i = 0; i < 3; i++) {
     const n = NATION_BY_CODE[c];
@@ -39,6 +40,9 @@ export function candidatesByNation(g: Game, date = g.calendar.currentDate): Map<
   const year = yearOf(date);
   const by = new Map<string, Cand[]>();
   const add = (c: Cand) => { const l = by.get(c.nat); if (l) l.push(c); else by.set(c.nat, [c]); };
+  // Nation je Kürzel nur einmal nachschlagen (wenige hundert Kürzel, zehntausende Spieler).
+  const natMemo = new Map<string, string | null>();
+  const nationFor = (code: string, y: number) => { let n = natMemo.get(code); if (n === undefined) { n = nationForCode(code, y); natMemo.set(code, n); } return n; };
   for (const p of Object.values(g.players)) {
     if (!p.clubId || !g.clubs[p.clubId] || p.age < 17 || p.age > 38) continue;
     const nat = nationFor(p.nationality, year);
@@ -58,18 +62,48 @@ export function candidatesByNation(g: Game, date = g.calendar.currentDate): Map<
   return by;
 }
 
-/** Persönliche Note des Bundestrainers (fest je Spieler und Jahr, ±2). */
-const taste = (id: string, year: number) => ((hashStr(`${id}|${year}|nt`) % 41) - 20) / 10;
+/** Persönliche Note des Bundestrainers (fest je Spieler und Jahr, ±2; zwischengespeichert je Jahr). */
+let tasteMemo: { year: number; m: Map<string, number> } = { year: -1, m: new Map() };
+const taste = (id: string, year: number) => {
+  if (tasteMemo.year !== year) tasteMemo = { year, m: new Map() };
+  let t = tasteMemo.m.get(id);
+  if (t === undefined) { t = ((hashStr(`${id}|${year}|nt`) % 41) - 20) / 10; tasteMemo.m.set(id, t); }
+  return t;
+};
 
 /** Aufgebot einer Nation (3 Torhüter + Feldspieler); `exclude` = verletzt/nicht verfügbar. */
 export function pickSquad(g: Game, nat: string, date: string, size = squadSizeOf(yearOf(date)), exclude?: (c: Cand) => boolean): Cand[] {
   const year = yearOf(date);
   const all = (candidatesByNation(g, date).get(nat) ?? []).filter((c) => !exclude?.(c));
   const score = (c: Cand) => c.ov + taste(c.id, year) - (c.age >= 34 ? (c.age - 33) * 1.5 : 0);
-  const sorted = [...all].sort((a, b) => score(b) - score(a));
-  const gks = sorted.filter((c) => c.pos === 'TW').slice(0, 3);
-  const field = sorted.filter((c) => c.pos !== 'TW').slice(0, size - gks.length);
+  // Wertung einmal je Kandidat (nicht in jedem Vergleich – hashStr ist teuer) und nur die Besten
+  // auswählen statt alle zu sortieren: gleiche Auswahl und Reihenfolge wie die stabile Sortierung
+  // (Wertung absteigend, bei Gleichstand die frühere Stelle zuerst).
+  const sc = all.map(score);
+  if (size < 3 || sc.some((x) => Number.isNaN(x))) {
+    const sorted = [...all].sort((a, b) => score(b) - score(a));
+    const gks = sorted.filter((c) => c.pos === 'TW').slice(0, 3);
+    return [...gks, ...sorted.filter((c) => c.pos !== 'TW').slice(0, size - gks.length)];
+  }
+  const gks = bestOf(all, sc, 3, (c) => c.pos === 'TW');
+  const field = bestOf(all, sc, size - gks.length, (c) => c.pos !== 'TW');
   return [...gks, ...field];
+}
+
+/** Die `k` besten Einträge (Wertung absteigend, stabil nach Stelle), die `ok` erfüllen. */
+function bestOf(all: Cand[], sc: number[], k: number, ok: (c: Cand) => boolean): Cand[] {
+  if (k <= 0) return [];
+  const idx: number[] = []; // Stellen, sortiert nach (Wertung ↓, Stelle ↑)
+  for (let i = 0; i < all.length; i++) {
+    if (!ok(all[i])) continue;
+    const s = sc[i];
+    if (idx.length === k && s <= sc[idx[k - 1]]) continue; // nicht besser als der Letzte (Gleichstand: frühere Stelle bleibt)
+    let j = idx.length < k ? idx.length : k - 1;
+    if (idx.length < k) idx.push(i);
+    while (j > 0 && sc[idx[j - 1]] < s) { idx[j] = idx[j - 1]; j--; }
+    idx[j] = i;
+  }
+  return idx.map((i) => all[i]);
 }
 
 /** Startelf eines Aufgebots: bester Torwart + zehn beste Feldspieler. */
@@ -100,7 +134,7 @@ export function activeNations(year: number): string[] {
 /** Stärke aller Nationen (zwischengespeichert je Tag). */
 let rankCache: { key: string; v: Map<string, number> } | null = null;
 /** Zwischenspeicher leeren (game/resetModuleState.ts; die Schlüssel kennen den Spielstand nicht). */
-export function clearNationalCache(): void { cache = null; rankCache = null; }
+export function clearNationalCache(): void { cache = null; rankCache = null; tasteMemo = { year: -1, m: new Map() }; }
 export function allStrengths(g: Game, date = g.calendar.currentDate): Map<string, number> {
   const key = `${date}|${Object.keys(g.players).length}`;
   if (rankCache?.key === key) return rankCache.v;

@@ -62,12 +62,13 @@ export function assignToFormation(
   formation: Formation,
   pool: Player[],
   benchSize = 5,
-  opts: { weight?: (p: Player) => number; benchPool?: Player[] } = {},
+  opts: { weight?: (p: Player) => number; benchPool?: Player[]; suit?: (p: Player, pos: Position) => number; noBench?: boolean } = {},
 ): LineupAssignment {
   const pairs: { slotId: string; playerId: string; value: number }[] = [];
+  const suit = opts.suit ?? positionSuitability;
   for (const slot of formation.slots) {
     for (const p of pool) {
-      pairs.push({ slotId: slot.id, playerId: p.id, value: positionSuitability(p, slot.position) * (opts.weight ? opts.weight(p) : 1) });
+      pairs.push({ slotId: slot.id, playerId: p.id, value: suit(p, slot.position) * (opts.weight ? opts.weight(p) : 1) });
     }
   }
   pairs.sort((a, b) => b.value - a.value);
@@ -90,6 +91,7 @@ export function assignToFormation(
 
   // Startelf in Slot-Reihenfolge
   const startingXI = formation.slots.map((s) => lineupMap[s.id]).filter(Boolean) as string[];
+  if (opts.noBench) return { lineupMap, assignedPositions, startingXI, substitutes: [] }; // nur Formationsvergleich
   // Ersatzbank (engine/benchPick.ts): Torwart, Abwehr innen/außen, Mittelfeld innen/außen,
   // Sturm außen/innen – jede Position der Startelf auswechselbar, dann doppelt, dann auffüllen.
   const rest = (opts.benchPool ?? pool).filter((p) => !usedPlayers.has(p.id)).sort((a, b) => b.overall - a.overall);
@@ -97,6 +99,21 @@ export function assignToFormation(
   const substitutes = pickBench(xiPos, rest, benchSize).map((p) => p.id);
 
   return { lineupMap, assignedPositions, startingXI, substitutes };
+}
+
+/**
+ * Eignung je Spieler und Position für einen Formationsvergleich zwischenspeichern (33 Systeme
+ * fragen dieselben ~14 Positionen ab; die Spieler ändern sich währenddessen nicht).
+ */
+export function suitabilityMemo(): (p: Player, pos: Position) => number {
+  const m = new Map<Player, Partial<Record<Position, number>>>();
+  return (p, pos) => {
+    let e = m.get(p);
+    if (!e) { e = {}; m.set(p, e); }
+    let v = e[pos];
+    if (v === undefined) { v = positionSuitability(p, pos); e[pos] = v; }
+    return v;
+  };
 }
 
 /**
@@ -108,15 +125,16 @@ export function pickBestFormation(pool: Player[]): Formation {
   let best = getFormation(DEFAULT_FORMATION_ID);
   let bestScore = -Infinity;
   const year = currentFormationYear();
+  const suit = suitabilityMemo();
   for (const f of FORMATIONS) {
     if (f.libero && liberoOut(year)) continue; // Libero ausgestorben (data/formations.ts)
-    const asg = assignToFormation(f, pool);
+    const asg = assignToFormation(f, pool, 5, { suit, noBench: true });
     let score = 0;
     for (const slot of f.slots) {
       const pid = asg.lineupMap[slot.id];
       if (pid) {
         const p = pool.find((x) => x.id === pid)!;
-        score += positionSuitability(p, slot.position);
+        score += suit(p, slot.position);
       }
     }
     if (f.libero) score += year < 1990 ? 12 : 0; // Ära-Bonus (mehrere Slots → moderat)

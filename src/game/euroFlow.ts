@@ -14,7 +14,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { withEuroSink } from '../engine/compStats';
 import { DM_PER_EUR, economyScale, euroMoneyFactor, yearOf } from '../engine/economy';
 import { groupDone, groupStandings } from '../engine/euroGroups';
-import { lightMatch, teamStrength } from '../engine/euroLight';
+import { lightMatch, teamStrength, withWorldRosters } from '../engine/euroLight';
 import { book, bookCupHomeMatch } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
 import { MatchEngine, type KoRule } from '../engine/match';
@@ -225,7 +225,7 @@ export function euroMatchdayV2(g: Game, comp: EuroCompId, cup: CupState, ri: num
     else ensureDrawn(g, comp, ri, today);
   }
   if (!round.drawn) return null;
-  const own = round.kind === 'ko' ? koSlot(g, comp, cup, ri, slot) : groupSlot(g, comp, cup, ri, slot);
+  const own = withWorldRosters(g, () => (round.kind === 'ko' ? koSlot(g, comp, cup, ri, slot) : groupSlot(g, comp, cup, ri, slot)));
   const lastSlot = (round.dates?.length ?? 1) - 1;
   if (slot < lastSlot) return own;
   if (round.kind !== 'ko') {

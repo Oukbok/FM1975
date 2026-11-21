@@ -10,7 +10,7 @@
 import { Club, ClubCoach, CoachPhilosophy, CoachStyle, LeagueTableRow, Player, Position, Tactics, TacticStyle } from '../types';
 import { decadeOf, FORMATIONS, getFormation, liberoOut } from '../data/formations';
 import { makeName, ORIGINS, pickOrigin } from '../data/origins';
-import { assignToFormation, buildAutoTactics } from './lineupAI';
+import { assignToFormation, buildAutoTactics, suitabilityMemo } from './lineupAI';
 import { positionSuitability } from './positions';
 import { hash01 } from './transferMarket';
 import { COUNTERPRESS_FROM, ZONE_DEFAULT_FROM, ZONE_FROM } from './tacticEra';
@@ -109,15 +109,16 @@ export function chooseFormation(pool: Player[], coach: ClubCoach, year: number):
   const byId = new Map(pool.map((p) => [p.id, p]));
   let best = getFormation(undefined).id, bestScore = -Infinity;
   const decade = decadeOf(year);
+  const suit = suitabilityMemo(); // gleiche Werte, je Spieler und Position nur einmal gerechnet
   for (const f of FORMATIONS) {
     // Libero ausgestorben: ab LIBERO_END wählt kein Trainer mehr ein Libero-System (Wunsch Pascal).
     if (f.libero && liberoOut(year)) continue;
-    const asg = assignToFormation(f, pool);
+    const asg = assignToFormation(f, pool, 5, { suit, noBench: true });
     let score = 0;
     for (const slot of f.slots) {
       const pid = asg.lineupMap[slot.id];
       const p = pid ? byId.get(pid) : undefined;
-      if (p) score += positionSuitability(p, slot.position);
+      if (p) score += suit(p, slot.position);
     }
     if (f.libero) score += year < 1985 ? 12 : year < 1992 ? 4 : -10;
     // Zeitgeist: typische Systeme der Epoche (Datensatz-Zuordnung `formationEras`).
