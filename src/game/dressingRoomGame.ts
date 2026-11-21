@@ -304,6 +304,10 @@ function cupShock(g: Game, dr: DressingRoomState, club: Club, squad: Player[], t
  * Keine Dauerkrise: Steckt die Stimmung gut drei Wochen unter 35, raufen sich die
  * Spieler selbst zusammen (Kapitän/Führungsspieler rufen die Mannschaft
  * zusammen) – höchstens alle 5 Wochen, stärker mit einem anerkannten Kapitän.
+ * Je tiefer die Krise und wenn schon die letzte Aussprache (vor ≤ 60 Tagen) nicht
+ * gereicht hat, desto deutlicher – die Aussprache klärt die Luft auch sofort ein Stück.
+ * Sonst hielt eine verkorkste Saison (Platz 17 statt 4, Stimmung bis 7) die Kabine
+ * über eine halbe Saison in der Krise (test:dressing „keine Dauerkrise“).
  */
 function rallyIfStuck(g: Game, dr: DressingRoomState, a: DRAnalysis, today: string): void {
   if (dr.mood >= 35) { dr.lowSince = undefined; return; }
@@ -311,7 +315,10 @@ function rallyIfStuck(g: Game, dr: DressingRoomState, a: DRAnalysis, today: stri
   if (days(dr.lowSince, today) < 24 || (dr.rally && days(dr.rally, today) < 35)) return;
   const cap = dr.captainId ? g.players[dr.captainId] : undefined;
   const strong = !!cap && (a.byId[cap.id]?.influence ?? 0) >= 60;
-  addBoost(dr, '*', strong ? 14 : 10, 'Spieler raufen sich zusammen', today, 45);
+  const again = !!dr.rally && days(dr.rally, today) <= 60;
+  const v = (strong ? 14 : 10) + Math.round(Math.max(0, 35 - dr.mood) * 0.6) + (again ? 4 : 0);
+  addBoost(dr, '*', v, 'Spieler raufen sich zusammen', today, 45);
+  dr.mood = Math.round(Math.min(100, dr.mood + v * 0.3) * 10) / 10;
   addBoost(dr, '#c', 6, 'Aussprache ohne Trainer', today, 45);
   dr.rally = today; dr.lowSince = today;
   const who = cap ? cap.fullName : 'Die Führungsspieler';
