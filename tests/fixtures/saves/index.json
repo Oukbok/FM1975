@@ -1,0 +1,68 @@
+[
+  {
+    "file": "test-10-jahre_2026-11-10_8b8bbb5.txt",
+    "source": "public/saves/test-10-jahre.txt @ 8b8bbb5",
+    "savedAt": "2026-11-10",
+    "season": "1985/86",
+    "gameDate": "1985-12-10",
+    "club": "Frankfurt Rot (fra)",
+    "fullSeason": true,
+    "why": "ältester Stand der Historie (gespeichert 10.11.): ohne game.ids, national, registration, private, reserve, superCup – uhrzeitbasierte IDs"
+  },
+  {
+    "file": "test-3-jahre_2026-11-15_8b8bbb5.txt",
+    "source": "public/saves/test-3-jahre.txt @ 8b8bbb5",
+    "savedAt": "2026-11-15",
+    "season": "1978/79",
+    "gameDate": "1978-12-10",
+    "club": "Frankfurt Rot (fra)",
+    "why": "erste Fassung im Repo, vor game.ids/extraAwards/clubTransfers/shirtsV; frühe Epoche (2-Punkte-Regel)"
+  },
+  {
+    "file": "italien-1985_2026-11-18_9bf5963.txt",
+    "source": "public/saves/italien-1985.txt @ 9bf5963",
+    "savedAt": "2026-11-18",
+    "season": "1985/86",
+    "gameDate": "1985-12-10",
+    "club": "Mailand Blau-Schwarz (ita-mailand-blau-schwarz)",
+    "why": "erste Fassung der Liga-Vorlagen: Heimatland Italien, vor Ligareformen/zweiten Ligen im Ausland und Ethnie-Abgleich"
+  },
+  {
+    "file": "regionalliga-2004_2026-11-18_0000527.txt",
+    "source": "public/saves/regionalliga-2004.txt @ 0000527",
+    "savedAt": "2026-11-18",
+    "season": "2004/05",
+    "gameDate": "2004-12-10",
+    "club": "Krefeld (kre)",
+    "fullSeason": true,
+    "why": "Regionalliga vor der Neubesetzung der Staffeln nach Region (1c6f7e3 ff.), ohne amateurLeagues/continents/faceNameV; Saisonwechsel mit Auf-/Abstieg der zweigleisigen Regionalliga"
+  },
+  {
+    "file": "ddr-1980_2026-11-20_ead6e41.txt",
+    "source": "public/saves/ddr-1980.txt @ ead6e41",
+    "savedAt": "2026-11-20",
+    "season": "1980/81",
+    "gameDate": "1980-12-10",
+    "club": "Frankfurt (Oder) (ddr-frankfurt-oder)",
+    "fullSeason": true,
+    "why": "aktuelles Format, Start in der DDR (DDR-Oberliga als Spielerliga, Mark der DDR)"
+  },
+  {
+    "file": "england3-1995_2026-11-20_ead6e41.txt",
+    "source": "public/saves/england3-1995.txt @ ead6e41",
+    "savedAt": "2026-11-20",
+    "season": "1995/96",
+    "gameDate": "1995-12-10",
+    "club": "Crewe (eng-crewe)",
+    "why": "aktuelles Format, Heimatland England, 3. Ebene, 3-Punkte-Regel"
+  },
+  {
+    "file": "liga1-2025_2026-11-20_ead6e41.txt",
+    "source": "public/saves/liga1-2025.txt @ ead6e41",
+    "savedAt": "2026-11-20",
+    "season": "2025/26",
+    "gameDate": "2025-12-10",
+    "club": "Wolfsburg (h_wob)",
+    "why": "aktuelles Format, späteste Epoche (Euro, Ligaphase im Europapokal, alle modernen Systeme)"
+  }
+]
