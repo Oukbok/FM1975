@@ -1,6 +1,8 @@
 // =============================================================================
 // Keine echten Vereinsnamen, Marken oder realen Fußballer im Spiel (Wunsch Pascal: Marketingrechte).
 //   npm run test:realnames      (läuft auch in npm run test:names)
+// „Bitte nenne keine echten Namen“ (Wunsch Pascal): auch Politiker, Künstler, Sportler, Bands, Sendungen, Filme und
+// Produktmarken stehen auf der Sperrliste (tests/realPeopleList.ts) – im Text die Funktion nennen („der Bundeskanzler“).
 // Durchsucht alle angezeigten Texte der Datendateien (nur String-Inhalte, Kommentare ausgenommen)
 // nach einer Sperrliste echter Vereinsnamen/Kurzformen/Spitznamen, Stadion-Marken und bekannter
 // Spieler/Trainer/Funktionäre. Im Spiel heißen Vereine nach Stadt (+ Farbe), z. B. „München Rot“,
@@ -9,6 +11,7 @@
 // =============================================================================
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC } from './realPeopleList';
 
 let fails = 0;
 const ok = (c: boolean, msg: string) => { if (!c || process.env.VERBOSE) console.log(`${c ? 'OK  ' : 'FEHL'} ${msg}`); if (!c) fails++; };
@@ -24,7 +27,10 @@ const FILES = [
   'src/data/merchCatalog.ts', 'src/data/contractClauses.ts', 'src/data/matchCalendarRules.ts', 'src/data/youthCompetitions.ts',
   'src/data/youthLowerLeagues.ts', 'src/data/euroFormats.ts', 'src/data/winterBreaks.ts', 'src/data/marketing.ts',
   'src/data/staff.ts', 'src/data/leagueTiers.ts', 'src/data/prematch/cityTextsDe.ts', 'src/data/prematch/cityTextsAbroad.ts',
-  'src/engine/sponsorship.ts',
+  'src/engine/sponsorship.ts', 'src/game/briefingChanges.ts', 'src/game/briefingStories.ts', 'src/game/seasonTasks.ts', 'src/game/indoorNews.ts',
+  'src/data/indoorAbroad.ts', 'src/data/privateLife.ts', 'src/data/activities.ts', 'src/data/fanCulture.ts', 'src/data/superCups.ts',
+  'src/data/scoutingProducts.ts', 'src/data/campImages.ts', 'src/data/history.ts', 'src/data/ddr.ts', 'src/data/transferRecords.ts',
+  'src/data/clubHonours.ts', 'src/data/sponsorTalkLines.ts', 'src/screens/match/board/SidePanels.tsx',
 ];
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => {
   const p = join(d, f);
@@ -131,16 +137,27 @@ const PEOPLE: RegExp[] = [
 // \b kennt in JS keine Umlaute/Akzente („Pelé“, „Özil“) – Wortgrenze daher über Unicode-Buchstaben.
 const WB = '(?:(?<![\\p{L}\\p{N}])(?=[\\p{L}\\p{N}])|(?<=[\\p{L}\\p{N}])(?![\\p{L}\\p{N}]))';
 const uni = (r: RegExp) => new RegExp(r.source.replace(/\\b/g, WB), 'u' + r.flags);
+// Listen aus realPeopleList.ts: Bruchstücke ohne Wortgrenzen; Personen auch im Genitiv.
+const EDGE_L = '(?<![\\p{L}\\p{N}])', EDGE_R = '(?![\\p{L}\\p{N}])';
+const listRules = (kind: string, list: string[], genitive: boolean) =>
+  list.map((s) => [kind, new RegExp(`${EDGE_L}(?:${s})${genitive ? 's?' : ''}${EDGE_R}`, 'u')] as const);
 const RULES = [...CLUBS.map((r) => ['Verein', uni(r)] as const), ...BRANDS.map((r) => ['Marke', uni(r)] as const),
   // Personen auch im Genitiv („Beckenbauers“, „Happels HSV“).
-  ...PEOPLE.map((r) => ['Person', uni(new RegExp(r.source.replace(/\\b$/, 's?\\b')))] as const)];
+  ...PEOPLE.map((r) => ['Person', uni(new RegExp(r.source.replace(/\\b$/, 's?\\b')))] as const),
+  ...listRules('Person', [...POLITICS, ...ATHLETES, ...FOOTBALL_PEOPLE, ...HISTORIC], true),
+  ...listRules('Kultur', CULTURE, false), ...listRules('Marke', PRODUCTS, false)];
 
 // Selbstprüfung: Beispiele werden erkannt, Spielnamen und Bundesland bleiben frei.
 const hitOf = (s: string) => RULES.find(([, r]) => r.test(s));
 const must = ['der FC Bayern', 'Gladbach gegen Bayern', 'Eintracht Braunschweig', 'Dynamo Dresden', 'Real Madrid', 'Allianz Arena',
-  'Franz Beckenbauer', 'Pelé und Uli Hoeneß', 'Özil', 'Der Kaiser übernimmt', 'beim HSV', '1. FC Köln', 'Karlsruher SC', 'SV Werder', 'Happels Pressing', 'Hansa Rostock', 'Manchester United', 'Ajax Amsterdam', 'ARD und ZDF', 'bei Sky', 'Kirch-Pleite'];
+  'Franz Beckenbauer', 'Pelé und Uli Hoeneß', 'Özil', 'Der Kaiser übernimmt', 'beim HSV', '1. FC Köln', 'Karlsruher SC', 'SV Werder', 'Happels Pressing', 'Hansa Rostock', 'Manchester United', 'Ajax Amsterdam', 'ARD und ZDF', 'bei Sky', 'Kirch-Pleite',
+  'Bundeskanzler Helmut Schmidt', 'Nach 16 Jahren Kohl', 'Kanzler Schröder', 'Friedrich Merz', 'Honeckers Besuch', 'Sigmund Jähn', 'Gorbatschow',
+  'Boris Becker, 17', 'Steffi Graf', 'Michael Schumacher', 'die Kelly Family', 'ABBA und Disco', 'der „Stern“', 'das iPhone', 'bei Facebook',
+  'Windows 95', 'der Walkman', 'Neymar', '„Krieg der Sterne“', 'Lindenstraße', 'Richard Wagner', 'Johannes Gutenberg'];
 const free = ['München Rot', 'Mönchengladbach', 'Hamburg Blau', 'Gelsenkirchen', 'Dresden', 'Regionalliga Bayern', 'in Bayern',
-  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil', 'Bezahlsender', 'Kirchheim', 'Premieren-Abend', 'Ufa'];
+  'Bergisch Gladbach', 'Madrid Weiß', 'Mailand Rot-Schwarz', 'Liverpool Rot', 'Porto', 'Daumen hoch', 'Kaiserslautern', 'Bosman-Urteil', 'Bezahlsender', 'Kirchheim', 'Premieren-Abend', 'Ufa',
+  'der Bundeskanzler', 'ein DDR-Kosmonaut', 'an der Havel', 'Kohl und Rüben', 'Schmidt', 'Bosman-Urteil', 'Hartz IV', 'Lutherstadt Wittenberg',
+  'Karl-Marx-Stadt', 'Die Zwanziger', 'Madonna di Campiglio', 'der Stern auf dem Trikot', 'E-Scooter', 'Riester-Rente', 'Die Ärzte rechnen'];
 const missed = must.filter((s) => !hitOf(s)), wrong = free.filter((s) => hitOf(s));
 ok(!missed.length, `Sperrliste erkennt Beispiele${missed.length ? ' – verfehlt: ' + missed.join(', ') : ''}`);
 ok(!wrong.length, `Spielnamen/Orte bleiben frei${wrong.length ? ' – fälschlich: ' + wrong.join(', ') : ''}`);

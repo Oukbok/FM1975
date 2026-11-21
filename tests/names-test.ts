@@ -139,7 +139,7 @@ const lists: Record<string, string[]> = {
   'Vereinsstadien (data/generate.ts)': CLUB_SEEDS.map((c) => c.stadium),
 };
 // Historische Hallen ohne Sponsor (reale Orte der Hallenturniere, kein Markenname).
-const ALLOW = new Set(['Westfalenhalle', 'Deutschlandhalle', 'Hanns-Martin-Schleyer-Halle', 'Killesberghalle', 'Olympiahalle', 'Festhalle', 'Messehalle', 'Weser-Ems-Halle']);
+const ALLOW = new Set(['Westfalenhalle', 'Deutschlandhalle', 'Halle am Neckarpark', 'Killesberghalle', 'Olympiahalle', 'Festhalle', 'Messehalle', 'Weser-Ems-Halle']);
 
 let total = 0;
 for (const [label, names] of Object.entries(lists)) {

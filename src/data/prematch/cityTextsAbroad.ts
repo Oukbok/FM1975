@@ -8,7 +8,7 @@ import type { CityText } from './cityTextsDe';
 export const CITY_TEXTS_ABROAD: Record<string, CityText> = {
   Amsterdam: ['fr', 'Die Hauptstadt der Niederlande ist von Grachten durchzogen, gesäumt von schmalen Giebelhäusern. Der Fußball der Stadt steht für schnelles Kurzpassspiel und eine berühmte Jugendschule.'],
   Athen: ['bd', 'Athen, die Hauptstadt Griechenlands, wird von der Akropolis überragt. Die Stadt wächst bis an die Hafenstadt Piräus heran; Fußball und Basketball sind hier große Leidenschaften.'],
-  Barcelona: ['dhm', 'Barcelona am Mittelmeer ist die Hauptstadt Kataloniens. Die Bauten Antoni Gaudís, allen voran die Sagrada Família, prägen die Stadt; der Fußballverein versteht sich als Symbol katalanischer Identität.'],
+  Barcelona: ['dhm', 'Barcelona am Mittelmeer ist die Hauptstadt Kataloniens. Die Bauten des katalanischen Jugendstils, allen voran die Sagrada Família, prägen die Stadt; der Fußballverein versteht sich als Symbol katalanischer Identität.'],
   Belgrad: ['sr', 'Belgrad liegt am Zusammenfluss von Save und Donau. Über den Flüssen thront die Festung Kalemegdan; zwei große Vereine teilen die Stadt in ein leidenschaftliches Derby.'],
   Bilbao: ['ih', 'Bilbao im Baskenland war eine Stadt des Schiffbaus und der Schwerindustrie. Der Verein der Stadt setzt traditionell nur auf Spieler aus dem Baskenland.'],
   Bratislava: ['sr', 'Bratislava liegt an der Donau, nur wenige Kilometer von Österreich und Ungarn entfernt. Die Burg auf dem Hügel über dem Fluss ist das Wahrzeichen der Stadt.'],
@@ -48,7 +48,7 @@ export const CITY_TEXTS_ABROAD: Record<string, CityText> = {
   'Saint-Etienne': ['i', 'Saint-Étienne in der Region Rhône-Alpes war ein Zentrum von Bergbau und Waffenherstellung. Der Fußballverein der Stadt gehört zu den traditionsreichsten Frankreichs.'],
   Saloniki: ['hd', 'Thessaloniki ist die zweitgrößte Stadt Griechenlands und ein wichtiger Hafen. Der Weiße Turm an der Uferpromenade ist ihr Wahrzeichen.'],
   Saragossa: ['dr', 'Saragossa am Ebro ist die Hauptstadt Aragoniens. Die Basilika del Pilar mit ihren Türmen prägt das Flussufer.'],
-  Split: ['hb', 'Split an der dalmatinischen Küste ist rund um den Palast des römischen Kaisers Diokletian gewachsen. Hafen und Altstadt gehen ineinander über.'],
+  Split: ['hb', 'Split an der dalmatinischen Küste ist rund um den Palast eines römischen Kaisers gewachsen. Hafen und Altstadt gehen ineinander über.'],
   'Stoke-on-Trent': ['i', 'Stoke-on-Trent in Staffordshire ist die Stadt des englischen Porzellans und der Töpfereien. Sie setzt sich aus sechs früheren Städten zusammen.'],
   Tiflis: ['bd', 'Tiflis, die Hauptstadt Georgiens, liegt im Tal der Kura zwischen Bergen. Bäderviertel, Kirchen und die Festung Narikala prägen die Altstadt.'],
   Turin: ['bs', 'Turin am Po liegt am Fuß der Alpen. Die Stadt war erste Hauptstadt Italiens und ist Zentrum der Autoindustrie; zwei Vereine teilen sie.'],

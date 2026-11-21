@@ -70,7 +70,7 @@ export interface IndoorVenue { city: string; hall: string; capacity: number; fro
 export const INDOOR_VENUES: IndoorVenue[] = [
   { city: 'Dortmund', hall: 'Westfalenhalle', capacity: 10000 },
   { city: 'Berlin', hall: 'Deutschlandhalle', capacity: 9000 },
-  { city: 'Stuttgart', hall: 'Hanns-Martin-Schleyer-Halle', capacity: 9000, from: 1984 },
+  { city: 'Stuttgart', hall: 'Halle am Neckarpark', capacity: 9000, from: 1984 },
   { city: 'Stuttgart', hall: 'Killesberghalle', capacity: 5000, until: 1983 },
   { city: 'München', hall: 'Olympiahalle', capacity: 10000 },
   { city: 'Frankfurt', hall: 'Festhalle', capacity: 7850 },

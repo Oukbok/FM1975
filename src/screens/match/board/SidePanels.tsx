@@ -11,7 +11,7 @@ import type { LeagueTableRow } from '../../../types';
 import { InfoTip } from '../../../ui/InfoTip';
 
 const REF_FIRST = ['Walter', 'Heinz', 'Volker', 'Peter', 'Bernd', 'Jürgen', 'Markus', 'Felix', 'Frank', 'Tobias', 'Daniel', 'Hans-Joachim', 'Dieter', 'Lutz'];
-const REF_LAST = ['Eschweiler', 'Brandhorst', 'Kempter', 'Ahlers', 'Wendt', 'Rothkegel', 'Prinzler', 'Siebert', 'Haverkamp', 'Lindemeyer', 'Osterkamp', 'Dreesen', 'Bruckner', 'Voss'];
+const REF_LAST = ['Eschenbach', 'Brandhorst', 'Kemper', 'Ahlers', 'Wendt', 'Rothkegel', 'Prinzler', 'Siebert', 'Haverkamp', 'Lindemeyer', 'Osterkamp', 'Dreesen', 'Bruckner', 'Voss'];
 
 function hash(s: string): number {
   let h = 2166136261;

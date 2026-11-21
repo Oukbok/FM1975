@@ -60,7 +60,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Zwei deutsche Staaten',
-        text: 'In Bonn regiert Bundeskanzler Helmut Schmidt (seit 1974), in Ost-Berlin führt Erich Honecker (seit 1971) die SED. Im August 1975 unterzeichnen beide Staaten die KSZE-Schlussakte von Helsinki.',
+        text: 'In Bonn regiert seit 1974 ein sozialdemokratischer Bundeskanzler, in Ost-Berlin führt seit 1971 ein neuer Erster Sekretär die SED. Im August 1975 unterzeichnen beide Staaten die KSZE-Schlussakte von Helsinki.',
       },
       {
         topic: 'politik',
@@ -80,7 +80,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Schlaghosen und Schlager',
-        text: 'In der Schlagerparade im Fernsehen läuft deutscher Schlager, im Radio ABBA und Disco. Schlaghosen, lange Haare und Koteletten sieht man auch auf dem Mannschaftsfoto.',
+        text: 'In der Schlagerparade im Fernsehen läuft deutscher Schlager, im Radio Schwedenpop und Disco. Schlaghosen, lange Haare und Koteletten sieht man auch auf dem Mannschaftsfoto.',
       },
     ],
   },
@@ -115,12 +115,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Bundestagswahl 1976',
-        text: 'Im Oktober 1976 bleibt Helmut Schmidt Kanzler der sozialliberalen Koalition. Die Union mit Herausforderer Helmut Kohl wird knapp stärkste Fraktion.',
+        text: 'Im Oktober 1976 bleibt der Bundeskanzler mit seiner sozialliberalen Koalition im Amt. Die Union wird mit ihrem Herausforderer aus Rheinland-Pfalz knapp stärkste Fraktion.',
       },
       {
         topic: 'politik',
-        title: 'Biermann ausgebürgert',
-        text: 'Nach einem Konzert in Köln bürgert die DDR im November 1976 den Liedermacher Wolf Biermann aus. Zahlreiche Künstler protestieren, einige verlassen später das Land.',
+        title: 'Liedermacher ausgebürgert',
+        text: 'Nach einem Konzert in Köln bürgert die DDR im November 1976 einen bekannten Liedermacher aus. Zahlreiche Künstler protestieren, einige verlassen später das Land.',
       },
       {
         topic: 'alltag',
@@ -130,7 +130,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Disco aus Deutschland',
-        text: 'Die von Frank Farian produzierte Gruppe Boney M. stürmt 1976 mit „Daddy Cool“ die Hitparaden. Disco wird zum Lebensgefühl.',
+        text: 'Eine in Deutschland produzierte Disco-Gruppe stürmt 1976 die Hitparaden in ganz Europa. Disco wird zum Lebensgefühl.',
       },
     ],
   },
@@ -165,7 +165,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Deutscher Herbst',
-        text: 'Im September 1977 entführt die RAF Arbeitgeberpräsident Hanns Martin Schleyer, im Oktober wird die Lufthansa-Maschine „Landshut“ in Mogadischu befreit. Fahndungsplakate und Straßensperren prägen wochenlang den Alltag.',
+        text: 'Im September 1977 entführt die RAF den Arbeitgeberpräsidenten, im Oktober wird die entführte Passagiermaschine „Landshut“ in Mogadischu befreit. Fahndungsplakate und Straßensperren prägen wochenlang den Alltag.',
       },
       {
         topic: 'alltag',
@@ -174,13 +174,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: 'Krieg der Sterne',
-        text: 'Im Februar 1978 startet „Krieg der Sterne“ in den bundesdeutschen Kinos – der Beginn des modernen Blockbusters.',
+        title: 'Weltraummärchen im Kino',
+        text: 'Im Februar 1978 startet ein Weltraummärchen aus Hollywood in den bundesdeutschen Kinos – der Beginn des modernen Blockbusters.',
       },
       {
         topic: 'kultur',
         title: 'Der King ist tot',
-        text: 'Im August 1977 stirbt Elvis Presley. Gleichzeitig erreicht das Disco-Fieber mit „Saturday Night Fever“ 1978 auch die deutschen Tanzflächen.',
+        text: 'Im August 1977 stirbt der „King of Rock ’n’ Roll“. Gleichzeitig erreicht das Disco-Fieber 1978 mit einem Tanzfilm aus den USA auch die deutschen Tanzflächen.',
       },
     ],
   },
@@ -209,7 +209,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Ein Deutscher im All',
-        text: 'Am 26. August 1978 fliegt Sigmund Jähn aus der DDR mit Sojus 31 als erster Deutscher ins All.',
+        text: 'Am 26. August 1978 fliegt ein DDR-Kosmonaut mit Sojus 31 als erster Deutscher ins All.',
       },
       {
         topic: 'alltag',
@@ -218,8 +218,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: '„Holocaust“ im Fernsehen',
-        text: 'Im Januar 1979 zeigen die Dritten Programme die US-Serie „Holocaust“. Millionen sehen zu, die Sendung löst eine breite Debatte über die NS-Vergangenheit aus.',
+        title: 'Eine Serie erschüttert das Land',
+        text: 'Im Januar 1979 zeigen die Dritten Programme eine US-Serie über den Völkermord an den europäischen Juden. Millionen sehen zu, die Sendung löst eine breite Debatte über die NS-Vergangenheit aus.',
       },
       {
         topic: 'politik',
@@ -268,7 +268,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Musik zum Mitnehmen',
-        text: 'Um 1980 kommt der Walkman nach Deutschland: Musik von der Kassette, über Kopfhörer, überall – auch in der Straßenbahn zum Stadion.',
+        text: 'Um 1980 kommt der tragbare Kassettenspieler aus Japan nach Deutschland: Musik von der Kassette, über Kopfhörer, überall – auch in der Straßenbahn zum Stadion.',
       },
     ],
   },
@@ -298,7 +298,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Bundestagswahl 1980',
-        text: 'Im Oktober 1980 setzt sich Helmut Schmidt gegen Unions-Kandidat Franz Josef Strauß durch.',
+        text: 'Im Oktober 1980 setzt sich der Bundeskanzler gegen den Unions-Kandidaten aus Bayern durch.',
       },
       {
         topic: 'politik',
@@ -318,7 +318,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Neue Deutsche Welle',
-        text: 'Bands wie Ideal, Fehlfarben und DAF singen auf Deutsch – frech, kühl und elektronisch. Die Neue Deutsche Welle rollt an.',
+        text: 'Junge Bands aus Berlin und Düsseldorf singen auf Deutsch – frech, kühl und elektronisch. Die Neue Deutsche Welle rollt an.',
       },
     ],
   },
@@ -353,17 +353,17 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Kanzler am Werbellinsee',
-        text: 'Im Dezember 1981 besucht Helmut Schmidt Erich Honecker in der DDR. Es ist das erste Treffen der Regierungschefs seit 1970.',
+        text: 'Im Dezember 1981 besucht der Bundeskanzler den Staatsratsvorsitzenden in der DDR. Es ist das erste Treffen der Regierungschefs seit 1970.',
       },
       {
         topic: 'kultur',
-        title: 'Da Da Da',
-        text: 'Die Neue Deutsche Welle erreicht die Hitparade: Trio, Spliff und Nena machen deutschsprachigen Pop zum Massenphänomen.',
+        title: 'Deutsch in der Hitparade',
+        text: 'Die Neue Deutsche Welle erreicht die Hitparade: Minimalistische Trios und freche Sängerinnen machen deutschsprachigen Pop zum Massenphänomen.',
       },
       {
         topic: 'alltag',
         title: 'Heimcomputer im Kinderzimmer',
-        text: 'Computer wie der Commodore VC 20 und bald der C64 ziehen in die Kinderzimmer ein. Programme kommen von der Kassette.',
+        text: 'Die ersten erschwinglichen Heimcomputer ziehen in die Kinderzimmer ein. Programme kommen von der Kassette.',
       },
     ],
   },
@@ -397,22 +397,22 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Kanzlerwechsel in Bonn',
-        text: 'Am 1. Oktober 1982 wird Helmut Kohl durch ein konstruktives Misstrauensvotum Kanzler. Bei der Wahl im März 1983 ziehen erstmals die Grünen in den Bundestag ein.',
+        text: 'Am 1. Oktober 1982 wird der CDU-Vorsitzende durch ein konstruktives Misstrauensvotum Kanzler. Bei der Wahl im März 1983 ziehen erstmals die Grünen in den Bundestag ein.',
       },
       {
         topic: 'kultur',
-        title: '99 Luftballons',
-        text: 'Nena steht Anfang 1983 mit „99 Luftballons“ an der Spitze der Charts, später auch international.',
+        title: 'Deutscher Pop an der Spitze',
+        text: 'Anfang 1983 steht ein deutschsprachiges Lied über Luftballons an der Spitze der Charts, später auch international.',
       },
       {
         topic: 'medien',
         title: 'Gefälschte Tagebücher',
-        text: 'Im April 1983 präsentiert der „Stern“ angebliche Hitler-Tagebücher. Wenige Tage später sind sie als Fälschung entlarvt.',
+        text: 'Im April 1983 präsentiert eine Hamburger Illustrierte angebliche Tagebücher des NS-Diktators. Wenige Tage später sind sie als Fälschung entlarvt.',
       },
       {
         topic: 'alltag',
         title: 'Der Videorekorder',
-        text: 'VHS, Betamax und Video 2000 kämpfen um die Wohnzimmer. Wer einen Rekorder hat, kann die Sportsendung am Samstag aufnehmen.',
+        text: 'Drei Kassettensysteme kämpfen um die Wohnzimmer. Wer einen Rekorder hat, kann die Sportsendung am Samstag aufnehmen.',
       },
     ],
   },
@@ -442,7 +442,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Milliardenkredit für die DDR',
-        text: 'Im Sommer 1983 verbürgt sich die Bundesrepublik auf Vermittlung von Franz Josef Strauß für einen Kredit von einer Milliarde DM an die DDR.',
+        text: 'Im Sommer 1983 verbürgt sich die Bundesrepublik auf Vermittlung des bayerischen Ministerpräsidenten für einen Kredit von einer Milliarde DM an die DDR.',
       },
       {
         topic: 'politik',
@@ -486,12 +486,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Neuer Mann in Moskau',
-        text: 'Im März 1985 wird Michail Gorbatschow Generalsekretär der KPdSU. In der DDR horchen viele auf.',
+        text: 'Im März 1985 wird ein 54-jähriger Reformer Generalsekretär der KPdSU. In der DDR horchen viele auf.',
       },
       {
         topic: 'politik',
         title: 'Rede zum 8. Mai',
-        text: 'Zum 40. Jahrestag des Kriegsendes nennt Bundespräsident Richard von Weizsäcker den 8. Mai 1945 einen „Tag der Befreiung“.',
+        text: 'Zum 40. Jahrestag des Kriegsendes nennt der Bundespräsident den 8. Mai 1945 einen „Tag der Befreiung“.',
       },
       {
         topic: 'alltag',
@@ -526,18 +526,18 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     society: [
       {
         topic: 'kultur',
-        title: 'Boris Becker, 17',
-        text: 'Am 7. Juli 1985 gewinnt Boris Becker als jüngster Spieler aller Zeiten Wimbledon. In Deutschland bricht ein Tennis-Boom aus.',
+        title: 'Wimbledonsieger mit 17',
+        text: 'Am 7. Juli 1985 gewinnt ein 17-Jähriger aus Leimen als jüngster Spieler aller Zeiten Wimbledon. In Deutschland bricht ein Tennis-Boom aus.',
       },
       {
         topic: 'kultur',
-        title: 'Live Aid',
-        text: 'Im Juli 1985 sehen weltweit Hunderte Millionen das Benefizkonzert für Afrika im Fernsehen.',
+        title: 'Benefizkonzert für Afrika',
+        text: 'Im Juli 1985 sehen weltweit Hunderte Millionen ein Benefizkonzert in London und Philadelphia im Fernsehen.',
       },
       {
         topic: 'kultur',
-        title: 'Lindenstraße',
-        text: 'Am 8. Dezember 1985 läuft die erste Folge der „Lindenstraße“. Sonntagabend gehört ab jetzt der Münchner Nachbarschaft.',
+        title: 'Serie am Sonntagabend',
+        text: 'Am 8. Dezember 1985 läuft die erste Folge einer wöchentlichen Familienserie. Der Sonntagabend gehört ab jetzt einer Münchner Nachbarschaft.',
       },
       {
         topic: 'alltag',
@@ -564,7 +564,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'medien',
-        title: 'Ein Buch namens „Anpfiff“',
+        title: 'Ein Torwart packt aus',
         text: 'Im März 1987 erscheint das Buch des Nationaltorwarts mit Vorwürfen über Doping und Kabinenleben. Er verliert daraufhin seinen Platz im Verein und in der Nationalmannschaft.',
       },
     ],
@@ -572,7 +572,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Bundestagswahl 1987',
-        text: 'Im Januar 1987 wird die Koalition von Helmut Kohl bestätigt. Die Grünen legen deutlich zu.',
+        text: 'Im Januar 1987 wird die christlich-liberale Koalition bestätigt. Die Grünen legen deutlich zu.',
       },
       {
         topic: 'politik',
@@ -582,7 +582,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Landung auf dem Roten Platz',
-        text: 'Am 28. Mai 1987 landet der 19-jährige Mathias Rust mit einem Sportflugzeug mitten in Moskau.',
+        text: 'Am 28. Mai 1987 landet ein 19-jähriger Hobbypilot aus der Bundesrepublik mit einem Sportflugzeug mitten in Moskau.',
       },
       {
         topic: 'kultur',
@@ -616,18 +616,18 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     society: [
       {
         topic: 'politik',
-        title: 'Honecker in Bonn',
-        text: 'Im September 1987 besucht Erich Honecker als erster DDR-Staatschef die Bundesrepublik – mit Hymne und Ehrenformation.',
+        title: 'Staatsbesuch in Bonn',
+        text: 'Im September 1987 besucht erstmals ein DDR-Staatschef die Bundesrepublik – mit Hymne und Ehrenformation.',
       },
       {
         topic: 'politik',
-        title: 'Barschel-Affäre',
-        text: 'Im Herbst 1987 erschüttert die Affäre um Schleswig-Holsteins Ministerpräsidenten Uwe Barschel die Bundesrepublik.',
+        title: 'Kieler Affäre',
+        text: 'Im Herbst 1987 erschüttert die Affäre um Schleswig-Holsteins Ministerpräsidenten die Bundesrepublik.',
       },
       {
         topic: 'kultur',
-        title: 'Kati Witt in Calgary',
-        text: 'Im Februar 1988 gewinnt die DDR-Eiskunstläuferin Katarina Witt ihr zweites olympisches Gold.',
+        title: 'Eiskunstlauf-Gold in Calgary',
+        text: 'Im Februar 1988 gewinnt eine Eiskunstläuferin aus der DDR ihr zweites olympisches Gold.',
       },
       {
         topic: 'alltag',
@@ -666,13 +666,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: 'Golden Slam für Steffi Graf',
-        text: 'Steffi Graf gewinnt 1988 alle vier Grand-Slam-Turniere und Olympia-Gold in Seoul.',
+        title: 'Golden Slam im Tennis',
+        text: 'Eine 19-Jährige aus Brühl gewinnt 1988 alle vier Grand-Slam-Turniere und Olympia-Gold in Seoul.',
       },
       {
         topic: 'politik',
-        title: '„Sputnik“ verboten',
-        text: 'Im November 1988 verbietet die DDR die sowjetische Zeitschrift „Sputnik“, die über Reformen berichtet.',
+        title: 'Sowjetisches Magazin verboten',
+        text: 'Im November 1988 verbietet die DDR eine sowjetische Monatszeitschrift, die über Reformen berichtet.',
       },
       {
         topic: 'politik',
@@ -711,7 +711,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Die Mauer ist offen',
-        text: 'Am 9. November 1989 fällt die Mauer. Trabis rollen über die Grenze, jeder DDR-Bürger erhält 100 DM Begrüßungsgeld.',
+        text: 'Am 9. November 1989 fällt die Mauer. Zweitakter rollen über die Grenze, jeder DDR-Bürger erhält 100 DM Begrüßungsgeld.',
       },
       {
         topic: 'politik',
@@ -839,7 +839,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Techno aus Berlin',
-        text: 'In leerstehenden Gebäuden Ost-Berlins entstehen Clubs wie der Tresor. Die Love Parade wächst von Jahr zu Jahr.',
+        text: 'In leerstehenden Gebäuden Ost-Berlins entstehen Techno-Clubs. Die sommerliche Techno-Parade über den Kurfürstendamm wächst von Jahr zu Jahr.',
       },
     ],
   },
@@ -900,7 +900,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Eurodance',
-        text: 'Deutsche Produktionen wie Snap! und Culture Beat mit „Mr. Vain“ stürmen die europäischen Charts.',
+        text: 'Tanzmusik-Produktionen aus Frankfurt stürmen die europäischen Charts.',
       },
     ],
   },
@@ -939,17 +939,17 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Bahnreform',
-        text: 'Zum 1. Januar 1994 werden Bundesbahn und Reichsbahn zur Deutschen Bahn AG.',
+        text: 'Zum 1. Januar 1994 werden Bundesbahn und Reichsbahn zu einer gemeinsamen Aktiengesellschaft verschmolzen.',
       },
       {
         topic: 'kultur',
         title: 'Dinosaurier im Kino',
-        text: 'Im September 1993 startet „Jurassic Park“ und wird zum Kassenschlager.',
+        text: 'Im September 1993 startet ein Dinosaurier-Abenteuer aus Hollywood und wird zum Kassenschlager.',
       },
       {
         topic: 'politik',
         title: 'Neuer Bundespräsident',
-        text: 'Im Mai 1994 wird Roman Herzog zum Bundespräsidenten gewählt.',
+        text: 'Im Mai 1994 wird der Präsident des Bundesverfassungsgerichts zum Bundespräsidenten gewählt.',
       },
     ],
   },
@@ -984,12 +984,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'politik',
         title: 'Bundestagswahl 1994',
-        text: 'Im Oktober 1994 wird Helmut Kohl knapp bestätigt.',
+        text: 'Im Oktober 1994 wird die Regierungskoalition knapp bestätigt.',
       },
       {
         topic: 'kultur',
-        title: 'Schumacher Weltmeister',
-        text: 'Michael Schumacher wird im November 1994 erster deutscher Formel-1-Weltmeister. Sonntags läuft nun auch Formel 1.',
+        title: 'Formel-1-Weltmeister aus Kerpen',
+        text: 'Ein Rennfahrer aus Kerpen wird im November 1994 erster deutscher Formel-1-Weltmeister. Sonntags läuft nun auch Formel 1.',
       },
       {
         topic: 'alltag',
@@ -999,7 +999,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'kultur',
         title: 'Verhüllter Reichstag',
-        text: 'Im Juni 1995 verhüllen Christo und Jeanne-Claude den Reichstag. Millionen kommen nach Berlin.',
+        text: 'Im Juni 1995 verhüllt ein Künstlerpaar den Reichstag. Millionen kommen nach Berlin.',
       },
     ],
   },
@@ -1040,8 +1040,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     society: [
       {
         topic: 'alltag',
-        title: 'Windows 95 und Online',
-        text: 'Im August 1995 erscheint Windows 95, der frühere Staatskonzern startet seinen Onlinedienst. Ein Modem pfeift sich ins Internet.',
+        title: 'Der PC geht online',
+        text: 'Im August 1995 erscheint ein neues Betriebssystem für den Heim-PC, der frühere Staatskonzern startet seinen Onlinedienst. Ein Modem pfeift sich ins Internet.',
       },
       {
         topic: 'politik',
@@ -1050,8 +1050,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: 'Kelly Family',
-        text: 'Die Kelly Family füllt Hallen und Stadien, Boygroups und Eurodance beherrschen die Charts.',
+        title: 'Großfamilie und Boygroups',
+        text: 'Eine singende Großfamilie füllt Hallen und Stadien, Boygroups und Eurodance beherrschen die Charts.',
       },
     ],
   },
@@ -1089,7 +1089,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: 'Tamagotchi',
+        title: 'Küken am Schlüsselbund',
         text: 'Das elektronische Haustier aus Japan wird 1997 zum Pausenhof-Hit.',
       },
     ],
@@ -1129,13 +1129,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'kultur',
-        title: 'Ullrich gewinnt die Tour',
-        text: 'Im Juli 1997 gewinnt Jan Ullrich als erster Deutscher die Tour de France. Radsport boomt.',
+        title: 'Deutscher Toursieger',
+        text: 'Im Juli 1997 gewinnt ein 23-jähriger Rostocker als erster Deutscher die Tour de France. Radsport boomt.',
       },
       {
         topic: 'kultur',
-        title: 'Titanic',
-        text: 'Ab Januar 1998 läuft „Titanic“ monatelang in den Kinos.',
+        title: 'Untergang im Kino',
+        text: 'Ab Januar 1998 läuft ein Liebesdrama um einen sinkenden Ozeandampfer monatelang in den Kinos.',
       },
       {
         topic: 'alltag',
@@ -1185,8 +1185,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     society: [
       {
         topic: 'politik',
-        title: 'Kanzler Schröder',
-        text: 'Nach 16 Jahren Kohl wird im Oktober 1998 Gerhard Schröder Kanzler einer rot-grünen Koalition.',
+        title: 'Regierungswechsel in Bonn',
+        text: 'Nach 16 Jahren unter demselben Kanzler wird im Oktober 1998 ein Sozialdemokrat aus Niedersachsen Kanzler einer rot-grünen Koalition.',
       },
       {
         topic: 'alltag',
@@ -1246,7 +1246,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: '„Bin ich schon drin?“',
-        text: 'Das Internet erreicht die Wohnzimmer, Werbung mit Boris Becker macht den Einstieg zum Witz.',
+        text: 'Das Internet erreicht die Wohnzimmer, Werbung mit einem Tennisstar macht den Einstieg zum Witz.',
       },
       {
         topic: 'alltag',
