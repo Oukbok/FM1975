@@ -250,7 +250,8 @@ await page.waitForTimeout(300);
 await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
 await page.locator('.tn-sub-item:has-text("Spielplan")').click();
 await page.waitForTimeout(600);
-await page.locator('.app-main .dchip:has-text("Bericht")').first().click();
+// Knopf „Bericht“ je beendetem Spiel (views/spieltag/FixturesView.tsx, `.fxp-rep`; früher `.dchip`).
+await page.locator('.app-main .fxp-rep:has-text("Bericht")').first().click();
 await page.waitForSelector('.mr-modal', { timeout: 8000 }).catch(() => {});
 await page.waitForTimeout(500);
 const pill = await page.locator('.mr2 .mr2-pill').innerText().catch(() => '');
