@@ -1,5 +1,5 @@
-import { GOAL_LABEL, MARKETING_AREAS, MARKETING_BY_ID, MARKETING_GOALS, areaMonthlyCostBase, areaSaturation, channelGoals, marketingAvailable, marketingPriceFactor, type MarketingGoal } from '../../data/marketing';
-import { marketingView } from '../../game/marketingGame';
+import { GOAL_LABEL, MARKETING_AREAS, MARKETING_BY_ID, MARKETING_GOALS, areaMonthlyCostBase, areaSaturation, channelGoals, marketingAvailable, type MarketingGoal } from '../../data/marketing';
+import { marketingPrice, marketingView } from '../../game/marketingGame';
 import { cateringDealNow, cateringExpectation, cateringOffers, cateringOpen, chooseCatering } from '../../game/cateringGame';
 import { economyScale, yearOf } from '../../engine/economy';
 import { LED_YEAR } from '../../data/sponsorCatalog';
@@ -31,7 +31,7 @@ export function MarketingView({ g, onChange }: { g: Game; onChange: () => void }
   };
 
   const mv = marketingView(g, budgets);
-  const price = marketingPriceFactor(curYear, club.reputation ?? 60);
+  const price = marketingPrice(g);
   const brandGoal = (k: MarketingGoal) => k === 'reg' || k === 'nat' || k === 'intl';
   const fxText = (k: MarketingGoal, v: number) => (brandGoal(k) ? `+${v.toFixed(1).replace('.', ',')}` : `+${(v * 100).toFixed(1).replace('.', ',')} %`);
   const net = mv.gainYear - mv.costYear;

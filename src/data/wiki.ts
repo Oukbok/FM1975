@@ -4061,7 +4061,7 @@ Stadionaktionen und Lokalpresse füllen Stadion und Mitgliederkartei, Fernsehen 
 Das Höchstmaß eines Ziels erreichst du, wenn **alle Kanäle der Epoche**, die darauf einzahlen, voll laufen. Kommen neue Medien dazu, verlieren die alten an Gewicht – wer 2015 nur Plakate klebt, erreicht weniger als 1975.
 
 ## Kosten linear, Wirkung flacht ab
-- Die **Kosten** steigen mit jeder Stufe um denselben Betrag. Große Vereine zahlen für dieselbe Stufe mehr (größere Kampagnen), kleine weniger.
+- Die **Kosten** steigen mit jeder Stufe um denselben Betrag. Große Vereine zahlen für dieselbe Stufe mehr (größere Kampagnen), kleine weniger. Maßgeblich ist der Ruf – höchstens aber der Markt, den dein Verein wirklich erreicht (Spieltag, Mitglieder, Fanartikel der Vorsaison gegen den Ligaschnitt): Ein Traditionsverein mit kleinem Stadion zahlt also nicht den Preis eines Großklubs.
 - Die **Wirkung** flacht ab: Stufe 1 bringt schon rund ein Drittel, die halbe Leiste rund zwei Drittel. **Wenige Stufen in vielen Kanälen** sind deshalb fast immer besser als ein Kanal am Anschlag.
 
 ## Anlauf, Verfall und bleibender Wert
