@@ -77,10 +77,39 @@ export function bindMarketing(g: Game): void {
   setMarketingFx(g.managedClubId, { demand: fx.att, members: fx.members, merch: fx.merch });
 }
 
+/** Erlöse, auf die Werbung wirkt (Spieltag, Mitglieder, Fanartikel) in der letzten abgeschlossenen Saison. */
+function marketBase(c: Game['clubs'][string]): number {
+  const h = c.finances.seasonHistory;
+  const i = h?.[h.length - 1]?.income;
+  return i ? i.ticketSales + i.catering + i.matchday + i.membership + i.merchandise : 0;
+}
+
+/**
+ * Preisfaktor der Werbung für den eigenen Verein: Epoche × Vereinsgröße. Die Größe kommt aus dem Ruf,
+ * höchstens aber aus dem Markt, den der Verein tatsächlich erreicht (Erlöse aus Spieltag, Mitgliedern und
+ * Fanartikeln gegen den Schnitt seiner Liga). Sonst zahlt ein Traditionsverein mit kleinem Stadion den
+ * Kampagnenpreis eines Großklubs, ohne dessen Ertrag zu haben, und Werbung trägt sich nicht mehr auf jeder
+ * Stufe (test:marketing, Vorlage 1978: Mönchengladbach/Kaiserslautern/Braunschweig). Nie teurer als nach Ruf.
+ */
+export function marketingPrice(g: Game): number {
+  const club = g.clubs[g.managedClubId];
+  const year = yearOf(g.calendar.currentDate);
+  const byRep = marketingPriceFactor(year, club?.reputation ?? 60);
+  const own = club ? marketBase(club) : 0;
+  if (!club || own <= 0) return byRep;
+  const tier = club.finances.leagueTier ?? 1;
+  const peers = Object.values(g.clubs).filter((c) => (c.finances.leagueTier ?? 1) === tier && marketBase(c) > 0);
+  if (peers.length < 6) return byRep;
+  const meanBase = peers.reduce((s, c) => s + marketBase(c), 0) / peers.length;
+  const meanPrice = peers.reduce((s, c) => s + marketingPriceFactor(year, c.reputation ?? 60), 0) / peers.length;
+  const byMarket = (own / meanBase) * meanPrice;
+  return Math.max(marketingPriceFactor(year, 30), Math.min(byRep, byMarket));
+}
+
 /** Monatskosten der Regler (nominal): Stammdaten × Preisfaktor (Epoche, Vereinsgröße) × Preisniveau des Jahres. */
 export function marketingCostMonth(g: Game, budgets: Record<string, number> = g.marketing ?? {}): number {
   const year = yearOf(g.calendar.currentDate);
-  return Math.round(marketingMonthlyBase(budgets) * marketingPriceFactor(year, g.clubs[g.managedClubId]?.reputation ?? 60) * economyScale(year));
+  return Math.round(marketingMonthlyBase(budgets) * marketingPrice(g) * economyScale(year));
 }
 
 /** Monatsabschluss (1. des Monats): Kosten buchen, Wirkung nachziehen, Marke aufbauen. */

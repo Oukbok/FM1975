@@ -58,8 +58,11 @@ function run(path: string, label: string): void {
     const nets = vs.map((v) => v.gainYear - v.costYear);
     ok(vs.every((v) => v.gainYear > v.costYear * 0.9) && (vs[0].pull.factor > 1.05 || nets[1] > nets[2]), `${label}: ${c.name} – Werbung trägt sich auf jeder Stufe (Zugkraft ×${vs[0].pull.factor}), am meisten bleibt in der Mitte`);
   }
+  // Ganze Liga: auch Traditionsvereine mit kleinem Markt (hoher Ruf, kleines Stadion) dürfen am Anschlag nicht draufzahlen.
+  const worst = league.map((c) => { g.managedClubId = c.id; const v = marketingView(g, levels(year, (m) => m)); return { c, x: v.gainYear / Math.max(1, v.costYear) }; }).sort((a, b) => a.x - b.x)[0];
+  if (worst) ok(worst.x > 0.9, `${label}: ganze Liga – am Anschlag trägt sich Werbung überall (schwächster: ${worst.c.name} ×${worst.x.toFixed(2)})`);
   g.managedClubId = me;
-  const lo = marketingView(g, levels(year, () => 1)), hi = marketingView(g, levels(year, (m) => m));
+  const lo =marketingView(g, levels(year, () => 1)), hi = marketingView(g, levels(year, (m) => m));
   ok(lo.gainYear / Math.max(1, lo.costYear) > hi.gainYear / Math.max(1, hi.costYear), `${label}: erste Stufen rechnen sich besser als der Anschlag`);
   // Anlauf über die Monate
   g.marketing = levels(year, (m) => Math.ceil(m / 2));
