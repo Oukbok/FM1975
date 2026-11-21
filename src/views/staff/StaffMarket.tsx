@@ -61,7 +61,7 @@ export function MarketTable({ g, rows, role, selId, onSelect, onTalk }: {
         <thead>
           <tr>
             <th>Name</th><th className="c">Alter</th>{role === 'all' && <th>Beste Stelle</th>}
-            <th>Eignung{role !== 'all' ? ` als ${roleName(role)}` : ''}</th><th>Stärken</th><th>Aussicht</th><th>Verein</th><th className="r">Forderung</th><th />
+            <th>Eignung{role !== 'all' ? ` als ${roleName(role)}` : ''}</th><th>Stärken</th><th className="sf-c-grow">Aussicht</th><th>Verein</th><th className="r">Forderung</th><th />
           </tr>
         </thead>
         <tbody>
@@ -75,7 +75,7 @@ export function MarketTable({ g, rows, role, selId, onSelect, onTalk }: {
                 {role === 'all' && <td>{roleName(r)}</td>}
                 <td className="sf-td-fit"><Level v={lvl} /><LevelBar v={lvl} /></td>
                 <td className="sf-td-skills">{topSkills(m, 2).map((x) => <span key={x.k}>{SKILL_LABEL[x.k]} <b>{x.v}</b></span>)}</td>
-                <td className="dim">{growthWord(m, r)}</td>
+                <td className="dim sf-c-grow">{growthWord(m, r)}</td>
                 <td>{m.clubId ? <ClubLink id={m.clubId}>{g.clubs[m.clubId]?.shortName ?? '–'}</ClubLink> : <span className="dim">vereinslos</span>}</td>
                 <td className="r">{fmtStaffWage(memberMonthlySalary({ ...m, roleId: r, salaryFactor: demandOf(g, m, r) }, scale), { unit: false })}</td>
                 <td className="r"><button type="button" className="b3 b3-s" disabled={!moves} title={moves ? undefined : 'Kommt nicht zu deinem Verein'} onClick={(e) => { e.stopPropagation(); onTalk(m.id, r); }}>Verhandeln</button></td>

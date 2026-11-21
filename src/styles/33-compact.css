@@ -48,3 +48,20 @@
 [data-ui="narrow"] .dz-news > .inbox-filter .seg3 > * { padding: 0 5px; font-size: 12.5px; }
 /* Steam Deck: Liste ohne Spalte „Kategorie“ (steht im Lesebereich), damit der Betreff lesbar bleibt */
 [data-ui="narrow"] .dz-ntable .dz-ncol-cat { display: none; }
+
+/* ---- Mitarbeiter-Markt: Filter in zwei Zeilen, Spalte „Aussicht“ und Eignungsbalken entfallen
+   (Zahl bleibt, Aussicht steht im Profil) – kein waagerechter Bildlauf ----------------------- */
+[data-ui] .sf-filters { flex-wrap: wrap; row-gap: 8px; white-space: normal; }
+[data-ui] .sf-table .sf-c-grow { display: none; }
+[data-ui] .sf-td-fit { width: auto; }
+[data-ui] .sf-td-fit > .sf-bar { display: none; }
+[data-ui] .sf-td-skills span { margin-right: 10px; }
+
+/* ---- Angehobene Schrift (data-fs="lift", styles/34-compact-fonts.css): breite Spielertabellen
+   ohne Spalten mit wenig Informationswert. Ländercode (Flagge zeigt das Land beim Zeigen),
+   Empfehlungstext (Note mit Text beim Zeigen) und Kenntnis-Balken (die Spanne zeigt die
+   Unsicherheit) entfallen – so bleiben „Verhandeln“ und alle Werte ohne Bildlauf sichtbar. */
+[data-fs] .mk-table .mk-nat > span:not(.cflag-nat):not(.cflag-code) { display: none; }
+[data-fs] .mk-table .mk-rec-t { display: none; }
+[data-fs] .mk-table .mk-c-know { display: none; }
+[data-fs] .mk-rec { max-width: none; }

@@ -119,7 +119,7 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
             {th('value', <>Transferwert<InfoTip k="marktwert" /></>)}
             {!compact && th('wage', wageHead())}
             {th('rec', <>Empfehlung<InfoTip k="empfehlung" /></>)}
-            {th('know', 'Kenntnisse', 'ctr')}
+            {th('know', 'Kenntnisse', 'ctr mk-c-know')}
             {action && <th />}
           </tr></thead>
           <tbody>
@@ -144,7 +144,7 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
                   <td className="nowrap"><span className="mk-money">{fmtPriceRange(m.value[0], m.value[1])}</span></td>
                   {!compact && <td className="nowrap"><span className="mk-money">{fmtWageRange(m.wage[0], m.wage[1])}</span></td>}
                   <td className="nowrap"><span className={`mk-rec t${m.rec.tone}`} title={m.rec.text}><span className="mk-rec-c">{m.rec.grade}</span>{!compact && <span className="mk-rec-t">{m.rec.text}</span>}</span></td>
-                  <td className="ctr"><KnowledgeBar k={m.k} word={knowWord(m.k)} /></td>
+                  <td className="ctr mk-c-know"><KnowledgeBar k={m.k} word={knowWord(m.k)} /></td>
                   {action && <td className="num nowrap" onClick={(e) => e.stopPropagation()}>{action(r)}</td>}
                 </tr>
               );
