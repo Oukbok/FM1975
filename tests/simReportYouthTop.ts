@@ -52,7 +52,7 @@ export function youthReport(game: Game, ps: Player[]) {
 }
 export function youthSummary(game: Game) {
   console.log(`YOUTH Anteil Akademiespieler Liga 1: Ø ${(avg(yt.shares) * 100).toFixed(1)} % (erste 10 J. ${(avg(yt.shares.slice(0, 10)) * 100).toFixed(1)} %, letzte 10 J. ${(avg(yt.shares.slice(-10)) * 100).toFixed(1)} %) | bester Akademiespieler je erreicht ${Math.max(0, ...yt.peak.values())}`);
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2050], [2050, 2100]]) {
     const n80 = [...yt.first80.values()].filter((y) => y >= a && y < b).length;
     const n85 = [...yt.first85.values()].filter((y) => y >= a && y < b).length;
     console.log(`YOUTH ${a}–${b - 1}: neue Akademie-Spieler ≥80 ${n80}, ≥85 ${n85}`);
@@ -115,13 +115,13 @@ export function topReport(game: Game, ps: Player[]) {
 }
 const worldRows: { y: number; top: number[]; n90: number; n85: number; u19: number; u21: number; club: number }[] = [];
 export function topSummary(g: Game) {
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2100]]) {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2050], [2050, 2100]]) {
     const r = worldRows.filter((x) => x.y >= a && x.y < b);
     if (!r.length) continue;
     console.log(`WELT ${a}–${b - 1}: Nr.1 ${avg(r.map((x) => x.top[0])).toFixed(1)} Nr.10 ${avg(r.map((x) => x.top[9] ?? 0)).toFixed(1)} ≥90 ${avg(r.map((x) => x.n90)).toFixed(1)} ≥85 ${avg(r.map((x) => x.n85)).toFixed(1)} | bester ≤19 ${avg(r.map((x) => x.u19)).toFixed(1)} (max ${Math.max(...r.map((x) => x.u19))}) ≤21 ${avg(r.map((x) => x.u21)).toFixed(1)} | Verein max ${avg(r.map((x) => x.club)).toFixed(1)}`);
   }
   const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2050], [2050, 2100]]) {
     const r = topStat.rows.filter((x) => x.y >= a && x.y < b);
     if (!r.length) continue;
     const ch = new Set(r.map((x) => x.champ).filter(Boolean));

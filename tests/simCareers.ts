@@ -47,7 +47,7 @@ const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.le
 
 export function careerSummary(): void {
   const all = [...careers.values()];
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2050], [2050, 2100]]) {
     const st = all.filter((c) => c.first85 && c.first85.year >= a && c.first85.year < b);
     const early = st.filter((c) => c.first85!.age <= 20);
     const cent = early.filter((c) => c.max >= 93);

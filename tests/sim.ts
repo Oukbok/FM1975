@@ -46,6 +46,7 @@ const g: Game = createNewGame({
   manager: { name: 'Sim', nationality: 'GER', birthYear: 1940, style: 'balanced', background: 'newcomer' } as any,
   difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300,
   legends: process.env.LEG !== '0', // LEG=0: ohne Ausnahmetalente (Vergleich)
+  ...(process.env.START ? { startYear: Number(process.env.START) } : {}), // START=1995: anderes Startjahr
 });
 
 (g as any).simAutoManage = true; // eigener Verein wird wie ein KI-Verein gepflegt
@@ -321,6 +322,8 @@ function balanceReport(game: Game, ps: Player[]) {
   const stars = ps.filter((p) => p.overall >= 85);
   const byO: Record<string, number> = {}; for (const p of stars) byO[origin(p)] = (byO[origin(p)] ?? 0) + 1;
   console.log(`   BAL ≥85 nach Herkunft ${Object.entries(byO).map(([k, v]) => k + ' ' + v).join(', ')} | Ø Alter ${avg(stars.map((p) => p.age)).toFixed(1)}`);
+  { const att = played.map((m) => (m.result as any).attendance ?? 0).filter((a: number) => a > 0); const revM = lc.map((c) => c.finances.seasonHistory?.[c.finances.seasonHistory.length - 1]?.revenue ?? 0).filter((v) => v > 0).sort((a, b) => a - b); const balM = lc.filter((c) => c.id !== my.id).map((c) => c.finances.balance).sort((a, b) => a - b);
+    console.log(`   LONG ${y0} Skala ${sc.toFixed(2)} | Zuschauer Ø ${Math.round(avg(att))} | Umsatz med ${((revM[revM.length >> 1] ?? 0) / sc / 1e6).toFixed(2)}M real | KI-Konto med ${((balM[balM.length >> 1] ?? 0) / sc / 1e6).toFixed(2)}M real min ${((balM[0] ?? 0) / sc / 1e6).toFixed(2)}M | Gehalt top real ${((wages[0] ?? 0) / sc / 1e6).toFixed(3)}M med ${((wages[wages.length >> 1] ?? 0) / sc / 1e3).toFixed(0)}k | MW top real ${((fees[0] ?? 0) / sc / 1e6).toFixed(2)}M | Top11 max ${Math.max(...lc.map(top11)).toFixed(1)}`); }
   console.log(`   BAL Gehalt/Jahr top ${(wages[0] / 1e6).toFixed(2)}M p90 ${((wages[Math.floor(wages.length * 0.1)] ?? 0) / 1e6).toFixed(2)}M med ${((wages[wages.length >> 1] ?? 0) / 1e3).toFixed(0)}k | MW top ${(fees[0] / 1e6).toFixed(2)}M | Konto/Umsatz KI min ${ratio[0]?.toFixed(2)} med ${ratio[ratio.length >> 1]?.toFixed(2)} max ${ratio[ratio.length - 1]?.toFixed(2)} | eigen ${myH ? (my.finances.balance / myH.revenue).toFixed(2) : '-'} | im Minus ${neg}`);
 }
 
@@ -412,6 +415,8 @@ for (let s = 0; s < seasons; s++) {
   campSeasonStart(g);
   promSeasonStart(g, promSt, promSeason);
   if (process.env.STAFF) staffReport(g);
+  // SAVESIZE=25: Größe des Spielstands je Teil alle 25 Saisons (Wachstum über Jahrzehnte).
+  if (Number(process.env.SAVESIZE) > 1 && (s + 1) % Number(process.env.SAVESIZE) === 0) { console.log(`SAVESIZE nach ${s + 1} Saisons (${g.season})`); saveSize(g); }
   // DUMPS=10:datei,20:datei: nach so vielen Saisons bis zum 10.12. weiterspielen und eine Vorlage ablegen (scripts/make-test-save.mjs).
   const dumpAt = (process.env.DUMPS ?? '').split(',').filter(Boolean).map((x) => x.split(':')).find(([n]) => Number(n) === s + 1);
   if (dumpAt) {
@@ -430,7 +435,8 @@ if (process.env.AI && aiTotals.seasons) {
   for (const [k, e] of Object.entries(aiEpochs)) console.log(`KI-Epoche ${k} (${e.n} Saisons): ablösefreie Abgänge Ø ${(e.free / e.n).toFixed(1)}, mit Ablöse Ø ${(e.paid / e.n).toFixed(1)}, Bosman-Verkäufe Ø ${(e.bosman / e.n).toFixed(1)}, frühe Verlängerungen Ø ${(e.early / e.n).toFixed(1)}, Vorverträge Ø ${(e.pre / e.n).toFixed(1)}, Leihen Ø ${(e.loans / e.n).toFixed(1)} (Option gezogen ${e.buys}/${e.opt})${process.env.HUMAN ? `, Jobangebote Ø ${(e.jobs / e.n).toFixed(1)}` : ''}`);
   console.log(`KI-Bilanz über ${s} Saisons: Zugänge/Saison ${(aiTotals.arrivals / s).toFixed(1)}, Wechsel in der Liga ${(aiTotals.transfers / s).toFixed(1)}, unterklassig ${(aiTotals.lower / s).toFixed(1)}, Ausland ${(aiTotals.imports / s).toFixed(1)}, Jugend ${(aiTotals.youth / s).toFixed(1)}, generiert ${(aiTotals.generated / s).toFixed(1)} (${(aiTotals.generated / a * 100).toFixed(0)} % der Zugänge), Trainerwechsel ${(aiTotals.coach / s).toFixed(1)} (Entlassungen ${(aiTotals.sacked / s).toFixed(1)})`);
 }
-if (process.env.SAVESIZE) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
+if (process.env.SAVESIZE) saveSize(g);
+function saveSize(g: Game) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
 async function writeTemplate(game: Game, file: string): Promise<void> {
   const { compressToUTF16 } = await import('lz-string');
   const { writeFileSync } = await import('node:fs');
@@ -475,7 +481,7 @@ if (process.env.BAL) {
   const name = (id: string) => g.clubs[id]?.shortName ?? g.simClubs?.[id]?.shortName ?? id;
   console.log(`BAL Aufsteiger: ${bal.newRanks.length}, Ø Platz ${avg(bal.newRanks).toFixed(1)}, in den Top 3: ${bal.newRanks.filter((r) => r <= 3).length}, Meister: ${bal.newRanks.filter((r) => r === 1).length}`);
   console.log(`BAL Meister (1. Liga, eigene Liga): ${t.length} verschiedene in ${t.reduce((a, x) => a + x[1], 0)} Saisons: ${t.map(([id, n]) => name(id) + ' ' + n).join(', ')}`);
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+  for (const [a, b] of Array.from({ length: 11 }, (_, i) => [1975 + 10 * i, 1985 + 10 * i])) {
     const r = bal.rows.filter((x) => x.y >= a && x.y < b && x.tore > 0);
     if (r.length) console.log(`BAL ${a}–${b - 1}: Tore/Sp ${avg(r.map((x) => x.tore)).toFixed(2)} Heimsieg ${(avg(r.map((x) => x.heim)) * 100).toFixed(1)}% Remis ${(avg(r.map((x) => x.remis)) * 100).toFixed(1)}% Verletzungen/Saison ${avg(r.map((x) => x.inj)).toFixed(0)} Vereine ohne TW ${avg(r.map((x) => x.tw0)).toFixed(1)}`);
   }

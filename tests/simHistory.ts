@@ -62,7 +62,7 @@ export function histTrack(g: Game): void {
 
 export function histSummary(g: Game, mode: HistoryMode): void {
   console.log(`HIST Modus ${mode}, eigener Verein ${g.managedClubId} (ohne Kurve)`);
-  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030]]) {
+  for (const [a, b] of [[1975, 1985], [1985, 1995], [1995, 2005], [2005, 2015], [2015, 2030], [2030, 2050], [2050, 2100]]) {
     const r = rows.filter((x) => x.y >= a && x.y < b);
     if (!r.length) continue;
     const big = r.filter((x) => x.champF >= 1.15).length;
