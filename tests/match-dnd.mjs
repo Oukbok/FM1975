@@ -6,6 +6,7 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { chromium } from 'playwright';
 import { startNewGame } from './newgame-flow.mjs';
+import { walkToPrematch } from './prematch-walk.mjs';
 import { pickOption, optionsOf, valueOf } from './select3.mjs';
 
 const outDir = process.argv[2] || 'test-output/match-dnd';
@@ -28,27 +29,11 @@ await page.goto(url);
 await startNewGame(page);
 await page.waitForTimeout(800);
 
-const closeModals = async () => {
-  for (const sel of ['button:has-text("Überspringen")', 'button:has-text("Fortsetzen")', 'button:has-text("Schließen")', 'button:has-text("OK")', '.modal-close']) {
-    const b = page.locator(sel).first();
-    if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
-  }
-};
-async function untilMatchDue() {
-  for (let i = 0; i < 120; i++) {
-    // Vorschau „Nächstes Spiel“ geschlossen → Kopfknopf öffnet sie wieder.
-    { const pn = page.locator('.hd-continue.pm-next'); if (await pn.isVisible().catch(() => false)) { await pn.click().catch(() => {}); await page.waitForTimeout(600); } }
-    if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) return true;
-    await closeModals();
-    const w = page.getByRole('button', { name: /weiter/i }).first();
-    if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
-    await page.waitForTimeout(700);
-  }
-  return false;
-}
-
-if (!(await untilMatchDue())) { console.log('Kein eigenes Spiel erreicht'); process.exit(1); }
-await page.click('button:has-text("Textmodus")');
+// Fensterkette (Briefing, Budget, Erstes Training, Auslosung …) bis zur Vorschau „Nächstes Spiel“ –
+// gemeinsamer Helfer wie in tests/match-ui.mjs (das alte eigene „Weiter“-Klicken mit allgemeinen Schließen-Knöpfen erreichte die Vorschau nicht mehr).
+await walkToPrematch(page, 'Erstes eigenes Spiel', 150, async (m) => { console.log('FEHLER: ' + m); await browser.close(); server.close(); process.exit(1); });
+await page.click('.pm-go-btn:has-text("Textmodus")');
+await page.waitForSelector('.tm-root', { timeout: 15000 });
 await page.waitForTimeout(2500);
 const fail = (m) => { console.log('FEHLER: ' + m); errors.push(m); };
 const dragTo = async (from, to) => {
