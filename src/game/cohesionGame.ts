@@ -25,10 +25,19 @@ export const COHESION_BLOCKS: Record<string, number> = { taktik: 1, spielform: 0
 export function ensureCohesion(g: Game, club: Club, year = seasonYearOf(g.calendar.currentDate)): void {
   if (!validCohesion(club.cohesion) && club.tactics) club.cohesion = initCohesion(club.tactics, year);
 }
-/** Beim Laden/Spielstart: alle Vereine mit Kader bekommen eine Eingespieltheit auf ihre aktuelle Taktik. */
+/**
+ * Spielstart und Spielstände von vor der Eingespieltheit: alle Vereine mit Kader bekommen eine
+ * Eingespieltheit auf ihre aktuelle Taktik. Kennt der Spielstand sie schon (mindestens ein Verein
+ * hat sie), bleibt es beim Ablauf des laufenden Spiels: neue Vereine (Aufsteiger, zweite Mannschaften,
+ * Pokal-Amateure) bekommen sie am nächsten Montag bzw. der eigene Verein am nächsten Tag
+ * (`cohesionDaily`) – sonst spielte ein geladener Stand anders weiter als der nie gespeicherte
+ * (tests/savecompat-test.ts).
+ */
 export function migrateCohesion(g: Game): void {
+  const clubs = Object.values(g.clubs);
+  if (clubs.some((c) => validCohesion(c.cohesion))) return;
   const year = seasonYearOf(g.calendar.currentDate);
-  for (const c of Object.values(g.clubs)) ensureCohesion(g, c, year);
+  for (const c of clubs) ensureCohesion(g, c, year);
 }
 
 /** Taktische Einheiten des eigenen Trainingstags (Summe der Gewichte × Lernfaktor des Trainerteams). */

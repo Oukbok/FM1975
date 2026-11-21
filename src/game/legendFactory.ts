@@ -18,6 +18,7 @@ import { ensurePositionSkill } from '../engine/positionSkill';
 import { updateScoutEstimate } from '../engine/scouting';
 import { wageForOverall } from '../engine/economy';
 import { marketValueFor } from '../engine/clubEconomy';
+import { baseMarketValue } from '../engine/youthShared';
 import { originClubOf } from '../engine/persona';
 import { legendPotential, youngTop } from '../engine/talent';
 
@@ -166,7 +167,8 @@ export function makeLegendYouth(def: LegendDef, m: LegendMake): Player {
   const w = age <= 15 ? 1.0 : age <= 17 ? 0.75 : 0.5;
   p.scoutedPotentialMin = clampStars(stars - w * (0.5 + rng()));
   p.scoutedPotentialMax = clampStars(stars + w * rng());
-  p.contract.transferValue = Math.round(p.overall * p.overall * 400);
+  // Förderverträge gedeckelt wie in generateYouthPlayer/`migrateYouthContracts` – sonst sank der Wert erst beim Laden (tests/savecompat-test.ts).
+  p.contract.transferValue = Math.min(Math.round(p.overall * p.overall * 400), baseMarketValue(p));
   return p;
 }
 

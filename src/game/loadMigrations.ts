@@ -91,6 +91,7 @@ import { migrateWorldStats } from './worldScorers';
 import { worldLiveDaily } from './worldLeagues';
 import { retireFullCountries } from './fullCountries';
 import { ensureCountryPools } from '../engine/world';
+import { migrateTacticsRefs } from './tacticsRefsMigration';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
 export function prepareLoadedGame(g: Game): void {
@@ -421,6 +422,8 @@ export function prepareLoadedGame(g: Game): void {
   if (retireFullCountries(g) && g.world) g.world.live = undefined;
   if (g.world && g.world.live?.season !== g.season) worldLiveDaily(g, g.calendar.currentDate);
   retireLibero(g, Number(g.season.slice(0, 4))); // ältere Stände: Liberos/Libero-Systeme nach 2000 (game/liberoEra.ts)
+  // Zuletzt: Aufstellungs-Verweise auf Spieler außerhalb des Kaders entfernen (ergebnisneutral, game/tacticsRefsMigration.ts).
+  migrateTacticsRefs(g);
 }
 
 /** Abgelaufene Verträge von Kaderspielern (sollte es nicht geben): bis zum Ende der nächsten Saison verlängern. */

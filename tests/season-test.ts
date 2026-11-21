@@ -14,6 +14,7 @@ import { leagueClubs, startNextSeason } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
 import { loadGameSync as loadGame, saveGameSync as saveGame } from '../src/engine/save';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
+import { migrateTacticsRefs } from '../src/game/tacticsRefsMigration';
 import { Game } from '../src/game/state';
 import type { Match } from '../src/types';
 import { execFileSync } from 'node:child_process';
@@ -114,7 +115,8 @@ const plain = (g: Game) => JSON.parse(JSON.stringify(g));
  * Nachrüstungen; (2) die Nachrüstungen ändern am laufenden Spiel nur Erlaubtes: verdeckte
  * Persönlichkeit (deterministisch beim Lesen erzeugt), Attribut-Ausgangswert des eigenen
  * Kaders, Rückennummern von Neuzugängen der KI (im Spiel bis zum Laden 0, nur Anzeige),
- * Platzkategorien von Auslandsvereinen (nur Anzeige), Briefing-/Budget-Fenster (beim Laden bewusst aus).
+ * Platzkategorien von Auslandsvereinen (nur Anzeige), Briefing-/Budget-Fenster (beim Laden bewusst aus),
+ * Aufstellungs-Verweise auf Spieler außerhalb des Kaders (game/tacticsRefsMigration.ts).
  */
 const LOAD_OK = [/^\.(players|youthPlayers)\.[^.]+\.persona$/, /^\.players\.[^.]+\.shirtNumber$/, /^\.players\.[^.]+\.history\.attributeSnapshots$/, /^\.clubs\.(w_|eu_)[^.]+\.stadium\.seating$/, /^\.(briefing|budget)\.pending$/];
 function checkLoad(g: Game, when: string): void {
@@ -123,8 +125,11 @@ function checkLoad(g: Game, when: string): void {
   prepareLoadedGame(ref);
   const d = firstDiff(plain(ref), plain(loadedG));
   ok(!d, `${when}: Speichern/Laden verlustfrei${d ? ' – ' + d : ''}`);
+  // Aufstellungs-Verweise auf Abgänge räumt das Laden auf (ergebnisneutral, game/tacticsRefsMigration.ts).
+  const running = plain(g);
+  migrateTacticsRefs(running);
   const all: string[] = [];
-  firstDiff(plain(g), plain(loadedG), '', all);
+  firstDiff(running, plain(loadedG), '', all);
   const bad = all.filter((m) => !LOAD_OK.some((re) => re.test(m.split(':')[0])));
   ok(bad.length === 0, `${when}: Laden ändert nichts Spielrelevantes (${all.length - bad.length} erlaubte Nachrüstungen)${bad.length ? ' – ' + bad.slice(0, 5).join(' | ') + (bad.length > 5 ? ` … (+${bad.length - 5})` : '') : ''}`);
 }
