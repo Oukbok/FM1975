@@ -94,7 +94,7 @@ export interface WorldClubInfo {
 export function worldClubs(g: Game): Map<string, WorldClubInfo> {
   const out = new Map<string, WorldClubInfo>();
   // Volle Kader zählen nur für deutsche (bzw. Heimat-)Vereine; alte Europapokal-Kader von 1975 (`w_*`) ersetzt der Weltpool.
-  const real = (id: string) => (g.clubs[id]?.playerIds.length ?? 0) >= 11 && (!isForeignId(id) || id === g.managedClubId);
+  const real = (id: string) => (g.clubs[id]?.playerIds.length ?? 0) >= 11 && !g.clubs[id]?.guest && (!isForeignId(id) || id === g.managedClubId); // Gastvereine (game/worldSquad.ts) behalten ihre Weltspieler
   for (const s of Object.values(g.simClubs ?? {})) {
     if (real(s.id) || s.tier >= 200 || s.tier >= 100 || s.id === `res-${g.managedClubId}`) continue; // deine zweite Mannschaft = deine Spieler // Länder Spiel für Spiel = Auslandsvereine (unten), DDR-Ligen haben volle Kader
     out.set(s.id, { id: s.id, name: s.name, shortName: s.shortName, city: s.city, country: 'Deutschland', level: s.tier, strength: s.strength, colors: s.colors });
@@ -372,7 +372,7 @@ export function materializeWorldPlayer(g: Game, id: string): Player | null {
 }
 
 /** Vollwertiges Spielerobjekt aus einem Weltspieler-Tupel, ohne es zu speichern. */
-function buildWorldPlayer(g: Game, w: WP): Player {
+export function buildWorldPlayer(g: Game, w: WP): Player {
   const id = w[W.id];
   const date = g.calendar.currentDate;
   const year = Number(date.slice(0, 4));
@@ -442,6 +442,14 @@ export function removeWorldEntry(g: Game, id: string): void {
   if (g.worldPool) { noteGone(g, g.worldPool.p.filter((w) => w[W.id] === id)); g.worldPool.p = g.worldPool.p.filter((w) => w[W.id] !== id); }
   const p = g.players[id] as (Player & { world?: boolean }) | undefined;
   if (p) delete p.world;
+}
+
+/** Weltspieler eines Vereins aus dem Pool nehmen (Verein bekommt einen vollen Kader, game/worldSquad.ts). `kept` = als volle Spieler übernommen. */
+export function takeWorldSquad(g: Game, clubId: string, kept: Set<string>): void {
+  const pool = g.worldPool;
+  if (!pool) return;
+  noteGone(g, pool.p.filter((w) => w[W.club] === clubId && !kept.has(w[W.id])));
+  pool.p = pool.p.filter((w) => w[W.club] !== clubId);
 }
 
 /** Spieler, der ins Ausland verkauft wird, bleibt als Weltspieler erhalten (Rückkauf möglich). */

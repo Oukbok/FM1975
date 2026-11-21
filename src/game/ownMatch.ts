@@ -25,6 +25,7 @@ import { ensureIcClub } from './intercontinentalPlay';
 import { isContinentalId } from '../data/world/continents';
 import { recordTicker, runNarrated } from './matchTicker';
 import type { Line } from '../data/ticker/narrator';
+import { canGuest, ensureGuestClub } from './worldSquad';
 
 export interface OwnMatchInfo {
   kind: 'liga' | 'pokal' | 'euro';
@@ -62,9 +63,10 @@ function tieInfo(g: Game, kind: 'pokal' | 'euro', cup: CupState, ri: number, tie
 
 /**
  * Steht heute ein eigenes, noch nicht gespieltes Spiel an? Nur Spiele, deren Gegner sich als voller
- * Verein aufbauen lässt (`canBuildClubs`): sonst entscheidet der Spieltag sie im Hintergrund
- * (euroFlow.ts `playOne` → `lightMatch`), statt dass der Tag ewig auf „Simulieren“ wartet –
- * z. B. Start in der DDR, Europapokal gegen einen simulierten Bundesligisten (tests/savecompat-test.ts).
+ * Verein aufbauen lässt (`canBuildClubs`): Auslandsgegner, andere Kontinente und Sim-Vereine des eigenen
+ * Landes als Gastverein mit ihren Weltspielern (game/worldSquad.ts – Start in der DDR: Europapokal gegen
+ * einen Bundesligisten). Notnagel für alles andere: Der Spieltag entscheidet das Spiel im Hintergrund
+ * (euroFlow.ts `playOne` → `lightMatch`), statt dass der Tag ewig auf „Simulieren“ wartet.
  */
 export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
   const info = findOwnMatchDueRaw(g);
@@ -73,7 +75,7 @@ export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
 
 /** Lassen sich beide Vereine für die Match-Engine aufbauen (ohne etwas anzulegen)? */
 export function canBuildClubs(g: Game, info: OwnMatchInfo): boolean {
-  return [info.homeId, info.awayId].every((id) => !!g.clubs[id] || isContinentalId(id) || !!g.euroClubs?.[id]);
+  return [info.homeId, info.awayId].every((id) => !!g.clubs[id] || isContinentalId(id) || !!g.euroClubs?.[id] || canGuest(g, id));
 }
 
 function findOwnMatchDueRaw(g: Game): OwnMatchInfo | null {
@@ -185,13 +187,13 @@ export function isPrepared(info: OwnMatchInfo): boolean {
   return hasPreparedMatch(info.homeId, info.awayId, info.date);
 }
 
-/** Ausländischen Gegner bei Bedarf als vollen Verein anlegen (wie im Europapokal-Ablauf). */
+/** Gegner ohne vollen Kader bei Bedarf als vollen Verein anlegen (wie im Europapokal-Ablauf). */
 export function ensureClubs(g: Game, info: OwnMatchInfo): boolean {
   for (const id of [info.homeId, info.awayId]) {
     if (g.clubs[id]) continue;
     if (isContinentalId(id)) { if (!ensureIcClub(g, id)) return false; continue; } // andere Kontinente (Weltpokal/Klub-WM)
     const euro = g.euroClubs?.[id];
-    if (!euro) return false;
+    if (!euro) { if (!ensureGuestClub(g, id)) return false; continue; } // Sim-Verein des eigenen Landes: Kader aus seinen Weltspielern
     g.clubs[id] = buildEuroClubFull(euro, g.calendar?.seasonStartDate ?? '', g.players);
   }
   return true;

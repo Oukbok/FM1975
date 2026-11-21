@@ -108,7 +108,7 @@ export function repairSquadLists(game: Game): number {
 
 /** Liga-Anker: liegt die Liga über/unter dem Ziel, werden Nachrücker etwas schwächer/stärker. */
 export function leagueAnchor(game: Game): number {
-  const leagueClubs = Object.values(game.clubs).filter((c) => !c.id.startsWith('am') && !c.id.startsWith('eu_'));
+  const leagueClubs = Object.values(game.clubs).filter((c) => !c.guest && !c.id.startsWith('am') && !c.id.startsWith('eu_'));
   const all = leagueClubs.flatMap((c) => c.playerIds.map((id) => game.players[id]).filter(Boolean)) as Player[];
   const avg = all.length ? all.reduce((s, p) => s + p.overall, 0) / all.length : LEAGUE_TARGET;
   return Math.max(-6, Math.min(6, (LEAGUE_TARGET - avg) * 1.5));

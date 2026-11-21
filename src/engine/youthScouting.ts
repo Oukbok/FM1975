@@ -46,7 +46,7 @@ export function visibleForeignYouth(
   const month = date.slice(0, 7);
   const out: Player[] = [];
   for (const c of Object.values(clubs)) {
-    if (c.id === managedId || c.id.startsWith('am') || c.id.startsWith('eu_') || c.id.startsWith('w_')) continue;
+    if (c.id === managedId || c.guest || c.id.startsWith('am') || c.id.startsWith('eu_') || c.id.startsWith('w_')) continue;
     for (const id of c.youthPlayerIds ?? []) {
       const p = youthPlayers[id];
       if (!p || p.age < minAge) continue;

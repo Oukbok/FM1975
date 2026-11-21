@@ -54,7 +54,7 @@ export function youthInvestOf(club: Club, year: number): YouthInvest {
 export function migrateYouthInvest(g: Game): void {
   const year = yearOf(g.calendar.currentDate);
   for (const c of Object.values(g.clubs)) {
-    if (c.id.startsWith('am') || c.id.startsWith('eu_') || c.id.startsWith('w_')) continue;
+    if (c.guest || c.id.startsWith('am') || c.id.startsWith('eu_') || c.id.startsWith('w_')) continue;
     youthInvestOf(c, year);
   }
 }

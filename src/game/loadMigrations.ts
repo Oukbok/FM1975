@@ -174,7 +174,7 @@ export function prepareLoadedGame(g: Game): void {
     applyFacilityEffects(c);
     const curDate = g.calendar.currentDate;
     // Pokal-Amateure und Auslandsvereine führen keine Jugend (wie im neuen Spiel).
-    if (c.id.startsWith('am') || isForeignId(c.id)) continue;
+    if (c.guest || c.id.startsWith('am') || isForeignId(c.id)) continue;
     if (c.youthPlayerIds.length === 0) {
       // Noch gar keine Talente → kompletten Altersaufbau F–A erzeugen.
       for (const yp of academyStartingCohort(c, curDate)) {

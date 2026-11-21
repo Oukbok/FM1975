@@ -9,6 +9,7 @@ import { drawRulesFor, drawVenue } from '../data/drawHistory';
 import { euroCompName, euroFormat } from '../data/euroFormats';
 import type { EuroCompId } from '../data/europe';
 import { buildEuroClubFull } from '../data/generate';
+import { ensureGuestClub } from './worldSquad';
 import { CalendarEngine } from '../engine/calendar';
 import { runDraw } from '../engine/cupDrawRules';
 import { buildGroupMatches, buildLeaguePhase, groupName } from '../engine/euroGroups';
@@ -48,6 +49,7 @@ export function materializeOpponents(g: Game, cup: CupState, round: CupRound): v
     if (g.clubs[id]) continue;
     const eu = g.euroClubs?.[id];
     if (eu) g.clubs[id] = buildEuroClubFull(eu, g.calendar?.seasonStartDate ?? '', g.players);
+    else ensureGuestClub(g, id); // Sim-Verein des eigenen Landes (DDR-Start: Bundesligist) mit seinen Weltspielern
   }
   void cup;
 }

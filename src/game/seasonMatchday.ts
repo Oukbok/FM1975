@@ -69,7 +69,7 @@ export function advanceDivisionsTo(game: Game, date: string): void {
 /** Nur die 1. Liga-Vereine (ohne die Pokal-Amateurvereine mit Präfix "am"). */
 export function leagueClubs(game: Game): Club[] {
   // Ohne Pokal-Amateure und ohne für den Europapokal materialisierte Auslandsvereine.
-  return Object.values(game.clubs).filter((c) => !c.id.startsWith('am') && !isForeignId(c.id));
+  return Object.values(game.clubs).filter((c) => !c.guest && !c.id.startsWith('am') && !isForeignId(c.id));
 }
 
 /** Erzeugt eine Spielbericht-Nachricht für das Spiel des Nutzers. */

@@ -121,7 +121,7 @@ function makeReserve(g: Game, parentId: string, year: number): SimClub {
 function parentCandidates(g: Game, tierOf: (id: string) => number): { id: string; tier: number }[] {
   const out: { id: string; tier: number }[] = [];
   for (const c of Object.values(g.clubs)) {
-    if (c.id.startsWith('am') || isForeignId(c.id) || isReserveId(c.id)) continue;
+    if (c.guest || c.id.startsWith('am') || isForeignId(c.id) || isReserveId(c.id)) continue;
     out.push({ id: c.id, tier: tierOf(c.id) });
   }
   for (const s of Object.values(g.simClubs)) if (!isReserveId(s.id) && tierOf(s.id) <= 3) out.push({ id: s.id, tier: tierOf(s.id) });

@@ -1270,6 +1270,8 @@ export interface ClubCommerce {
 
 /** Ein 1. Liga-Verein. */
 export interface Club {
+  /** Gastverein (game/worldSquad.ts): Sim-Verein, für ein eigenes Pflichtspiel bis zum Saisonwechsel voll angelegt; zählt nicht zur Spielerliga. */
+  guest?: true;
   /** Eingespieltheit (engine/cohesion.ts): eingeübte Anweisungen, Formationen, Stammelf; fehlt = neutral. */
   cohesion?: import('../engine/cohesion').Cohesion;
   id: string;

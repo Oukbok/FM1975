@@ -30,7 +30,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 const sim = (g: Game) => !!(g as any).simAutoManage;
 /** Verein wird vom Spieler geführt (Angebote statt Automatik). */
 const human = (g: Game, c: Club) => c.id === g.managedClubId && !sim(g);
-const isSponsorClub = (c: Club) => !c.id.startsWith('eu_') && !c.id.startsWith('w_');
+const isSponsorClub = (c: Club) => !c.guest && !c.id.startsWith('eu_') && !c.id.startsWith('w_');
 
 export function clubTierNow(g: Game, c: Club): number {
   if (c.id.startsWith('am')) return 5;

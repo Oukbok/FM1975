@@ -64,6 +64,7 @@ import { cateringSeasonStart } from './cateringGame';
 import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
+import { adoptWorldSquad, dropGuestClubs, squadToWorld } from './worldSquad';
 import { storeSeasonResults } from './leagueResults';
 import { bindGameIds } from './resetModuleState';
 import { ddrEuroQualifiers, ddrRenameClubs, ddrReunifyHome, isDdrClub, isDdrHome, levelOfTier, mergeQualifiers } from './ddrHome';
@@ -274,12 +275,15 @@ export function startNextSeason(g: Game): void {
   }
 
   // --- 5) Repräsentation abgleichen: NUR die Spielerliga hat volle Kader ---
-  // 5a) Sim → Voll für Vereine, die in die Spielerliga aufsteigen/einziehen.
+  dropGuestClubs(g); // Gastvereine eigener Pflichtspiele (game/worldSquad.ts) – ihre Weltspieler bleiben im Pool
+  // 5a) Sim → Voll für Vereine, die in die Spielerliga aufsteigen/einziehen. Der Kader entsteht aus den
+  //     Weltspielern des Vereins (gleiche Namen/Jahrgänge/Stärken wie im Spielerpool), nicht neu gewürfelt.
   for (const id of playerIds) {
     if (!g.clubs[id]) {
       const sc = g.simClubs[id];
       if (sc) {
         g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers, levelOfTier(membership[playerDivId].meta.tier));
+        adoptWorldSquad(g, g.clubs[id], nextStartYear);
         delete g.simClubs[id];
       }
     }
@@ -303,6 +307,7 @@ export function startNextSeason(g: Game): void {
     const dest = divOf[c.id] ?? (ddrClub && ddrSep ? { tier: DDR_POOL_TIER, group: 'nordost' as LeagueGroup } : { tier: 2, group: 'nord' as LeagueGroup });
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
     if (ddrClub) g.simClubs[c.id].ddr = true;
+    squadToWorld(g, c, g.simClubs[c.id]); // Kader läuft als Weltspieler weiter (game/worldSquad.ts)
     for (const pid of c.playerIds) delete g.players[pid];
     for (const yid of (c.youthPlayerIds || [])) delete g.youthPlayers[yid];
     delete g.clubs[c.id];

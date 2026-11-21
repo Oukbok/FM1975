@@ -78,7 +78,7 @@ export function youthPoachingAtSeasonChange(g: Game, date: string): void {
   const mine = g.clubs[g.managedClubId];
   if (!mine) return;
   const year = yearOf(date);
-  const league = Object.values(g.clubs).filter((c) => c.id !== mine.id && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_'));
+  const league = Object.values(g.clubs).filter((c) => c.id !== mine.id && !c.guest && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_'));
   const lost = aiPoachAttempts(mine, league, g.youthPlayers, year, Math.random);
   for (const { p, to } of lost) {
     const fee = youthCompensation(p, year);

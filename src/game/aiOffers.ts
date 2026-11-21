@@ -50,9 +50,9 @@ function wantsMove(g: Game, p: Player, buyer: Club, abroad = false): boolean {
 
 function pickBidder(g: Game, p: Player, own: Club, fee: number): Club | null {
   // Zuerst Vereine mit echtem Bedarf auf seiner Position (Kaderplanung, game/aiClubs.ts).
-  const planned = needBidders(g, p, fee).filter((c) => c.id !== own.id && !isForeignId(c.id) && c.reputation >= own.reputation - 8);
+  const planned = needBidders(g, p, fee).filter((c) => c.id !== own.id && !c.guest && !isForeignId(c.id) && c.reputation >= own.reputation - 8);
   if (planned.length) return planned[Math.floor(Math.random() * Math.min(2, planned.length))];
-  const cands = Object.values(g.clubs).filter((c) => c.id !== own.id && !isForeignId(c.id)
+  const cands = Object.values(g.clubs).filter((c) => c.id !== own.id && !c.guest && !isForeignId(c.id)
     && c.reputation >= Math.max(own.reputation - 4, p.overall - 6) && c.finances.transferBudget >= fee && c.playerIds.length < 30);
   if (!cands.length) return null;
   cands.sort((a, b) => b.reputation - a.reputation);

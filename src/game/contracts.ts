@@ -109,7 +109,7 @@ export function offerContract(g: Game, playerId: string, wage: number, years: nu
 // -----------------------------------------------------------------------------
 /** Neuer Verein für einen eigenen Spieler (Vertragsende/Vorvertrag): nach seinen Wünschen. */
 function pickBuyer(g: Game, p: Player, exclude: string, seed: string): Club | null {
-  const cands = Object.values(g.clubs).filter((c) => c.id !== exclude && c.id !== g.managedClubId && !isForeignId(c.id)
+  const cands = Object.values(g.clubs).filter((c) => c.id !== exclude && c.id !== g.managedClubId && !c.guest && !isForeignId(c.id)
     && Math.abs((c.reputation ?? 60) - p.overall) <= 14 && c.playerIds.length < 30);
   if (!cands.length) return null;
   let i = 0;

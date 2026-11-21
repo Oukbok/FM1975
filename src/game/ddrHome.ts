@@ -39,7 +39,7 @@ export function isDdrClub(g: Pick<Game, 'simClubs' | 'clubs'> & { ddrHome?: true
   if (!id) return false;
   if (g.simClubs?.[id]?.ddr) return true;
   if (/^(ddr|gdr)-/.test(id) || /^res-(ddr|gdr)-/.test(id)) return true;
-  return !!g.ddrHome && !!g.clubs?.[id] && !isForeignId(id);
+  return !!g.ddrHome && !!g.clubs?.[id] && !g.clubs[id].guest && !isForeignId(id); // Gastverein = Bundesligist (game/worldSquad.ts)
 }
 
 /** DDR-Grenze noch zu? (nur bei DDR-Start) */

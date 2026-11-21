@@ -3,11 +3,18 @@
 //   1. Start 1980 in der DDR-Oberliga und in der DDR-Liga: Spielerliga, Kader, Punkteregel, Währung,
 //      Europapokal-Starter, Transfersperre, eine Saison + Saisonwechsel, Speichern/Laden.
 //   2. Start 1989 in der Oberliga, Lauf über den Saisonwechsel 1991/92: Verteilung nach migrate1991,
-//      Heimatland danach Deutschland, Spielerliga korrekt, Mauerfall öffnet den Markt.
+//      Heimatland danach Deutschland, Spielerliga korrekt, Mauerfall öffnet den Markt; Kontinuität:
+//      West-Vereine der neuen Spielerliga treten mit ihren Weltspielern an (game/worldSquad.ts),
+//      Vereine, die die Spielerliga verlassen, laufen mit ihrem Kader als Weltspieler weiter.
+//   3. Eigenes Europapokalspiel gegen einen simulierten Bundesligisten: Gastverein aus seinen
+//      Weltspielern, Vorschau, Textmodus, Simulieren über die Match-Engine, Abräumen zum Saisonwechsel.
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
 import { processDay, DayUi } from '../src/game/day';
-import { findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
+import { canBuildClubs, createOwnMatchSim, findMatch, findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
+import { buildPrematch } from '../src/game/prematch';
+import { worldClubs, WP_FIELD as W } from '../src/game/worldPool';
+import { poolRows } from '../src/game/playerPool';
 import { startNextSeason } from '../src/game/season';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { ddrTransferBlocker, isDdrClub, isDdrHome } from '../src/game/ddrHome';
@@ -93,7 +100,25 @@ console.log('Start 1989 Oberliga → Wiedervereinigung');
   runTo(g, '1991-06-29');
   const ober = g.leagues.playerDivision.id === 'ddr-oberliga' ? g.table.rows.map((r) => r.clubId) : g.leagues.otherDivisions.find((d) => d.id === 'ddr-oberliga')!.table.rows.map((r) => r.clubId);
   const ownPos = ober.indexOf(g.managedClubId) + 1;
+  // Kontinuität: Weltkader aller Sim-Vereine und volle Kader der Spielerliga vor dem Wechsel merken.
+  const wpBefore = new Map<string, string[]>();
+  for (const w of g.worldPool?.p ?? []) if (!w[W.youth]) (wpBefore.get(w[W.club]) ?? wpBefore.set(w[W.club], []).get(w[W.club])!).push(`${w[W.first]} ${w[W.last]}|${w[W.born]}|${w[W.pos]}`);
+  const fullBefore = new Map(g.table.rows.map((r) => [r.clubId, g.clubs[r.clubId].playerIds.map((id) => g.players[id]).filter((p) => p && !p.loan).map((p) => `${p.fullName}|${p.dateOfBirth.slice(0, 4)}`)] as const));
   startNextSeason(g);
+  {
+    const key = (p: { fullName: string; dateOfBirth: string; naturalPosition: string }) => `${p.fullName}|${p.dateOfBirth.slice(0, 4)}|${p.naturalPosition}`;
+    const west = g.table.rows.map((r) => r.clubId).filter((id) => wpBefore.has(id));
+    const share = west.map((id) => { const sq = g.clubs[id].playerIds.map((pid) => g.players[pid]); const old = new Set(wpBefore.get(id)); return sq.filter((p) => old.has(key(p))).length / sq.length; });
+    ok(west.length >= 8 && share.every((x) => x >= 0.8), `1991: ${west.length} West-Vereine der Spielerliga mit ihren Weltspielern (kleinster Anteil ${Math.round(Math.min(...share) * 100)} %)`);
+    ok(west.every((id) => !(g.worldPool?.p ?? []).some((w) => w[W.club] === id)), 'ihre Einträge im Weltpool sind aufgelöst (keine Doppelgänger)');
+    ok(west.every((id) => g.clubs[id].playerIds.every((pid) => !(g.players[pid] as any).world)), 'übernommene Spieler sind normale Kaderspieler');
+    const ids = new Set<string>(); let dup = 0;
+    for (const c of Object.values(g.clubs)) for (const pid of c.playerIds) { if (ids.has(pid)) dup++; ids.add(pid); }
+    ok(dup === 0, 'kein Spieler in zwei Kadern');
+    const gone = [...fullBefore.keys()].filter((id) => !g.clubs[id] && g.simClubs[id] && worldClubs(g).has(id));
+    const kept = gone.map((id) => { const now = new Set((g.worldPool?.p ?? []).filter((w) => w[W.club] === id).map((w) => `${w[W.first]} ${w[W.last]}|${w[W.born]}`)); const old = fullBefore.get(id)!; return old.filter((k) => now.has(k)).length; });
+    ok(gone.length > 0 && kept.every((n) => n >= 11), `1991: ${gone.length} Vereine verlassen die Spielerliga, Kader läuft als Weltspieler weiter (mind. ${Math.min(...kept)} bekannte Namen)`);
+  }
   ok(g.season === '1991/92' && !isDdrHome(g) && homeCountryOf(g) === 'ger' && homeCurrencyCc() === 'ger', 'Heimatland Deutschland, Markierung weg');
   ok(g.appliedReforms.includes('reform-1991-reunification'), 'Reform 1991 angewandt');
   ok(!g.leagues.otherDivisions.some((d) => d.id.startsWith('ddr-')) && !g.leagues.playerDivision.id.startsWith('ddr-'), 'keine DDR-Ligen mehr');
@@ -109,6 +134,65 @@ console.log('Start 1989 Oberliga → Wiedervereinigung');
   runTo(g, '1992-06-29');
   startNextSeason(g);
   ok(g.season === '1992/93' && g.table.rows.some((r) => r.clubId === g.managedClubId), `1992/93 weiter in ${g.leagues.playerDivision.name}`);
+}
+
+console.log('Eigenes Europapokalspiel gegen einen Bundesligisten');
+{
+  const club = 'ddr-jena';
+  const g = start(club, 1980);
+  const comp = (['ec', 'cwc', 'uefa'] as const).find((k) => g.euroCups?.[k]?.participantIds.includes(club))!;
+  const cup = () => g.euroCups![comp]!;
+  for (let n = 0; n < 150 && !cup().rounds[0].drawn; n++) tick(g);
+  // Auslosung lenken: Gegner des eigenen Vereins wird der Bundesligist des Wettbewerbs.
+  const round = cup().rounds[0];
+  const own = round.ties.find((t) => t.homeClubId === club || t.awayClubId === club)!;
+  const west = cup().participantIds.find((id) => !!g.simClubs[id] && !isDdrClub(g, id))!;
+  const other = round.ties.find((t) => t.homeClubId === west || t.awayClubId === west)!;
+  ok(!!own && !!west && !!other, `Wettbewerb ${comp}: ${name(g, club)} und ${name(g, west)} in der 1. Runde`);
+  if (own !== other) {
+    const old = own.homeClubId === club ? own.awayClubId : own.homeClubId;
+    const swap = (o: any, a: string, b: string) => { for (const k of ['homeClubId', 'awayClubId', 'home', 'away']) if (o[k] === a) o[k] = b; };
+    for (const x of [own, ...(own.legs ?? [])]) swap(x, old, west);
+    for (const x of [other, ...(other.legs ?? [])]) swap(x, west, old);
+  }
+  const poolNames = () => new Set((g.worldPool?.p ?? []).filter((w) => w[W.club] === west).map((w) => `${w[W.first]} ${w[W.last]}`));
+  const before = poolNames();
+  ok(before.size >= 20 && !g.clubs[west], `${name(g, west)} läuft simuliert mit ${before.size} Weltspielern`);
+  let played = 0, engine = 0, preview = 0, text = 0, sameNames = true, scorersKnown = true;
+  for (let n = 0; n < 200 && g.calendar.currentDate < '1980-12-15'; n++) {
+    if (processDay(g, ui)) continue;
+    const due = findOwnMatchDue(g);
+    if (!due) continue;
+    if (due.homeId === west || due.awayId === west) {
+      played++;
+      if (!canBuildClubs(g, due)) fails++;
+      const pm = buildPrematch(g, due);
+      if (pm && g.clubs[west]?.guest) preview++;
+      const sq = g.clubs[west]?.playerIds.map((id) => g.players[id]) ?? [];
+      if (sq.length < 14 || !sq.every((p) => p && before.has(p.fullName) && p.clubId === west)) sameNames = false;
+      if (createOwnMatchSim(g, due, true)) text++;
+      const out = quickSimOwnMatch(g, due);
+      processDay(g, ui);
+      const m = findMatch(g, due.matchId)?.match;
+      if (out && m && m.status === 'finished' && (m.events?.length ?? 0) > 0) engine++;
+      for (const e of m?.events ?? []) if ((e as any).type === 'goal' && (e as any).playerId && !g.players[(e as any).playerId]) scorersKnown = false;
+    } else { quickSimOwnMatch(g, due); processDay(g, ui); }
+  }
+  ok(played === 2, `Hin- und Rückspiel gegen ${name(g, west)} stehen als eigenes Spiel an (${played})`);
+  ok(preview === played && text === played, 'Vorschau und Textmodus lassen sich vorbereiten (Gastverein angelegt)');
+  ok(engine === played && scorersKnown, 'beide Spiele über die Match-Engine gespielt (Spielbericht mit Ereignissen)');
+  ok(sameNames, 'Kader des Gegners = seine Weltspieler (gleiche Namen wie im Spielerpool)');
+  ok(poolNames().size === before.size && !!g.simClubs[west] && worldClubs(g).has(west), 'Weltspieler und Sim-Verein bleiben bestehen');
+  ok(!isDdrClub(g, west) && !!ddrTransferBlocker(g, west, g.calendar.currentDate), 'Gastverein zählt nicht als DDR-Verein (Transfersperre bleibt)');
+  const rows = poolRows(g).rows.filter((r) => r.clubId === west);
+  ok(new Set(rows.map((r) => r.id)).size === rows.length && rows.length === (g.worldPool?.p ?? []).filter((w) => w[W.club] === west).length, 'Spielerpool: jeder Spieler des Gegners genau einmal');
+  const copy = JSON.parse(JSON.stringify(g)) as Game;
+  prepareLoadedGame(copy);
+  ok(!!copy.clubs[west]?.guest && copy.clubs[west].playerIds.every((id) => !!copy.players[id]), 'Speichern/Laden: Gastverein bleibt bis zum Saisonende');
+  prepareLoadedGame(g);
+  runSeason(g);
+  ok(!g.clubs[west] && !!g.simClubs[west] && !Object.values(g.players).some((p) => p.clubId === west), 'Saisonwechsel: Gastverein wieder entfernt, Verein läuft simuliert weiter');
+  ok(g.table.rows.every((r) => !g.clubs[r.clubId].guest) && fullOk(g), 'Spielerliga unverändert nur DDR-Vereine mit vollen Kadern');
 }
 
 console.log(fails ? `\n${fails} FEHLER` : '\nAlles ok');

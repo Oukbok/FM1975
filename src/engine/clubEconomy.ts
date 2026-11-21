@@ -27,7 +27,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 /** Vollwertiger Liga-Verein (keine Amateure des Pokals, keine Auslandsvereine). */
 export function isLeagueClub(c: Club): boolean {
-  return !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_');
+  return !c.guest && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_'); // Gastvereine: game/worldSquad.ts
 }
 
 // Marke, Marke & Ruf nach der Saison, Vermarktung: engine/clubBrand.ts.

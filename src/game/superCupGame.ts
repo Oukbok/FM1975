@@ -18,6 +18,7 @@ import { hashSeed, homeCountryKey } from './state';
 import { SUPER_CUPS, SUPER_PRIZE, superEra, type SuperEra } from '../data/superCups';
 import { MatchEngine, type KoRule } from '../engine/match';
 import { buildEuroClubFull } from '../data/generate';
+import { ensureGuestClub } from './worldSquad';
 import { book, bookCupHomeMatch } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
 import { economyScale, yearOf } from '../engine/economy';
@@ -257,6 +258,7 @@ function playScMatch(g: Game, ev: ScEvent, m: ScMatch, today: string): void {
   if (m.home === mid || m.away === mid) for (const id of [m.home, m.away]) {
     const eu = !g.clubs[id] ? g.euroClubs?.[id] : undefined;
     if (eu) g.clubs[id] = buildEuroClubFull(eu, g.calendar?.seasonStartDate ?? '', g.players);
+    else if (!g.clubs[id]) ensureGuestClub(g, id); // Sim-Verein des eigenen Landes (game/worldSquad.ts)
   }
   const full = !!g.clubs[m.home] && !!g.clubs[m.away];
   if (full) {
