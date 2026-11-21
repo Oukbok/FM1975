@@ -5,10 +5,9 @@
 // Auch für die Bilderliste docs/images/briefing.md (scripts/briefing-image-list.ts).
 // =============================================================================
 import { topicMeta, type BriefingItem } from '../data/briefings';
-import { eraTipsFor } from '../data/briefings/eraTips';
 import { briefingImageKey, briefingKindPhoto } from '../data/briefingImages';
 import { CHANGE_KIND_META } from './briefingChanges';
-import { shorten, type SeasonBriefing } from './seasonBriefing';
+import { localEraTips, shorten, type SeasonBriefing } from './seasonBriefing';
 
 export interface Story { topic: BriefingItem['topic']; title: string; text: string; kicker: string; inGame?: string; key: string }
 export interface Card { icon: string; title: string; label: string; text: string; photo: string | null }
@@ -41,7 +40,7 @@ export function cardsOf(b: SeasonBriefing): Card[] {
     out.push({ icon: topicMeta(d.topic).icon, title: start ? d.title : `Vorbei: ${d.title}`, label: start ? 'Anders als heute' : 'Ab jetzt wie heute',
       text: clip(start ? d.then : `Ab dieser Saison wie heute: ${d.today}`), photo: null });
   }
-  for (const t of eraTipsFor(b.startYear)) {
+  for (const t of localEraTips(b.startYear)) {
     if (out.length >= 3) break;
     out.push({ icon: topicMeta(t.topic).icon, title: t.title, label: 'Typisch für die Zeit', text: clip(t.inGame), photo: null });
   }

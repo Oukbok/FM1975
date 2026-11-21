@@ -4,6 +4,8 @@ import { DashBox, DashPage, Empty } from '../../ui/DashPage';
 import { CHRONICLE_WIKI_ID, ChronicleView, chronEvents, matchChronicle, type TlEvent } from '../stats/ChronicleView';
 import type { Screen } from '../../shell/navigation';
 import { useMemo, useState } from 'react';
+import { localMoneyText } from '../../engine/moneyText';
+import { _displayYear } from '../../ui/format';
 
 // =============================================================================
 // ENTWICKLER-WIKI (durchsuchbar, Kategorien)
@@ -97,7 +99,7 @@ export function WikiView({ g, openArticle, onGoto }: { g: Game; openArticle?: st
         {shown ? (shown.id === CHRONICLE_WIKI_ID
           ? <ChronicleView g={g} embedded query={titleHit ? '' : query} related={(e) => relatedMap.get(e.id) ?? []}
               onArticle={(id) => setOpenId(id)} onOpenModal={onGoto ? () => onGoto('chronicle') : undefined} />
-          : <WikiBody text={shown.body} />)
+          : <WikiBody text={localMoneyText(shown.body, _displayYear, { dmYear: 1975 })} />)
           : <Empty icon="wiki">Keine Treffer für „{query}“.</Empty>}
       </DashBox>
 

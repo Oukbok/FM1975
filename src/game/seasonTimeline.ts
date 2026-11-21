@@ -5,6 +5,7 @@
 import { TIMELINE_TYPE_META, TimelineEvent, dueTimelineEvents } from '../data/timeline';
 import { calculateTable } from '../engine/league';
 import { makeMessage, pushMessage } from '../engine/messages';
+import { localCurrencyText } from '../engine/moneyText';
 import { Game } from './state';
 import { leagueClubs } from './seasonMatchday';
 
@@ -47,7 +48,7 @@ export function fireTimelineForSeason(g: Game, season: string, dateISO: string, 
         date: dateISO, category: 'milestone', from: 'Fußball-Chronik',
         subject: `${ev.year}: ${ev.title}`,
         shortText: `${meta.label}-Meilenstein ${ev.season}: ${ev.title}.`,
-        bodyText: `${ev.title}  (${ev.season} · ${meta.label})\n\n${ev.description}\n\n`
+        bodyText: `${ev.title}  (${ev.season} · ${meta.label})\n\n${localCurrencyText(ev.description, ev.year) ?? ev.description}\n\n`
           + `Diesen und alle weiteren Meilensteine findest du in der „Chronik des deutschen Fußballs“ (unten rechts in der Fußleiste).`,
       }));
     }

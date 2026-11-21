@@ -38,6 +38,8 @@
     "test:schedule": "node scripts/run-ts.mjs tests/schedule-test.ts",
     "test:grounds": "node scripts/run-ts.mjs tests/grounds-test.ts",
     "test:finance": "node scripts/run-ts.mjs tests/finance-test.ts",
+    "test:currency": "node scripts/run-ts.mjs tests/currency-test.ts",
+    "test:currency-ui": "node tests/currency-ui.mjs",
     "test:briefing": "node scripts/run-ts.mjs tests/briefing-test.ts",
     "test:awards": "node scripts/run-ts.mjs tests/awards-test.ts",
     "test:goldenball": "node scripts/run-ts.mjs tests/goldenball-test.ts",

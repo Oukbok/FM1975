@@ -11,7 +11,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ClubCrest from '../../components/ClubCrest';
 import Icon from '../../components/Icon';
-import { eraFor, eraTipsFor } from '../../data/briefings/eraTips';
+import { eraFor } from '../../data/briefings/eraTips';
+import { localEraTips } from '../../game/seasonBriefing';
 import type { SeasonBriefing } from '../../game/seasonBriefing';
 import { seasonTasks } from '../../game/seasonTasks';
 import type { Game } from '../../game/state';
@@ -81,7 +82,7 @@ export function BriefingModal({ b, g, onClose, onGoto, initialTab = 'overview', 
 
   const club = g?.clubs[g.managedClubId];
   const era = eraFor(b.startYear);
-  const tips = useMemo(() => eraTipsFor(b.startYear), [b.startYear]);
+  const tips = useMemo(() => localEraTips(b.startYear), [b.startYear]);
   // Aufgaben nur für die laufende Saison (aus dem aktuellen Spielstand).
   const tasks = useMemo(() => (g && g.season === b.season ? seasonTasks(g, b.situation, b.inGame) : null), [g, b]);
   const navigate = onGoto ? (where: string) => { const s = screenOfWhere(where); if (s) { onClose(); onGoto(s); } } : undefined;

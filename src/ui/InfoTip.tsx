@@ -10,6 +10,8 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type 
 import { createPortal } from 'react-dom';
 import { INFO_TEXTS, type InfoKey } from '../data/infoTexts';
 import { placeNear, uiScale } from './floating';
+import { localMoneyText } from '../engine/moneyText';
+import { _displayYear } from './format';
 
 let wikiOpener: ((articleId: string) => void) | null = null;
 /** Von GameShell gesetzt: öffnet das Wiki mit einem Artikel. Rückgabe = Abmelden. */
@@ -39,7 +41,8 @@ export function InfoTip({ k, title, text, wiki, className }: {
 }) {
   const entry = k ? INFO_TEXTS[k] : undefined;
   const head = title ?? entry?.title ?? '';
-  const body = text ?? entry?.text ?? '';
+  const raw = text ?? entry?.text ?? '';
+  const body = typeof raw === 'string' ? localMoneyText(raw, _displayYear) : raw; // Beispielbeträge in der Heimatwährung
   const wikiId = wiki ?? entry?.wiki;
   const id = useId();
   const btn = useRef<HTMLButtonElement>(null);

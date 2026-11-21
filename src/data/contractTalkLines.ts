@@ -14,7 +14,7 @@ export const CONTRACT_GRAMMAR: Grammar = {
     '„Ich fühle mich hier wohl. Lass uns das schnell hinbekommen.“',
     '„Ich will bleiben – wenn das Angebot fair ist, unterschreibe ich.“',
     '„{club} ist mein Verein. Ich hoffe, ihr seht das genauso.“',
-    '@-1989 „Ich bin hier zu Hause. Über die Mark werden wir uns schon einig.“',
+    '@-1989 „Ich bin hier zu Hause. Über das Geld werden wir uns schon einig.“',
     '@2002- „Ich habe hier alles, was ich brauche. Mach mir ein faires Angebot.“',
   ],
   open_offen: [

@@ -284,6 +284,7 @@ export function createNewGame(opts: NewGameOptions): Game {
     ...(isGer ? {} : { homeCountry: home }),
     ...(ddrStart ? { ddrHome: true as const } : {}),
   };
+  applyHomeModules(g0); // jetzt mit der Stadt des eigenen Vereins (Währung des Nachfolgestaats, data/currencySuccessors.ts)
   // Vereins-Pool (Amateurligen) + Historie 1963–1975 (game/clubPool.ts).
   if (comp) seedStartPool(g0, home, year); // übrige Vereine des Landes (Weltdaten)
   if (comp && !isGer) fillHomeDeep(g0, home, year, ligaStart); // 3./4. Ebene im Heimatland (game/homeDeep.ts)

@@ -844,7 +844,7 @@ Eine Schlagzeile öffnet den vollen Artikel mit allen Beteiligten und Knöpfen z
 Hat dein Datensatz Fotos zu einem Spieler (Datensatz-Editor › **Spielerbilder & Fotos** bzw. **Ausnahmetalente**), zeigt die Zeitung bei Artikeln über ihn sein Foto statt des Gesichts – passend zur Art des Artikels (Spielbericht → Torjubel/Torschuss, Verletzung → Verletzung, Transfer/Gerücht → Vertrag, Talente → Training), sonst ein allgemeines Foto. Bis 1985 druckt das Blatt schwarzweiß. Auch das **Newscenter** zeigt bei Nachrichten, die einen solchen Spieler nennen, sein Foto statt des Pressefotos.
 
 ## Epochen
-Blattname und Aufmachung wechseln mit der Zeit (die Blätter sind erfunden). Ab den 2000ern taucht das Netz in den Texten auf, Ablösen stehen bis 2001 in DM, danach in Euro.
+Blattname und Aufmachung wechseln mit der Zeit (die Blätter sind erfunden). Ab den 2000ern taucht das Netz in den Texten auf, Ablösen stehen in der Währung deines Landes und ihrer Zeit.
 
 ## Speicher
 Ausgaben werden nicht gespeichert, sondern beim Lesen aus dem Spielstand zusammengesetzt (Ergebnisse, Spielerverlauf, Trainerhistorie, Pokalrunden, Nachrichten). Dieselbe Ausgabe sieht deshalb immer gleich aus.`,
@@ -2092,13 +2092,15 @@ Der Trainerstab meldet, wer auffällig zulegt, wer trotz Luft nach oben stagnier
 Der Bereich **Finanzen** (unteres Menü, ) zeigt Kontostand, Budgets, die aufgeschlüsselte Einnahmen-/Ausgaben-Bilanz der Saison, einen Verlaufsgraphen, eine Prognose bis Saisonende sowie die letzten Buchungen.
 
 ## Währung des Heimatlands — automatisch
-Alle Beträge erscheinen in der **Währung deines Heimatlands, wie sie an diesem Tag galt**:
-- Deutschland: D-Mark bis 31.12.2001, ab 1.1.2002 Euro (1 € = 1,95583 DM). DDR: Mark bis 30.6.1990, dann D-Mark.
-- England, Schottland, Wales, Nordirland: Pfund Sterling. Italien: Lire bis 2001, dann Euro. Polen: Zloty, am 1.1.1995 neuer Zloty (10.000 : 1).
-- Jede Umstellung greift am echten Stichtag, auch mitten in der Saison: Türkei 1.1.2005 (neue Lira), Rumänien 1.7.2005, Slowakei 2009, Kroatien 2023, Bulgarien 2026 u. a.
-- Wechselkurse gelten je Jahr (Jahresmittel gegenüber der D-Mark), Hochinflation wie in der Türkei oder Jugoslawien ist eingerechnet.
+Alle Beträge erscheinen in der **Währung deines Heimatlands, wie sie an diesem Tag galt** – Kontostand, Gehälter, Ablösen, Eintrittspreise, Prämien, Nachrichten, Presse und auch die Beispielbeträge hier im Wiki:
+- **Deutschland:** D-Mark bis 31.12.2001, ab 1.1.2002 Euro (1\u2060 € = 1,95583\u2060 DM). **DDR:** Mark bis 30.6.1990, dann D-Mark.
+- **Euro-Länder:** Der Euro gilt einheitlich ab der Einführung des **Bargelds** – Italien (Lire), Spanien (Peseten), Portugal (Escudos), Frankreich (Francs), Niederlande (Gulden), Belgien und Luxemburg (Francs), Österreich (Schilling), Finnland (Finnmark), Irland (Pfund) und Griechenland (Drachmen) am 1.1.2002. Von 1999 bis 2001 gab es den Euro nur als Buchgeld; Preise und Gehälter nannte man weiter in der Landeswährung, deshalb zeigt das Spiel sie so (zum festen Umrechnungskurs). Später: Zypern und Malta 1.1.2008, Slowakei 1.1.2009, Kroatien 1.1.2023, Bulgarien 1.1.2026.
+- **Ohne Euro:** England, Schottland, Wales, Nordirland (Pfund Sterling), Schweiz (Franken), Schweden, Norwegen, Dänemark, Island (Kronen), Polen (Złoty), Ungarn (Forint), Tschechien (Krone), Rumänien (Leu), Türkei (Lira), Russland (Rubel), Ukraine (Hrywnja), Serbien (Dinar), Albanien (Lek), Israel (Schekel).
+- **Währungsreformen am echten Stichtag,** auch mitten in der Saison: Island 1.1.1981 (100 : 1), Jugoslawien 1.1.1990 (10.000 : 1), Polen 1.1.1995 (10.000 : 1), Ukraine 2.9.1996 (Hrywnja, 100.000 : 1), Russland 1.1.1998 (1.000 : 1), Bulgarien 5.7.1999 (1.000 : 1), Türkei 1.1.2005 (1.000.000 : 1), Rumänien 1.7.2005 (10.000 : 1). Malta nennt sein Pfund ab 1983 Lira.
+- **Aufgelöste Staaten:** Beginnst du in der Tschechoslowakei, der Sowjetunion oder Jugoslawien, wechselt die Währung mit dem Staat deines Vereins – Prag rechnet ab 8.2.1993 in tschechischen Kronen, Bratislava in slowakischen Kronen und ab 2009 in Euro; Kiew über den Karbowanez zur Hrywnja, Tiflis zum Lari, Wilna zum Litas und 2015 zum Euro; Zagreb über den kroatischen Dinar zur Kuna und 2023 zum Euro, Ljubljana zum Tolar und 2007 zum Euro, Sarajevo zur Konvertiblen Mark. Maßgeblich ist die Stadt des Vereins.
+- **Wechselkurse** gelten je Jahr (Jahresmittel gegenüber der D-Mark, ab 1999 aus dem Eurokurs). Hochinflation wie in der Türkei, Polen oder Jugoslawien ist eingerechnet – dort werden die Zahlen von Jahr zu Jahr größer, bis Nullen gestrichen werden.
 
-Intern rechnet das Spiel durchgehend in nominalen DM; nur die Anzeige wird umgerechnet. Bei Verhandlungen mit Auslandsvereinen steht die Ablöse zusätzlich in der Währung des Verkäufers. Im Saison-Briefing meldet der Berater jede Umstellung mit dem Umstellungskurs.
+Intern rechnet das Spiel durchgehend in nominalen D-Mark; nur die Anzeige wird umgerechnet, die Kaufkraft im Spiel ändert sich durch eine Umstellung nicht. Beträge anderer Länder (etwa die Ablöse eines Auslandsvereins) stehen in deiner Währung; am Verhandlungstisch zusätzlich in der Währung des Verkäufers. Im Saison-Briefing meldet der Berater jede Umstellung mit dem Umstellungskurs. **Formeln** im Wiki (in grauer Schreibmaschinenschrift) nennen die Rechenwerte in D-Mark von 1975; die Beispielbeträge daneben stehen in deiner Währung.
 
 ## Das Finanzniveau ist recherchiert
 1975/76 setzt ein Erstligist im Mittel rund **4,5 Mio. DM** um: etwa 70 % Eintritt (Ø 23.000 Zuschauer × 8 DM), dazu Catering,
@@ -4827,7 +4829,7 @@ Das Niveau 1975 ist recherchiert (Erstligist ≈ 4,5 Mio. DM Umsatz). Mit dem In
 1985 ≈ 11 Mio. DM, 1995 ≈ 30–35 Mio. DM, 2005 ≈ 45 Mio. €, 2015 ≈ 90 Mio. € und 2024 ≈ 220 Mio. €.
 
 ## Währungen der Länder
-Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583 DM. Daten und Quellen: docs/research/waehrungen.md.`,
+Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583\u2060 DM. Für die Euro-Länder gilt einheitlich der Tag der Bargeld-Einführung; nach der Auflösung von Tschechoslowakei, Sowjetunion und Jugoslawien folgt die Währung dem Staat, in dem dein Verein liegt. Feste Texte (Berater, Briefing, Chronik, Wiki-Beispiele) werden ebenfalls umgerechnet. Daten und Quellen: docs/research/waehrungen.md.`,
   },
   {
     id: 'scouting-software',

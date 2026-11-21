@@ -55,12 +55,13 @@ export function ddrTransferBlocker(g: Game, clubId: string, today: string): stri
 }
 
 /** Anzeige-Module (Währung, Herkunft der Spielernamen) passend zum Spielstand setzen. */
-export function applyHomeModules(g: { ddrHome?: true; homeCountry?: string }): void {
+export function applyHomeModules(g: { ddrHome?: true; homeCountry?: string; managedClubId?: string; clubs?: Record<string, { city?: string } | undefined> }): void {
   if (g.ddrHome) {
     setHomeCurrency('gdr'); // Mark der DDR bis 30.6.1990, danach D-Mark (data/currencies.ts)
     setHomeOrigin(countryOrigin('gdr'));
   } else {
-    setHomeCurrency(g.homeCountry);
+    // Stadt des eigenen Vereins: Nachfolgestaat nach der Auflösung von ČSSR/UdSSR/Jugoslawien (data/currencySuccessors.ts).
+    setHomeCurrency(g.homeCountry, g.managedClubId ? g.clubs?.[g.managedClubId]?.city : undefined);
     setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
   }
 }
