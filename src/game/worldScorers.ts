@@ -13,8 +13,8 @@
 // (`WorldSeasonRecord.pstats`, Schlüssel `Land|Ebene` bzw. `Land|cup`; ältere Spielstände
 // nur `scorers`) – die Kader ändern sich ja zur neuen Saison.
 // =============================================================================
-import { hashStr, mulberry32 } from '../engine/leagues';
 import type { LeanCup, LeanDiv } from '../engine/world';
+import type { WorldPackedStats, WorldStatRow } from '../engine/worldTypes';
 import type { StatRow } from './competitionView';
 import type { StatCat } from './leagueArchive';
 import type { Game } from './state';
@@ -42,10 +42,40 @@ const EMPTY = (): LeanStats => ({ goals: [], assists: [], scorer: [], yellow: []
 /** Saisonzeile eines Weltspielers (für Auszeichnungen/Goldenen Ball): Einsätze geschätzt nach Stammplatz. */
 export interface LeanLine { w: WP; clubId: string; apps: number; goals: number; assists: number; clean: number; played: number }
 
-function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, n: number, sink?: (l: LeanLine) => void): LeanStats {
-  const out = EMPTY();
-  const pool = g.worldPool?.p;
-  if (!pool?.length) return out;
+/** FNV-1a wie engine/leagues.ts hashStr, aber mit Zwischenstand (hashStr(a + b) = fnv(fnv(FNV0, a), b) >>> 0). */
+const FNV0 = 2166136261;
+function fnv(h: number, s: string): number {
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h;
+}
+/** Erster Wert von mulberry32(seed) (engine/leagues.ts), ohne Funktion anzulegen. */
+function first32(seed: number): number {
+  let a = seed >>> 0;
+  a |= 0; a = (a + 0x6d2b79f5) | 0;
+  let t = Math.imul(a ^ (a >>> 15), 1 | a);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+/** Verteilung eines Vereins: Kader nach Stärke, je Spieler Tore/Vorlagen/Gelb/Rot, Stammtorwart. */
+interface ClubDist { clubId: string; played: number; sorted: WP[]; gl: number[]; as: number[]; ye: number[]; re: number[]; keeper: WP | undefined; cs: number }
+
+/**
+ * Zwischenspeicher für die Dauer eines Abschnitts (`withLeanMemo`, z. B. Saisonwechsel: Bestenlisten,
+ * Die Besten der Saison und Goldener Schuh rechnen dieselbe Verteilung je Liga sonst dreimal). Der
+ * Spielerpool darf sich im Abschnitt nicht ändern. Schlüssel = Wettbewerb + Vereine + alle Ergebnisse.
+ */
+let memo: Map<string, ClubDist[]> | null = null;
+/** Zwischenspeicher leeren (game/resetModuleState.ts). */
+export function clearLeanMemo(): void { memo = null; }
+export function withLeanMemo<T>(fn: () => T): T {
+  if (memo) return fn();
+  memo = new Map();
+  try { return fn(); } finally { memo = null; }
+}
+
+function distribute(g: Game, clubIds: string[], list: ScoredGame[], tag: string): ClubDist[] {
+  const pool = g.worldPool!.p;
   const clubs = new Set(clubIds);
   const squads = new Map<string, WP[]>();
   for (const w of pool) {
@@ -61,8 +91,13 @@ function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, 
     if (x.ag === 0) clean.set(x.home, (clean.get(x.home) ?? 0) + 1);
     if (x.hg === 0) clean.set(x.away, (clean.get(x.away) ?? 0) + 1);
   }
-  const rnd = (key: string) => mulberry32(hashStr(key))();
+  const out: ClubDist[] = [];
   for (const [clubId, squad] of squads) {
+    // Zufall je Tor/Spiel = mulberry32(hashStr(Schlüssel)) wie bisher, der feste Anfang des Schlüssels
+    // (Wettbewerb, Verein) wird aber nur einmal gehasht (FNV-1a läuft Zeichen für Zeichen weiter).
+    const P = (mid: string) => fnv(FNV0, `${tag}:${mid}${clubId}:`);
+    const pG = P(''), pA = P('a:'), pAp = P('ap:'), pAq = P('aq:'), pY = P('y:'), pYp = P('yp:'), pR = P('r:'), pRp = P('rp:');
+    const rnd = (prefix: number, rest: string) => first32(fnv(prefix, rest) >>> 0);
     const played = games.get(clubId) ?? 0;
     if (!played) continue;
     // Stammelf voll, Ergänzungsspieler deutlich weniger.
@@ -70,7 +105,6 @@ function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, 
     const share = (i: number) => (i < 11 ? 1 : i < 16 ? 0.35 : 0.08);
     const weights = (tab: Record<string, number>, pow: number) => sorted.map((w, i) => (tab[w[W.pos]] ?? 1) * Math.pow(w[W.ov] / 70, pow) * share(i));
     const pick = (ws: number[], sum: number, u: number) => { let x = u * sum, i = 0; for (; i < ws.length - 1; i++) { x -= ws[i]; if (x <= 0) break; } return i; };
-    const row = (w: WP, value: number): StatRow => ({ pid: w[W.id], name: `${w[W.first]} ${w[W.last]}`.trim(), clubId, pos: w[W.pos], value, apps: played, face: w[W.face], born: w[W.born] });
     const zero = () => new Array<number>(sorted.length).fill(0);
     const gl = zero(), as = zero(), ye = zero(), re = zero();
     const gw = weights(POS_W, 3), gsum = gw.reduce((a, b) => a + b, 0);
@@ -78,20 +112,49 @@ function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, 
     const cw = weights(CARD_W, 0), csum = cw.reduce((a, b) => a + b, 0);
     const total = goals.get(clubId) ?? 0;
     if (gsum > 0) for (let k = 0; k < total; k++) {
-      const s = pick(gw, gsum, rnd(`${tag}:${clubId}:${k}`));
+      const ks = String(k);
+      const s = pick(gw, gsum, rnd(pG, ks));
       gl[s]++;
-      if (asum > 0 && rnd(`${tag}:a:${clubId}:${k}`) < 0.72) {
-        let a = pick(aw, asum, rnd(`${tag}:ap:${clubId}:${k}`));
-        if (a === s) a = pick(aw, asum, rnd(`${tag}:aq:${clubId}:${k}`));
+      if (asum > 0 && rnd(pA, ks) < 0.72) {
+        let a = pick(aw, asum, rnd(pAp, ks));
+        if (a === s) a = pick(aw, asum, rnd(pAq, ks));
         if (a !== s) as[a]++;
       }
     }
     if (csum > 0) for (let j = 0; j < played; j++) {
-      const u = rnd(`${tag}:y:${clubId}:${j}`);
+      const js = String(j);
+      const u = rnd(pY, js);
       const cards = u < 0.22 ? 0 : u < 0.56 ? 1 : u < 0.83 ? 2 : u < 0.95 ? 3 : 4;
-      for (let c = 0; c < cards; c++) ye[pick(cw, csum, rnd(`${tag}:yp:${clubId}:${j}:${c}`))]++;
-      if (rnd(`${tag}:r:${clubId}:${j}`) < 0.045) re[pick(cw, csum, rnd(`${tag}:rp:${clubId}:${j}`))]++;
+      for (let c = 0; c < cards; c++) ye[pick(cw, csum, rnd(pYp, `${js}:${c}`))]++;
+      if (rnd(pR, js) < 0.045) re[pick(cw, csum, rnd(pRp, js))]++;
     }
+    const keeper = sorted.find((w) => w[W.pos] === 'TW');
+    out.push({ clubId, played, sorted, gl, as, ye, re, keeper, cs: clean.get(clubId) ?? 0 });
+  }
+  return out;
+}
+
+function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, n: number, sink?: (l: LeanLine) => void): LeanStats {
+  const out = EMPTY();
+  const pool = g.worldPool?.p;
+  if (!pool?.length) return out;
+  let dists: ClubDist[];
+  if (memo) {
+    let key = `${tag}|${clubIds.join(',')}|`;
+    for (const x of list) key += `${x.home},${x.away},${x.hg ?? '-'},${x.ag ?? '-'};`;
+    dists = memo.get(key) ?? distribute(g, clubIds, list, tag);
+    memo.set(key, dists);
+  } else dists = distribute(g, clubIds, list, tag);
+  if (n <= 0 && !sink) return out;
+  for (const { clubId, played, sorted, gl, as, ye, re, keeper, cs } of dists) {
+    if (n <= 0) { // nur Saisonzeilen (leanLines): Bestenlisten blieben ohnehin leer
+      sorted.forEach((w, i) => {
+        const apps = Math.round(played * (i < 11 ? 0.9 : i < 16 ? 0.4 : 0.1));
+        if (apps) sink!({ w, clubId, apps, goals: gl[i], assists: as[i], clean: w === keeper ? cs : 0, played });
+      });
+      continue;
+    }
+    const row = (w: WP, value: number): StatRow => ({ pid: w[W.id], name: `${w[W.first]} ${w[W.last]}`.trim(), clubId, pos: w[W.pos], value, apps: played, face: w[W.face], born: w[W.born] });
     sorted.forEach((w, i) => {
       if (gl[i]) out.goals.push(row(w, gl[i]));
       if (as[i]) out.assists.push(row(w, as[i]));
@@ -99,17 +162,18 @@ function statsFrom(g: Game, clubIds: string[], list: ScoredGame[], tag: string, 
       if (ye[i]) out.yellow.push(row(w, ye[i]));
       if (re[i]) out.red.push(row(w, re[i]));
     });
-    const keeper = sorted.find((w) => w[W.pos] === 'TW');
-    const cs = clean.get(clubId) ?? 0;
     if (keeper && cs) out.clean.push(row(keeper, cs));
     if (sink) sorted.forEach((w, i) => {
       const apps = Math.round(played * (i < 11 ? 0.9 : i < 16 ? 0.4 : 0.1));
       if (apps) sink({ w, clubId, apps, goals: gl[i], assists: as[i], clean: w === keeper ? cs : 0, played });
     });
   }
-  for (const k of Object.keys(out) as StatCat[]) out[k] = out[k].sort((a, b) => b.value - a.value || a.name.localeCompare(b.name, 'de')).slice(0, n);
+  if (n <= 0) return out;
+  for (const k of Object.keys(out) as StatCat[]) out[k] = out[k].sort((a, b) => b.value - a.value || DE.compare(a.name, b.name)).slice(0, n);
   return out;
 }
+/** Wie `localeCompare(…, 'de')`, aber einmal angelegt (localeCompare mit Sprache baut je Aufruf einen Collator). */
+const DE = new Intl.Collator('de');
 const scorersFrom = (g: Game, clubIds: string[], list: ScoredGame[], tag: string, n: number): StatRow[] => statsFrom(g, clubIds, list, tag, n).goals;
 
 /** Alle Einzelwertungen einer schlanken Liga bis zum heutigen Stand (beste `n` je Wertung). */
@@ -139,18 +203,42 @@ export function leanCupStats(g: Game, key: string, season: string, c: LeanCup, n
   return c.r ? statsFrom(g, c.ids, leanCupRounds(key, season, c).flatMap((r) => r.ties), `wcs:${season}`, n) : EMPTY();
 }
 /** Für die Historie: je Wertung [Name, Verein, Position, Wert, Gesichtsgruppe, Geburtsjahr]. */
-export type PackedStats = Partial<Record<StatCat, [string, string, string, number, string, number][]>>;
+/** Zeile alt: [Name, Verein, Position, Wert, Gesicht, Geburtsjahr]; kompakt: [Nummer in `p`, Wert]. */
+type StatRowOld = [string, string, string, number, string, number];
+export type PackedStats = WorldPackedStats;
+/** Bestenlisten einer Liga speichern: dieselben Spieler stehen in mehreren Wertungen → Spielertabelle `p`. */
 export const packStats = (st: LeanStats): PackedStats => {
-  const out: PackedStats = {};
-  for (const k of Object.keys(st) as StatCat[]) if (st[k].length) out[k] = st[k].map((r) => [r.name, r.clubId, r.pos, r.value, r.face ?? '', r.born ?? 0]);
+  const out: PackedStats = { p: [] };
+  const idx = new Map<string, number>();
+  for (const k of Object.keys(st) as StatCat[]) if (st[k].length) out[k] = st[k].map((r) => {
+    const e: [string, string, string, string, number] = [r.name, r.clubId, r.pos, r.face ?? '', r.born ?? 0];
+    const key = JSON.stringify(e);
+    let i = idx.get(key);
+    if (i === undefined) { i = out.p!.length; out.p!.push(e); idx.set(key, i); }
+    return [i, r.value];
+  });
   return out;
 };
 export const unpackStats = (p: PackedStats | undefined): LeanStats | null => {
   if (!p) return null;
   const out = EMPTY();
-  for (const k of Object.keys(out) as StatCat[]) out[k] = (p[k] ?? []).map(([name, clubId, pos, value, face, born], i) => ({ pid: `ws${k}${i}:${name}`, name, clubId, pos, value, apps: 0, face: face || undefined, born: born || undefined }));
+  const row = (x: WorldStatRow): StatRowOld => {
+    if (x.length !== 2) return x as StatRowOld;
+    const e = p.p?.[x[0] as number];
+    return e ? [e[0], e[1], e[2], x[1] as number, e[3], e[4]] : ['', '', 'ZM', x[1] as number, '', 0];
+  };
+  for (const k of Object.keys(out) as StatCat[]) out[k] = (p[k] ?? []).map((x, i) => { const [name, clubId, pos, value, face, born] = row(x); return { pid: `ws${k}${i}:${name}`, name, clubId, pos, value, apps: 0, face: face || undefined, born: born || undefined }; });
   return out;
 };
+/** Alte Spielstände: Bestenlisten der Welt-Historie ins kompakte Format, doppelte Torschützenlisten weg (idempotent). */
+export function compactWorldStats(rec: { scorers?: Record<string, unknown>; pstats?: Record<string, PackedStats> }): void {
+  for (const [k, ps] of Object.entries(rec.pstats ?? {})) {
+    if (!ps.p) rec.pstats![k] = packStats(unpackStats(ps)!);
+    if (rec.scorers) delete rec.scorers[k]; // gelesen nur, wenn `pstats` fehlt (competitionCountry.ts archivedStats)
+  }
+  if (rec.scorers && !Object.keys(rec.scorers).length) delete rec.scorers;
+}
+export function migrateWorldStats(g: Game): void { for (const rec of g.world?.history ?? []) compactWorldStats(rec); }
 export const emptyLeanStats = EMPTY;
 
 /** Torschützen einer schlanken Liga bis zum heutigen Stand (beste `n`). */

@@ -53,6 +53,7 @@ import { countryPointSystem } from '../data/world/countries';
 import { homeExcluded } from './startYear';
 import { retireFullCountries } from './fullCountries';
 import { worldLiveResults } from './worldLeagues';
+import { withLeanMemo } from './worldScorers';
 import { updateWorldDepths } from '../engine/worldDeep';
 import { worldSeasonAwards } from './worldAwardsGame';
 import { homeExtraAwards, worldExtraAwards } from './extraAwardsGame';
@@ -167,11 +168,16 @@ export function startNextSeason(g: Game): void {
   const oldPlayerTier = g.leagues.playerDivision.tier;
   // Auslandsligen: Spieltag-Simulation zu Ende spielen (game/worldLeagues.ts); die Endtabellen gehen an engine/world.ts.
   retireFullCountries(g); // ältere Spielstände ohne Lade-Migration (Sicherheitsnetz)
-  const leanResults = worldLiveResults(g);
-  // Die Besten der Saison in den 1. Ligen im Ausland (Note nach dem Maßstab der eigenen Liga).
-  worldSeasonAwards(g, oldSeason, leanResults.divs);
-  // Goldener Schuh (alle 1. Ligen) + Elf der Saison im Ausland (game/extraAwardsGame.ts).
-  worldExtraAwards(g, oldSeason, leanResults.divs, g.calendar.currentDate);
+  // Bestenlisten, Die Besten der Saison und Goldener Schuh verteilen dieselben Tore auf dieselben
+  // Kader – einmal je Liga rechnen (game/worldScorers.ts withLeanMemo; der Pool ändert sich hier nicht).
+  const leanResults = withLeanMemo(() => {
+    const res = worldLiveResults(g);
+    // Die Besten der Saison in den 1. Ligen im Ausland (Note nach dem Maßstab der eigenen Liga).
+    worldSeasonAwards(g, oldSeason, res.divs);
+    // Goldener Schuh (alle 1. Ligen) + Elf der Saison im Ausland (game/extraAwardsGame.ts).
+    worldExtraAwards(g, oldSeason, res.divs, g.calendar.currentDate);
+    return res;
+  });
 
   // --- 2) Endstände ALLER aktuellen Divisionen einlesen (Spielerliga + Sim) ---
   const pd = g.leagues.playerDivision;
@@ -396,7 +402,13 @@ export function startNextSeason(g: Game): void {
     const rec = g.world.history[g.world.history.length - 1];
     if (rec && rec.season === oldSeason && Object.keys(leanResults.divs).length) rec.divs = leanResults.divs;
     if (rec && rec.season === oldSeason && Object.keys(leanResults.cups).length) rec.cups = leanResults.cups;
-    if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) { rec.scorers = leanResults.scorers; rec.pstats = leanResults.pstats; }
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.scorers).length) {
+      // Bestenlisten (`pstats`, kompakt); die reine Torschützenliste nur noch, wo keine Bestenliste vorliegt
+      // (sie wird nur dann gelesen – game/competitionCountry.ts archivedStats; Spielstand-Größe).
+      rec.pstats = leanResults.pstats;
+      const sc = Object.fromEntries(Object.entries(leanResults.scorers).filter(([k]) => !leanResults.pstats[k]));
+      if (Object.keys(sc).length) rec.scorers = sc;
+    }
     if (rec && rec.season === oldSeason && Object.keys(leanResults.deep).length) rec.deep = leanResults.deep;
     g.world.live = undefined;
   }

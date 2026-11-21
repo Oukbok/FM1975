@@ -47,6 +47,8 @@ import { clearNationalCache } from './national/pool';
 import { clearLegendCache } from './legendsGame';
 import { clearHomeDeepCache } from './homeDeep';
 import { setDisplayYear } from '../ui/format';
+import { clearWorldRosters } from '../engine/euroLight';
+import { clearLeanMemo } from './worldScorers';
 
 /** Alle Module auf den Ausgangszustand (wie nach dem Laden der Seite). */
 export function resetModuleState(): void {
@@ -80,6 +82,8 @@ export function resetModuleState(): void {
   clearNationalCache();
   clearLegendCache();
   clearHomeDeepCache(); // 3./4. Ebene des Heimatlandes (game/homeDeep.ts)
+  clearWorldRosters();  // Weltspieler je Verein für Hintergrundspiele (engine/euroLight.ts)
+  clearLeanMemo();      // Verteilung der Auslandsstatistik im Saisonwechsel (game/worldScorers.ts)
 }
 
 /** Zähler des Spielstands für IDs binden (fehlt bei älteren Spielständen → beginnt bei 0, neues ID-Format). */

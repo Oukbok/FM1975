@@ -73,8 +73,16 @@ export interface WorldSeasonRecord {
   cups?: Record<string, LeanCup>;
   /** Torschützenlisten der Auslandsligen, Schlüssel `Land|Index` (0 = 1. Liga, 1… = Staffeln der 2. Ebene): [Name, Verein, Position, Tore] (nur die letzten WORLD_TABLES_KEEP Saisons). */
   scorers?: Record<string, [string, string, string, number][]>;
-  /** Alle Einzelwertungen (beste zehn) je `Land|Ebene` bzw. `Land|cup`: Wertung → [Name, Verein, Position, Wert, Gesicht, Geburtsjahr]. */
-  pstats?: Record<string, Partial<Record<string, [string, string, string, number, string, number][]>>>;
+  /** Alle Einzelwertungen (beste zehn) je `Land|Ebene` bzw. `Land|cup` (game/worldScorers.ts packStats). */
+  pstats?: Record<string, WorldPackedStats>;
+}
+
+/** Zeile einer Wertung: alt [Name, Verein, Position, Wert, Gesicht, Geburtsjahr], kompakt [Nummer in `p`, Wert]. */
+export type WorldStatRow = [string, string, string, number, string, number] | [number, number];
+/** Bestenlisten einer Liga: Wertung → Zeilen; `p` = Spieler [Name, Verein, Position, Gesicht, Geburtsjahr] (kompaktes Format). */
+export interface WorldPackedStats {
+  p?: [string, string, string, string, number][];
+  goals?: WorldStatRow[]; assists?: WorldStatRow[]; scorer?: WorldStatRow[]; yellow?: WorldStatRow[]; red?: WorldStatRow[]; clean?: WorldStatRow[];
 }
 
 /**

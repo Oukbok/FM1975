@@ -23,7 +23,7 @@ import { getHomeOrigin } from '../src/data/origins';
 import type { Game } from '../src/game/state';
 import { leanDates, leanGames, leanMatchdays, leanPairs, leanTable, leanWinPts, worldLiveDiv } from '../src/game/worldLeagues';
 import { leanCupDates, leanCupRounds, leanCupRoundsN, leanCupWinner } from '../src/game/worldCups';
-import { leanCupScorers, leanScorers } from '../src/game/worldScorers';
+import { leanCupScorers, leanScorers, unpackStats } from '../src/game/worldScorers';
 import { buildClubProfile } from '../src/game/clubProfile';
 import { worldPlacesOf } from '../src/engine/worldPlaces';
 import { migrateWorldPlaces } from '../src/game/worldPlacesSeed';
@@ -297,8 +297,10 @@ for (const [y, divId, full] of [[1991, 'tier3-nordost', false], [1995, 'tier3-we
     ok(!!oc && !!w && rec.cupWinners['England'] === w, `Saisonende: Pokalsieger ${w} aus dem ausgespielten Pokal geht in die Welt`);
     const pc = countrySnapshot(g, en2, old, 'world', 'xcup')!;
     ok(pc.winner === w && pc.rounds!.every((r) => r.drawn && r.ties.every((x) => x.winner)) && pc.rounds!.at(-1)!.ties.length === 1, 'Vorsaison: Pokal mit allen Runden abrufbar');
-    ok((rec.scorers?.['England|0']?.length ?? 0) === 10 && past.stats!.goals.length === 10 && past.stats!.goals[0].value >= past.stats!.goals[9].value && (rec.pstats?.['England|0']?.assists?.length ?? 0) === 10 && past.stats!.yellow.length === 10, `Vorsaison: Torschützenliste gespeichert (${rec.scorers?.['England|0']?.[0]?.[0]}, ${rec.scorers?.['England|0']?.[0]?.[3]} Tore)`);
-    ok((rec.scorers?.['England|cup']?.length ?? 0) > 0 && pc.stats!.goals.length === rec.scorers!['England|cup'].length && pc.finals![0].winner === w, 'Vorsaison: Pokal-Torschützen und Siegerliste gespeichert');
+    // Bestenlisten kompakt in `pstats` (die doppelte Torschützenliste `scorers` entfällt, Leistung & Speicher).
+    const top = unpackStats(rec.pstats?.['England|0'])?.goals ?? [];
+    ok(top.length === 10 && past.stats!.goals.length === 10 && past.stats!.goals[0].value >= past.stats!.goals[9].value && (rec.pstats?.['England|0']?.assists?.length ?? 0) === 10 && past.stats!.yellow.length === 10 && !rec.scorers?.['England|0'], `Vorsaison: Torschützenliste gespeichert (${top[0]?.name}, ${top[0]?.value} Tore)`);
+    ok((rec.pstats?.['England|cup']?.goals?.length ?? 0) > 0 && pc.stats!.goals.length === rec.pstats!['England|cup'].goals!.length && pc.finals![0].winner === w, 'Vorsaison: Pokal-Torschützen und Siegerliste gespeichert');
     ok(g.world!.live!.cups!['England'].rd === 0, 'Neue Saison: neuer Pokal');
   }
 }
