@@ -11,6 +11,7 @@
 //   node scripts/run-ts.mjs tests/perf-bench.ts [saisons=60]
 //   (mit `node --expose-gc` wird der Heap nach einer vollen GC gemessen)
 //   DRILL=f,g Aufschlüsselung weiterer Funktionen · CALLERS=f,g wer ruft diese Funktionen (inkl. Zeit)
+//   DUMPPROF=pfad schreibt je Saison pfad.<n>.cpuprofile (Chrome DevTools)
 //   PROF=0 ohne CPU-Profil · SIZES=1,10,20,40,60 · OUT=datei.json (Rohdaten)
 //   FP=1 Fingerabdruck je Saison (Meister, Tabelle, Konto) für den Vergleich vorher/nachher
 // =============================================================================
@@ -142,6 +143,7 @@ for (let s = 0; s < seasons; s++) {
   const sorted = [...days].sort((a, b) => a - b);
   const sum = days.reduce((a, b) => a + b, 0);
   const row = { season, n: days.length, sum, cpuS, avg: sum / days.length, p95: sorted[Math.floor(sorted.length * 0.95)], max: sorted[sorted.length - 1], sw, heap: ((globalThis as any).gc?.(), process.memoryUsage().heapUsed / 1e6), players: Object.keys(g.players).length, fp, steps: {} as any };
+  if (prof && process.env.DUMPPROF) writeFileSync(`${process.env.DUMPPROF}.${s}.cpuprofile`, JSON.stringify(prof));
   if (prof) {
     const a = analyse(prof, ['processDay', 'startNextSeason', ...DRILL]);
     for (const d of DRILL) addInto((drillAll[d] ??= {}), a.steps[d]);
