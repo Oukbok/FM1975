@@ -20,7 +20,7 @@ export interface Sample { src: Src; unit: string; field: string; text: string; c
 export interface Finding { cat: string; src: Src; year: number; text: string; hit: string }
 
 /** Harte Fehlerarten (müssen 0 sein, sonst schlägt STRICT fehl). */
-export const HARD = new Set(['Genus', 'Platzhalter', 'undefined/NaN', 'leerer Slot', 'Mehrzahl', 'Artikel vor Vereinsname', 'doppeltes Wort',
+export const HARD = new Set(['Grammatik', 'Genus', 'Platzhalter', 'undefined/NaN', 'leerer Slot', 'Mehrzahl', 'Artikel vor Vereinsname', 'doppeltes Wort',
   'Leerzeichen', 'Satzzeichen', 'Umlaut als ae/oe/ue', 'Epoche', 'Inhalt', 'Währung']);
 
 // --------------------------------------------------------------- Epochen
@@ -157,6 +157,9 @@ function checkLine(ch: Checker, s: Sample, t: string): void {
   // Inhalt: Abstieg in die zweite Liga, wenn man schon darunter spielt
   if (s.ctx.tier >= 2 && (m = /Richtung zweite Liga|in die zweite Liga|in die 2\. Liga|Jagd auf die Schale|Meisterschale/.exec(t))) add(ch, s, 'Inhalt', `Ebene ${s.ctx.tier}: „${m[0]}“`);
   if (s.ctx.tier === 1 && s.src !== 'brief' && (m = /Aufstieg in die (1\.|erste) Liga|Aufstiegsrennen|Wer schafft den Aufstieg|Anwärter auf den Aufstieg/.exec(t))) add(ch, s, 'Inhalt', `Ebene 1: „${m[0]}“`);
+  // Grammatik-Muster, die beim Durchsehen aufgefallen sind (dürfen nicht wiederkommen)
+  if ((m = /\bgastierte \S+(?: \S+)? gegen |verlässt Ausland|kehrt Ausland|\b(?:Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag|Sonntag), (?:Mo|Di|Mi|Do|Fr|Sa|So),|\bdes (?:Pokal|Europa-Pokal|Achtelfinale|Viertelfinale|Halbfinale)\b|\bder (?:Achtelfinale|Viertelfinale|Halbfinale)\b|\d\. (?:Empfängt|Den|Dem)\b|\bmit einen\b|\bmit \d+ Tage\b/.exec(t))) add(ch, s, 'Grammatik', m[0]);
+  if (s.src === 'press' && (s.ctx.tier > 1 || s.ctx.home !== 'ger') && (m = /\bBundesliga\b/.exec(t))) add(ch, s, 'Inhalt', `${s.ctx.home}/Ebene ${s.ctx.tier}: „${m[0]}“`);
   // Zeilenende im Ticker/Artikeltext
   if ((s.src === 'ticker' || (s.src === 'press' && s.field === 'body')) && !/[.!?…“")»:]$/.test(t.trim()) && !/→|^[+−•-]|^\d+\. /.test(t)) add(ch, s, 'Satzende fehlt', t.slice(-30));
   if (/^[a-zäöü]/.test(t) && (s.field === 'headline' || s.field === 'subject' || s.src === 'ticker')) add(ch, s, 'Kleinschreibung am Anfang', t.slice(0, 30));

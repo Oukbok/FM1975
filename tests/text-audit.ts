@@ -197,6 +197,7 @@ for (const name of SAVES) {
       const sentences: string[] = [];
       for (const s of [...(e.lead ? [e.lead] : []), ...e.stories, ...e.briefs]) {
         check('press', `${name}@${d}`, 'headline', s.headline, ctx);
+        check('press', `${name}@${d}`, 'rubric', s.rubric, ctx);
         check('press', `${name}@${d}`, 'dek', s.dek, ctx);
         for (const b of s.body) { check('press', `${name}@${d}`, 'body', b, ctx); sentences.push(...b.split(/(?<=[.!?])\s+/)); }
         heads.push(s.headline);
