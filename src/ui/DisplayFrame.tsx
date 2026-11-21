@@ -92,6 +92,10 @@ export function DisplayFrame({ resolution, uiScale, children }: {
   // Innerer Zoom des Canvas (erzeugt bei der jeweiligen Canvas-Breite die
   // Referenz-Darstellung). Für das 4K-Design-Canvas = 1.5 → heutige Ansicht.
   const designZoom = autoScaleForWidth(canvas.w);
+  // Kleine Bildschirme (Steam Deck 1280×800, 1366×768): reines Einpassen ergäbe 0,5 bzw.
+  // 0,53 – zu klein zum Lesen. Automatisch gilt deshalb ein Mindestmaßstab; das Canvas
+  // wird dafür kleiner (Fläche in CSS-Pixeln) und füllt den Bildschirm ohne Ränder.
+  const box = parsed ? canvas : autoCanvas(vp, designZoom);
 
   // Uniformer Einpass-Faktor: skaliert das GESAMTE Canvas gleichmäßig in den
   // Viewport (fit, zentriert, nichts abgeschnitten) → bei kleineren Auflösungen
@@ -99,15 +103,22 @@ export function DisplayFrame({ resolution, uiScale, children }: {
   // Der manuelle uiScale-Slider wirkt multiplikativ als Feinjustierung
   // (Default 100 → reines Auto/Fit-Verhalten).
   const manual = (uiScale || 100) / 100;
-  const fit = Math.min(vp.w / canvas.w, vp.h / canvas.h) * manual;
+  const fit = Math.min(vp.w / box.w, vp.h / box.h) * manual;
+
+  // Breite der Fläche in CSS-Pixeln (2560 = Design). Darunter rücken Kopfleiste, Untermenü
+  // und breite Tabellen enger zusammen (CSS `[data-ui]` in 33-compact.css) – Media-Queries
+  // sähen nur die echte Fensterbreite, nicht die Fläche hinter Zoom und Skalierung.
+  const cssW = box.w / designZoom;
+  const ui = cssW < 2100 ? 'narrow' : cssW < 2400 ? 'compact' : undefined;
 
   return (
     <div className="display-outer">
       <div
+        data-ui={ui}
         className="display-inner"
         style={{
-          width: canvas.w,
-          height: canvas.h,
+          width: box.w,
+          height: box.h,
           transform: `translate(-50%, -50%) scale(${fit})`,
         }}
       >
@@ -117,6 +128,22 @@ export function DisplayFrame({ resolution, uiScale, children }: {
       </div>
     </div>
   );
+}
+
+/**
+ * Kleinster Maßstab (Bildschirm-Pixel je CSS-Pixel) im Modus „Automatisch“. Das Design ist
+ * für 2560 × 1440 CSS-Pixel gebaut (1920 × 1080 = 0,75); bei 0,625 bleibt auf dem
+ * Steam Deck eine Fläche von 2048 × 1280 CSS-Pixeln – die Seiten passen sich darin an
+ * (DashPage-Raster in %, Boxen scrollen intern), Schrift wird 25 % größer als bei 0,5.
+ */
+export const MIN_AUTO_SCALE = 0.625;
+
+/** Canvas im Modus „Automatisch“: 4K-Design, auf kleinen Bildschirmen kleiner (siehe oben). */
+export function autoCanvas(vp: { w: number; h: number }, designZoom: number): { w: number; h: number } {
+  const c = DESIGN_CANVAS;
+  const scale = Math.min(vp.w / c.w, vp.h / c.h) * designZoom;
+  if (!(scale < MIN_AUTO_SCALE) || vp.w <= 0 || vp.h <= 0) return c;
+  return { w: Math.round(vp.w / MIN_AUTO_SCALE * designZoom), h: Math.round(vp.h / MIN_AUTO_SCALE * designZoom) };
 }
 
 /** Parst "BREITExHÖHE" zu Zahlen; null bei ungültigem Wert. */

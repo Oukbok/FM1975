@@ -306,15 +306,7 @@ body { background: var(--paper-page); }
 .mx-head .mx-sub { opacity: 0.75; }
 .mx-head .modal-close { color: var(--navy-ink); }
 
-/* Kopfleiste auf kleineren Bildschirmen: alle 10 Menüpunkte sichtbar */
-@media (max-width: 1750px) {
-  .hd-nav-item { font-size: 15.5px; padding: 0 6px; letter-spacing: 0.4px; }
-  .hd-logo { padding-right: 34px; }
-}
-@media (max-width: 1450px) {
-  .hd-nav-item { font-size: 14px; padding: 0 5px; letter-spacing: 0.3px; }
-  .hd-logo { padding-right: 26px; }
-}
+/* Kopfleiste auf kleineren Flächen: siehe 33-compact.css (`[data-ui]` am Spielrahmen). */
 
 /* ---- Bühnen & Startbildschirm bleiben dunkel ----------------------------------
    Gezeichnete Bühnen (Auslosung, Gala, Bewertung, Textmodus, Vorschau,
