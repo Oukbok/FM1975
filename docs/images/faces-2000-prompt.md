@@ -21,18 +21,7 @@ Gemessen im Spiel an allen Spielern der Jahrgänge 1975–1984 (Vorlage „Test 
 
 ## Stand 21.11.2026
 
-Im Spiel: 190 von 300 Bildern (Pakete 03, 04, 06, 11, 13, 15, 16, 19–30). Nach Sichtung zwei Bilder umsortiert: 273 und 277 von `lateinamerika` nach `westafrika` (Einordnung nach Aussehen).
-
-Noch offen (110 Bilder):
-
-| Gruppe | Fehlende Pakete | Nummern |
-|---|---|---|
-| mitteleuropa | 01, 02, 05, 07, 08 | 001–020, 041–050, 061–080 |
-| osteuropa | 09, 10, 12 | 081–100, 111–120 |
-| suedeuropa | 14, 17 | 131–140, 161–170 |
-| balkan | 18 | 171–180 |
-
-Solange eine Gruppe in der Epoche 2000 weniger als 40 Bilder hat, bekommt die Hälfte der Spieler dieser Epoche ein Gesicht aus den 1990ern (`THIN_POOL` in `src/components/faces/faceLookup.ts`), damit sich Gesichter nicht zu oft wiederholen.
+Alle 300 Bilder sind im Spiel und gesichtet. Umsortiert nach Aussehen: 273 und 277 von `lateinamerika` nach `westafrika`.
 
 **Gemischte Herkunft:** Einordnen nach dem Aussehen, nicht nach dem Pass. Ein Franzose mit senegalesischen Eltern liegt bei `westafrika`, ein Niederländer mit marokkanischen Eltern bei `nordafrika`. Die Herkunft darf als Zusatz im Dateinamen stehen.
 
