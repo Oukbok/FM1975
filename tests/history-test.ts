@@ -104,7 +104,9 @@ ok('Stark: Ruf/Geld der KI gelenkt, eigener Verein unberührt, nach Wechsel wied
   const ddr0 = gs.simClubs['ddr-berlin-ost'].strength;
   for (let i = 0; i < 5; i++) historicSimClubs(gs, 1982);
   if (gs.simClubs['ddr-berlin-ost'].strength <= ddr0) fail('Berlin (Ost) 1982 nicht gestärkt');
-  const w = initWorld(gs.euroClubs ?? allEuroClubs(), 1976);
+  // Die Welt des Spielstands nehmen (Weltdaten: Vereine `w_<land>-…`); ein frisches initWorld ohne
+  // Weltdaten-Overlay enthält nur Lückenfüller-Vereine und kaum einen Verein mit Kurve.
+  const w = gs.world ?? initWorld(gs.euroClubs ?? allEuroClubs(), 1976);
   // Ein Auslandsverein mit historischer Kurve, der 2015 deutlich stärker sein soll (früher fest „Paris“ –
   // der steht nicht in jeder Startwelt).
   const id = Object.keys(w.meta).find((k) => gs.euroClubs![k]?.name === 'Paris' && gs.euroClubs![k]?.country === 'Frankreich')
