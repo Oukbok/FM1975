@@ -42,6 +42,32 @@ Vorher = derselbe Check auf dem Stand vor diesem Durchgang (`DIST=…`, 1659 Sei
 
 Zum Vergleich: **Schrift** zählt Seiten mit zu kleiner Schrift (jede Seite hat welche); der Anteil der Textstellen unter 11 px sank bei 1366×768 von 97 % auf 71 %, bei 1280×800 von 98 % auf 71 % (Maßstab 0,53/0,50 → 0,63, kleinste Schrift 4,3 → 5,3 px). **Text mit …** zählt nachher jede gekürzte Stelle (alle zeigen jetzt beim Zeigen den vollen Text, `ui/ellipsisTitle.ts`), vorher nur die ohne title – die Zahlen sind deshalb nicht vergleichbar. **Waagerechte Bildlaufleiste** steigt auf kleiner Fläche, weil die Fläche jetzt schmaler ist (2048 statt 2560 CSS-Pixel); betroffen sind breite Tabellen/Bäume, die intern scrollen. **Menü passt nicht**: vorher bei 1920×1080 mit langem Vereinsnamen („Mönchengladbach“) auf 397 Seiten, jetzt nirgends. JS-/404-Fehler vorher: Bild-Slots der Fanartikel ohne Datei.
 
+## Durchgang Lesbarkeit Steam Deck (21.11.2026, Nacht)
+
+Gemessen mit `VIEWS=1280x800,1366x768 SAVES=neu,liga1-2025,england-1992,ddr-1980` (ohne `sim20`), vorher = Build vor dem Durchgang (`DIST=…`), je 894 Seiten- und 190 Fensteransichten je Lauf.
+
+| Art | 1280×800 vorher → nachher | 1366×768 vorher → nachher |
+|---|---|---|
+| Anteil Textstellen < 11 px (effektiv) | **70,6 % → 13,4 %** (124 404 → 22 121 Stellen) | **70,7 % → 13,5 %** (124 949 → 22 270) |
+| Kleinste Schrift | 5,3 px → 6,3 px | 5,3 px → 6,3 px |
+| Seiten mit mindestens einer Stelle < 11 px | 542 → 520 | 542 → 520 |
+| Waagerechte Bildlaufleiste | 43 → 76 | 35 → 77 |
+| Inhalt waagerecht abgeschnitten | 1 → 13 | 1 → 1 |
+| Text mit … gekürzt | 3752 → 3769 | 2886 → 3168 |
+| 1920×1080 | unverändert (Rahmen ohne `data-fs`; Screenshots aller 114 Seiten von liga1-2025 vorher/nachher verglichen – Unterschiede nur durch nachladende Gesichter/Wappen) | |
+
+**Weg:** Unter Maßstab 0,7 setzt `ui/DisplayFrame.tsx` `data-fs="lift"`; `styles/34-compact-fonts.css` wird von `scripts/compact-fonts.mjs` im Build aus allen Stylesheets erzeugt (jede `font-size` gespiegelt mit `[data-fs]` davor, gleiche Kaskade): Text ab 12 CSS-px → 17,6 px (= 11 px bei 0,625), kleinere Etiketten +4 px. Spalten mit wenig Informationswert entfallen bei angehobener Schrift (`33-compact.css`): Transfermarkt/Beobachtung ohne Ländercode, Empfehlungstext und Kenntnis-Balken (Tooltips bleiben), Mitarbeiter-Markt ohne „Aussicht“, Eignungsbalken und zweite Fähigkeit, Filter in zwei Zeilen. Kopfleiste mit schmaleren Abständen.
+
+**Noch unter 11 px (bewusst):** Positions-Etiketten in Tabellen (11,5 → 15,5 CSS-px = 9,7 px), i-Symbole (Glyphe im Kreis), Formkürzel S/U/N, Kennzahl-Beschriftungen, Fähigkeiten-Raster im Spielerprofil (feste Zeilenhöhe, ausgenommen über `NO_LIFT`), Schrift in SVG (Achsen, Netzdiagramm) und Inline-Größen.
+
+**Nach der Messung behoben (nur Stichprobe nachgemessen):** „Menü passt nicht“ trat mit angehobener Schrift bei 1280×800 mit langen Vereinsnamen auf (404 Ansichten in neu/england/ddr) – Kopfleiste schmaler, Nachprüfung neu 1280×800: 0. Spielerprofil 1366×768 (england-1992) ließ den Rahmen um 6 px wachsen – Fähigkeiten-Raster ausgenommen, Nachprüfung 0. Tabellen-Zellabstand 5 px jetzt auch bei 1366×768 (vorher nur „narrow“).
+
+**Offen aus diesem Durchgang:** Waagerechter Bildlauf ist mit größerer Schrift häufiger (Aufstellung › Kaderliste 15 px, Kader › Übersicht/Kabine, Budget, Beobachtung bei 1366, Vereins-/Länderprofil-Kader, Infokarte) – Inhalte erreichbar, nächster Schritt je Tabelle eine Spalte weniger. Verein › Erfolge: Kategorienleiste der Vitrine 10–16 px zu breit. Verhandlungstisch: Chip „Weitere Verstärkungen“ abgeschnitten.
+
+**Gegner-Seite:** Box heißt jetzt „Begegnung“ (nicht mehr doppelt „Nächstes Spiel“).
+
+**Zeitgeist/Briefing im DDR-Spielstand:** nicht umgebaut. Die Gesellschafts-Punkte (`data/briefings/seasons1975.ts`, 43 × Thema `politik` bis 1990) sind durchgehend aus westdeutscher Sicht geschrieben; eine neutrale Variante per Filter ließe das Briefing 1975–1990 fast leer, eine echte DDR-Sicht braucht eigene redaktionelle Texte je Saison (optional `societyDdr` in `SeasonBriefingEntry`, Auswahl in `composeBriefing`/`RightWidgets` über `game.ddrHome`). Vorschlag, Entscheidung bei Pascal; echte Politiker-Namen unverändert.
+
 ## Sichtprüfung (S-Punkte, Stichproben aus den Screenshots)
 
 Durchgesehen: alle Seiten im Stand „Deutschland 2025 · 1. Liga“ bei 1920×1080 und 1280×800, dazu Stichproben aus dem neuen Spiel 1975, DDR 1980 und den Fenstern (Spielerprofil, Vereinsprofil, Länderprofil, Infokarte, Verhandlungstisch, Chronik).
@@ -68,13 +94,12 @@ Durchgesehen: alle Seiten im Stand „Deutschland 2025 · 1. Liga“ bei 1920×1
 
 ## Offen (nicht behoben, Vorschlag)
 
-- **Schrift auf dem Steam Deck:** auch bei 0,625 liegen viele Tabellen- und Nebentexte unter 11 px (Spaltenköpfe 12,5 CSS-px → 7,8 px, Positionsetiketten 6,6 px). Nächster Schritt: in `33-compact.css` für `[data-ui="narrow"]` Tabellen-, Etiketten- und Nebentexte gezielt auf mindestens 17,6 CSS-px anheben und die betroffenen Seiten mit `VIEWS=1280x800 npm run test:audit` nachziehen; alternativ ein eigenes Steam-Deck-Layout mit weniger Spalten.
-- **Zeitgeist/Briefing:** nennt echte Politiker (Helmut Schmidt, Friedrich Merz …). Das ist redaktionell gewollt, steht aber im Spannungsfeld zur Regel „keine realen Personen“ – bitte entscheiden. Im DDR-Stand erscheint dieselbe westdeutsche Politik.
+- **Schrift auf dem Steam Deck:** erledigt bis auf Etiketten/Symbole, siehe „Durchgang Lesbarkeit“ (71 % → 13 % der Textstellen unter 11 px).
+- **Zeitgeist/Briefing:** nennt echte Politiker (Helmut Schmidt, Friedrich Merz …). Das ist redaktionell gewollt, steht aber im Spannungsfeld zur Regel „keine realen Personen“ – bitte entscheiden. Im DDR-Stand erscheint dieselbe westdeutsche Politik (Vorschlag im Abschnitt „Durchgang Lesbarkeit“).
 - **Alte Spielstände:** Buchungen/Nachrichten aus der Zeit vor dem Text-Audit behalten „Gebaeude-Fixkosten“/„Mitgliedsbeitraege“ (neue Buchungen sind richtig).
 - **Mitarbeiter (Startjahr 2025, 1. Liga):** nur 2 von 37 Stellen besetzt, Spielstärke −3,4 % – vermutlich Startausstattung späterer Startjahre (Spiellogik, nicht angefasst).
 - **Kalender:** Ringbuch-Box ragt gewollt 10 px über den Rand (negativer Rand, Bild hat transparente Kante) – im Bericht als „Box läuft über“ sichtbar, optisch in Ordnung.
 - **Waagerechter Bildlauf** bleibt bei breiten Bäumen (Pokal, Gruppen) und dem Mitarbeiter-Markt auf kleiner Fläche; Inhalte sind erreichbar.
-- **Gegner-Seite:** „Nächstes Spiel“ steht als Leiste und als Box-Titel doppelt.
 - **Textfarben ohne Token** (Vereinsprofil-Kopf, Taktiktafel): halbtransparentes Weiß auf dunklen Bühnen – berechnete Mischfarben, keine festen Farben im CSS; die festen Farben im CSS stehen in der Tabelle oben.
 
 ## Funde (zusammengefasst)
