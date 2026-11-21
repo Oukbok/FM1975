@@ -41,7 +41,7 @@
 .tro-listbox, .tro-stage { min-height: 0; }
 .tro-listbody { overflow-y: auto; }
 .tro-table th { position: sticky; top: 0; z-index: 1; background: var(--panel); }
-.tro-col-s { width: 92px; color: var(--text-2); }
+.tro-col-s { width: 112px; color: var(--text-2); } /* „2008/09“ ohne Kürzung (test:audit) */
 .tro-row { cursor: pointer; }
 .tro-row td { transition: background 160ms ease; }
 .tro-row:hover td { background: rgba(var(--ink-rgb), 0.035); }

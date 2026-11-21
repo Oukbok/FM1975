@@ -120,7 +120,8 @@ export function TrainingCampView({ g, onChange }: { g: Game; onChange: () => voi
         {aiCount.size ? [...aiCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([id, n]) => (
           <div key={id} className="dlist-row"><span className="grow">{campDestination(id)?.name ?? id}</span><b>{n}</b></div>
         )) : <div className="dnote">Die anderen Vereine planen noch.</div>}
-        <div className="dsec">Demnächst neu</div>
+        {/* Überschrift nur, wenn noch etwas kommt (sonst leerer Abschnitt, test:audit) */}
+        {campMilestones().some((m) => m.year > year) && <div className="dsec">Demnächst neu</div>}
         {campMilestones().filter((m) => m.year > year).slice(0, 3).map((m, i) => (
           <div key={i} className="dlist-row win-locked"><span className="meta" style={{ minWidth: 40 }}>{m.year}</span><span className="grow">{m.text}</span></div>
         ))}

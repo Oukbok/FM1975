@@ -47,14 +47,14 @@
 .fxp-md { width: 44px; color: var(--text-2); }
 .fxp-dt { width: 230px; white-space: nowrap; }
 .fxp-table td:nth-child(5) { width: 110px; }
-.fxp-table td:nth-child(6) { width: 96px; }
+.fxp-table td:nth-child(6) { width: 112px; } /* Knopf „Bericht“ ohne Kürzung (test:audit) */
 .fxp-where { width: 70px; color: var(--text-2); }
 .fxp-opp { display: inline-flex; align-items: center; gap: 12px; font-weight: 600; }
 .fxp-res { display: inline-block; min-width: 46px; padding: 2px 6px; border-radius: 4px; text-align: center; font-weight: 800; background: rgba(var(--ink-rgb), .05); color: var(--text-2); }
 .fxp-res.r-W { color: var(--pos); background: color-mix(in srgb, var(--pos) 14%, transparent); }
 .fxp-res.r-L { color: var(--neg); background: color-mix(in srgb, var(--neg) 14%, transparent); }
 .fxp-res.r-D { color: var(--text); }
-.fxp-rep { height: 26px; min-width: 66px; font-size: 12.5px; }
+.fxp-rep { height: 26px; min-width: 66px; padding: 0 10px; font-size: 12.5px; overflow: visible; }
 .fxp-table tr.fxp-next td { color: var(--club-accent, var(--accent)); }
 .fxp-table tr.fxp-next .fxp-opp { color: var(--club-accent, var(--accent)); font-weight: 700; }
 .fxp-table tbody tr.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }

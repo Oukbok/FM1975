@@ -13,6 +13,7 @@ import { setDisplayYear, setWagePeriod } from './ui/format';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { lazyNamed } from './ui/lazyNamed';
 import { installClickSound } from './ui/clickSound';
+import { installEllipsisTitles } from './ui/ellipsisTitle';
 import { installStableTables } from './ui/stableTables';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
@@ -28,6 +29,7 @@ const loadNewGame = () => import('./game/newGame');
 // ROOT: Startmenü ⇄ Spiel
 // =============================================================================
 installClickSound();
+installEllipsisTitles(); // gekürzte Texte zeigen beim Zeigen den vollen Text
 installStableTables();
 
 export default function App() {

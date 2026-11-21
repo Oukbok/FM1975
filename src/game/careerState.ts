@@ -202,6 +202,7 @@ export function ensureCareer(g: Game): CareerState {
     const c = g.career;
     c.offers ??= []; c.declined ??= {}; c.log ??= []; c.stints ??= []; c.offerCount ??= 0; c.sacked ??= 0;
     if (!c.stints.length) c.stints.push(startStint(g, true));
+    fixStartStint(g, c);
     return c;
   }
   const own = g.managedClubId;
@@ -216,8 +217,8 @@ export function ensureCareer(g: Game): CareerState {
 export function startStint(g: Game, initial = false): CareerStint {
   const id = g.managedClubId;
   const startYear = Number(g.season.slice(0, 4));
-  // Jedes Spiel beginnt 1975/76; vor der Karriere gab es keinen Vereinswechsel → erste Station seit Spielbeginn.
-  const from = initial ? '1975-07-01' : g.calendar.currentDate;
+  // Erste Station seit Spielbeginn (Startjahr des Spiels, früher immer 1975/76).
+  const from = initial ? `${g.startYear ?? 1975}-07-01` : g.calendar.currentDate;
   const recFrom = initial && startYear > 1975 ? g.season : undefined;
   return {
     clubId: id, clubName: clubNameOf(g, id), from, tier: playerTier(g), seasons: [],
@@ -233,12 +234,41 @@ const TITLE_DE: Record<string, string> = { meister: 'Meisterschaft', pokal: 'Pok
  * Alter Spielstand: Saisons und Ligabilanz seit 1975 aus der Vereins-Historie
  * (game/clubRecords.ts: Endplätze, Titel, direkter Vergleich) nachtragen.
  */
+/** Erste Saison des Spiels („2025/26“ bei Startjahr 2025, sonst „1975/76“). */
+function startSeason(g: Game): string {
+  const y = g.startYear ?? 1975;
+  return `${y}/${String((y + 1) % 100).padStart(2, '0')}`;
+}
+
+/**
+ * Spiele mit späterem Startjahr: Die erste Station begann früher fest am 1.7.1975 und zählte
+ * die Vereinshistorie vor Spielbeginn mit („Im Amt seit 01.07.1975 · 50 Jahre“, fremde Titel).
+ * Hier einmalig auf das Startjahr zurechtgerückt (idempotent).
+ */
+function fixStartStint(g: Game, c: CareerState): void {
+  const st = c.stints[0];
+  const sy = g.startYear ?? 1975;
+  if (!st || sy <= 1975) return;
+  const s0 = startSeason(g);
+  if (st.from < `${sy}-07-01`) {
+    st.from = `${sy}-07-01`;
+    st.seasons = st.seasons.filter((x) => x.season >= s0);
+  }
+  // Managerbilanz (game/managerLog.ts) hatte die Saisons ab 1975/76 nachgetragen.
+  const log = c.mgr;
+  if (log && log.from < s0) {
+    log.from = s0;
+    for (const k of Object.keys(log.seasons)) if (k < s0) delete log.seasons[k];
+  }
+}
+
 function backfillStint(g: Game, st: CareerStint): void {
   const book = recordBook(g);
   if (!book) return;
   const cur = g.season;
+  const s0 = startSeason(g);
   for (const [season, tier, pos, size] of book.seasons[st.clubId] ?? []) {
-    if (season >= cur || season < '1975/76') continue; // Historie vor Spielbeginn gehört nicht zu dir
+    if (season >= cur || season < s0) continue; // Historie vor Spielbeginn gehört nicht zu dir
     const titles = (book.titles[st.clubId] ?? []).filter(([, s2]) => s2 === season).map(([k]) => TITLE_DE[k]).filter(Boolean);
     st.seasons.push({ season, tier, pos, size, titles: titles.length ? titles : undefined });
   }
@@ -246,7 +276,7 @@ function backfillStint(g: Game, st: CareerStint): void {
   const r = { w: 0, d: 0, l: 0 };
   let n = 0;
   for (const list of Object.values(book.h2h)) for (const [season, , comp, , a, b] of list) {
-    if (comp !== 'L' || season >= cur) continue;
+    if (comp !== 'L' || season >= cur || season < s0) continue;
     n++;
     if (a > b) r.w++; else if (a < b) r.l++; else r.d++;
   }

@@ -173,7 +173,7 @@ export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => 
 
       <DashBox title="Jugendakademie" info="ausbildung" icon="youth" onClick={() => onGoto('youth')} right={`${youth.length} Talente`}>
         {topYouth.length ? topYouth.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={p.scoutedPotentialMin != null ? `${p.scoutedPotentialMin}–${p.scoutedPotentialMax}` : '–'} color="var(--text-2)" />
+          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={<ScoutStars p={p} />} color="var(--text-2)" />
         )) : <Empty icon="youth">Noch keine Talente in der Akademie.</Empty>}
         <div className="dnote mt8">Wert = geschätzte Potenzial-Spanne der Scouts.</div>
       </DashBox>

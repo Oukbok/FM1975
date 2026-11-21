@@ -162,7 +162,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
             <span className="val">{Math.round(c.youthInvest?.reputation ?? 0)}</span>
           </div>
         ))}
-        <div className="dsec">Meilensteine</div>
+        {MILESTONES.some((m) => m.year >= year - 2) && <div className="dsec">Meilensteine</div>}
         {MILESTONES.filter((m) => m.year >= year - 2).slice(0, 3).map((m) => (
           <KV key={m.year} k={<span style={{ color: m.year <= year ? 'var(--text-3)' : 'var(--accent)' }}>{m.year}</span>} v={<span className="dnote">{m.text}</span>} />
         ))}

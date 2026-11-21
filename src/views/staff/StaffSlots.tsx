@@ -85,7 +85,7 @@ export function StaffSlots({ g, scope, selId, msg, onSelect, onSearch }: {
           <div className="sf-kpi"><span>Besetzt</span><b>{filledRoles}/{slotsTotal}</b><i>Stellen der Zeit</i></div>
           <div className={`sf-kpi ${ssPct < -1.5 ? 'neg' : ''}`}><span>Spielstärke</span><b>{ssPct >= 0 ? '+' : '−'}{Math.abs(ssPct).toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %</b><i>durch den ganzen Stab</i></div>
         </>}
-        <div className="sf-kpi"><span>Gehälter</span><b>{fmtStaffWage(cost, { unit: false })}</b><i>pro {wageUnit()}</i></div>
+        <div className="sf-kpi" title={fmtStaffWage(cost)}><span>Gehälter</span><b>{fmtStaffWage(cost, { unit: false })}</b><i>pro {wageUnit()}</i></div>
       </div>
       <div className={`sf-msg ${msg ? 'on' : ''}`}>{msg ?? (scope === 'team' ? 'Das Niveau des Trainerteams entscheidet, wie weit deine Spieler kommen.' : 'Jede Stelle wirkt ein wenig – zusammen spürbar.')}</div>
       <div className="sf-slotlist">

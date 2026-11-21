@@ -42,7 +42,7 @@ export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
 
       <DashBox title="Größte Talente" icon="youth" onClick={() => onGoto('youth')} right="ab 13 Jahre">
         {top.length ? top.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={p.scoutedPotentialMin != null ? `${p.scoutedPotentialMin}–${p.scoutedPotentialMax}` : '–'} color="var(--text-2)" />
+          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={<ScoutStars p={p} />} color="var(--text-2)" />
         )) : <Empty icon="youth">Noch keine Talente.</Empty>}
       </DashBox>
 

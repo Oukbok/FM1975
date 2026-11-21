@@ -16,6 +16,12 @@ export function money(v: number): string {
 }
 
 /**
+ * Freigeschaltete Bilder unter `bilder/merch/<name>.webp` (z. B. `trikot: true`). Nur
+ * eingetragene Bilder werden geladen – sonst gäbe jeder Slot eine 404-Anfrage (test:audit).
+ */
+const MERCH_PHOTOS: Record<string, true> = {};
+
+/**
  * Bild-Slot: `bilder/merch/<name>.webp`; fehlt die Datei, bleibt eine ruhige
  * Fläche mit Icon stehen (Bildwünsche im Bericht / Wiki).
  */
@@ -23,7 +29,7 @@ export function MerchImage({ name, alt, icon = 'merch', className = '' }: { name
   const [failed, setFailed] = useState(false);
   return (
     <div className={`mc-img ${className}`}>
-      {!failed
+      {!failed && MERCH_PHOTOS[name]
         ? <img src={`assets/merch/${name}.webp`} alt={alt} draggable={false} onError={() => setFailed(true)} />
         : <span className="mc-img-fb"><Icon name={icon} size={34} /></span>}
     </div>
