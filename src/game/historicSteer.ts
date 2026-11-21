@@ -21,7 +21,7 @@ import { playerLevel } from './state';
 import { Game } from './state';
 import { book } from '../engine/finances';
 import { brandFromReputation, ensureBrand, isLeagueClub, lastRevenue } from '../engine/clubEconomy';
-import { foreignFactor, germanFactor } from '../data/historicStrength';
+import { foreignFactor, germanFactor, historicFade } from '../data/historicStrength';
 import type { EuroClub } from '../data/europe';
 import type { WorldState } from '../engine/world';
 
@@ -61,9 +61,13 @@ export function historyModeOf(g: Pick<Game, 'historyMode'>): HistoryMode {
   return g.historyMode ?? 'off';
 }
 
-function weightsOf(g: Game): Weights | null {
+/** Gewichte der Lenkung im Jahr – nach den echten Daten (2025) auslaufend (data/historicStrength.ts historicFade). */
+function weightsOf(g: Game, year: number): Weights | null {
   const m = historyModeOf(g);
-  return m === 'off' ? null : WEIGHTS[m];
+  if (m === 'off') return null;
+  const f = historicFade(year), w = WEIGHTS[m];
+  if (f >= 1) return w;
+  return { rep: w.rep * f, brand: w.brand * f, money: w.money * f, sim: w.sim * f, simK: w.simK, world: w.world * f };
 }
 
 /** Ziel-Ruf eines Vereins zum Faktor (1,0 → 68; 1,42 → 95; 0,8 → 55). */
@@ -76,7 +80,7 @@ export function targetReputation(f: number): number {
  * KI-Vereine Richtung Kurve ziehen. `year` = Startjahr der neuen Saison.
  */
 export function historicSeasonClose(g: Game, year: number): void {
-  const w = weightsOf(g);
+  const w = weightsOf(g, year);
   if (!w) return;
   for (const c of Object.values(g.clubs)) {
     if (!isLeagueClub(c) || c.id === g.managedClubId) continue;
@@ -98,7 +102,7 @@ export function historicSeasonClose(g: Game, year: number): void {
  * Vermarktungsvorsprung), abgestürzte einen Abfluss (Altlasten). Nominal gebucht.
  */
 export function historicMoney(g: Game, year: number, date: string): void {
-  const w = weightsOf(g);
+  const w = weightsOf(g, year);
   if (!w) return;
   const tier = playerLevel(g);
   // Bezug ist der Medianumsatz der Liga (nicht der eigene Umsatz): sonst würde der Zufluss
@@ -124,7 +128,7 @@ export function historicMoney(g: Game, year: number, date: string): void {
  * Richtung Median ihrer Liga plus/minus Kurve. Nach dem Ligenumbau aufrufen.
  */
 export function historicSimClubs(g: Game, year: number): void {
-  const w = weightsOf(g);
+  const w = weightsOf(g, year);
   if (!w) return;
   const byDiv: Record<string, number[]> = {};
   const key = (t: number, gr: unknown) => `${t}|${gr ?? ''}`;
@@ -156,7 +160,7 @@ export function historicSimClubs(g: Game, year: number): void {
 
 /** Auslandsvereine: Größe und natürliche Größe Richtung Kurve (vor advanceWorldSeason). */
 export function historicWorld(g: Game, world: WorldState, euroClubs: Record<string, EuroClub>, year: number): void {
-  const w = weightsOf(g);
+  const w = weightsOf(g, year);
   if (!w) return;
   for (const [id, m] of Object.entries(world.meta)) {
     const ec = euroClubs[id];
@@ -179,7 +183,7 @@ export function historicWorld(g: Game, world: WorldState, euroClubs: Record<stri
  * (Stark: Faktor 1,4 ≈ +5 Punkte, Mittel ≈ +2).
  */
 export function historicWorldAfter(g: Game, world: WorldState, euroClubs: Record<string, EuroClub>, year: number): void {
-  const w = weightsOf(g);
+  const w = weightsOf(g, year);
   if (!w) return;
   for (const id of Object.keys(world.meta)) {
     const ec = euroClubs[id];

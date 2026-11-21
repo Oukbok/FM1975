@@ -10,7 +10,7 @@ import { startNextSeason } from '../src/game/season';
 import { CalendarEngine } from '../src/engine/calendar';
 import { allEuroClubs } from '../src/data/europe';
 import { initWorld } from '../src/engine/world';
-import { curveAt, FOREIGN_CURVES, GERMAN_CURVES } from '../src/data/historicStrength';
+import { curveAt, FOREIGN_CURVES, GERMAN_CURVES, historicFade } from '../src/data/historicStrength';
 import {
   historicMoney, historicSeasonClose, historicSimClubs, historicWorld, historyModeOf, migrateHistoryMode, targetReputation,
 } from '../src/game/historicSteer';
@@ -40,6 +40,8 @@ if (curveAt(m, 1960) !== m[0][1] || curveAt(m, 2100) !== m[m.length - 1][1]) fai
 if (Math.abs(curveAt([[2000, 1], [2010, 1.2]], 2005) - 1.1) > 1e-9) fail('Interpolation falsch');
 if (curveAt(GERMAN_CURVES.muc, 2015) < 1.4) fail('München Rot ab 2012 nicht Weltspitze');
 if (curveAt(GERMAN_CURVES.ham, 2019) > 0.9) fail('Hamburg Blau nach 2018 nicht abgestürzt');
+// Nach den echten Daten läuft die Lenkung aus (Langzeit-Balance, docs/recherche/balance-100.md).
+if (historicFade(2025) !== 1 || Math.abs(historicFade(2050) - 0.5) > 1e-9 || historicFade(2075) > 0.26) fail('Lenkung läuft nach 2025 nicht aus');
 ok(`Kurven: ${Object.keys(GERMAN_CURVES).length} deutsche, ${Object.keys(FOREIGN_CURVES).length} ausländische`);
 
 // 2) Alle Vereine mit Kurve existieren im Spiel

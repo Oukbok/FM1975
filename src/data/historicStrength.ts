@@ -5,7 +5,7 @@
 // 0,7 (abgestürzt, kaum Mittel) … 1,0 (normal für seine Liga) … 1,42 (Weltspitze,
 // z. B. FC Bayern ab 2012, Real Madrid). Stützpunkte [Saison-Startjahr, Faktor],
 // dazwischen linear, vor dem ersten und nach dem letzten Punkt konstant
-// (Fortschreibung nach 2025 = letzter Stand). Die Kurve wirkt nur auf KI-Vereine
+// (Fortschreibung nach 2025 = letzter Stand; die Lenkung läuft danach aus, historicFade). Die Kurve wirkt nur auf KI-Vereine
 // (game/historicSteer.ts) und nur, wenn beim Spielstart „Mittel“ oder „Stark“
 // gewählt wurde. Sie ist keine Ergebnisvorgabe: Sie lenkt Ruf, Marke, Geld und bei
 // Sim-Vereinen die Stärke sanft in diese Richtung.
@@ -182,6 +182,22 @@ export const FOREIGN_CURVES: Record<string, Curve> = {
 };
 
 /** Faktor einer Kurve im Jahr (linear zwischen den Stützpunkten, außen konstant). */
+/** Letztes Jahr mit echten Daten der Kurven (Vereine und Ligaruf, data/leagueReputation.ts). */
+export const HIST_DATA_END = 2025;
+/** Halbwertszeit (Jahre), mit der die Lenkung nach den echten Daten ausläuft. */
+export const HIST_FADE_HALF_LIFE = 25;
+
+/**
+ * Stärke der historischen Lenkung im Jahr (1 bis HIST_DATA_END, danach Halbwertszeit 25 Jahre:
+ * 2050 halb so stark, 2075 ein Viertel). Nach 2025 gibt es keine „echte Geschichte“ mehr – ohne
+ * Auslaufen hielt die Lenkung die Rangordnung von 2025 für immer fest (Langzeit-Balance
+ * 1975–2075, docs/recherche/balance-100.md: München Rot 60 von 100 Titeln, England dauerhaft 100).
+ * Gilt für die Lenkung (Gewichte), nicht für die Kurve selbst.
+ */
+export function historicFade(year: number): number {
+  return year <= HIST_DATA_END ? 1 : Math.pow(0.5, (year - HIST_DATA_END) / HIST_FADE_HALF_LIFE);
+}
+
 export function curveAt(c: Curve, year: number): number {
   if (year <= c[0][0]) return c[0][1];
   for (let i = 1; i < c.length; i++) {

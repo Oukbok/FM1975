@@ -22,6 +22,7 @@
 // Stärke kommt aus den echten Kadern.
 // =============================================================================
 import { repTargetAt } from '../data/leagueReputation';
+import { historicFade } from '../data/historicStrength';
 import { coefSum, legacyCountryLevel, REP_LEVEL_K, type WorldCountry, type WorldState } from './world';
 
 export type LeagueRepMode = 'free' | 'historic';
@@ -96,13 +97,16 @@ export function seasonLeagueRep(w: WorldState, year: number, mode: LeagueRepMode
     let v = c.rep + FREE_PULL * full * ((earned[c.name] ?? c.rep) - c.rep)
       + STRUCT_PULL * ((c.repStart ?? c.rep) - c.rep) + gauss(r) * REP_NOISE;
     if (mode === 'historic') {
+      // Nach den echten Daten (2025) läuft die Lenkung aus (Halbwertszeit 25 Jahre, historicFade) –
+      // sonst bliebe die Rangordnung von 2025 bis 2075 eingefroren.
+      const fade = historicFade(year);
       const target = repTargetAt(c.name, year);
-      v -= (v - target) * HIST_PULL;
+      v -= (v - target) * HIST_PULL * fade;
       // Zusage: Mindestens ein Viertel der Abweichung vom Saisonbeginn wird tatsächlich abgebaut –
       // auch wenn das Land gerade alles gewinnt (20 über der Kurve → mindestens −5).
       const dev0 = c.rep - target;
-      if (dev0 > 0) v = Math.min(v, c.rep - dev0 * MIN_SHARE);
-      else if (dev0 < 0) v = Math.max(v, c.rep - dev0 * MIN_SHARE);
+      if (dev0 > 0) v = Math.min(v, c.rep - dev0 * MIN_SHARE * fade);
+      else if (dev0 < 0) v = Math.max(v, c.rep - dev0 * MIN_SHARE * fade);
     }
     c.rep = Math.round(clamp(v, 0, 100) * 10) / 10;
     (c.repHist ??= []).push(c.rep);
