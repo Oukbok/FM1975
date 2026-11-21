@@ -34,7 +34,17 @@ export async function writeReport(path, { stats, findings, colors, saves, views,
     L.push(`| ${def.t} | ${def.hard ? '✗' : ''} | ${views.map((v) => byKind[k]?.[v] ?? 0).join(' | ')} | ${nDiff} |`);
   }
   L.push('');
-  if (before) L.push(before, '');
+  if (before) {
+    const b = summarize(before.findings, views).byKind;
+    L.push('## Vorher / nachher', '', `Vorher = derselbe Check auf dem Stand vor diesem Durchgang (\`DIST=…\`, ${before.stats.pages} Seiten-, ${before.stats.popups} Fensteransichten). Je Auflösung: vorher → nachher.`, '');
+    L.push(`| Art | ${views.join(' | ')} |`, `|---|${views.map(() => '---|').join('')}`);
+    for (const [k, def] of Object.entries(KINDS)) {
+      const cells = views.map((v) => `${b[k]?.[v] ?? 0} → ${byKind[k]?.[v] ?? 0}`);
+      if (cells.every((c) => c === '0 → 0')) continue;
+      L.push(`| ${def.t} | ${cells.join(' | ')} |`);
+    }
+    L.push('');
+  }
   L.push('## Funde (zusammengefasst)', '', '| Art | Anzahl | Auflösung | Stände | Seiten (Beispiele) | Beschreibung (Beispiel) |', '|---|---:|---|---|---|---|');
   const order = Object.keys(KINDS);
   groups.sort((a, b) => order.indexOf(a.k) - order.indexOf(b.k) || b.n - a.n);

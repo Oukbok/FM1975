@@ -217,7 +217,13 @@ server.close();
 await mkdir(OUT, { recursive: true });
 await writeFile(`${OUT}/findings.json`, JSON.stringify({ stats, findings, colors }, null, 1));
 const reportPath = process.env.REPORT ?? 'docs/recherche/audit-bericht.md';
-if (reportPath !== '0') await writeReport(reportPath, { stats, findings, colors, saves: SAVES, views: VIEWS.map((v) => v.tag), secs: Math.round((Date.now() - t0) / 1000) });
+// BEFORE=findings.json eines früheren Laufs (z. B. DIST=alter Build) → Tabelle vorher/nachher im Bericht.
+let before;
+if (process.env.BEFORE) {
+  const { readFile } = await import('node:fs/promises');
+  before = JSON.parse(await readFile(process.env.BEFORE, 'utf8'));
+}
+if (reportPath !== '0') await writeReport(reportPath, { stats, findings, colors, saves: SAVES, views: VIEWS.map((v) => v.tag), secs: Math.round((Date.now() - t0) / 1000), before });
 const hard = findings.filter((f) => KINDS[f.k]?.hard);
 console.log(`Seiten ${stats.pages}, Fenster ${stats.popups}, Screenshots ${stats.shots}, Funde ${findings.length} (schwer ${hard.length})`);
 for (const f of hard.slice(0, 40)) console.log(`  [${f.k}] ${f.view} ${f.save} ${f.where}: ${f.d}`);
