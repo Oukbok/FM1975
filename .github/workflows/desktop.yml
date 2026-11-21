@@ -1,0 +1,61 @@
+# Desktop-Builds (Electron): Windows (NSIS-Installer, portable .exe, ZIP) und Linux (AppImage, für Steam Deck).
+# Start: von Hand (Actions → Desktop-Build → Run workflow) oder durch ein Tag v* (z. B. v1.1.0).
+# Ablauf und Patch-Vorgehen: desktop/README.md
+name: Desktop-Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: Windows, os: windows-latest, script: 'dist:win' }
+          - { name: Linux, os: ubuntu-latest, script: 'dist:linux' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            desktop/package-lock.json
+      - name: Abhängigkeiten (Spiel)
+        run: npm ci
+      - name: Abhängigkeiten (Desktop-Hülle)
+        run: npm ci
+        working-directory: desktop
+      - name: Tag passt zur Versionsnummer
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          v="v$(node -p "require('./package.json').version")"
+          if [ "$v" != "$GITHUB_REF_NAME" ]; then echo "Tag $GITHUB_REF_NAME, aber package.json hat $v"; exit 1; fi
+      - name: Typprüfung
+        run: npm run check
+      - name: Bauen
+        run: npm run ${{ matrix.script }}
+        working-directory: desktop
+      - name: Desktop-Test (App starten, neues Spiel, speichern, neu starten, laden)
+        run: npm run test:desktop
+        # Windows-Runner haben einen kleinen Bildschirm (1024×768) – dort nur Hinweis, kein Abbruch.
+        continue-on-error: ${{ runner.os == 'Windows' }}
+      - name: Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: FM1975-${{ matrix.name }}-${{ github.ref_name }}
+          if-no-files-found: error
+          path: |
+            desktop/release/*.exe
+            desktop/release/*.zip
+            desktop/release/*.AppImage
