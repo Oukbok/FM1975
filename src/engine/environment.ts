@@ -141,11 +141,11 @@ export function baseMembers(reputation: number): number {
 }
 
 /** Wie viele Vielfache der Startzahl ein Verein in einer Epoche höchstens erreicht (danach Sättigung). */
-const MEMBER_CAP_ERA: [number, number][] = [[1975, 4], [1995, 6], [2005, 9], [2015, 13], [2025, 16]];
+const MEMBER_CAP_ERA: [number, number][] = [[1975, 3], [1995, 4], [2005, 5], [2015, 7], [2025, 8]];
 
 /**
- * Obergrenze der Mitglieder: Startzahl × Epochen-Vielfaches (1975 × 4 … ab 2025 × 16). Damit bleiben die
- * Beiträge auch nach Jahrzehnten Erfolg im Rahmen (Spitzenverein 2025 ≈ 8 % des Umsatzes, danach nicht mehr).
+ * Obergrenze der Mitglieder: Startzahl × Epochen-Vielfaches (1975 × 3 … ab 2025 × 8). Damit bleiben die
+ * Beiträge auch nach Jahrzehnten Erfolg im Rahmen (Spitzenverein ≈ 3–5 % des Umsatzes, KI-Schätzung ≈ 2 %).
  */
 export function memberCap(reputation: number, year: number): number {
   const A = MEMBER_CAP_ERA;
