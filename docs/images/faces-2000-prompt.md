@@ -19,6 +19,21 @@ Gemessen im Spiel an allen Spielern der Jahrgänge 1975–1984 (Vorlage „Test 
 | nordafrika | 1,3 % | 10 | 29 | 281–290 |
 | ostasien | 0,5 % | 10 | 30 | 291–300 |
 
+## Stand 21.11.2026
+
+Im Spiel: 190 von 300 Bildern (Pakete 03, 04, 06, 11, 13, 15, 16, 19–30). Nach Sichtung zwei Bilder umsortiert: 273 und 277 von `lateinamerika` nach `westafrika` (Einordnung nach Aussehen).
+
+Noch offen (110 Bilder):
+
+| Gruppe | Fehlende Pakete | Nummern |
+|---|---|---|
+| mitteleuropa | 01, 02, 05, 07, 08 | 001–020, 041–050, 061–080 |
+| osteuropa | 09, 10, 12 | 081–100, 111–120 |
+| suedeuropa | 14, 17 | 131–140, 161–170 |
+| balkan | 18 | 171–180 |
+
+Solange eine Gruppe in der Epoche 2000 weniger als 40 Bilder hat, bekommt die Hälfte der Spieler dieser Epoche ein Gesicht aus den 1990ern (`THIN_POOL` in `src/components/faces/faceLookup.ts`), damit sich Gesichter nicht zu oft wiederholen.
+
 **Gemischte Herkunft:** Einordnen nach dem Aussehen, nicht nach dem Pass. Ein Franzose mit senegalesischen Eltern liegt bei `westafrika`, ein Niederländer mit marokkanischen Eltern bei `nordafrika`. Die Herkunft darf als Zusatz im Dateinamen stehen.
 
 **Westafrika-Pakete 24–26:** Davon etwa die Hälfte europäische Spieler mit afrikanischen oder karibischen Wurzeln (französisch, englisch, niederländisch-surinamisch, belgisch, portugiesisch, deutsch). Die andere Hälfte sind Spieler aus Nigeria, Ghana, Kamerun, der Elfenbeinküste und dem Senegal.

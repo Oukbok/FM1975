@@ -60,6 +60,10 @@ function hash(str: string): number {
   return h >>> 0;
 }
 
+/** Ab dieser Epoche kommen die Bilder paketweise; darunter gilt eine dünne Gruppe als „im Aufbau“. */
+const THIN_FROM = 2000;
+const THIN_POOL = 40;
+
 const epochOfYear = (y: number) => Math.max(FACE_EPOCHS[0], Math.min(FACE_EPOCHS[FACE_EPOCHS.length - 1], Math.floor(y / 10) * 10));
 
 /** Vorhandene Epoche dieser Gruppe, die der gewünschten am nächsten liegt (bei Gleichstand die frühere). */
@@ -98,8 +102,15 @@ export function faceImageFor(q: FaceQuery): FaceImage | null {
   const want = q.staff
     ? epochOfYear(q.year ?? 1975)
     : epochOfYear((q.birthYear ?? ((q.year ?? 1975) - (q.age ?? 25))) + 25);
-  const epoch = nearestEpoch(group, want);
+  let epoch = nearestEpoch(group, want);
   if (epoch == null) return null;
+  // Epoche noch im Aufbau (Wunsch Pascal: 2000er kommen paketweise): Solange die Gruppe dort weniger als
+  // THIN_POOL Bilder hat, bekommt fest die Hälfte der Spieler ein Gesicht der Epoche davor – mehr Vielfalt,
+  // die neuen Bilder sind trotzdem zu sehen. Ab THIN_POOL Bildern nur noch die eigene Epoche.
+  if (!q.staff && epoch >= THIN_FROM && group[epoch].length < THIN_POOL) {
+    const before = nearestEpoch(Object.fromEntries(Object.entries(group).filter(([k]) => Number(k) < epoch!)), epoch - 10);
+    if (before != null && hash(`${groupId}|${q.id}|ep`) % 2 === 0) epoch = before;
+  }
   const people = group[epoch];
   const person = people[hash(`${groupId}|${q.id}`) % people.length];
   const age = q.age ?? (q.staff ? 50 : 25);

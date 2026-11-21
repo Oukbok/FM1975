@@ -16,7 +16,7 @@ OUT = Path('images/faces')
 DIRS = json.load(open('src/data/faceDirs.json', encoding='utf8'))  # Gruppen-ID -> Ordner
 GROUPS = set(DIRS)
 EPOCHS = {1970, 1980, 1990, 2000, 2010, 2020}
-NAME = re.compile(r'^(\d{4})_(\d{1,4})_([a-z_]+)\.png$', re.I)
+NAME = re.compile(r'^(\d{4})_(\d{1,4})_([a-z]+)(?:_[a-z0-9_-]+)?\.png$', re.I)  # Zusatz _<herkunft> erlaubt
 W, H = 512, 600
 
 def sources(args):
