@@ -4,22 +4,66 @@
   "version": "1.1.0",
   "private": true,
   "description": "Desktop-Version von 1975 – A Football Manager",
+  "author": "Pascal Franke",
   "main": "main.cjs",
   "scripts": {
-    "start": "npm --prefix .. run build && electron .",
-    "dist:win": "npm --prefix .. run build && electron-builder --win nsis portable"
+    "sync": "node sync-version.cjs",
+    "game": "npm --prefix .. run build && node offline-fonts.cjs",
+    "start": "npm run sync && npm run game && electron .",
+    "dist:win": "npm run sync && npm run game && electron-builder --win nsis portable zip --x64 --publish never",
+    "dist:win:zip": "npm run sync && npm run game && electron-builder --win zip --x64 --publish never",
+    "dist:linux": "npm run sync && npm run game && electron-builder --linux AppImage --x64 --publish never",
+    "dist:dir": "npm run sync && npm run game && electron-builder --linux dir --x64 --publish never"
   },
   "devDependencies": {
-    "electron": "33.2.1",
-    "electron-builder": "25.1.8"
+    "@fontsource-variable/roboto-serif": "^5.3.0",
+    "@fontsource/antonio": "^5.3.0",
+    "@fontsource/archivo": "^5.3.0",
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
   },
   "build": {
     "appId": "de.fm1975.game",
     "productName": "1975 A Football Manager",
-    "directories": { "output": "release" },
-    "files": ["main.cjs"],
-    "extraResources": [{ "from": "../dist", "to": "dist" }],
-    "win": { "target": ["nsis", "portable"] },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "shortcutName": "1975 A Football Manager" }
+    "artifactName": "FM1975-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "saves.cjs"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist",
+        "to": "dist"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "1975 A Football Manager",
+      "artifactName": "FM1975-${version}-Setup.${ext}",
+      "deleteAppDataOnUninstall": false
+    },
+    "portable": {
+      "artifactName": "FM1975-${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Game",
+      "executableName": "fm1975",
+      "synopsis": "Fußballmanager ab 1975"
+    }
   }
 }

@@ -4,6 +4,7 @@ import { cachedDataset, hydrateDatasets, onDatasetsChanged } from './data/datase
 import { hydrateClubOverrides } from './data/clubOverrides';
 import { setCurrencyDate, yearOf } from './engine/economy';
 import { AppSettings, initSaveStore, loadGame, loadSettings, saveSettings } from './engine/save';
+import { desktopApi } from './engine/saveStore';
 import { Game } from './game/state';
 import { MainMenu, preloadNewGameScreen } from './screens/MainMenu';
 import { preloadEarlyParts } from './shell/lazyParts';
@@ -48,6 +49,8 @@ export default function App() {
     return () => { alive = false; clearTimeout(t); };
   }, []);
   const [currentSlot, setCurrentSlot] = useState<string | null>(null);
+  // Desktop-Fassung: Rückfrage beim Schließen des Fensters nur, solange ein Spiel läuft.
+  useEffect(() => { desktopApi()?.setInGame(inGame).catch(() => {}); }, [inGame]);
 
   // Spielweiten Vereins-Override-Store (IndexedDB) einmalig beim Start laden und
   // danach neu rendern, damit hochgeladene Wappen/Trikots nach dem asynchronen

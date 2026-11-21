@@ -1,4 +1,5 @@
 import { DisplayMode } from '../engine/save';
+import { desktopApi } from '../engine/saveStore';
 import { type ReactNode, useEffect, useState } from 'react';
 
 // =============================================================================
@@ -19,6 +20,9 @@ export const RESOLUTION_GROUPS: { label: string; options: string[] }[] = [
  */
 export function applyDisplayMode(mode: DisplayMode): void {
   if (typeof document === 'undefined') return;
+  // Desktop-Fassung: echtes Fenster-Vollbild über die Hülle (F11/Alt+Enter schalten dort ebenfalls um).
+  const desktop = desktopApi();
+  if (desktop) { desktop.setFullscreen(mode !== 'window').catch(() => {}); return; }
   const el = document.documentElement;
   try {
     if (mode === 'fullscreen' || mode === 'borderless') {
