@@ -135,9 +135,29 @@ export function defaultPhilosophy(club: Club): ClubPhilosophy {
   return (['offensiv', 'kampf', 'bodenstaendig'] as ClubPhilosophy[])[h];
 }
 
+/** Startzahl der Mitglieder (wie die Schätzung der KI-Vereine in engine/finances.ts: 30.000 + Ruf × 1.000 DM Beiträge). */
+export function baseMembers(reputation: number): number {
+  return Math.round((30000 + reputation * 1000) / 40);
+}
+
+/** Wie viele Vielfache der Startzahl ein Verein in einer Epoche höchstens erreicht (danach Sättigung). */
+const MEMBER_CAP_ERA: [number, number][] = [[1975, 4], [1995, 6], [2005, 9], [2015, 13], [2025, 16]];
+
+/**
+ * Obergrenze der Mitglieder: Startzahl × Epochen-Vielfaches (1975 × 4 … ab 2025 × 16). Damit bleiben die
+ * Beiträge auch nach Jahrzehnten Erfolg im Rahmen (Spitzenverein 2025 ≈ 8 % des Umsatzes, danach nicht mehr).
+ */
+export function memberCap(reputation: number, year: number): number {
+  const A = MEMBER_CAP_ERA;
+  let f = A[A.length - 1][1];
+  if (year <= A[0][0]) f = A[0][1];
+  else for (let i = 1; i < A.length; i++) if (year <= A[i][0]) { const [y0, f0] = A[i - 1], [y1, f1] = A[i]; f = f0 + (f1 - f0) * (year - y0) / (y1 - y0); break; }
+  return Math.round(baseMembers(reputation) * f);
+}
+
 export function initEnvironment(club: Club, clubs: Club[]): ClubEnvironment {
   return {
-    fanMood: 55, members: Math.round((30000 + club.reputation * 1000) / 40),
+    fanMood: 55, members: baseMembers(club.reputation),
     mediaPressure: 30, philosophy: defaultPhilosophy(club),
     tradition: clamp(club.reputation - 10, 20, 95), rivals: findRivals(club, clubs),
     identity: 50, memberTrend: 0,
@@ -223,8 +243,12 @@ export function monthlyEnvironment(env: ClubEnvironment, club: Club, inp: MonthI
   }
   const before = env.fanMood;
   env.fanMood = clamp(env.fanMood + (target - env.fanMood) * 0.25 * era.volatility, 0, 100);
-  // 2) Mitglieder
-  const growth = era.memberGrowth / 12 + (env.fanMood - 50) / 50 * 0.003 + (inp.tablePos <= 3 ? 0.002 : 0);
+  // 2) Mitglieder – wachsen mit Epoche, Stimmung und Erfolg, aber nur bis zur Obergrenze `memberCap`
+  //    (vorher ungebremst: ein Spitzenverein wuchs ≈ 8 % im Jahr, 2070 waren die Beiträge 30–50 % des Umsatzes).
+  let growth = era.memberGrowth / 12 + (env.fanMood - 50) / 50 * 0.003 + (inp.tablePos <= 3 ? 0.002 : 0);
+  const cap = memberCap(club.reputation ?? 60, inp.year);
+  if (growth > 0) growth *= clamp(1 - env.members / cap, 0, 1);
+  if (env.members > cap) growth = Math.min(growth, -0.002); // über der Obergrenze langsam zurück
   env.memberTrend = growth;
   env.members = Math.max(500, Math.round(env.members * (1 + growth)));
   // 3) Medien
