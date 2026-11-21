@@ -27,6 +27,7 @@ import { updateScoutEstimate } from './scouting';
 import { pickOrigin, makeName, faceFor } from '../data/origins';
 import { heritageName } from '../data/ethnicity';
 import { makePersonality } from './playerFactory';
+import { marketValueFor } from './clubEconomy';
 import {
   Player, Club, PlayerAttributes, Position, AttributeKey,
   createEmptyStats, clampStars, starsToPotential, potentialToStars,
@@ -368,6 +369,8 @@ export function graduateYouth(
   youthPlayers: Record<string, Player>,
   isManaged: boolean,
   maxSquad = 26,
+  /** Saisonjahr: Marktwert der Hochgezogenen gleich auf die Rekordkurve setzen. */
+  year?: number,
 ): GraduateResult {
   const result: GraduateResult = { promoted: [], released: [] };
 
@@ -397,6 +400,7 @@ export function graduateYouth(
     if (promote) {
       const res = promoteYouth(club, p.id, players, youthPlayers, exceptional ? maxSquad + 2 : maxSquad);
       if (res.ok) {
+        if (year) p.contract.transferValue = marketValueFor(p, year);
         result.promoted.push(p);
         cpuPromoted++;
         continue;
@@ -478,6 +482,10 @@ export function promoteYouth(
   ensureDevFields(p);
   refreshOverall(p);
   updateScoutEstimate(p, 0.6, true);
+  // Marktwert ab jetzt nach Profi-Maßstab auf der Rekordkurve (wie refreshMarketValues zum Saisonstart).
+  // Vorher blieb der ungedeckelte Jugendwert (baseMarketValue) bis zum nächsten Saisonstart stehen:
+  // ein hochgezogenes 90er-Talent stand 2060 mit ≈ 1 Mrd. € (Kurve ≈ 250 Mio. €) in der Liste.
+  if (date) p.contract.transferValue = marketValueFor(p, Number(date.slice(0, 4)) - (Number(date.slice(5, 7)) < 7 ? 1 : 0));
   // Freie Rückennummer im Profikader suchen.
   p.shirtNumber = freeShirtNumber(club, players, p, date);
 

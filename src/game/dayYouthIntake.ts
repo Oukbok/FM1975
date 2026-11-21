@@ -48,7 +48,7 @@ export function youthIntakeDaily(g: Game, today: string): void {
       }
       // 2) Jahrgangsabschluss: A-Jugend (nun ≥20) verlässt die Akademie –
       //    die Besten werden hochgezogen, der Rest verlässt den Verein.
-      const grad = graduateYouth(club, g.players, g.youthPlayers, isMine);
+      const grad = graduateYouth(club, g.players, g.youthPlayers, isMine, undefined, yearNow);
       // 3) Neuer jüngster Jahrgang (G-Jugend/Bambini, 7 Jahre) rückt nach.
       const cohort = academyIntake(club, today, `${yearNow}`);
       for (const yp of cohort) maybeMakeGem(yp, GEM_CHANCE_YOUTH);

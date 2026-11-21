@@ -13,12 +13,12 @@ import { LEGEND_TYPES, COUNTRY_FACE, type LegendDef } from '../data/legends/type
 import { ORIGINS, type Origin } from '../data/origins';
 import { createPlayer } from '../engine/playerFactory';
 import { generateYouthPlayer } from '../engine/youth';
+import { baseMarketValue as youthMarketValue } from '../engine/youthShared';
 import { applyOverallChange, ensureDevFields, refreshOverall } from '../engine/development';
 import { ensurePositionSkill } from '../engine/positionSkill';
 import { updateScoutEstimate } from '../engine/scouting';
 import { wageForOverall } from '../engine/economy';
 import { marketValueFor } from '../engine/clubEconomy';
-import { baseMarketValue } from '../engine/youthShared';
 import { originClubOf } from '../engine/persona';
 import { legendPotential, youngTop } from '../engine/talent';
 
@@ -167,8 +167,8 @@ export function makeLegendYouth(def: LegendDef, m: LegendMake): Player {
   const w = age <= 15 ? 1.0 : age <= 17 ? 0.75 : 0.5;
   p.scoutedPotentialMin = clampStars(stars - w * (0.5 + rng()));
   p.scoutedPotentialMax = clampStars(stars + w * rng());
-  // Förderverträge gedeckelt wie in generateYouthPlayer/`migrateYouthContracts` – sonst sank der Wert erst beim Laden (tests/savecompat-test.ts).
-  p.contract.transferValue = Math.min(Math.round(p.overall * p.overall * 400), baseMarketValue(p));
+  // Wie jedes Jugendtalent (engine/youthShared.ts) – vorher Stärke² × 400 (60er ≈ 1,4 Mio. Basis, 8 × zu hoch).
+  p.contract.transferValue = youthMarketValue(p);
   return p;
 }
 

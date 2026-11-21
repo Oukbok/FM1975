@@ -5,6 +5,7 @@
 // =============================================================================
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
 import { wageForOverall } from './economy';
+import { marketValueFor } from './clubEconomy';
 import { weightsFor, positionSuitability, footForSide } from './positions';
 import { eraPosition } from '../data/formations';
 import { ensurePositionSkill } from './positionSkill';
@@ -127,7 +128,6 @@ export function createPlayer(spec: NewPlayerSpec): Player {
   const overall = positionSuitability(probe, pos);
   const pers = makePersonality(rng);
   const basePotential = Math.max(overall, rollBasePotential(age, overall, rng));
-  const value = Math.round(overall * overall * 1000 * (age < 24 ? 1.5 : age < 29 ? 1.2 : 0.6));
   const scoutBias = Math.round((rng() - 0.5) * 4) / 4; // −0,5 … +0,5 Sterne
   const stars = potentialToStars(basePotential);
   const player: Player = {
@@ -149,7 +149,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     contract: {
       weeklyWage: Math.round(wageForOverall(overall) * (0.85 + rng() * 0.3)),
       expiryDate: `${year + 1 + Math.floor(rng() * 4)}-06-30`,
-      transferValue: value, satisfaction: 55 + Math.floor(rng() * 35),
+      transferValue: 0, satisfaction: 55 + Math.floor(rng() * 35),
     },
     development: {
       currentAbility: overall, potentialAbility: basePotential,
@@ -165,6 +165,9 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     seasonStats: createEmptyStats(), careerStats: createEmptyStats(),
     trainingLoad: 0, transferListed: false,
   };
+  // Marktwert gleich auf der Rekordkurve (wie refreshMarketValues zum Saisonstart). Früher stand hier
+  // Stärke² × 1000 – nominal ohne Kurve: ein 75er war bis zum nächsten Saisonstart ≈ 8 Mio. statt ≈ 0,15 Mio. wert.
+  player.contract.transferValue = marketValueFor(player, year);
   ensurePositionSkill(player, date); // Positionsvertrautheit (engine/positionSkill.ts)
   return player;
 }
