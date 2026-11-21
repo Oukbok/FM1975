@@ -28,6 +28,7 @@ import { sameRegion } from '../src/engine/environment';
 import { cityGeo, distanceKm, isGermanCity } from '../src/data/prematch/cityGeo';
 import { playerLevel, type Game } from '../src/game/state';
 import type { Club } from '../src/types';
+import { ORIGINS } from '../src/data/origins';
 import { addNames, checkSample, makeChecker, newRep, report, repUnit, setClubs, type Ctx, type RepStat, type Sample, type Src } from './textAuditChecks';
 
 let seed = 1975;
@@ -88,6 +89,8 @@ function namesOf(g: Game) {
     }
   };
   walk(g.staffWorld, 0); walk(g.hiredStaff, 0); walk(g.coachPool, 0);
+  // alle Namen der Namenspools (Weltspieler tauchen in Texten auf, ohne in g.players zu stehen)
+  for (const o of Object.values(ORIGINS)) { ns.push(...o.first, ...o.last); for (const e of o.firstByEra ?? []) ns.push(...(e[1] as string[])); }
   addNames(ch, ns);
   setClubs(ch, clubs);
 }

@@ -20,7 +20,7 @@ export const DUELS: Grammar = {
   ],
   fail_aerial: [
     '{d} steigt höher als {p} und köpft weg.', 'Kopfballduell: {d} gewinnt gegen {p}.', '{d} klärt per Kopf vor {p}.',
-    '{p} kommt nicht an {d} vorbei – in der Luft hat der Verteidiger das bessere Timing.', '@-1991 Libero {d} räumt in der Luft ab.',
+    '{p} kommt nicht an {d} vorbei – in der Luft hat der Verteidiger das bessere Timing.', '{d} räumt in der Luft kompromisslos ab.',
   ],
   fail_claim: [
     '{d} kommt raus und pflückt die Flanke von {p} herunter.', 'Sicher gefangen – {d} beherrscht den Strafraum.',
@@ -54,7 +54,7 @@ export const DUELS: Grammar = {
   ],
   b_steil_lauf: [
     '{a} spielt steil, {p} läuft {d} davon!', 'Steilpass {a} – {p} ist einen Schritt schneller als {d}!',
-    '{a} schickt {p} in die Tiefe, {d} kommt nicht hinterher.', '@-1991 {a} schlägt den Ball über den Libero, {p} enteilt {d}.',
+    '{a} schickt {p} in die Tiefe, {d} kommt nicht hinterher.', '@-1991 {a} schlägt den Ball weit hinter die Abwehrreihe, {p} enteilt {d}.',
   ],
   b_konter_lauf: [
     'Konter! {a} schickt {p}, und {d} kommt nicht mehr hinterher!', '{p} sprintet {d} davon – Gegenstoß!',
