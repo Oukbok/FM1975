@@ -46,6 +46,7 @@
     "test:draw": "node scripts/run-ts.mjs tests/draw-test.ts",
     "test:sponsor": "node scripts/run-ts.mjs tests/sponsor-test.ts",
     "test:names": "node scripts/run-ts.mjs tests/names-test.ts && node scripts/run-ts.mjs tests/realnames-test.ts",
+    "test:texts": "node scripts/run-ts.mjs tests/text-audit.ts",
     "test:realnames": "node scripts/run-ts.mjs tests/realnames-test.ts",
     "test:talent": "node scripts/run-ts.mjs tests/talent-test.ts",
     "test:positions": "node scripts/run-ts.mjs tests/positions-test.ts",
