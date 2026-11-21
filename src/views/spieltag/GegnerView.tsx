@@ -2,7 +2,7 @@
 // AUFSTELLUNG › GEGNER (Wunsch Pascal; früher Kategorie „Spieltag“): alles über
 // den nächsten Gegner in Liga, Pokal, Europapokal oder Supercup.
 // Aufbau nach Pascals Mockup: oben die Leiste „Nächstes Spiel“, darunter drei hohe
-// Boxen – Nächstes Spiel + direkter Vergleich | Gegner-Analyse (Kennzahlen,
+// Boxen – Begegnung (Ort, Termin) + direkter Vergleich | Gegner-Analyse (Kennzahlen,
 // Netzdiagramm der Mannschaftsteile, gefährlichste Spieler) | So spielt der Gegner
 // (Trainer, Ausrichtung, Grundordnung auf dem Feld, Tempo/Pressing/Abwehrlinie).
 // Bausteine in gegner/parts.tsx, CSS `.opx-*` in 28-opponent.css.
@@ -71,7 +71,8 @@ export function GegnerView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Screen
     <DashPage rows={1} className="opx-page">
       <NextStrip g={g} nx={nx} />
 
-      <DashBox title="Nächstes Spiel" right={nx?.comp} className="opx-next">
+      {/* Titel nicht noch einmal „Nächstes Spiel“ – das steht schon in der Leiste darüber */}
+      <DashBox title="Begegnung" right={nx?.comp} className="opx-next">
         {nx ? (
           <>
             <div className="opx-vs">
