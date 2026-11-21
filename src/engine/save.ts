@@ -1,13 +1,14 @@
 // =============================================================================
-// FOOTBALL MANAGER 1980 — Speichern & Laden (localStorage)
+// FOOTBALL MANAGER 1980 — Speichern & Laden
 // =============================================================================
-// Speicherstände werden als JSON im Browser (localStorage) abgelegt. Der zentrale
+// Speicherstände werden als JSON abgelegt – im Browser in IndexedDB, in der
+// Desktop-Fassung als Dateien (engine/saveStore.ts), Rückfall localStorage. Der zentrale
 // Game-Zustand ist ein reines Datenobjekt (Records + Arrays) und damit direkt
 // serialisierbar. Zu jedem Slot wird Metadaten (Verein, Manager, Datum) geführt,
 // damit der Lade-Screen eine Vorschau anzeigen kann.
 // =============================================================================
 
-import { idbAvailable, idbDelete, idbGet, idbMetas, idbPut } from './saveStore';
+import { type SaveBackend, idbAvailable, idbBackend, pickSaveBackend } from './saveStore';
 import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 
 /** Format-Version des Speicherstands (für spätere Migrationen). */
@@ -147,32 +148,54 @@ function writeIndex(slots: string[]): void {
 }
 
 // -----------------------------------------------------------------------------
-// Speicherort: IndexedDB (engine/saveStore.ts), Rückfall localStorage.
-// Die Metadaten liegen zusätzlich im Speicher (`metaCache`), damit Liste und
-// freie Slots ohne Warten verfügbar sind. `initSaveStore` beim Start: öffnet die
-// Datenbank, zieht alte localStorage-Stände um (danach dort gelöscht), lädt die Liste.
+// Speicherort (engine/saveStore.ts): Browser = IndexedDB, Desktop = Dateien im
+// Benutzerordner; Rückfall localStorage. Die Metadaten liegen zusätzlich im
+// Speicher (`metaCache`), damit Liste und freie Slots ohne Warten verfügbar sind.
+// `initSaveStore` beim Start: lädt die Liste und zieht ältere Stände einmalig um
+// (localStorage → Speicherort, in der Desktop-Fassung auch IndexedDB → Dateien;
+// die Quelle wird erst nach erfolgreichem Schreiben gelöscht).
 // -----------------------------------------------------------------------------
-let useIdb = false;
+let backend: SaveBackend | null = null;
 let metaCache: Map<string, SaveMeta> | null = null;
 let initP: Promise<void> | null = null;
+
+/** Desktop: Stände aus der IndexedDB früherer Fassungen in Dateien übernehmen (vorhandene Dateien gewinnen). */
+async function moveIdbSaves(to: SaveBackend, known: Map<string, SaveMeta>): Promise<void> {
+  if (!idbAvailable()) return;
+  try {
+    for (const m of await idbBackend.metas<SaveMeta>()) {
+      if (!m?.slot) continue;
+      if (!known.has(m.slot)) {
+        const json = await idbBackend.get(m.slot);
+        if (!json) continue;
+        await to.put(m.slot, m, json);
+        known.set(m.slot, m);
+      }
+      await idbBackend.remove(m.slot);
+    }
+  } catch { /* Rest bleibt in IndexedDB und wird beim nächsten Start erneut versucht */ }
+}
 
 export function initSaveStore(): Promise<void> {
   if (initP) return initP;
   initP = (async () => {
-    metaCache = new Map();
-    if (idbAvailable()) {
+    const metas = new Map<string, SaveMeta>();
+    metaCache = metas;
+    const b = pickSaveBackend();
+    if (b) {
       try {
-        for (const m of await idbMetas<SaveMeta>()) if (m?.slot) metaCache.set(m.slot, m);
-        useIdb = true;
-      } catch { useIdb = false; }
+        for (const m of await b.metas<SaveMeta>()) if (m?.slot) metas.set(m.slot, m);
+        backend = b;
+      } catch { backend = null; }
     }
+    if (backend?.kind === 'desktop') await moveIdbSaves(backend, metas);
     if (!storageAvailable()) return;
     const idx = readIndex();
-    if (!useIdb) {
-      for (const slot of idx) { const s = readSlot(slot); if (s?.meta) metaCache.set(slot, s.meta); }
+    if (!backend) {
+      for (const slot of idx) { const s = readSlot(slot); if (s?.meta) metas.set(slot, s.meta); }
       return;
     }
-    // Umzug alter localStorage-Stände (auch von Tests eingespielte) nach IndexedDB.
+    // Umzug alter localStorage-Stände (auch von Tests eingespielte) in den Speicherort.
     const left: string[] = [];
     for (const slot of idx) {
       const raw = localStorage.getItem(KEY_PREFIX + slot);
@@ -182,10 +205,10 @@ export function initSaveStore(): Promise<void> {
       if (!s?.meta) { left.push(slot); continue; }
       const meta = { ...s.meta, slot };
       try {
-        await idbPut(slot, meta, json);
-        metaCache.set(slot, meta);
+        await backend.put(slot, meta, json);
+        metas.set(slot, meta);
         localStorage.removeItem(KEY_PREFIX + slot);
-      } catch { left.push(slot); metaCache.set(slot, meta); }
+      } catch { left.push(slot); metas.set(slot, meta); }
     }
     writeIndex(left);
   })();
@@ -202,7 +225,7 @@ function cache(): Map<string, SaveMeta> {
 }
 
 /** Wo die Spielstände liegen (für die Einstellungen/Anzeige). */
-export function saveBackend(): 'indexeddb' | 'localstorage' { return useIdb ? 'indexeddb' : 'localstorage'; }
+export function saveBackend(): 'indexeddb' | 'desktop' | 'localstorage' { return backend?.kind ?? 'localstorage'; }
 
 /**
  * Speichert einen Spielstand unter dem angegebenen Slot.
@@ -217,8 +240,8 @@ export async function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 's
   };
   const payload: SaveSlot<T> = { meta: fullMeta, game };
   try {
-    if (useIdb) {
-      await idbPut(slot, fullMeta, JSON.stringify(payload));
+    if (backend) {
+      await backend.put(slot, fullMeta, JSON.stringify(payload));
     } else {
       if (!storageAvailable()) return false;
       writeSlot(slot, payload);
@@ -234,9 +257,9 @@ export async function saveGame<T>(slot: string, meta: Omit<SaveMeta, 'slot' | 's
 
 /** Lädt einen kompletten Speicherstand (Meta + Spielzustand). */
 export async function loadGame<T>(slot: string): Promise<SaveSlot<T> | null> {
-  if (useIdb) {
+  if (backend) {
     try {
-      const json = await idbGet(slot);
+      const json = await backend.get(slot);
       if (json) return safeParse<SaveSlot<T>>(json);
     } catch { /* Rückfall unten */ }
   }
@@ -266,7 +289,7 @@ export function listSaves(): SaveMeta[] {
 /** Löscht einen Speicherstand. */
 export function deleteSave(slot: string): void {
   cache().delete(slot);
-  if (useIdb) idbDelete(slot).catch(() => {});
+  if (backend) backend.remove(slot).catch(() => {});
   if (!storageAvailable()) return;
   localStorage.removeItem(KEY_PREFIX + slot);
   writeIndex(readIndex().filter((s) => s !== slot));
@@ -459,7 +482,7 @@ export async function importBuiltinSave(b: BuiltinSave): Promise<string> {
   if (!payload?.game) throw new Error('Vorlage ist beschädigt');
   const slot = `vorlage-${b.file.replace(/\.[a-z]+$/i, '')}`;
   payload.meta = { ...payload.meta, slot, name: b.name, clubName: b.clubName, season: b.season, gameDate: b.gameDate, savedAt: new Date().toISOString(), version: payload.meta?.version ?? SAVE_VERSION };
-  if (useIdb) await idbPut(slot, payload.meta, JSON.stringify(payload));
+  if (backend) await backend.put(slot, payload.meta, JSON.stringify(payload));
   else {
     writeSlot(slot, payload);
     const idx = readIndex();
