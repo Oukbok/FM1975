@@ -86,6 +86,8 @@ import { ensureWorldPool } from './worldPool';
 import { ensureContinents } from './continents';
 import { ensureRanking } from './national/ranking';
 import { migrateWorldPlaces } from './worldPlacesSeed';
+import { migrateLeagueResults } from './leagueResults';
+import { migrateWorldStats } from './worldScorers';
 import { worldLiveDaily } from './worldLeagues';
 import { retireFullCountries } from './fullCountries';
 import { ensureCountryPools } from '../engine/world';
@@ -405,6 +407,8 @@ export function prepareLoadedGame(g: Game): void {
   fixStaleContracts(g); // Spieler im Kader mit abgelaufenem Vertrag (Hochziehen nach dem 1. Juli, alte Spielstände)
   ensureCountryPools(g.world, g.euroClubs, Number(g.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   try { migrateWorldPlaces(g); } catch (err) { console.error('Platzierungs-Historie-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateLeagueResults(g); } catch (err) { console.error('Ergebnis-Archiv-Umstellung fehlgeschlagen:', err); } // Ergebnisse je Spieltag kompakt (game/leagueResults.ts)
+  try { migrateWorldStats(g); } catch (err) { console.error('Auslandsstatistik-Umstellung fehlgeschlagen:', err); } // Bestenlisten der Welt-Historie kompakt (game/worldScorers.ts)
   try { ensureRanking(g); } catch (err) { console.error('Weltranglisten-Nachrüstung fehlgeschlagen:', err); } // Elo-Weltrangliste (game/national/ranking.ts)
   try { ensureContinents(g); } catch (err) { console.error('Kontinente-Nachrüstung fehlgeschlagen:', err); } // andere Kontinente (game/continents.ts)
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
