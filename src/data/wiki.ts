@@ -3585,7 +3585,7 @@ Zum Saisonstart prüft der Verband **alle Vereine**: Schulden (negativer Kontost
     title: 'Vereinsumfeld — Fans, Mitglieder, Medien, Vorstand',
     keywords: ['fans', 'stimmung', 'mitglieder', 'medien', 'vorstand', 'vertrauen', 'leitbild', 'identität', 'derby', 'rivalen', 'fankultur', 'saisonziel', 'ticketpreis'],
     body: `## Stimmung als Zustand
-Die **Fan-Stimmung** (0–100) wird jeden Monat fortgeschrieben: Ergebnisse der letzten Spiele, **Derbys** gegen Rivalen aus der Region, das **Leitbild** des Vereins und zu hohe **Eintrittspreise** bewegen sie. Gute Stimmung füllt das Stadion langsam, schlechte leert es.
+Die **Fan-Stimmung** (0–100) wird jeden Monat fortgeschrieben: Ergebnisse der letzten Spiele, **Derbys** gegen Rivalen aus der Region (gleiche Stadt oder dieselbe Region und höchstens 160 km Luftlinie entfernt), das **Leitbild** des Vereins und zu hohe **Eintrittspreise** bewegen sie. Gute Stimmung füllt das Stadion langsam, schlechte leert es.
 
 ## Leitbild (Identität)
 Jeder Verein hat ein Leitbild, das die Fans erwarten:

@@ -43,6 +43,17 @@ interface ClubEvent {
   resolve?: (g: Game, club: Club, choice: string, data: Record<string, number | string>) => { text: string; money?: number; moneyText?: string };
 }
 
+/** Rivale, gegen den das nächste eigene Spiel der kommenden 28 Tage geht (sonst null). */
+function nextDerbyRival(c: Ctx): string | null {
+  const rivals = new Set(ensureEnvironment(c.g).rivals);
+  if (!rivals.size) return null;
+  const until = CalendarEngine.addDays(c.today, 28);
+  const next = c.g.fixtures.filter((m) => m.status !== 'finished' && m.date > c.today && m.date <= until && (m.homeClubId === c.club.id || m.awayClubId === c.club.id))
+    .sort((a, b) => a.date.localeCompare(b.date))[0];
+  const opp = next ? (next.homeClubId === c.club.id ? next.awayClubId : next.homeClubId) : null;
+  return opp && rivals.has(opp) ? opp : null;
+}
+
 function lostStreak(g: Game, clubId: string): number {
   const ms = g.fixtures.filter((m) => m.result && (m.homeClubId === clubId || m.awayClubId === clubId))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -80,10 +91,10 @@ const EVENTS: ClubEvent[] = [
   },
   {
     type: 'krawall',
-    weight: (c) => (c.year >= 1980 && c.year <= 1999 ? 3 : 1) * (ensureEnvironment(c.g).rivals.length ? 1 : 0),
+    // Nur, wenn wirklich bald ein Derby ansteht (Rivale ist der nächste Gegner in den kommenden vier Wochen).
+    weight: (c) => (c.year >= 1980 && c.year <= 1999 ? 3 : 1) * (nextDerbyRival(c) ? 1 : 0),
     spawn: (c) => {
-      const env = ensureEnvironment(c.g);
-      const rival = c.g.clubs[env.rivals[0]]?.name ?? 'den Rivalen';
+      const rival = c.g.clubs[nextDerbyRival(c) ?? '']?.name ?? 'den Rivalen';
       const cost = Math.round(c.rev * 0.006);
       return {
         from: 'Polizei', category: 'general', subject: `Warnung vor dem Derby gegen ${rival}`,

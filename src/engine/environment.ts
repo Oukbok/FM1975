@@ -62,24 +62,63 @@ const REGIONS: string[][] = [
   ['München', 'Nürnberg', 'Fürth', 'Augsburg', 'Regensburg', 'Ingolstadt', 'Würzburg'],
   ['Stuttgart', 'Karlsruhe', 'Mannheim', 'Freiburg', 'Ulm', 'Sinsheim', 'Heidenheim'],
   ['Frankfurt', 'Offenbach', 'Darmstadt', 'Kaiserslautern', 'Mainz', 'Saarbrücken', 'Homburg', 'Kassel'],
-  ['Berlin', 'Potsdam', 'Cottbus', 'Magdeburg', 'Halle'],
+  ['Berlin', 'Potsdam', 'Cottbus', 'Magdeburg', 'Halle', 'Frankfurt (Oder)'],
   ['Dresden', 'Leipzig', 'Chemnitz', 'Karl-Marx-Stadt', 'Zwickau', 'Aue', 'Jena', 'Erfurt', 'Rostock'],
-  ['Bielefeld', 'Paderborn', 'Münster', 'Gütersloh'],
+  ['Bielefeld', 'Paderborn', 'Münster', 'Gütersloh', 'Osnabrück'],
 ];
+
+/** Lage der Derby-Städte (Breite, Länge): ein Derby nur bis {@link DERBY_MAX_KM} Luftlinie (Kiel–Braunschweig ist keins). */
+const REGION_GEO: Record<string, [number, number]> = {
+  Dortmund: [51.51, 7.47], Gelsenkirchen: [51.51, 7.10], Bochum: [51.48, 7.22], Duisburg: [51.43, 6.76], Essen: [51.46, 7.01],
+  Oberhausen: [51.47, 6.85], Wattenscheid: [51.48, 7.13], Köln: [50.94, 6.96], Mönchengladbach: [51.19, 6.44], Düsseldorf: [51.23, 6.78],
+  Leverkusen: [51.03, 6.98], Uerdingen: [51.35, 6.64], Krefeld: [51.33, 6.56], Aachen: [50.78, 6.08], Wuppertal: [51.26, 7.15],
+  Solingen: [51.17, 7.08], Hamburg: [53.55, 9.99], Bremen: [53.08, 8.80], Hannover: [52.37, 9.73], Braunschweig: [52.27, 10.52],
+  Kiel: [54.32, 10.13], Lübeck: [53.87, 10.69], Osnabrück: [52.28, 8.05], Oldenburg: [53.14, 8.21], Wolfsburg: [52.42, 10.79],
+  München: [48.14, 11.58], Nürnberg: [49.45, 11.08], Fürth: [49.48, 10.99], Augsburg: [48.37, 10.90], Regensburg: [49.01, 12.10],
+  Ingolstadt: [48.77, 11.43], Würzburg: [49.79, 9.95], Stuttgart: [48.78, 9.18], Karlsruhe: [49.01, 8.40], Mannheim: [49.49, 8.47],
+  Freiburg: [47.99, 7.84], Ulm: [48.40, 9.99], Sinsheim: [49.25, 8.88], Heidenheim: [48.68, 10.15], Frankfurt: [50.11, 8.68],
+  Offenbach: [50.10, 8.76], Darmstadt: [49.87, 8.65], Kaiserslautern: [49.44, 7.77], Mainz: [50.00, 8.27], Saarbrücken: [49.24, 6.99],
+  Homburg: [49.33, 7.34], Kassel: [51.31, 9.48], Berlin: [52.52, 13.40], Potsdam: [52.40, 13.07], Cottbus: [51.76, 14.33],
+  Magdeburg: [52.13, 11.63], Halle: [51.48, 11.97], 'Frankfurt (Oder)': [52.34, 14.55], Dresden: [51.05, 13.74], Leipzig: [51.34, 12.37],
+  Chemnitz: [50.83, 12.92], 'Karl-Marx-Stadt': [50.83, 12.92], Zwickau: [50.72, 12.50], Aue: [50.59, 12.70], Jena: [50.93, 11.59],
+  Erfurt: [50.98, 11.03], Rostock: [54.09, 12.10], Bielefeld: [52.02, 8.53], Paderborn: [51.72, 8.75], Münster: [51.96, 7.63],
+  Gütersloh: [51.91, 8.38],
+};
+const DERBY_MAX_KM = 160;
+
+/** Stadt passt zum Eintrag: gleich oder Stadtteil („Berlin (Ost)“, „Essen-Steele“), aber nicht „Frankfurt (Oder)“ zu „Frankfurt“. */
+function cityIs(city: string, x: string): boolean {
+  if (city === x) return true;
+  if (!city.startsWith(x)) return false;
+  const rest = city.slice(x.length);
+  return !rest.startsWith(' (') || /^ \((Ost|West)\)/.test(rest);
+}
+const entryOf = (r: string[], city: string) => [...r].sort((a, b) => b.length - a.length).find((x) => cityIs(city, x));
+
+function kmBetween(a: string, b: string): number {
+  const p = REGION_GEO[a], q = REGION_GEO[b];
+  if (!p || !q) return 0;
+  const rad = Math.PI / 180, dLat = (q[0] - p[0]) * rad, dLon = (q[1] - p[1]) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(p[0] * rad) * Math.cos(q[0] * rad) * Math.sin(dLon / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
 
 /** Anzeigenamen der Regionen (Reihenfolge wie REGIONS). */
 export const REGION_NAMES = ['Ruhrgebiet', 'Rheinland', 'Norden', 'Bayern', 'Baden-Württemberg', 'Südwest & Hessen', 'Berlin & Brandenburg', 'Sachsen & Thüringen', 'Westfalen'];
 
 /** Region einer Stadt (Name) oder „Sonstige“. */
 export function regionOf(city: string): string {
-  const i = REGIONS.findIndex((r) => r.some((x) => (city ?? '').startsWith(x)));
+  const i = REGIONS.findIndex((r) => !!entryOf(r, city ?? ''));
   return i >= 0 ? REGION_NAMES[i] ?? 'Sonstige' : 'Sonstige';
 }
 
 export function sameRegion(a: string, b: string): boolean {
   if (!a || !b) return false;
   if (a === b) return true;
-  return REGIONS.some((r) => r.some((x) => a.startsWith(x)) && r.some((x) => b.startsWith(x)));
+  return REGIONS.some((r) => {
+    const x = entryOf(r, a), y = entryOf(r, b);
+    return !!x && !!y && kmBetween(x, y) <= DERBY_MAX_KM;
+  });
 }
 
 export function findRivals(club: Club, clubs: Club[]): string[] {
