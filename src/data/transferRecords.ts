@@ -12,9 +12,12 @@
 // germany = Spitzenablöse eines deutschen Vereins (Zugang)
 // Werte vor 2001 für Deutschland sind Schätzungen aus Einzelangaben
 // (1976 erster Millionentransfer, 2001 Rekord mit 50 Mio. DM).
-// Ab 2027 fiktive Fortschreibung (+3,5 % pro Jahr).
+// Ab 2027 fiktive Fortschreibung im Gleichschritt mit der Wirtschafts-Basis (engine/economy.ts economyScale;
+// früher fest +3,5 % pro Jahr – die Basis wächst nach 2030 nur ≈ 2 %, bis 2075 hätte sich die Spitzenablöse
+// gemessen am Umsatz der Vereine verdoppelt, docs/recherche/balance-100.md).
 // =============================================================================
 
+import { economyScale } from '../engine/economy';
 export interface FeeAnchor { year: number; world: number; germany: number }
 
 const M = 1_000_000;
@@ -52,7 +55,6 @@ export const TRANSFER_RECORD_RAW: [number, number][] = [
   [2021, 117.5], [2022, 95], [2023, 121], [2025, 145],
 ];
 
-const FUTURE_GROWTH = 1.035;
 
 /** Spitzenablöse (EUR nominal) eines Jahres – log-linear interpoliert, danach fortgeschrieben. */
 export function recordFeeEUR(year: number, scope: 'world' | 'germany'): number {
@@ -65,5 +67,5 @@ export function recordFeeEUR(year: number, scope: 'world' | 'germany'): number {
     }
   }
   const last = a[a.length - 1];
-  return last[scope] * Math.pow(FUTURE_GROWTH, year - last.year);
+  return last[scope] * economyScale(year) / economyScale(last.year);
 }
