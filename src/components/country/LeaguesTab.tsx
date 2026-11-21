@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import { leagueLabel, leagueName } from '../../data/leagueNames';
 import { countryHolders, countryLeagues, titleCounts } from '../../game/countryProfile';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
-import { TeamName } from '../../views/statistiken/competition/parts';
-import { presetCompetition } from '../../views/statistiken/competition/CompetitionPage';
+import { TeamName } from '../../views/stats/competition/parts';
+import { presetCompetition } from '../../views/stats/competition/CompetitionPage';
 import { MiniTable, type CountryTabProps } from './parts';
 import { ContinentLeagues } from './ContinentBoxes';
 

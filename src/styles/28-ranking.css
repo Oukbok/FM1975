@@ -1,6 +1,6 @@
 /* =============================================================================
    WELTRANGLISTE (Wunsch Pascal): Box im Länderprofil (components/country/WorldRankBox.tsx)
-   und Statistiken › Nationalteams › Weltrangliste (views/statistiken/national/).
+   und Statistiken › Nationalteams › Weltrangliste (views/stats/national/).
    Nur Tokens; eigene Nation mit Akzent-Kante wie .nt-prow.me.
    ============================================================================= */
 .dbox-body:has(> .wr-box), .dbox-body:has(> .wr-table) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }

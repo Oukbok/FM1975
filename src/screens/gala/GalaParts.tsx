@@ -9,11 +9,11 @@ import { GB_TITLE_LABEL } from '../../engine/goldenBall';
 import type { GBEntry } from '../../game/goldenBallGame';
 import type { Game } from '../../game/state';
 import type { Club, Player } from '../../types';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import PosBadge from '../../components/PosBadge';
 import { NatFlag } from '../../components/competition/CountryFlag';
 import FaceThumb from '../../components/FaceThumb';
-import { awardPerson } from '../../views/statistiken/awards/AwardParts';
+import { awardPerson } from '../../views/stats/awards/AwardParts';
 
 const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 

@@ -1,6 +1,6 @@
 // =============================================================================
-// TRAININGSLAGER – kleine Bausteine (Seite views/kader/TrainingCampView.tsx und
-// Planer views/kader/camp/): Stufenanzeige, Reisetext, Klimastreifen, Freischaltungen.
+// TRAININGSLAGER – kleine Bausteine (Seite views/squad/TrainingCampView.tsx und
+// Planer views/squad/camp/): Stufenanzeige, Reisetext, Klimastreifen, Freischaltungen.
 // =============================================================================
 import { CAMP_DESTINATIONS, CAMP_TRANSPORT_LABEL, CampDestination } from '../../data/campDestinations';
 import { campWeather } from '../../engine/trainingCamp';

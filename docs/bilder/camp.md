@@ -1,7 +1,7 @@
 # Bildwünsche Trainingslager (Planer › Trainingsprogramm)
 
 Großes Ortsbild im Planer (Schritt 3, rechts; Vorbild EA FM „Trainingslager“). Ohne Foto zeigt der Planer eine
-gezeichnete Landschaft je Typ (`src/views/kader/camp/CampScenery.tsx`); Länderkarte und Anlagen-Skizze sind immer
+gezeichnete Landschaft je Typ (`src/views/squad/camp/CampScenery.tsx`); Länderkarte und Anlagen-Skizze sind immer
 gezeichnet und liegen „aufgeklebt“ über dem Bild (`CampPinned.tsx`).
 
 - Datei: `bilder/camp/<id>.webp`, freischalten in `src/data/campImages.ts` (`CAMP_PHOTOS`).

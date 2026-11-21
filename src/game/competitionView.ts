@@ -2,7 +2,7 @@
 // WETTBEWERBS-ANSICHT: einheitliche Sicht auf Ligen und Pokale je Saison
 // -----------------------------------------------------------------------------
 // Quellen: laufende Saison (Spielstand), Archiv (game/leagueArchive.ts) und
-// Historie vor Spielbeginn (data/history/). Die Seiten in views/statistiken/
+// Historie vor Spielbeginn (data/history/). Die Seiten in views/stats/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
 import { ctClub } from '../data/world/continents';

@@ -13,7 +13,7 @@ import type { Game } from '../../../game/state';
 import type { Screen } from '../../../shell/navigation';
 import { fmtDateFull } from '../../../ui/format';
 import type { Player } from '../../../types';
-import { Crest, clubShort } from '../presse/parts';
+import { Crest, clubShort } from '../press/parts';
 import { ownGames } from './data';
 import { TeamWidget, Widget } from './LeftWidgets';
 

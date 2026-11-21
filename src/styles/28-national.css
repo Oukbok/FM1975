@@ -1,4 +1,4 @@
-/* Statistiken › Nationalteams (views/statistiken/NationalView.tsx) */
+/* Statistiken › Nationalteams (views/stats/NationalView.tsx) */
 .nt-list { display: flex; flex-direction: column; overflow-y: auto; min-height: 0; flex: 1; }
 .nt-prow, .nt-arow { display: flex; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px solid var(--border-soft); font-size: 15px; }
 .nt-prow.me, .nt-grow.me { box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }

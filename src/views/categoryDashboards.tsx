@@ -11,7 +11,7 @@ import { nextPlayerEuroTie } from '../engine/euro';
 import { euroStatus, inEuroCup } from '../game/euroFixture';
 import { euroCompName } from '../data/euroFormats';
 import { computeMonthly, expectedAttendanceRate, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../engine/finances';
-import { BalanceLine, CorporateBox, LicenseBox, useBalanceRange } from './finanzen/businessBoxes';
+import { BalanceLine, CorporateBox, LicenseBox, useBalanceRange } from './finance/businessBoxes';
 import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
 import { getAvailablePlayers } from '../engine/transfers';

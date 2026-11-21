@@ -6,7 +6,7 @@ import type { CompSnapshot } from '../../game/competitionView';
 import type { CountryRef, NatPlayer } from '../../game/countryProfile';
 import type { PyramidData } from '../../game/leaguePyramid';
 import type { Position } from '../../types';
-import { TeamName, zoneOf } from '../../views/statistiken/competition/parts';
+import { TeamName, zoneOf } from '../../views/stats/competition/parts';
 import { vColor } from '../../ui/format';
 import FaceThumb from '../FaceThumb';
 import PosBadge from '../PosBadge';

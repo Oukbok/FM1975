@@ -8,7 +8,7 @@ import { STAT_CATS, type StatCat } from '../../../game/leagueArchive';
 import { isVirtual } from '../../../game/youthComps/sim';
 import type { YcSnapshot } from '../../../game/youthComps/view';
 import { KV } from '../../../ui/DashPage';
-import { TeamName } from '../../statistiken/competition/parts';
+import { TeamName } from '../../stats/competition/parts';
 import PosBadge from '../../../components/PosBadge';
 
 const LABEL: Record<StatCat, string> = { goals: 'Tore', assists: 'Vorlagen', scorer: 'Scorer', yellow: 'Gelbe Karten', red: 'Rote Karten', clean: 'Zu-null-Spiele' };

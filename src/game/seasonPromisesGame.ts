@@ -1,7 +1,7 @@
 // =============================================================================
 // VERSPRECHEN ZUM ERSTEN TRAINING — Spielablauf
 // -----------------------------------------------------------------------------
-// Katalog/Reaktionen in engine/seasonPromises.ts, Popup views/kader/promises/.
+// Katalog/Reaktionen in engine/seasonPromises.ts, Popup views/squad/promises/.
 //   • `seasonPromisesDaily` (game/day.ts): am ersten Trainingstag der Saison
 //     (vor dem ersten Ligaspiel) wird `pending` gesetzt → Popup. Danach: Frische-
 //     Verstöße an eigenen Spieltagen zählen, montags früh brechende Versprechen

@@ -6,7 +6,7 @@ import {
 } from '../../game/countryProfile';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
 import { CtChampBox, CtClubsBox, CtCupBox } from './ContinentBoxes';
 import { WorldRankBox } from './WorldRankBox';

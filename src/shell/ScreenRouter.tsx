@@ -4,7 +4,7 @@
 import { Suspense } from 'react';
 import type { Game } from '../game/state';
 import type { DrawComp } from '../types/draw';
-import { Dashboard } from '../views/zentrale/Dashboard';
+import { Dashboard } from '../views/office/Dashboard';
 import { PageLoading } from './LazyFallback';
 import type { Screen } from './navigation';
 import * as P from './lazyParts';

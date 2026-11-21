@@ -6,7 +6,7 @@ import { yearOf } from '../../engine/economy';
 import { Game } from '../../game/state';
 import { approachedThisSeason, scoutedYouth } from '../../game/youthMarket';
 import { DashBox, Empty } from '../../ui/DashPage';
-import { YouthModal } from '../kader/YouthModal';
+import { YouthModal } from '../squad/YouthModal';
 
 // =============================================================================
 // Talente anderer Vereine (Jugend-Scouting): Sichtungen deiner Scouts.

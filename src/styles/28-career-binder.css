@@ -1,6 +1,6 @@
 /* =============================================================================
    ZENTRALE › KARRIERE › BILANZ als Ringmappe (Wunsch Pascal, Vorschlag 2 „Akten- &
-   Scrapbook-Design“) – views/zentrale/career/BilanzTab.tsx. Mappe bilder/akte/bilanz.webp
+   Scrapbook-Design“) – views/office/career/BilanzTab.tsx. Mappe bilder/akte/bilanz.webp
    (2400×1174); alle Lagen in % der Mappe, Zettel aus bilder/akte/bilanz/.
    ============================================================================= */
 .sub3-page > .dpage.bnd-page { display: flex; align-items: center; justify-content: center; padding: 6px 1.5% 18px; }

@@ -1,4 +1,4 @@
-// Screenshots des Spielergesprächs (views/kader/talk/): vor/nach dem Gespräch,
+// Screenshots des Spielergesprächs (views/squad/talk/): vor/nach dem Gespräch,
 // verschiedene Spieler (müde, unzufrieden, Star), 1920×1080 und 1366×768.
 // Prüft Überläufe im Buch und JS-Fehler.
 //   npm run build && node tests/talk-shots.mjs [ordner]

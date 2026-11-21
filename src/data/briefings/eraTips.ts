@@ -8,7 +8,7 @@
 // (`inGame`) samt Seite (`where` = „Kategorie › Unterpunkt“ aus MENU_STRUCTURE).
 // Einzelne Tipps können enger datiert sein (`from`/`to` = Saison-Startjahre).
 // Die Epoche steuert auch die Anmutung der Auftakt-Animation (`motif`).
-// Verwendet in game/seasonTasks.ts und views/zentrale/briefing/TasksPanel.tsx.
+// Verwendet in game/seasonTasks.ts und views/office/briefing/TasksPanel.tsx.
 // =============================================================================
 import type { BriefingTopic } from './types';
 

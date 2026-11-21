@@ -11,7 +11,7 @@ import { CalendarEngine } from '../../../engine/calendar';
 import type { Game } from '../../../game/state';
 import { oppName, type NextOpp } from '../../../game/opponentView';
 import type { OwnComp } from '../../../game/ownCompetitions';
-import { TrophyArt } from '../../verein/trophies/TrophyArt';
+import { TrophyArt } from '../../club/trophies/TrophyArt';
 import { trophyPhoto } from '../../../data/trophyImages';
 
 /** Gezeichnete Fankurve (Rückfall ohne Foto): Köpfe/Schultern in Reihen, nur Grautöne. */

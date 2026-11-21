@@ -1,5 +1,5 @@
 /* =============================================================================
-   Fanartikel (Finanzen › Fanartikel) – views/finanzen/MerchView.tsx + merch/
+   Fanartikel (Finanzen › Fanartikel) – views/finance/MerchView.tsx + merch/
    ============================================================================= */
 .mc-table { width: 100%; border-collapse: collapse; }
 .mc-table th { text-align: left; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; position: sticky; top: 0; background: var(--panel); z-index: 1; }

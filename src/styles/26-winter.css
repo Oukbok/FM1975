@@ -1,9 +1,9 @@
-/* Hallenfußball (views/statistiken/IndoorView.tsx) + Trainingslager (views/kader/TrainingCampView.tsx) */
+/* Hallenfußball (views/stats/IndoorView.tsx) + Trainingslager (views/squad/TrainingCampView.tsx) */
 .dlist-row.win-sel { background: rgba(var(--accent-rgb), 0.08); box-shadow: inset 3px 0 0 var(--accent); }
 .dlist-row.win-me .grow, .dlist-row.win-me b { color: var(--accent); }
 .dlist-row.win-locked { opacity: 0.45; }
 
-/* Trainingslager: Ziel-Steckbrief, Unterkunfts-Vergleich, Abwägung (views/kader/TrainingCampView.tsx + campParts.tsx) */
+/* Trainingslager: Ziel-Steckbrief, Unterkunfts-Vergleich, Abwägung (views/squad/TrainingCampView.tsx + campParts.tsx) */
 .camp-dest .camp-ai { color: var(--text-3); font-size: 13px; font-weight: 600; }
 .camp-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--text-2); margin-bottom: 6px; }
 .camp-facts em { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); margin-right: 6px; }
@@ -46,7 +46,7 @@
 .camp-month.on i { background: var(--accent); }
 .camp-month.on b { color: var(--accent); }
 
-/* Halle – Masters-Wertung (views/statistiken/indoor/MastersBox.tsx) */
+/* Halle – Masters-Wertung (views/stats/indoor/MastersBox.tsx) */
 .mst-box .dbox-body { display: flex; flex-direction: column; overflow: hidden; }
 .mst-hint { flex: 0 0 auto; padding: 0 15px 8px; font-size: 13px; }
 .mst-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
@@ -68,7 +68,7 @@
 .hk-star { color: var(--text-3); }
 .hk-empty { padding: 8px 15px; }
 .hk-foot { margin-top: 6px; font-size: 12.5px; }
-/* Statistiken › Halle, Ansicht „Turniere im Ausland“ (views/statistiken/indoor/AbroadList.tsx) */
+/* Statistiken › Halle, Ansicht „Turniere im Ausland“ (views/stats/indoor/AbroadList.tsx) */
 .hk-pick { margin: 8px 15px 4px; }
 .hk-opt { display: inline-flex; align-items: center; gap: 6px; }
 .hk-abroad-note { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

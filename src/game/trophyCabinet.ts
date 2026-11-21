@@ -7,7 +7,7 @@
 //   • Staffelsiege 2. Liga und tiefer + Aufstiege aus den Endplätzen,
 //   • Einzelheiten der Saison aus Liga-Archiv (game/leagueArchive.ts), Historie
 //     (data/history/) und Hallen-Archiv (game/winterShared.ts).
-// Zeichnung der Trophäen: views/verein/trophies/TrophyArt.tsx, Foto-Slots
+// Zeichnung der Trophäen: views/club/trophies/TrophyArt.tsx, Foto-Slots
 // data/trophyImages.ts.
 // =============================================================================
 import { nOf } from '../engine/textNum';

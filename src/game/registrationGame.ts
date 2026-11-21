@@ -10,7 +10,7 @@
 // • Kaderauflagen der Liga (eigener Verein): Nicht-Europäer unter Vertrag (2004–2006,
 //   Verhandlung gesperrt), zwölf einheimische Lizenzspieler und Local Player ab 2006
 //   (Prüfung am 1.9. und 1.2., Verstoß = Geldstrafe der Liga).
-// Regeln/Quellen: data/registrationRules.ts. Seite: views/kader/RegistrationView.tsx.
+// Regeln/Quellen: data/registrationRules.ts. Seite: views/squad/RegistrationView.tsx.
 // =============================================================================
 import { bindCupTied } from './reserveCup';
 import type { Game } from './state';

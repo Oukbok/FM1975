@@ -32,7 +32,7 @@
   --akte-grain: none;
   --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
   --cal-paper: url('assets/akte/kalender.webp');  /* Kalender: Ringbuch */
-  /* Karriere › Bilanz als Ringmappe (views/zentrale/career/BilanzTab.tsx, 28-career-binder.css) */
+  /* Karriere › Bilanz als Ringmappe (views/office/career/BilanzTab.tsx, 28-career-binder.css) */
   --bnd-folder: url('assets/akte/bilanz.webp');
   --bnd-blatt: url('assets/akte/bilanz/zettel-blatt.webp');
   --bnd-abriss: url('assets/akte/bilanz/zettel-abriss.webp');

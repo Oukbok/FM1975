@@ -15,7 +15,7 @@ import { groupTable } from '../../game/national/tournament';
 import { ddmm, jobCalendar, recText } from '../../game/national/nationalJobView';
 import { condBar, condColor } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
-import { Widget } from '../zentrale/dash/LeftWidgets';
+import { Widget } from '../office/dash/LeftWidgets';
 import type { Position } from '../../types';
 
 type Go = (s: Screen) => void;

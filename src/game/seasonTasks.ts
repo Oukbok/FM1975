@@ -6,7 +6,7 @@
 // Verträge, Transferbudget, Trainingslager, Saisonziel vs. Kaderstärke,
 // Nachwuchs/NLZ, Finanzen, Sponsoren und Neues im Spiel. Jede Aufgabe nennt
 // die Seite (`where` = „Kategorie › Unterpunkt“), die Oberfläche springt dorthin
-// (views/zentrale/briefing/TasksPanel.tsx). Live berechnet → erledigte Aufgaben
+// (views/office/briefing/TasksPanel.tsx). Live berechnet → erledigte Aufgaben
 // verschwinden beim nächsten Öffnen. Epochen-Tipps: data/briefings/eraTips.ts.
 // =============================================================================
 import { playerLevel } from './state';

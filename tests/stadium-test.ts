@@ -12,7 +12,7 @@ import { blockCaps, vipAreaSeats } from '../src/engine/seating';
 /** Hospitality-Kapazität (Business-Plätze + Logengäste) – ersetzt die alte Logen-Pauschale. */
 const vipIncome = (c: { stadium: { blocks?: StadiumBlock[] } }, _s: number, _y: number) => { const k = blockCaps(c.stadium.blocks!).caps; return (k.business ?? 0) + (k.loge ?? 0) * 11; };
 import { MatchSim } from '../src/engine/match/sim';
-import { applyPlan, planList, putInPlan, summarize } from '../src/views/verein/stadium/planModel';
+import { applyPlan, planList, putInPlan, summarize } from '../src/views/club/stadium/planModel';
 import { buildBlocker } from '../src/game/stadiumGame';
 import { StadiumBlock } from '../src/types';
 import { extrasOf, planExtras, type BoardSpot } from '../src/engine/stadiumExtras';

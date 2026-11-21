@@ -20,7 +20,7 @@
 //    Position und sammeln dort Vertrautheit (engine/positionSkill.ts).
 //  • Wirkung: Wer spielt, bekommt Reserve-Minuten (Spielpraxis bis 23, gewichtet nach
 //    Stufe und Schwerpunkt); Rückkehrer über 23 gewinnen Form.
-// Seite: views/jugend/ReserveTeamView.tsx.
+// Seite: views/youth/ReserveTeamView.tsx.
 // =============================================================================
 import type { Game } from './state';
 import { homeCountryOf } from './state';

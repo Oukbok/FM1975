@@ -1,6 +1,6 @@
 /* =============================================================================
    WETTBEWERBE (Statistiken › Liga / Pokal / International)
-   views/statistiken/competition/, components/competition/RoundsBracket.tsx
+   views/stats/competition/, components/competition/RoundsBracket.tsx
    ========================================================================== */
 .cmp-select { display: inline-flex; align-items: center; gap: 6px; }
 

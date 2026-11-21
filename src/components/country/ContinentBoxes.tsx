@@ -6,7 +6,7 @@ import { continentProfile, type CtProfile } from '../../game/continentProfile';
 import type { Game } from '../../game/state';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import type { CountryTabProps } from './parts';
 
 const yrSeason = (y: number) => `${y}/${String((y + 1) % 100).padStart(2, '0')}`;

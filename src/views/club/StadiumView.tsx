@@ -9,7 +9,7 @@
 //   • Buden, Fanshop, Parkplatz, Hospitality … rund ums Stadion anklicken →
 //     dieselben Ausbau-Ansichten wie auf dem Vereinsgelände (GroundsDetail).
 //   • Kassenhäuschen oder „Kartenverkauf“ → Seite Verein › Kartenverkauf (Preise je
-//     Tribüne, Preiskategorie je Spiel, Prognose-Spannen; views/verein/TicketsView.tsx).
+//     Tribüne, Preiskategorie je Spiel, Prognose-Spannen; views/club/TicketsView.tsx).
 //   • Leiste unten filtert, was anklickbar ist (Tribünen, Gastronomie, Handel …).
 // Das Gelände liegt fest außerhalb der größtmöglichen Tribünen: beim Ausbau wachsen nur
 // die Tribünen. Linke Maustaste verschiebt die Szene, das Mausrad zoomt (StadiumScene).

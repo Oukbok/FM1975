@@ -8,7 +8,7 @@
 // Gekaufte Grundstücke (`ClubGrounds.plots`) sind Bauland; ein Umfeld-Modul,
 // das dort gebaut wird, steht in `ClubGrounds.sites`.
 // Spielablauf (Kauf, Bau, Migration): game/groundsGame.ts · Zeichnung:
-// views/verein/grounds/PlotLayer.tsx.
+// views/club/grounds/PlotLayer.tsx.
 // =============================================================================
 import type { Club } from '../types';
 import type { ClubGrounds, GroundsLocation, GroundsModuleKey } from '../types/grounds';

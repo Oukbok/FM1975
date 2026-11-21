@@ -1,6 +1,6 @@
 /* Vereinsauszeichnungen (Wunsch Pascal) – Medaillen, Raster Verein › Erfolge › Auszeichnungen,
    Leiste im Vereinsprofil, Hover-Fenster. Komponenten components/honours/HonourBadge.tsx,
-   views/verein/honours/HonoursView.tsx. */
+   views/club/honours/HonoursView.tsx. */
 .hm { display: block; flex: none; }
 .hm-ring { stroke-width: 0; }
 .hm-bronze .hm-ring { fill: var(--hon-bronze-2); }

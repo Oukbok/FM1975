@@ -1,7 +1,7 @@
 /* =============================================================================
    Presse (Zentrale › Presse): Zeitungsseite im ruhigen Spieldesign.
    Spaltensatz, Zeitungskopf je Epoche, dünne Linien statt Kästen.
-   Präfix .np- (views/zentrale/presse/).
+   Präfix .np- (views/office/press/).
    ============================================================================= */
 .np-box .dbox-body.flush { margin: 0 -15px -12px; }
 .np-nav { display: inline-flex; align-items: center; gap: 6px; }

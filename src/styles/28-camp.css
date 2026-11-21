@@ -1,6 +1,6 @@
 /* =============================================================================
-   TRAININGSLAGER – Seite (views/kader/TrainingCampView.tsx), Planer-Popup
-   (views/kader/camp/CampPlanner.tsx + PlanDates/CampMap/DestPanel/PlanSquad),
+   TRAININGSLAGER – Seite (views/squad/TrainingCampView.tsx), Planer-Popup
+   (views/squad/camp/CampPlanner.tsx + PlanDates/CampMap/DestPanel/PlanSquad),
    Archiv (camp/CampHistory.tsx) und Zusammenfassung (camp/CampRecap.tsx).
    Präfixe .cp-* (Seite/Planer) und .cr-* (Zusammenfassung). Farben nur über Tokens.
    ============================================================================= */

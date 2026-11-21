@@ -293,7 +293,7 @@
 .talk-who.talk-spieler { color: var(--green); }
 .talk-log .grow { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
 
-/* Vereinsgelände (views/verein/FacilitiesView.tsx + grounds/) */
+/* Vereinsgelände (views/club/FacilitiesView.tsx + grounds/) */
 .gr-wrap { position: relative; width: 100%; height: 100%; min-height: 0; overflow: hidden; border-radius: 10px;
   background: radial-gradient(ellipse at 50% 45%, rgba(110, 160, 100, 0.16), transparent 72%); }
 .gr-svg { width: 100%; height: 100%; display: block; }
@@ -315,7 +315,7 @@
 .gr-pips i.on { background: var(--accent); }
 .gr-pips span { margin-left: 8px; }
 
-/* Fankurve (views/verein/FanCrowd.tsx) */
+/* Fankurve (views/club/FanCrowd.tsx) */
 .fan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; height: 100%; min-height: 0; }
 .fan-svg { width: 100%; height: 100%; display: block; border-radius: 10px; background: #2e3137; }
 .fan-side { display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: auto; }
@@ -323,7 +323,7 @@
 .fan-jump { animation: fanJump 0.9s ease-in-out infinite; transform-box: fill-box; }
 .fan-jump.fan-d1 { animation-delay: 0.2s; } .fan-jump.fan-d2 { animation-delay: 0.45s; } .fan-jump.fan-d3 { animation-delay: 0.7s; }
 @media (prefers-reduced-motion: reduce) { .fan-jump { animation: none; } }
-/* Stadion (views/verein/StadiumView.tsx + stadium/) */
+/* Stadion (views/club/StadiumView.tsx + stadium/) */
 .st-wrap { background: radial-gradient(ellipse at 38% 50%, rgba(110, 160, 100, 0.14), transparent 70%); }
 .st-panel { width: 430px; }
 .st-sec { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
@@ -338,7 +338,7 @@
 /* Spielplan: Nachholspiel / verlegt (game/fixtureWatch.ts) */
 .fx-tag { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); vertical-align: 1px; }
 
-/* Aufstellung › Gegner: Mannschaftsteile im Vergleich (views/spieltag/GegnerView.tsx) */
+/* Aufstellung › Gegner: Mannschaftsteile im Vergleich (views/matchday/GegnerView.tsx) */
 .opp-units-head, .opp-unit { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px 48px; align-items: center; gap: 8px; }
 .opp-units-head { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding-bottom: 4px; }
 .opp-units-head span:not(:first-child) { text-align: right; }

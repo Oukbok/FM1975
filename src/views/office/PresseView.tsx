@@ -6,9 +6,9 @@ import { buildEdition, pressIssues } from '../../game/press/edition';
 import { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
 import { DashBox, DashPage } from '../../ui/DashPage';
-import { ArticleModal } from './presse/ArticleModal';
-import { Newspaper } from './presse/Newspaper';
-import type { PressApi } from './presse/parts';
+import { ArticleModal } from './press/ArticleModal';
+import { Newspaper } from './press/Newspaper';
+import type { PressApi } from './press/parts';
 
 // =============================================================================
 // PRESSE — Sportzeitung des Spiels (Zentrale › Presse)

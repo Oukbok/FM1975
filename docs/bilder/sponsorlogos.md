@@ -6,7 +6,7 @@ Pascal: „Füge Logos für Sponsoren zur Liste der benötigten Bilder hinzu.“
 Farb-/Schriftkombinationen, die an eine bestehende Marke erinnern, keine echten Wappen.
 
 Bis ein Bild eingetragen ist, zeichnet das Spiel ein Logo aus Name, Branche und Jahrzehnt
-(`src/views/finanzen/sponsor/SponsorLogo.tsx`). Eingesetzt wird das Logo auf dem Trikot (Brust, Ärmel,
+(`src/views/finance/sponsor/SponsorLogo.tsx`). Eingesetzt wird das Logo auf dem Trikot (Brust, Ärmel,
 Ausrüster), auf den Banden, in der Sponsoren-Pyramide, auf der Karteikarte und in den Angebotslisten
 (Finanzen › Sponsoring).
 

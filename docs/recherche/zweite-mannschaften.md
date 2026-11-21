@@ -1,7 +1,7 @@
 # Zweite Mannschaften (Amateure / U23 / „II“) – Regeln je Epoche
 
 Umsetzung: `src/data/reserveRules.ts` (Regeln + Quellen), `src/game/reservePyramid.ts` (Pyramide, Auf-/Abstieg, Pokal),
-`src/game/reserveTeam.ts` (eigene Mannschaft, Amateurliga), Anzeige `src/game/reserveView.ts` + `views/jugend/ReserveTeamView.tsx`.
+`src/game/reserveTeam.ts` (eigene Mannschaft, Amateurliga), Anzeige `src/game/reserveView.ts` + `views/youth/ReserveTeamView.tsx`.
 
 ## Deutschland
 | Zeit | Höchste Liga | Besonderheiten |

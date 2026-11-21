@@ -1,5 +1,5 @@
 /* =============================================================================
-   KABINE (Kader › Kabine) – views/kader/DressingRoomView.tsx + kabine/ (Pyramide)
+   KABINE (Kader › Kabine) – views/squad/DressingRoomView.tsx + dressingRoom/ (Pyramide)
    Ruhig und monochrom: Moral über condColor/condBar, Bernstein nur für Auswahl.
    ============================================================================= */
 .kb-kpis { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
@@ -22,7 +22,7 @@
 .kb-spark-line { fill: none; stroke: var(--bar-fill-hi); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
 .kb-spark-mid { stroke: var(--border); stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
 
-/* Pyramide (kabine/RoomPyramid.tsx) */
+/* Pyramide (dressingRoom/RoomPyramid.tsx) */
 .kb-legend { font-size: 13px; color: var(--text-3); }
 .kp-wrap { display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
 .kp-pyr { position: relative; flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; padding-top: 4px; }

@@ -15,7 +15,7 @@ import type { Game } from '../../../game/state';
 import type { Screen } from '../../../shell/navigation';
 import { condBar, condColor, fmtDM, fmtPrice, vColor, zoneClass } from '../../../ui/format';
 import { InfoTip } from '../../../ui/InfoTip';
-import { Crest, clubShort } from '../presse/parts';
+import { Crest, clubShort } from '../press/parts';
 import { absences, budgetOf, ownGames, teamStatus } from './data';
 import PosBadge from '../../../components/PosBadge';
 

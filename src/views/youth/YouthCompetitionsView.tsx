@@ -5,7 +5,7 @@
 // Endrunde (Turnierbaum ↔ Runden); rechts oben die Bestenlisten, rechts unten
 // Saisonbilanz bzw. „Deine Jugend“. Kopf: Saison (laufend + Archiv) und Wettbewerb,
 // gruppiert nach Jugend (A … G). C–G: Staffel des eigenen Vereins oder Spielfeste.
-// Daten: game/youthComps/view.ts; Bausteine aus views/statistiken/competition/.
+// Daten: game/youthComps/view.ts; Bausteine aus views/stats/competition/.
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import { GroupTables, type GroupZone } from '../../components/competition/GroupTables';
@@ -15,10 +15,10 @@ import { compClubName } from '../../game/competitionView';
 import type { Game } from '../../game/state';
 import { youthCompOptions, youthSeasonOptions, youthSnapshot, type YcSnapshot } from '../../game/youthComps/view';
 import { DashBox, DashPage, Empty } from '../../ui/DashPage';
-import { CupRounds } from '../statistiken/competition/CupRounds';
-import { LeagueTable } from '../statistiken/competition/LeagueTable';
+import { CupRounds } from '../stats/competition/CupRounds';
+import { LeagueTable } from '../stats/competition/LeagueTable';
 import { SubTabsPage } from '../../ui/SubTabs';
-import { StatsBox } from '../statistiken/competition/StatsBox';
+import { StatsBox } from '../stats/competition/StatsBox';
 import { FestDates, FestSide } from './youthcomp/YouthFestView';
 import { YouthInfoBox } from './youthcomp/YouthInfoBox';
 import { youthPlayerCard } from './youthcomp/YouthPlayerCard';

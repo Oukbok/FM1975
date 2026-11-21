@@ -1,5 +1,5 @@
 // =============================================================================
-// Hauptorte zur Orientierung auf der Trainingslager-Karte (views/kader/camp/CampMap.tsx).
+// Hauptorte zur Orientierung auf der Trainingslager-Karte (views/squad/camp/CampMap.tsx).
 // Nur Lage (Breite, Länge in Grad, WGS84, gerundet) – keine Spielwirkung.
 // Koordinaten: Stadtzentren nach Wikipedia/GeoNames. `minor` = nur im Ausschnitt
 // „Deutschland & Alpen“.

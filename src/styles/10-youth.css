@@ -87,7 +87,7 @@
   overflow: hidden;
 }
 
-/* --- Akademie: Nachwuchs-Investitionen (views/kader/AcademyView.tsx) --- */
+/* --- Akademie: Nachwuchs-Investitionen (views/squad/AcademyView.tsx) --- */
 .ac-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
 .ac-card { display: flex; align-items: center; gap: 10px; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); min-width: 0; }
 .ac-ico { color: var(--accent); display: inline-flex; flex: 0 0 auto; }

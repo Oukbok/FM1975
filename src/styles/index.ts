@@ -70,7 +70,7 @@ import './28-playercard.css'; // Spieler-Infokarte (components/playerCard/)
 import './28-transfer3.css';
 import './28-prematch.css';
 import './28-textmode2.css';
-import './28-report.css'; // Spielbericht im Textmodus-Look (views/spieltag/report/)
+import './28-report.css'; // Spielbericht im Textmodus-Look (views/matchday/report/)
 import './28-awards.css';
 import './28-promises.css';
 import './28-talk.css';

@@ -10,7 +10,7 @@
 // • Spieltag (`superCupMatchday` aus day.ts, Kalender-Ereignis 'super_cup'):
 //   volle Vereine über die Match-Engine (eigenes Spiel mit Vorschau/Textmodus wie im
 //   Pokal), sonst nach Stärke. Titel über `addTitleRecord` ('super' / 'ligapokal').
-// Seite: views/statistiken/SuperCupView.tsx (Statistiken › Supercup).
+// Seite: views/stats/SuperCupView.tsx (Statistiken › Supercup).
 // =============================================================================
 import type { Match } from '../types';
 import type { Game } from './state';

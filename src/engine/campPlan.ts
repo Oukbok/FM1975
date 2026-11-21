@@ -1,7 +1,7 @@
 // =============================================================================
 // TRAININGSLAGER-PLANER – Rechenlogik ohne Spielstand: Kartenausschnitte (Kontinente),
 // Vor- und Nachteile eines Ziels, Wirkungsbalken der Planung, Erfolgswertung.
-// Oberfläche: views/kader/camp/ · Rechnung der Wirkung: engine/trainingCamp.ts.
+// Oberfläche: views/squad/camp/ · Rechnung der Wirkung: engine/trainingCamp.ts.
 // =============================================================================
 import { CAMP_CLIMATE, CAMP_TRANSPORT_LABEL, CampDestination } from '../data/campDestinations';
 import { CampLodging, lodgingsFor } from '../data/campLodgings';

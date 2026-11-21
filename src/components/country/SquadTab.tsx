@@ -8,7 +8,7 @@ import { nationalState } from '../../game/national/nationalGame';
 import { homeCountryKey } from '../../game/state';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
 import { squadSeasonLines } from '../../game/nationSquadLines';
 

@@ -6,7 +6,7 @@ import { nationMatches, nationalSeason, natName, upcoming } from '../../game/nat
 import { nationInfo } from '../../game/countryProfile';
 import { worldRank } from '../../game/national/ranking';
 import { DashBox, Empty, KV } from '../../ui/DashPage';
-import { MatchLine, TournamentBox } from '../../views/statistiken/NationalView';
+import { MatchLine, TournamentBox } from '../../views/stats/NationalView';
 import { NatFlag } from '../competition/CountryFlag';
 import type { CountryTabProps } from './parts';
 

@@ -1,7 +1,7 @@
 // =============================================================================
 // ClubModal — Vereinsprofil im Football-Manager-Stil (großes Popup mit Reitern)
 //   Kopf (immer sichtbar): Wappen | Name, Stadt, Liga | Platz, Ø Stärke, Ansehen
-//   Reiter: Übersicht · Kader · Jugend · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/verein/trophies/)
+//   Reiter: Übersicht · Kader · Jugend · Verein · Transfers · Historie (in src/components/club/) · Erfolge (views/club/trophies/)
 // Geöffnet wird es überall über <ClubLink> (club/ClubProfileContext.tsx).
 // =============================================================================
 import { isDdrClub } from '../game/ddrHome';
@@ -23,8 +23,8 @@ import HistoryTab from './club/HistoryTab';
 import OverviewTab from './club/OverviewTab';
 import SquadTab from './club/SquadTab';
 import YouthTab from './club/YouthTab';
-import { HonourStrip } from '../views/verein/honours/HonoursView';
-import { TrophyCabinet } from '../views/verein/trophies/TrophyCabinet';
+import { HonourStrip } from '../views/club/honours/HonoursView';
+import { TrophyCabinet } from '../views/club/trophies/TrophyCabinet';
 
 export type ClubTabKey = 'overview' | 'squad' | 'youth' | 'club' | 'transfers' | 'history' | 'trophies';
 const TABS: [ClubTabKey, string][] = [['overview', 'Übersicht'], ['squad', 'Kader'], ['youth', 'Jugend'], ['club', 'Verein'], ['transfers', 'Transfers'], ['history', 'Historie'], ['trophies', 'Erfolge']];

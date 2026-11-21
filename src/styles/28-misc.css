@@ -72,7 +72,7 @@
 .chm-side .dmeter { grid-template-columns: 110px 1fr 44px; font-size: 13px; padding: 4px 0; gap: 10px; }
 .chm-side .dkv { font-size: 13px; }
 
-/* Spielerprofil eines Jugendspielers: erster Reiter „Akademie“/„Scouting“ (views/kader/YouthModal.tsx). */
+/* Spielerprofil eines Jugendspielers: erster Reiter „Akademie“/„Scouting“ (views/squad/YouthModal.tsx). */
 .pp-extra { height: 100%; }
 .pp-youth-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 
@@ -95,7 +95,7 @@
 .pcm-item.sep { border-top: 1px solid var(--border-soft); margin-top: 4px; padding-top: 10px; }
 .pcm-note { padding: 8px 14px 4px; color: var(--neg); font-size: 13px; }
 
-/* Wiki-Kapitel „Chronik der Epochen“ (views/statistiken/ChronicleView.tsx, gleiche Zeilen wie das Fenster). */
+/* Wiki-Kapitel „Chronik der Epochen“ (views/stats/ChronicleView.tsx, gleiche Zeilen wie das Fenster). */
 .chw-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .chw .chm-sec { margin-bottom: 10px; }
 .chw-rel { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 6px; font-size: 13px; }
@@ -103,6 +103,6 @@
 .chw-link { background: none; border: none; padding: 0; color: var(--text-2); font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
 .chw-link:hover { color: var(--text); text-decoration-color: var(--accent); }
 
-/* Rechtsform & Anteile (views/finanzen/businessBoxes.tsx) */
+/* Rechtsform & Anteile (views/finance/businessBoxes.tsx) */
 .corp-holder { padding: 2px 0 8px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
 .corp-holder .dbtnrow { margin-top: 4px; }

@@ -801,7 +801,7 @@ Die Kabine läuft meist von selbst ordentlich – an etwa jedem 15. bis 25. Tag 
 Bei den anderen Vereinen folgt die Stimmung den letzten Ergebnissen; die Moral ihrer Spieler wandert wöchentlich in diese Richtung (Stammkräfte ohne Einsätze und Unzufriedene eine Stufe tiefer).
 
 ## Code
-- \`engine/dressingRoom.ts\` (Rechnung, Tabellendruck \`goalFactors\`), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen, \`goalOf\`), \`game/moraleJolt.ts\` (sofortige Sprünge), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/kader/DressingRoomView.tsx\` + \`kabine/RoomPyramid.tsx\`.
+- \`engine/dressingRoom.ts\` (Rechnung, Tabellendruck \`goalFactors\`), \`game/dressingRoomGame.ts\` (Tageslauf, KI, Aktionen, \`goalOf\`), \`game/moraleJolt.ts\` (sofortige Sprünge), \`game/dressingRoomEvents.ts\` (Vorfälle), Seite \`views/squad/DressingRoomView.tsx\` + \`dressingRoom/RoomPyramid.tsx\`.
 - Felder: \`Player.moraleScore\`, \`Club.dressingRoom\` (darin \`jolts\`, \`joltScan\`, \`listed\`).`,
   },
 

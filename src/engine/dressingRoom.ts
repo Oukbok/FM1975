@@ -441,7 +441,7 @@ export function aiMoraleStep(mood: number, p: Player, rank: number): number {
 // Einzelgespräch: Erfolgsaussicht nach Persönlichkeit und Lage
 // -----------------------------------------------------------------------------
 export type TalkKind = 'loben' | 'kritisieren' | 'einsatz' | 'beruhigen'
-  // Spielergespräch (views/kader/talk/, game/playerTalk.ts)
+  // Spielergespräch (views/squad/talk/, game/playerTalk.ts)
   | 'training' | 'fordern' | 'pause' | 'topform' | 'ziele' | 'zukunft' | 'fuehrung';
 export const TALK_LABEL: Record<TalkKind, string> = {
   loben: 'Loben', kritisieren: 'Kritisieren', einsatz: 'Einsatz versprechen', beruhigen: 'Beruhigen',

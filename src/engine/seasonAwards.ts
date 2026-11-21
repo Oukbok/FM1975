@@ -4,7 +4,7 @@
 // Am Saisonende kürt die Liga mit vollen Kadern (Liga des eigenen Vereins) je
 // Mannschaftsteil – Torwart, Abwehr, Mittelfeld, Sturm – die drei Besten. Dazu
 // „Spieler der Saison“ und „Newcomer der Saison“ (höchstens 21 Jahre).
-// Spielablauf/Archiv: game/seasonAwardsGame.ts. Oberfläche: views/statistiken/awards/.
+// Spielablauf/Archiv: game/seasonAwardsGame.ts. Oberfläche: views/stats/awards/.
 //
 // Formel (Wertungspunkte, höher = besser) – nur Ligaspiele:
 //   Leistung        3,0 × (4,0 − Notenschnitt)               (Note 2,5 → 4,5 Punkte)

@@ -334,7 +334,7 @@ export interface AppSettings {
   eventFrequency?: 'wenige' | 'normal' | 'viele';
   /** Saison-Briefing zu Spielbeginn und Saisonwechsel automatisch öffnen (Standard an). */
   briefingAuto?: boolean;
-  /** Auftakt-Animation vor dem Saison-Briefing (views/zentrale/briefing/SeasonIntro.tsx). */
+  /** Auftakt-Animation vor dem Saison-Briefing (views/office/briefing/SeasonIntro.tsx). */
   briefingIntro?: boolean;
   /** Pokalauslosung als Show: immer, nur mit eigenem Verein (Standard) oder nur Nachricht. */
   drawShow?: 'immer' | 'eigener' | 'aus';

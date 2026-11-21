@@ -1,6 +1,6 @@
 /* =============================================================================
-   SAISONBUDGET — Fenster (views/finanzen/budget/BudgetModal.tsx) und Seite
-   Finanzen › Budget (views/finanzen/BudgetView.tsx). Posten in Schieferstufen,
+   SAISONBUDGET — Fenster (views/finance/budget/BudgetModal.tsx) und Seite
+   Finanzen › Budget (views/finance/BudgetView.tsx). Posten in Schieferstufen,
    Reserve grün/rot nur als Signal gegen die Mindestreserve.
    ============================================================================= */
 .modal.modal-xl.bud-modal { max-width: 1500px; height: 92%; max-height: 92%; } /* feste Größe (Wunsch Pascal) */

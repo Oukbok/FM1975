@@ -1,4 +1,4 @@
-// Screenshots Spielbericht im Textmodus-Look (views/spieltag/report/TickerReport.tsx):
+// Screenshots Spielbericht im Textmodus-Look (views/matchday/report/TickerReport.tsx):
 // bis zum nächsten eigenen Spiel, „Simulieren“, Bericht in 1920×1080 und 1366×768
 // (Reiter Statistik/Aufstellungen/Einzelwerte, Ticker-Reiter Highlights/Tore),
 // danach ein älteres Spiel aus Aufstellung › Spielplan (Rückfall = bisheriges Layout).

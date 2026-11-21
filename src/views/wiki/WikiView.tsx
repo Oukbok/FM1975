@@ -1,7 +1,7 @@
 import { WIKI_ARTICLES, WIKI_CATEGORIES, WikiArticle, searchWiki } from '../../data/wiki';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty } from '../../ui/DashPage';
-import { CHRONICLE_WIKI_ID, ChronicleView, chronEvents, matchChronicle, type TlEvent } from '../statistiken/ChronicleView';
+import { CHRONICLE_WIKI_ID, ChronicleView, chronEvents, matchChronicle, type TlEvent } from '../stats/ChronicleView';
 import type { Screen } from '../../shell/navigation';
 import { useMemo, useState } from 'react';
 

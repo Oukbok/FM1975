@@ -2,7 +2,7 @@
 // KABINE (Kader › Kabine) — Teamstimmung, Hierarchie-Pyramide, Gruppen, Außenseiter,
 // Gespräche, Vorfälle und Maßnahmen.
 // Rechnung: engine/dressingRoom.ts · Spielablauf: game/dressingRoomGame.ts ·
-// Vorfälle: game/dressingRoomEvents.ts · Teile: views/kader/kabine/
+// Vorfälle: game/dressingRoomEvents.ts · Teile: views/squad/dressingRoom/
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
@@ -13,8 +13,8 @@ import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, Kpi } from '../../ui/DashPage';
 import { condColor, fmtDay } from '../../ui/format';
 import { MoraleIcon } from '../../components/status';
-import { RoomPyramid } from './kabine/RoomPyramid';
-import { FactorList, MoodSpark, PlayerFocus, TeamActions, moodSeries } from './kabine/RoomParts';
+import { RoomPyramid } from './dressingRoom/RoomPyramid';
+import { FactorList, MoodSpark, PlayerFocus, TeamActions, moodSeries } from './dressingRoom/RoomParts';
 import { PromisesTab } from './promises/PromisesTab';
 import PosBadge from '../../components/PosBadge';
 

@@ -250,7 +250,7 @@ await page.waitForTimeout(300);
 await page.locator('.hd-nav-item:has-text("Aufstellung")').click();
 await page.locator('.tn-sub-item:has-text("Spielplan")').click();
 await page.waitForTimeout(600);
-// Knopf „Bericht“ je beendetem Spiel (views/spieltag/FixturesView.tsx, `.fxp-rep`; früher `.dchip`).
+// Knopf „Bericht“ je beendetem Spiel (views/matchday/FixturesView.tsx, `.fxp-rep`; früher `.dchip`).
 await page.locator('.app-main .fxp-rep:has-text("Bericht")').first().click();
 await page.waitForSelector('.mr-modal', { timeout: 8000 }).catch(() => {});
 await page.waitForTimeout(500);

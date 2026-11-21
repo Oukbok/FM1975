@@ -1,5 +1,5 @@
 /* =============================================================================
-   Aufstellung › Gegner (views/spieltag/GegnerView.tsx + gegner/parts.tsx, Mockup Pascal):
+   Aufstellung › Gegner (views/matchday/GegnerView.tsx + opponent/parts.tsx, Mockup Pascal):
    Leiste „Nächstes Spiel“ über drei hohen Boxen. Seitenränder/Spalten wie jede .dpage.
    ============================================================================= */
 .dpage.opx-page { grid-template-rows: 64px minmax(0, 1fr); row-gap: 28px; }

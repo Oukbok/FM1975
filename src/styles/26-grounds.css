@@ -1,4 +1,4 @@
-/* Stadionumfeld: Seitenleiste und Details (views/verein/grounds/GroundsPanel.tsx, GroundsDetail.tsx) */
+/* Stadionumfeld: Seitenleiste und Details (views/club/grounds/GroundsPanel.tsx, GroundsDetail.tsx) */
 .gp { display: flex; flex-direction: column; height: 100%; min-height: 0; gap: 10px; }
 .gp-tabs { flex: none; }
 .gp-tabs .seg-btn { flex: 1; }
@@ -33,7 +33,7 @@
 .gd-proj { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--text); }
 .gd-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .gd-src { margin-top: 8px; font-size: 12px; color: var(--text-3); }
-/* Nachbargrundstücke: kompakte Liste mit Preis und Knopf (views/verein/grounds/PlotDetail.tsx) */
+/* Nachbargrundstücke: kompakte Liste mit Preis und Knopf (views/club/grounds/PlotDetail.tsx) */
 .gpl { display: flex; flex-direction: column; gap: 2px; }
 .gpl-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--border-soft); }
 .gpl-row:last-child { border-bottom: none; }

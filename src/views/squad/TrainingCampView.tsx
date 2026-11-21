@@ -17,7 +17,7 @@ import { campMilestones } from './campParts';
 
 // =============================================================================
 // TRAININGSLAGER — Übersicht: geplante/laufende Lager mit erwarteter Wirkung,
-// Knopf „Trainingslager planen“ (Planer-Popup views/kader/camp/CampPlanner.tsx),
+// Knopf „Trainingslager planen“ (Planer-Popup views/squad/camp/CampPlanner.tsx),
 // vergangene Lager mit gemessener Wirkung (Archiv), Ziele der Liga.
 // Spielablauf: game/trainingCampGame.ts · Messung: game/campResult.ts
 // =============================================================================

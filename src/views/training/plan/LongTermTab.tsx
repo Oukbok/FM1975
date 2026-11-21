@@ -10,7 +10,7 @@ import { Game } from '../../../game/state';
 import { SeasonWeek, seasonWeeks, setWeekTemplate, templateName } from '../../../game/trainingSeason';
 import { DashBox, DashPage } from '../../../ui/DashPage';
 import { fmtDateShort } from '../../../ui/format';
-import { PhilosophyBox } from '../../kader/PhilosophyBox';
+import { PhilosophyBox } from '../../squad/PhilosophyBox';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const risk = (i: number) => (i < 0.6 ? 'gering' : i < 1.3 ? 'normal' : i < 2.2 ? 'erhöht' : 'hoch');

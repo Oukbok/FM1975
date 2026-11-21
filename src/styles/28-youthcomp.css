@@ -10,7 +10,7 @@
 .yc-card .mx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .yc-card-name { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-family: var(--font-display); font-weight: 500; font-size: 24px; }
 .yc-card .mx-body { padding-top: 8px; }
-/* C- bis G-Jugend: Spielfeste ohne Tabelle (views/jugend/youthcomp/YouthFestView.tsx) */
+/* C- bis G-Jugend: Spielfeste ohne Tabelle (views/youth/youthcomp/YouthFestView.tsx) */
 .cmp-page > .yc-fest-wide { grid-column: 2 / 4 !important; grid-row: 1 !important; }
 .cmp-page > .yc-fest-l { grid-column: 2 / 3 !important; grid-row: 2 / 4 !important; }
 .cmp-page > .yc-fest-r { grid-column: 3 / 4 !important; grid-row: 2 / 4 !important; }

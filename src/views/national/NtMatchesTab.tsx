@@ -1,5 +1,5 @@
 // Nationalteam › Spiele & Turniere: Länderspiele unter dir | laufendes/letztes Turnier
-// (Bausteine MatchLine/TournamentBox aus views/statistiken/NationalView.tsx) |
+// (Bausteine MatchLine/TournamentBox aus views/stats/NationalView.tsx) |
 // Bilanz je Wettbewerb | Turniere und Qualifikationen deiner Amtszeit.
 import type { Game } from '../../game/state';
 import { NatFlag } from '../../components/competition/CountryFlag';
@@ -7,7 +7,7 @@ import { nationalJob, fmtDay } from '../../game/national/nationalJob';
 import { nationalState, upcoming } from '../../game/national/nationalGame';
 import { jobMatches, recText } from '../../game/national/nationalJobView';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
-import { MatchLine, TournamentBox } from '../statistiken/NationalView';
+import { MatchLine, TournamentBox } from '../stats/NationalView';
 
 export function NtMatchesTab({ g }: { g: Game }) {
   const job = nationalJob(g)!;

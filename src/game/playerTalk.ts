@@ -1,7 +1,7 @@
 // =============================================================================
 // SPIELERGESPRÄCH — Themen, Lage und Antwort des Spielers
 // -----------------------------------------------------------------------------
-// Oberfläche: views/kader/talk/PlayerTalkModal.tsx. Rechnet nichts neu, sondern
+// Oberfläche: views/squad/talk/PlayerTalkModal.tsx. Rechnet nichts neu, sondern
 // nutzt das Einzelgespräch der Kabine (`talkTo` in game/dressingRoomGame.ts:
 // Abklingzeit je Spieler, Abnutzung, Wochenlimit, Moral-Sprung über
 // game/moraleJolt.ts, Zusage „Einsatz“) und die Erfolgsaussicht

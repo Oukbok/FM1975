@@ -1,5 +1,5 @@
 // =============================================================================
-// Inhalte der Briefing-Archivseite (views/zentrale/BriefingView.tsx): Aufmacher +
+// Inhalte der Briefing-Archivseite (views/office/BriefingView.tsx): Aufmacher +
 // zwei Nebenthemen je Saison und die Karten „Neu im Spiel“ (mit Auffüllen aus
 // Unterschieden zu heute und Epochen-Tipps, damit jedes Feld gefüllt ist).
 // Auch für die Bilderliste docs/bilder/briefing.md (scripts/briefing-image-list.ts).

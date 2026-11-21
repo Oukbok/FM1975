@@ -2,7 +2,7 @@
 // Bild-Slots für Sponsorenlogos (Finanzen › Sponsoring: Trikot, Banden, Pyramide, Karteikarte)
 // -----------------------------------------------------------------------------
 // Liegt ein Logo unter `bilder/sponsor/logos/<slug>.webp`, hier den Slug eintragen –
-// dann zeigt `views/finanzen/sponsor/SponsorLogo.tsx` das Bild statt des gezeichneten Logos
+// dann zeigt `views/finance/sponsor/SponsorLogo.tsx` das Bild statt des gezeichneten Logos
 // (die Zeichnung bleibt Rückfall, auch bei Ladefehlern). Nur eingetragene Logos werden geladen
 // (keine 404-Anfragen). Slug = Firmenname klein, Umlaute ausgeschrieben, Akzente weg, alles
 // außer Buchstaben/Ziffern → „-“ (Beispiel „Kesselberg Bräu“ → `kesselberg-braeu`).

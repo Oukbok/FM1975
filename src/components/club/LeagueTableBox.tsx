@@ -2,7 +2,7 @@
 // Trainer im Ausland unbekannt ist): laufende Tabelle seiner Liga, der Verein hervorgehoben.
 import { useEffect, useRef } from 'react';
 import { DashBox, Empty } from '../../ui/DashPage';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import type { ClubProfileData } from '../../game/clubProfile';
 import type { Game } from '../../game/state';
 

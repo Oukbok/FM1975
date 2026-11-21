@@ -1,11 +1,11 @@
 // =============================================================================
 // Verein › Erfolge: Reiter „Vereinspokale“ (Vitrine, trophies/TrophyCabinet.tsx)
-// und „Ruhmeshalle“ (Spieler-Archiv, statistiken/HallOfFameView.tsx), „Auszeichnungen“
+// und „Ruhmeshalle“ (Spieler-Archiv, stats/HallOfFameView.tsx), „Auszeichnungen“
 // (Vereinsauszeichnungen Bronze/Silber/Gold, honours/HonoursView.tsx).
 // =============================================================================
 import { SubTabsPage, useSubTab } from '../../ui/SubTabs';
 import type { Game } from '../../game/state';
-import { HallOfFameView } from '../statistiken/HallOfFameView';
+import { HallOfFameView } from '../stats/HallOfFameView';
 import { TrophyCabinet } from './trophies/TrophyCabinet';
 import { HonoursView } from './honours/HonoursView';
 

@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 // Liegt ein fotorealistisches Bild unter `bilder/trophies/<form>.webp`,
 // hier die Form eintragen – dann zeigt die Vitrine das Foto statt der Zeichnung
-// (views/verein/trophies/TrophyArt.tsx bleibt Rückfall, auch bei Ladefehlern).
+// (views/club/trophies/TrophyArt.tsx bleibt Rückfall, auch bei Ladefehlern).
 // Nur eingetragene Formen werden geladen (keine 404-Anfragen).
 // Format: WebP, quadratnah 1000 × 1100 px, freigestellt (Alpha) oder auf
 // dunklem neutralem Grund, Licht von links oben, Trophäe mittig auf dem Sockel.

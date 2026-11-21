@@ -8,7 +8,7 @@
 //    und was bewegt die Gesellschaft (SeasonBriefingEntry.society)?
 // Inhalte: data/briefings/seasons1975.ts (1975/76–1999/2000) und
 // data/briefings/seasons2000.ts (2000/01–2034/35), Unterschiede in differences.ts.
-// Spielablauf/Anzeige: game/seasonBriefing.ts, views/zentrale/BriefingView.tsx.
+// Spielablauf/Anzeige: game/seasonBriefing.ts, views/office/BriefingView.tsx.
 // =============================================================================
 
 /** Themenbereich eines Briefing-Punkts (steuert das Symbol und die Gruppierung). */

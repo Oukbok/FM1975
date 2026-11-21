@@ -7,7 +7,7 @@ import type { CareerStation, Club, Player, TransferRecord } from '../../types';
 import type { Game } from '../../game/state';
 import { useClubProfile } from '../club/ClubLink';
 import { ClubByName } from '../../ui/LinkedText';
-import { TeamName } from '../../views/statistiken/competition/parts';
+import { TeamName } from '../../views/stats/competition/parts';
 import { formatMoneyShort } from '../../engine/economy';
 import { compStatsOf, type CompTuple } from '../../engine/compStats';
 import { AWARD_CATS, AWARD_CAT_LABEL } from '../../engine/seasonAwards';

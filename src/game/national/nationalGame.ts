@@ -14,7 +14,7 @@
 //   (`intlValueFactor`, genutzt in engine/clubEconomy.ts `marketValueFor`).
 //   Weltmeister/Europameister: Form und Moral hoch, dafür später im Training.
 // • Nachrichten nur für den eigenen Verein (Abstellungen, Nominierung, Turnier).
-// Seite: views/statistiken/NationalView.tsx (Statistiken › Nationalteams).
+// Seite: views/stats/NationalView.tsx (Statistiken › Nationalteams).
 // =============================================================================
 import { intlExperience } from '../../engine/experience';
 import type { Player } from '../../types';

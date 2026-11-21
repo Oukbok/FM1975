@@ -99,7 +99,7 @@ for (const [k, n] of use) {
   borders += ringPath(pts, false);
 }
 const src = `// =============================================================================
-// WELTKARTE für den Trainingslager-Planer (views/kader/camp/CampMap.tsx).
+// WELTKARTE für den Trainingslager-Planer (views/squad/camp/CampMap.tsx).
 // Umrisse und Staatsgrenzen aus Natural Earth 1:50m (gemeinfrei, naturalearthdata.com),
 // bezogen über das npm-Paket world-atlas 2.0.2 (ISC, M. Bostock); vereinfacht
 // (Douglas-Peucker: Europa 0,04°, Rest 0,22°), Antarktis und Kleinstinseln entfernt.

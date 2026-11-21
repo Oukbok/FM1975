@@ -7,7 +7,7 @@
 //   kategorie, Prognose-Spanne (künftig) bzw. Prognose am Spieltag und Ist (gespielt).
 // • Preise je Tribüne × Kategorie, Preiskategorie je Spiel, Besondere Preise.
 // Rechnung: engine/seating.ts (ticketedSale, Tribünen), engine/ticketForecast.ts.
-// Seite: views/verein/TicketsView.tsx.
+// Seite: views/club/TicketsView.tsx.
 // =============================================================================
 import { attendanceRestriction } from '../data/history';
 import { CAT_KEYS, LOGE_GUESTS, STANDS } from '../data/seatingCatalog';

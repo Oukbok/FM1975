@@ -1,5 +1,5 @@
 /* =============================================================================
-   STADION – direkte Bedienung in der Szene (views/verein/StadiumView.tsx,
+   STADION – direkte Bedienung in der Szene (views/club/StadiumView.tsx,
    stadium/BlockConfigurator.tsx; Kartenverkauf: 28-tickets.css). Ruhig: Schiefer-
    flächen, Akzentfarbe nur für Auswahl, Vorschau und Handlung.
    ============================================================================= */
@@ -79,7 +79,7 @@
 .sv-kpis .sv-kpi-name b { font-size: 17px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
 .sv-kpis .sv-kpi-name span { text-transform: none; letter-spacing: 0; }
 
-/* ---- Bau-Popover 2 (Wunsch Pascal: übersichtlicher, moderner) – views/verein/stadium/BlockConfigurator.tsx ----
+/* ---- Bau-Popover 2 (Wunsch Pascal: übersichtlicher, moderner) – views/club/stadium/BlockConfigurator.tsx ----
    Kopf + Umfang oben, Einstellungen in der Mitte (scrollt), Wirkung/Kosten/Finanzierung fest unten. */
 .sv-pop:has(> .bc) { padding: 0; overflow: hidden; display: flex; }
 .bc { display: flex; flex-direction: column; width: 100%; min-height: 0; }
@@ -159,7 +159,7 @@
 .bc-build { flex: 1; max-width: 230px; }
 .bc-fine { font-size: 11.5px; color: var(--text-3); line-height: 1.4; }
 
-/* ---- Bausubstanz & Neubau (views/verein/stadium/RebuildPanel.tsx) ---- */
+/* ---- Bausubstanz & Neubau (views/club/stadium/RebuildPanel.tsx) ---- */
 .rb-scale { position: relative; height: 12px; border-radius: 6px; background: rgba(var(--ink-rgb), 0.08); overflow: visible; }
 .rb-scale i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; }
 .rb-scale-cap { background: rgba(var(--ink-rgb), 0.16); }
@@ -190,7 +190,7 @@
 .pz-zoom { width: 56px; text-align: center; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--text); }
 .pz-hint { margin: 0 8px 0 4px; font-size: 13.5px; color: var(--text-3); white-space: nowrap; }
 
-/* ---- Planungsmodus „Stadion ausbauen“ (views/verein/stadium/PlanPanel.tsx, usePlanDraft.ts) ----
+/* ---- Planungsmodus „Stadion ausbauen“ (views/club/stadium/PlanPanel.tsx, usePlanDraft.ts) ----
    Entwurfs-Box links fest (Höhe hängt nur am Fenster), Block-Popover rechts; beide scrollen intern. */
 .sv-bar .sv-plan-btn { flex: none; width: 196px; justify-content: center; gap: 8px; }
 .sv-plan-btn em { font-style: normal; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; font: 700 12px var(--font-ui); line-height: 20px;

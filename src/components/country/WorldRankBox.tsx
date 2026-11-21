@@ -1,11 +1,11 @@
 // Länderprofil › Übersicht: Box „Weltrangliste“ (Wunsch Pascal, ersetzt die Box
 // „Nationalmannschaft“) – Platz, Punkte, Veränderung seit der letzten Ausgabe,
 // Ausschnitt der Liste um die Nation (eigene hervorgehoben) und Verlauf des Rangs.
-// Daten: game/national/ranking.ts, Bausteine views/statistiken/national/rankingParts.tsx.
+// Daten: game/national/ranking.ts, Bausteine views/stats/national/rankingParts.tsx.
 import { activeJob } from '../../game/national/nationalJob';
 import { rankHistory, rankingRows, worldRank } from '../../game/national/ranking';
 import { DashBox, Empty } from '../../ui/DashPage';
-import { RankDelta, RankLine, RankSpark, editionLabel, excerpt } from '../../views/statistiken/national/rankingParts';
+import { RankDelta, RankLine, RankSpark, editionLabel, excerpt } from '../../views/stats/national/rankingParts';
 import type { Game } from '../../game/state';
 import type { CountryRef } from '../../game/countryProfile';
 

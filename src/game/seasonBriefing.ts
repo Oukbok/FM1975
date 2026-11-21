@@ -11,7 +11,7 @@
 //  • immer: „Neu im Spiel“ (game/briefingChanges.ts) und „Deine Ausgangslage“.
 // Am Spielstand liegt nur das kleine Archiv `game.briefing` (Saison + Eckdaten
 // der Ausgangslage); die Inhalte werden aus den Daten rekonstruiert.
-// Oberfläche: views/zentrale/BriefingModal.tsx (Popup) + BriefingView.tsx (Archiv).
+// Oberfläche: views/office/BriefingModal.tsx (Popup) + BriefingView.tsx (Archiv).
 // =============================================================================
 import { nOf } from '../engine/textNum';
 import {

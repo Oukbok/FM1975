@@ -14,7 +14,7 @@ import type { Game } from '../../game/state';
 import type { IndoorTournament } from '../../game/winterShared';
 import type { Player } from '../../types';
 import { fmtDM } from '../../ui/format';
-import { TrophyArt } from '../../views/verein/trophies/TrophyArt';
+import { TrophyArt } from '../../views/club/trophies/TrophyArt';
 import { AnyCrest } from '../../views/transfers/window/parts';
 import { IndoorHall } from './IndoorHall';
 import { IxClub, scoreText } from './IndoorPanels';

@@ -1,5 +1,5 @@
 // Aktionsleiste unten im Spielerprofil (Vorbild EA Fussball Manager): runde Symbolknöpfe mit
-// Tooltip. Nur Aktionen, die es im Spiel gibt – Bericht, Spielergespräch (views/kader/talk/),
+// Tooltip. Nur Aktionen, die es im Spiel gibt – Bericht, Spielergespräch (views/squad/talk/),
 // Vertrag verlängern, Transferliste (eigener Kader), Transferverhandlung (fremde Spieler),
 // Leihe (eigene Spieler zur Leihe anbieten bzw. fremde ausleihen, game/loanMarket.ts/loanTalks.ts),
 // Vereinsprofil. Nicht passende Knöpfe bleiben sichtbar, aber gesperrt (Tooltip sagt warum).
@@ -10,7 +10,7 @@ import { startTalk } from '../../game/transferTalks';
 import { toggleLoanListed } from '../../game/loanMarket';
 import { startLoanTalk } from '../../game/loanTalks';
 import { materializeWorldPlayer } from '../../game/worldPool';
-import { PlayerTalkModal } from '../../views/kader/talk/PlayerTalkModal';
+import { PlayerTalkModal } from '../../views/squad/talk/PlayerTalkModal';
 import Icon from '../Icon';
 import { openContractScreen } from '../../screens/contract/contractOpen';
 import type { IconName } from '../iconPaths';

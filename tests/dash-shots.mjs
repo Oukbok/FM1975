@@ -1,4 +1,4 @@
-// Screenshots der Zentrale (Newscenter-Aufbau, src/views/zentrale/dash/).
+// Screenshots der Zentrale (Newscenter-Aufbau, src/views/office/dash/).
 //   npm run build && node tests/dash-shots.mjs [ordner]
 //   Standard-Spielstand: Vorlage „Test 3 Jahre“ (public/saves/test-3-jahre.txt); anderer mit SAVE=…,
 //   Präfix der Dateinamen mit PREFIX=… (z. B. PREFIX=2012).

@@ -6,7 +6,7 @@
 // Geld nominal (DM-Werte wie Vereinskonten, Anzeige fmtDM), Zustand Energie/Laune/Gesundheit/
 // Kontakte 0–100, Fähigkeiten 0–20, Wochenplan als Prioritäten 0–5.
 // Ablauf: game/private/privateGame.ts, Generationswechsel: succession.ts,
-// Seiten: views/privat/.
+// Seiten: views/private/.
 // =============================================================================
 import type { Game } from '../state';
 import { mulberry32 } from '../../engine/leagues';

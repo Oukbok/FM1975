@@ -5,13 +5,13 @@
 // Boxen – Begegnung (Ort, Termin) + direkter Vergleich | Gegner-Analyse (Kennzahlen,
 // Netzdiagramm der Mannschaftsteile, gefährlichste Spieler) | So spielt der Gegner
 // (Trainer, Ausrichtung, Grundordnung auf dem Feld, Tempo/Pressing/Abwehrlinie).
-// Bausteine in gegner/parts.tsx, CSS `.opx-*` in 28-opponent.css.
+// Bausteine in opponent/parts.tsx, CSS `.opx-*` in 28-opponent.css.
 // Daten: game/opponentView.ts.
 // =============================================================================
 import ClubCrest from '../../components/ClubCrest';
 import { ClubLink } from '../../components/club/ClubLink';
 import { getFormation } from '../../data/formations';
-import { COMP_DE } from '../zentrale/career/parts';
+import { COMP_DE } from '../office/career/parts';
 import type { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
 import { absences, h2hSummary, nextOpponent, oppName, oppStrength, unitCompare } from '../../game/opponentView';
@@ -22,7 +22,7 @@ import Icon from '../../components/Icon';
 import { resolveLineup } from '../../engine/match/team';
 import { seasonYearOf } from '../../engine/match/era';
 import { avg, squadOf, tableRow } from '../shared';
-import { DangerCard, FormationPitch, H2HBar, NextStrip, UnitRadar } from './gegner/parts';
+import { DangerCard, FormationPitch, H2HBar, NextStrip, UnitRadar } from './opponent/parts';
 import { useMemo } from 'react';
 import { TAC_STYLE_DE } from '../categoryDashboards';
 

@@ -12,7 +12,7 @@
 //   • Ausreißer: in rund 10 % der Fälle liegt der Ist-Wert knapp außerhalb.
 // Ändert sich bis zum Spiel etwas (Preise, Form, Zuspruch), wandert die Spanne mit.
 // Am Spieltag wird die Spanne mit dem Verkauf gespeichert (Prognose gegen Ist).
-// Verkauf: engine/seating.ts `ticketedSale`; Anzeige: views/verein/TicketsView.tsx.
+// Verkauf: engine/seating.ts `ticketedSale`; Anzeige: views/club/TicketsView.tsx.
 // =============================================================================
 import { SEAT_CAT } from '../data/seatingCatalog';
 import type { SeatCat, SeatNums } from '../types';

@@ -1,6 +1,6 @@
 // =============================================================================
 // TRAININGSLAGER – animierte Zusammenfassung nach der Rückkehr (ca. 12 s, überspringbar).
-// Bühne wie der Saison-Auftakt (views/zentrale/briefing/SeasonIntro.tsx): Ort, Erfolgs-
+// Bühne wie der Saison-Auftakt (views/office/briefing/SeasonIntro.tsx): Ort, Erfolgs-
 // Bogen mit Wertung, Kennzahlen Vorher/Nachher, Gewinner und Sorgenkinder, Kosten.
 // Ausgelöst über DayUi.onCampEnd (game/day.ts → shell/GameShell.tsx). CSS 28-camp.css.
 // Klick/Leertaste/Enter: erst Animation überspringen, dann schließen; Esc schließt.

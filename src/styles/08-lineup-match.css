@@ -202,7 +202,7 @@
 .lu-hints li.warn::before { background: var(--orange); }
 .lu-hints li.ok::before { background: var(--green); }
 
-/* --- Wirkungs-Balken (Trainingslager: views/kader/camp/EffectBars.tsx; die Taktik-Seite liegt in 28-tactics.css) --- */
+/* --- Wirkungs-Balken (Trainingslager: views/squad/camp/EffectBars.tsx; die Taktik-Seite liegt in 28-tactics.css) --- */
 .tx-eff { display: grid; grid-template-columns: 170px 1fr 64px; align-items: center; gap: 12px; padding: 4px 0; font-size: 15px; }
 .tx-eff-l { color: var(--text-2); white-space: nowrap; }
 .tx-eff-t { position: relative; height: 8px; border-radius: 4px; background: rgba(var(--ink-rgb), .06); }

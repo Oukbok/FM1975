@@ -1,7 +1,7 @@
 // =============================================================================
 // Finanzen › Budget — Saisonbudget mit Soll/Ist, Einnahmen-Prognose gegen Ist,
 // Finanzberater und Bilanz der Vorjahre. „Budget anpassen“ öffnet das Fenster
-// (views/finanzen/budget/BudgetModal.tsx). Logik: game/budgetPlan.ts.
+// (views/finance/budget/BudgetModal.tsx). Logik: game/budgetPlan.ts.
 // =============================================================================
 import { useState } from 'react';
 import { incomeSoFar, sumIncome } from '../../game/budgetForecast';

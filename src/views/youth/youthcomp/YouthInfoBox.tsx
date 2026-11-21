@@ -6,7 +6,7 @@ import type { Game } from '../../../game/state';
 import { myYouthStandings, type YcSnapshot } from '../../../game/youthComps/view';
 import { isLowKey } from '../../../data/youthLowerLeagues';
 import { DashBox, KV } from '../../../ui/DashPage';
-import { TeamName } from '../../statistiken/competition/parts';
+import { TeamName } from '../../stats/competition/parts';
 
 /** Kurzbeschreibung des Modus (Quellen: data/youthCompetitions.ts). */
 function modeText(snap: YcSnapshot): string {

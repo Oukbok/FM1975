@@ -8,7 +8,7 @@ import type { Game } from '../../../game/state';
 import type { YcSnapshot } from '../../../game/youthComps/view';
 import { DashBox, Empty, KV } from '../../../ui/DashPage';
 import { fmtDateShort } from '../../../ui/format';
-import { TeamName } from '../../statistiken/competition/parts';
+import { TeamName } from '../../stats/competition/parts';
 
 /** Linke große Box: Termine der Spielfeste. */
 export function FestDates({ g, snap }: { g: Game; snap: YcSnapshot }) {

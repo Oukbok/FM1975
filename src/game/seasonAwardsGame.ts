@@ -6,7 +6,7 @@
 // (Liga des eigenen Vereins – nur dort gibt es Einzelstatistik) je Mannschaftsteil
 // die drei Besten gekürt (Wertung engine/seasonAwards.ts). Ergebnis:
 //   • Archiv im optionalen Feld `game.seasonAwards` (kompakt, höchstens MAX Saisons),
-//   • `pending` öffnet das Popup (views/statistiken/awards/AwardsModal.tsx),
+//   • `pending` öffnet das Popup (views/stats/awards/AwardsModal.tsx),
 //   • Nachricht der Sportredaktion, kleiner Moral-Sprung für geehrte eigene Spieler.
 // =============================================================================
 import { compStatsOf } from '../engine/compStats';

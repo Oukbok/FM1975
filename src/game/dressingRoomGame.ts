@@ -2,7 +2,7 @@
 // KABINE — Spielablauf: täglicher Lauf, KI-Vereine, Trainer-Aktionen
 // -----------------------------------------------------------------------------
 // Rechnung in engine/dressingRoom.ts, Vorfälle mit Entscheidung in
-// game/dressingRoomEvents.ts, Seite views/kader/DressingRoomView.tsx.
+// game/dressingRoomEvents.ts, Seite views/squad/DressingRoomView.tsx.
 //   • eigener Verein, täglich: Moral 0–100 folgt dem Zielwert (8 %/Tag), die
 //     Stufe `Player.morale` (wirkt in der Match-Engine) wird daraus abgeleitet;
 //     Teamstimmung folgt ihrem Zielwert (6 %/Tag) – darin auch der Druck aus

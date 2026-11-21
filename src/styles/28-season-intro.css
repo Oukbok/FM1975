@@ -1,6 +1,6 @@
 /* =============================================================================
    SAISON-AUFTAKT + BRIEFING-FENSTER (Textmodus-Größe)
-   views/zentrale/BriefingModal.tsx, briefing/SeasonIntro.tsx, briefing/TasksPanel.tsx
+   views/office/BriefingModal.tsx, briefing/SeasonIntro.tsx, briefing/TasksPanel.tsx
    Farben nur über Tokens aus 00-base.css; Epochen-Anmutung über .si-motif-*.
    ============================================================================= */
 
