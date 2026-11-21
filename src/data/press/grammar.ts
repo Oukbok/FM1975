@@ -21,12 +21,19 @@ export const PRESS_GRAMMAR: Grammar = {
     '{w} behält gegen {l} die Oberhand',
     '{w} gewinnt gegen {l}',
     '{w} setzt sich gegen {l} durch',
+    'Klare Sache für {w}',
+    '{w} lässt {l} [hinter sich|das Nachsehen]',
+    'Nichts zu holen für {l}',
+    '{score}: {w} [jubelt|feiert] gegen {l}',
   ],
   hl_sieg_knapp: [
     '{w} zittert sich zum Sieg',
     'Ein Tor reicht {w}',
     'Knapp, aber verdient: {w} schlägt {l}',
-    '{w} müht sich gegen {l} zum [Dreier|Sieg]',
+    '?p3 {w} müht sich gegen {l} zum Dreier',
+    '{w} müht sich gegen {l} zum Sieg',
+    '{w} siegt mit Ach und Krach',
+    'Knappe Kiste: {w} gegen {l} vorn',
     '?spaet Spätes Glück für {w}',
     '?spaet Last-Minute-Jubel bei {w}',
   ],
@@ -34,6 +41,9 @@ export const PRESS_GRAMMAR: Grammar = {
     '{h} und {a} trennen sich {score}',
     'Punkteteilung zwischen {h} und {a}',
     'Kein Sieger in {city}',
+    'Remis zwischen {h} und {a}',
+    '{h} und {a} teilen die Punkte',
+    '{score} – {h} und {a} bleiben ohne Sieger',
     '{h} kommt gegen {a} nicht über ein Remis hinaus',
     '?null Nullnummer in {city}',
     '?null Torlos und trostlos: {h} gegen {a}',
@@ -41,11 +51,17 @@ export const PRESS_GRAMMAR: Grammar = {
   hl_upset: [
     'Sensation! {w} stürzt {l}',
     'Außenseiter {w} [überrascht|blamiert] {l}',
-    'David schlägt Goliath: {w} gewinnt bei {l}',
+    '?ausw David schlägt Goliath: {w} gewinnt bei {l}',
+    '!ausw David schlägt Goliath: {w} bezwingt {l}',
+    '?ausw Überraschung in {city}: {w} siegt beim Favoriten',
     '{l} [blamiert sich|stolpert] gegen {w}',
   ],
   hl_held: [
     '{player} schießt {club} zum Sieg',
+    '{player} [sticht|trifft] für {club}',
+    'Matchwinner {player}',
+    '{club} jubelt über {player}',
+    '{player} macht den Unterschied',
     '?doppel Doppelpack! {player} [entscheidet|erledigt] das Spiel',
     '?hattrick Dreierpack! {player} ist nicht zu halten',
     '?hattrick {player} trifft dreimal – {club} jubelt',
@@ -89,7 +105,7 @@ export const PRESS_GRAMMAR: Grammar = {
   ],
   sp_platz: [
     'Damit [steht|rangiert] {club} nun auf Platz {pos}.',
-    'In der Tabelle ist {club} nun [Platz|auf Rang] {pos}.',
+    'In der Tabelle [belegt {club} nun Rang {pos}|liegt {club} jetzt auf Platz {pos}].',
   ],
   sp_rot: ['Für Aufregung sorgte {rot}, der [vorzeitig duschen musste|die Rote Karte sah|vom Platz flog].'],
 
@@ -109,28 +125,38 @@ export const PRESS_GRAMMAR: Grammar = {
   hl_spitze_neu: ['{club} [erobert|übernimmt] die Tabellenspitze', 'Neuer Spitzenreiter: {club}', '{club} ganz oben!'],
   hl_spitze: [
     '{club} [thront|bleibt] [weiter |]an der Spitze',
+    'Platz eins bleibt bei {club}',
+    '{club} verteidigt die Tabellenführung',
+    'Der Spitzenreiter heißt weiter {club}',
     '{club} [zieht einsam seine Kreise|marschiert vorneweg]',
     'Spitzenreiter {club} [lässt nicht locker|gibt sich keine Blöße]',
   ],
   hl_keller: [
-    'Abstiegskampf: {club} [rutscht|steckt] [tief |]im Keller',
+    'Abstiegskampf: {club} [rutscht in den|steckt tief im] Keller',
     'Bei {club} brennt der Baum',
     'Bei {club} schrillen die Alarmglocken',
     'Rote Laterne für {club}',
-    '{club} [taumelt|schlittert] Richtung zweite Liga',
+    '?oberhaus {club} [taumelt|schlittert] Richtung zweite Liga',
+    '!oberhaus {club} [taumelt|schlittert] dem Abstieg entgegen',
+    '{club} im Tabellenkeller: Die Lage wird ernst',
+    'Krisenstimmung bei {club}',
   ],
   tb_lead: [
-    '{club} steht nach {played} Spielen mit {pts} Punkten auf Platz {pos}.',
-    'Mit {pts} Zählern aus {played} Partien belegt {club} Rang {pos}.',
+    '{club} steht nach {spiele} mit {punkte} auf Platz {pos}.',
+    'Mit {zaehler} aus {partien} belegt {club} Rang {pos}.',
+    'Nach {spiele} hat {club} {punkte_acc} auf dem Konto – Platz {pos}.',
   ],
   tb_abstand: [
     '!gleich Der Vorsprung auf {second} beträgt {gap}.',
     '?gleich {second} ist punktgleich – nur das Torverhältnis trennt die beiden.',
-    '!gleich Dahinter lauert {second} ({gap} zurück).',
+    '!gleich ?eng Dahinter lauert {second} ({gap} zurück).',
+    '!gleich !eng Erster Verfolger ist {second} mit {gapdat} Rückstand.',
+    '!gleich ?eng {second} sitzt dem Spitzenreiter mit {gapdat} Rückstand im Nacken.',
   ],
   tb_keller: [
     'Am Tabellenende wird die Luft dünn: {bottom} [zittern|bangen] um die Klasse.',
     'Im Keller [stecken|kämpfen] {bottom}.',
+    'Ganz unten [stehen|finden sich] {bottom}.',
   ],
 
   // ------------------------------------------------------------- Transfers
@@ -142,12 +168,21 @@ export const PRESS_GRAMMAR: Grammar = {
     '?big Rekord-Deal: {player} für {fee} zu {to}',
     '?big {fee}! {to} [schlägt zu|greift tief in die Tasche]',
     '?free !abroad Ablösefrei: {player} [schließt sich {to} an|geht zu {to}]',
-    '?abroad {player} [zieht es ins Ausland|verlässt die Liga]',
+    '?abroad Es zieht {player} ins Ausland',
+    '?abroad {player} verlässt die Liga',
+    '!abroad Neue Aufgabe: {player} wechselt nach {tocity}',
+    '!abroad Wechsel perfekt: {player} [spielt künftig|läuft künftig] für {to} auf',
+    '!abroad !import {from} gibt {player} an {to} ab',
+    '!abroad ?import Neuer Mann für {to}: {player}',
   ],
   tr_lead: [
     '!import {player} ({age}, {pos}) [wechselt|geht] von {from} zu {to}.',
     '!import Der {age}-jährige {posname} {player} [verlässt {from}|kehrt {from} den Rücken] und schließt sich {to} an.',
     '!import !abroad {to} hat {player} von {from} verpflichtet.',
+    '!import !abroad {player} ({age}) spielt künftig für {to}, {from} gibt den {posname} ab.',
+    '!import !abroad Von {from} zu {to}: {player} hat seinen neuen Vertrag unterschrieben.',
+    '!import !abroad Der Wechsel ist perfekt – {player} verlässt {from} in Richtung {tocity}.',
+    '!import !abroad {to} verstärkt sich mit {player} ({pos}, {age}) von {from}.',
     '?import !abroad {to} hat den {age}-jährigen {posname} {player} verpflichtet.',
     '?ausl !abroad {player} kommt aus dem Ausland zu {to}.',
   ],
@@ -155,10 +190,14 @@ export const PRESS_GRAMMAR: Grammar = {
     'Die Ablöse soll bei {fee} liegen.',
     'Nach unseren Informationen fließen {fee}.',
     'Über die Ablöse wurde Stillschweigen vereinbart – im Umfeld ist von {fee} die Rede.',
+    'Der Transfer kostet {fee}.',
+    'Für den Wechsel werden {fee} fällig.',
+    'Die Summe: {fee}, wie aus Vereinskreisen verlautet.',
   ],
-  tr_free: ['Eine Ablöse wird nicht fällig.', 'Der Wechsel erfolgt ablösefrei.'],
+  tr_free: ['Eine Ablöse wird nicht fällig.', 'Der Wechsel erfolgt ablösefrei.', 'Geld fließt keines.'],
   tr_fazit: [
-    '{player} [kam|stand] in dieser Saison auf {apps} Einsätze und {goals} Tore.',
+    '{player} kam in dieser Saison auf {apps} und {goals}.',
+    'In dieser Saison brachte es {player} auf {apps} und {goals}.',
     '!import In {fromcity} [hinterlässt er eine Lücke|weint man ihm keine Träne nach|hatte er zuletzt einen schweren Stand].',
     '@2003- Im Netz [diskutieren die Fans|wird der Wechsel heftig diskutiert].',
   ],
@@ -167,6 +206,11 @@ export const PRESS_GRAMMAR: Grammar = {
     '{to} [buhlt|wirbt] um {player}',
     '{player} im Visier von {to}',
     '[Poker|Tauziehen] um {player}',
+    'Wechselt {player} nach {tocity}?',
+    'Gerücht: {to} [fragt|klopft] bei {club} an',
+    '{to} [streckt die Fühler|seine Fühler] nach {player} aus',
+    'Wie lange bleibt {player} noch in {city}?',
+    'Heiße Spur: {player} und {to}',
   ],
   ge_body: [
     'Wie aus [dem Umfeld des Vereins|gut unterrichteten Kreisen|Spielerkreisen] zu hören ist, [beobachtet|verfolgt] {to} die Entwicklung von {player} ({club}) [schon länger|aufmerksam].',
@@ -195,7 +239,7 @@ export const PRESS_GRAMMAR: Grammar = {
   co_grund: [
     '?entlassen [Nach|Infolge] der sportlichen Talfahrt – Platz {pos} – [zog der Vorstand die Konsequenzen|verlor das Präsidium die Geduld].',
     '?entlassen [Zuletzt hatte es|Seit Wochen hatte es] im Umfeld [gebrodelt|gerumort].',
-    '?ruhestand Nach {years} Jahren an der Seitenlinie [ist Schluss|genießt er den Ruhestand].',
+    '?ruhestand Nach {years} an der Seitenlinie [ist Schluss|genießt er den Ruhestand].',
   ],
   co_nachfolger: [
     'Nachfolger wird {succ}.',
@@ -206,17 +250,25 @@ export const PRESS_GRAMMAR: Grammar = {
   // ------------------------------------------------------------ Verletzung
   hl_verletzung: [
     '{player} fällt [lange|wochenlang] aus',
+    'Verletzungssorgen bei {club}',
+    '{club} bangt um {player}',
     'Schock für {club}: {player} verletzt',
     'Bittere Diagnose für {player}',
     '?lang {player} [droht das Saison-Aus|fällt monatelang aus]',
   ],
   vl_body: [
-    'Die Diagnose bei {player}: {inj}. [Die Ärzte rechnen|Der Mannschaftsarzt rechnet] mit {days}.',
+    'Die Diagnose bei {player}: {inj}. [Die Ärzte rechnen|Der Mannschaftsarzt rechnet] mit {daysdat} Pause.',
     '{club} muss {days} auf {player} verzichten ({inj}).',
+    '{player} hat sich verletzt ({inj}) und fehlt {club} voraussichtlich {days}.',
   ],
   vl_fazit: [
     '?stamm Für {club} wiegt der Ausfall schwer – {player} war gesetzt.',
-    '[Die Lücke müssen nun andere füllen.|Jetzt ist die zweite Reihe gefragt.]',
+    'Die Lücke müssen nun andere füllen.',
+    'Jetzt ist die zweite Reihe gefragt.',
+    'Der Trainer muss umbauen.',
+    'Für die Ersatzleute schlägt jetzt die Stunde.',
+    '[Ein herber Rückschlag.|Ein Ausfall zur Unzeit.]',
+    'Wann {player} wieder ins Training einsteigt, ist offen.',
   ],
 
   // ---------------------------------------------------------- Pokal/Europa
@@ -230,7 +282,7 @@ export const PRESS_GRAMMAR: Grammar = {
   hl_euro: [
     '!aus !final {club} [zieht|stürmt] {next} ein',
     '!aus !final Europa ruft: {club} [weiter|eine Runde weiter]',
-    '?aus Aus in {round}: {club} scheitert an {opp}',
+    '?aus Aus {inround}: {club} scheitert an {opp}',
     '?aus Europäischer Traum geplatzt für {club}',
     '?final {club} [triumphiert|siegt] im Endspiel!',
   ],
@@ -270,27 +322,50 @@ export const PRESS_GRAMMAR: Grammar = {
   ],
 
   // --------------------------------------------------------------- Rekorde
-  hl_rekord_hattrick: ['Dreierpack! {player} [schreibt Geschichte|ist der Mann des Tages]', 'Lupenreiner Hattrick von {player}'],
-  hl_rekord_marke: ['{player} knackt die {n}-Tore-Marke', '{n} Saisontore: {player} [trifft und trifft|ist nicht zu stoppen]'],
+  hl_rekord_hattrick: [
+    'Dreierpack! {player} [schreibt Geschichte|ist der Mann des Tages]', 'Lupenreiner Hattrick von {player}', 'Drei Tore: {player} [glänzt|trumpft auf]',
+    '{player} trifft und trifft und trifft', 'Ein Abend für {player}', '{player} schnürt den Dreierpack',
+  ],
+  hl_rekord_marke: [
+    '{player} knackt die {n}-Tore-Marke', '{n} Saisontore: {player} [trifft und trifft|ist nicht zu stoppen]', '{player} schon bei {n} Toren',
+    'Torjäger {player}: Nummer {n}', '{player} trifft zum {n}. Mal', '{n}! {player} [hört nicht auf|legt nach]',
+  ],
   hl_rekord_kulisse: ['Rekordkulisse: {att} sehen {h} gegen {a}', '{att}! Ausverkauft in {city}'],
   rk_body: [
     '?marke Mit seinem jüngsten Treffer erreichte {player} ({club}) die Marke von {n} Saisontoren.',
     '?marke {player} ({club}) steht nun bei {n} Saisontoren – [eine starke Quote|ein beachtlicher Wert].',
+    '?marke {n} Tore hat {player} in dieser Saison schon erzielt – {club} [freut sich über seinen Torjäger|kann sich auf ihn verlassen].',
+    '?marke Für {player} ({club}) war es bereits das {n}. Saisontor.',
+    '?marke Die Torjägerliste kennt einen neuen Namen weit oben: {player} ({club}) hat jetzt {n} Treffer.',
     '?hattrick {player} traf beim {score} gegen {opp} gleich dreimal.',
+    '?hattrick Beim {score} gegen {opp} war {player} dreimal erfolgreich.',
+    '?hattrick Drei Treffer gegen {opp}: {player} ({club}) war beim {score} nicht zu halten.',
+    '?hattrick {opp} fand beim {score} kein Mittel gegen {player} – drei Tore.',
     '?kulisse So viele Zuschauer wie beim Spiel {h} gegen {a} ({att}) gab es in dieser Saison noch nicht.',
   ],
 
   // -------------------------------------------------------------- Vorschau
-  hl_vorschau: ['Vorschau: {h} gegen {a}', '?top Topspiel: {h} empfängt {a}', '?top Das Spiel der Woche: {h} – {a}', '!top {h} erwartet {a}', '!top Vor dem Duell {h} – {a}'],
+  hl_vorschau: [
+    'Vorschau: {h} gegen {a}', '?top Topspiel: {h} empfängt {a}', '?top Das Spiel der Woche: {h} – {a}', '!top {h} erwartet {a}', '!top Vor dem Duell {h} – {a}',
+    '{a} zu Gast bei {h}', 'Am {wd}: {h} gegen {a}', '{h} will gegen {a} punkten', 'Was geht für {a} in {city}?', 'Die Woche der Wahrheit für {h}?',
+  ],
   vs_body: [
-    'Am {wd} [kommt es zum|steigt das] Duell zwischen {h} (Platz {hp}) und {a} (Platz {ap}).',
+    '?plaetze Am {wd} [kommt es zum|steigt das] Duell zwischen {h} (Platz {hp}) und {a} (Platz {ap}).',
+    '!plaetze Am {wd} [kommt es zum|steigt das] Duell zwischen {h} und {a}.',
     '{h} [hofft auf|setzt auf] die Unterstützung des Publikums, {a} reist mit [breiter Brust|Respekt|Selbstvertrauen] an.',
+    '?plaetze Am {wd} empfängt der Tabellen-{hp}. den Tabellen-{ap}.',
+    'Beide Trainer [haben sich bedeckt gehalten|lassen sich nicht in die Karten schauen].',
+    'In {city} rechnet man mit [einer vollen Hütte|einem ordentlichen Besuch|einer stimmungsvollen Kulisse].',
   ],
 
   // ------------------------------------------------------- Saisonvorschau
-  hl_favoriten: ['Wer stoppt {a}?', 'Die Jagd auf die Schale beginnt', '{a}, {b}, {c}: Die Favoriten', 'Titelkampf: Alle gegen {a}'],
+  hl_favoriten: [
+    'Wer stoppt {a}?', '?schale Die Jagd auf die Schale beginnt', '!schale ?oberhaus Die Jagd auf den Titel beginnt', '!oberhaus Wer schafft den Aufstieg?',
+    '{a}, {b}, {c}: Die Favoriten', '?oberhaus Titelkampf: Alle gegen {a}', '!oberhaus Aufstiegsrennen: Alle gegen {a}',
+  ],
   fv_body: [
-    'Vor dem Saisonstart gilt {a} als [erster Anwärter auf die Meisterschaft|Topfavorit]. Die größten Verfolger: {b} und {c}.',
+    '?oberhaus Vor dem Saisonstart gilt {a} als [erster Anwärter auf die Meisterschaft|Topfavorit]. Die größten Verfolger: {b} und {c}.',
+    '!oberhaus Vor dem Saisonstart gilt {a} als [erster Anwärter auf den Aufstieg|Topfavorit]. Die größten Verfolger: {b} und {c}.',
     'Unsere Redaktion [tippt|setzt] auf {a}. [Dahinter lauern|Ein Wort mitreden wollen] {b} und {c}.',
   ],
   hl_stars: ['Die Stars der neuen Saison', 'Auf diese Spieler schaut die Liga', '{player} und Co.: Die Besten der Liga'],
@@ -303,9 +378,18 @@ export const PRESS_GRAMMAR: Grammar = {
   ],
 
   // ------------------------------------------------------------ Kommentar
-  hl_kommentar_gut: ['{club} – weiter so!', 'Die Kurve zeigt nach oben', 'Ein Lob an {club}', '{club} macht Lust auf mehr'],
-  hl_kommentar_mittel: ['Licht und Schatten bei {club}', '{club}: Noch ist Luft nach oben', 'Geduld ist gefragt'],
-  hl_kommentar_schlecht: ['Wo soll das hinführen, {club}?', 'Die Uhr tickt', '{club} braucht eine Wende', 'Es reicht!'],
+  hl_kommentar_gut: [
+    '{club} – weiter so!', 'Die Kurve zeigt nach oben', 'Ein Lob an {club}', '{club} macht Lust auf mehr', 'Es läuft bei {club}',
+    '{club} auf dem richtigen Weg', 'Ein Team im Aufwind', 'Hier wächst etwas zusammen',
+  ],
+  hl_kommentar_mittel: [
+    'Licht und Schatten bei {club}', '{club}: Noch ist Luft nach oben', 'Geduld ist gefragt', '{club} tritt auf der Stelle',
+    'Mittelmaß bei {club}?', 'Wohin geht die Reise, {club}?',
+  ],
+  hl_kommentar_schlecht: [
+    'Wo soll das hinführen, {club}?', 'Die Uhr tickt', '{club} braucht eine Wende', 'Es reicht!', '{club} im freien Fall?',
+    'So geht es nicht weiter', 'Krisenstimmung in {city}',
+  ],
   km_gut: [
     'Die letzten Wochen [machen Mut|sprechen eine deutliche Sprache]: {form}. [So darf es weitergehen.|Die Fans träumen schon.]',
     '{form} – [da wächst etwas zusammen|die Mannschaft hat sichtbar Spaß am Spiel].',
@@ -321,5 +405,6 @@ export const PRESS_GRAMMAR: Grammar = {
   km_platz: [
     'Aktuell steht {club} auf Platz {pos}.',
     'In der Tabelle bedeutet das Rang {pos}.',
+    'Die Tabelle weist {club} derzeit auf Rang {pos} aus.',
   ],
 };

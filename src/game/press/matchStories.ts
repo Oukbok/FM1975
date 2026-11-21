@@ -6,7 +6,7 @@
 import { POSTPONE_TEXT, type PostponeReason } from '../../data/matchCalendarRules';
 import type { Match } from '../../types';
 import type { PressCtx } from './context';
-import { plural, scoreOf, story, winnerOf } from './context';
+import { count, plural, scoreOf, story, winnerOf } from './context';
 import type { PressResult, PressStory, PressTableRow } from './types';
 import { weekdayOf } from './calendar';
 
@@ -62,6 +62,15 @@ function scorersOf(m: Match, clubId: string): Map<string, number[]> {
   return out;
 }
 
+/** „A, B und C“. */
+const listAnd = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} und ${xs[xs.length - 1]}` : xs[0] ?? '');
+
+/** Slots der Tabellensätze mit richtigen Fällen („nach einem Spiel“, „mit 13 Punkten“). */
+const tbSlots = (club: string, r: PressTableRow) => ({
+  club, pos: r.pos, spiele: count(r.played, 'dat', ['Spiel', 'Spielen'], 'n'), partien: count(r.played, 'dat', ['Partie', 'Partien'], 'f'),
+  punkte: count(r.pts, 'dat', ['Punkt', 'Punkten']), punkte_acc: count(r.pts, 'acc', ['Punkt', 'Punkte']), zaehler: count(r.pts, 'dat', ['Zähler', 'Zählern']),
+});
+
 /** Spieltag-Schlagzeile ohne doppelte Doppelpunkte/Striche. */
 function spieltagHeadline(c: PressCtx, md: number, top: string): string {
   return /[:–]/.test(top) ? `${md}. Spieltag · ${top}` : c.say('hl_spieltag', { md, top });
@@ -102,11 +111,12 @@ function matchHeadline(c: PressCtx, x: Rated): string {
   const m = x.m, wl = winnerOf(m);
   const slots = { h: c.name(m.homeClubId), a: c.name(m.awayClubId), score: scoreOf(m), city: c.city(m.homeClubId),
     w: wl ? c.name(wl.w) : '', l: wl ? c.name(wl.l) : '' };
+  const flags = wl && wl.w === m.awayClubId ? [...x.flags, 'ausw'] : x.flags;
   if (!wl) return c.say('hl_remis', slots, x.flags);
   const hero = c.player(x.hero);
   if (hero && hero.clubId === wl.w && (x.flags.includes('hattrick') || x.flags.includes('doppel') || x.flags.includes('spaet')) && c.rng() < 0.7)
     return c.say('hl_held', { ...slots, player: hero.fullName, club: c.name(wl.w) }, x.flags);
-  if (x.flags.includes('upset')) return c.say('hl_upset', slots, x.flags);
+  if (x.flags.includes('upset')) return c.say('hl_upset', slots, flags);
   if (x.flags.includes('hoch')) return c.say('hl_sieg_hoch', slots, x.flags);
   if (x.flags.includes('knapp')) return c.say('hl_sieg_knapp', slots, x.flags);
   return c.say('hl_sieg', slots, x.flags);
@@ -139,7 +149,7 @@ function matchStory(c: PressCtx, x: Rated, posAfter: Map<string, number>): Press
   const heroP = c.player(x.hero);
   const people = [...new Set([x.hero, r.manOfTheMatchId, ...m.events.filter((e) => GOAL.has(e.type)).map((e) => e.playerId)].filter((id): id is string => !!id && !!c.player(id)))].slice(0, 6);
   return story(c, {
-    kind: 'spiel', rubric: 'Bundesliga', date: m.date, weight: 40 + x.score,
+    kind: 'spiel', rubric: c.league, date: m.date, weight: 40 + x.score,
     headline: matchHeadline(c, x), dek: `${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''} · ${slots.h} – ${slots.a} ${scoreOf(m)}`,
     body, image: heroP ? { kind: 'player', id: heroP.id } : { kind: 'club', id: wl?.w ?? m.homeClubId },
     people, clubs: [m.homeClubId, m.awayClubId], results: [resultOf(m)],
@@ -178,7 +188,7 @@ export function leagueStories(c: PressCtx): LeagueOut {
     const dr = games.length - hw - aw;
     const slots = { md, goals, games: games.length, hw, hws: plural(hw, 'Heimsieg', 'Heimsiege'), aws: plural(aw, 'Auswärtssieg', 'Auswärtssiege'), drs: plural(dr, 'Unentschieden', 'Unentschieden') };
     stories.push(story(c, {
-      kind: 'spieltag', rubric: 'Bundesliga', date: games[games.length - 1]?.date ?? c.date, weight: 30,
+      kind: 'spieltag', rubric: c.league, date: games[games.length - 1]?.date ?? c.date, weight: 30,
       headline: spieltagHeadline(c, md, top ? matchHeadline(c, top) : `${goals} Tore`),
       body: [c.say('st_lead', slots), c.say('st_heim', slots)], results, clubs: [],
       image: top ? { kind: 'club', id: winnerOf(top.m)?.w ?? top.m.homeClubId } : undefined,
@@ -214,9 +224,10 @@ export function leagueStories(c: PressCtx): LeagueOut {
       kind: 'tabelle', rubric: 'Tabelle', date: c.date, weight: newLead ? 55 : 22,
       headline: c.say(newLead ? 'hl_spitze_neu' : 'hl_spitze', { club: c.name(lead.clubId) }),
       body: [
-        c.say('tb_lead', { club: c.name(lead.clubId), played: lead.played, pts: lead.pts, pos: 1 }),
-        c.say('tb_abstand', { second: c.name(second?.clubId), gap: plural(lead.pts - (second?.pts ?? 0), 'Punkt', 'Punkte') }, lead.pts === second?.pts ? ['gleich'] : []),
-        c.say('tb_keller', { bottom: bottom.map((r) => c.name(r.clubId)).join(', ') }),
+        c.say('tb_lead', tbSlots(c.name(lead.clubId), lead)),
+        c.say('tb_abstand', { second: c.name(second?.clubId), gap: count(lead.pts - (second?.pts ?? 0), 'acc', ['Punkt', 'Punkte']), gapdat: count(lead.pts - (second?.pts ?? 0), 'dat', ['Punkt', 'Punkten']) },
+          lead.pts === second?.pts ? ['gleich'] : lead.pts - (second?.pts ?? 0) <= 3 ? ['eng'] : []),
+        c.say('tb_keller', { bottom: listAnd(bottom.map((r) => c.name(r.clubId))) }),
       ],
       image: { kind: 'club', id: lead.clubId }, clubs: [lead.clubId, second?.clubId].filter(Boolean) as string[],
       targets: [{ kind: 'screen', screen: 'table', label: 'Tabelle' }],
@@ -230,7 +241,7 @@ export function leagueStories(c: PressCtx): LeagueOut {
       stories.push(story(c, {
         kind: 'tabelle', rubric: 'Abstiegskampf', date: c.date, weight: kellerId === c.my ? 70 : 18,
         headline: c.say('hl_keller', { club: c.name(kellerId) }),
-        body: [c.say('tb_lead', { club: c.name(kellerId), played: kr.played, pts: kr.pts, pos: kr.pos }), c.say('tb_keller', { bottom: bottom.map((r) => c.name(r.clubId)).join(', ') })],
+        body: [c.say('tb_lead', tbSlots(c.name(kellerId), kr)), c.say('tb_keller', { bottom: listAnd(bottom.map((r) => c.name(r.clubId))) })],
         image: { kind: 'club', id: kellerId }, clubs: [kellerId], targets: [{ kind: 'screen', screen: 'table', label: 'Tabelle' }],
       }));
     }
@@ -280,11 +291,12 @@ export function leagueStories(c: PressCtx): LeagueOut {
   const next = g.fixtures.filter((m) => m.date >= c.date && (m.homeClubId === c.my || m.awayClubId === c.my)).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (next) {
     const pos = new Map(after.map((r) => [r.clubId, r.pos]));
-    const s = { h: c.name(next.homeClubId), a: c.name(next.awayClubId), wd: weekdayOf(next.date), hp: pos.get(next.homeClubId) ?? '–', ap: pos.get(next.awayClubId) ?? '–' };
+    const s = { h: c.name(next.homeClubId), a: c.name(next.awayClubId), city: c.city(next.homeClubId), wd: weekdayOf(next.date), hp: pos.get(next.homeClubId) ?? '–', ap: pos.get(next.awayClubId) ?? '–' };
+    const pf = typeof s.hp === 'number' && typeof s.ap === 'number' && after.some((r) => r.played > 0) ? ['plaetze'] : [];
     const days = (Date.parse(next.date) - Date.parse(c.date)) / 864e5;
     stories.push(story(c, {
       kind: 'vorschau', rubric: 'Vorschau', date: next.date, weight: days <= 3 ? 40 : days <= 6 ? 24 : 10,
-      headline: c.say('hl_vorschau', s, Number(s.hp) <= 6 && Number(s.ap) <= 6 ? ['top'] : []), dek: `${next.matchday}. Spieltag${next.moved?.makeup ? ' · Nachholspiel' : next.moved ? ' · verlegt' : ''}`, body: [c.say('vs_body', s), c.say('vs_body', s)],
+      headline: c.say('hl_vorschau', s, Number(s.hp) <= 6 && Number(s.ap) <= 6 ? ['top'] : []), dek: `${next.matchday}. Spieltag${next.moved?.makeup ? ' · Nachholspiel' : next.moved ? ' · verlegt' : ''}`, body: [c.say('vs_body', s, pf), c.say('vs_body', s, pf)],
       image: { kind: 'club', id: next.homeClubId === c.my ? next.awayClubId : next.homeClubId }, clubs: [next.homeClubId, next.awayClubId],
       targets: [{ kind: 'screen', screen: 'lineup', label: 'Aufstellung' }, { kind: 'screen', screen: 'fixtures', label: 'Spielplan' }],
     }));

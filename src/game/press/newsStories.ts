@@ -9,8 +9,9 @@ import { economyScale } from '../../engine/economy';
 import { hashStr } from '../../engine/leagues';
 import type { CupState, Match } from '../../types';
 import type { PressCtx } from './context';
-import { durationText, plural, posName, story } from './context';
+import { count, durationText, plural, posName, story } from './context';
 import { tableAt } from './matchStories';
+import { issueNumber } from './calendar';
 import type { PressResult, PressStory } from './types';
 
 const yearsBetween = (a: string, b: string) => Math.max(0, Math.round((Date.parse(b) - Date.parse(a)) / (365.25 * 864e5)));
@@ -35,13 +36,14 @@ export function transferStories(c: PressCtx): { stories: PressStory[]; briefs: P
       const slots = {
         player: p.fullName, to: abroad ? 'einem Verein im Ausland' : t.toClub, from: t.fromClub, fromcity: fromId ? c.city(fromId) : t.fromClub,
         tocity: toId ? c.city(toId) : t.toClub, fee: c.money(t.fee),
-        age: p.age, pos: p.naturalPosition, posname: posName(p), apps: p.seasonStats.appearances, goals: p.seasonStats.goals,
+        age: p.age, pos: p.naturalPosition, posname: posName(p, c.year),
+        apps: count(p.seasonStats.appearances, 'acc', ['Einsatz', 'Einsätze']), goals: count(p.seasonStats.goals, 'acc', ['Tor', 'Tore'], 'n'),
       };
       const w = 12 + Math.min(45, Math.sqrt(Math.max(0, base) / 1000) * 1.5) + Math.max(0, (p.overall - 60) / 2) + (own ? 30 : 0);
       items.push({ w, s: story(c, {
         kind: 'transfer', rubric: 'Transfermarkt', date: t.date, weight: w,
         headline: c.say('hl_transfer', slots, flags), dek: `${t.fromClub} → ${t.toClub}`,
-        body: [c.say('tr_lead', slots), c.say(t.fee > 0 ? 'tr_fee' : 'tr_free', slots), c.say('tr_fazit', slots)],
+        body: [c.say('tr_lead', slots, flags), c.say(t.fee > 0 ? 'tr_fee' : 'tr_free', slots, flags), c.say('tr_fazit', slots, flags)],
         image: { kind: 'player', id: p.id }, people: [p.id], clubs: [fromId, toId].filter((x): x is string => !!x),
         targets: [{ kind: 'screen', screen: 'transfers', label: 'Transfermarkt' }],
       }) });
@@ -63,14 +65,16 @@ export function rumorStories(c: PressCtx): PressStory[] {
     .sort((a, b) => b.overall - a.overall).slice(0, 8);
   const out: PressStory[] = [];
   const n = Math.min(cands.length, 1 + Math.floor(c.rng() * 2));
+  // Reihum durch die Kandidaten (je Ausgabe ein anderer Spieler vorn), damit nicht jede Ausgabe dasselbe Gerücht bringt.
+  const turn = issueNumber(c.date) + Number(c.date.slice(0, 4));
   for (let i = 0; i < n; i++) {
-    const p = cands.splice(Math.floor(c.rng() * Math.min(cands.length, 4)), 1)[0];
+    const p = cands.splice((turn + Math.floor(c.rng() * 2)) % Math.max(1, cands.length), 1)[0];
     const targets = bigs.filter((b) => b.id !== p.clubId && b.id !== c.my);
     if (!p || !targets.length) continue;
     // Gleicher Interessent über mehrere Ausgaben (Spieler + Saison).
     const to = targets[hashStr(`${p.id}:${c.g.season}`) % targets.length];
     const flags = [p.transferListed ? 'liste' : 'vertrag'];
-    const slots = { player: p.fullName, to: to.name, club: c.name(p.clubId), city: c.city(p.clubId), posname: posName(p) };
+    const slots = { player: p.fullName, to: to.name, tocity: c.city(to.id), club: c.name(p.clubId), city: c.city(p.clubId), posname: posName(p, c.year) };
     out.push(story(c, {
       kind: 'geruecht', rubric: 'Gerüchteküche', date: c.date, weight: 12 + (p.overall - 70) + (p.clubId === c.my ? 16 : 0), rumor: true,
       headline: c.say('hl_geruecht', slots), body: [c.say('ge_body', slots), c.say('ge_grund', slots, flags)],
@@ -91,7 +95,8 @@ export function coachStories(c: PressCtx): PressStory[] {
       if (!c.inWindow(h.to)) return;
       const succ = hist[i + 1]?.name ?? (cl.coach && cl.coach.since >= h.to ? cl.coach.name : undefined);
       const succId = hist[i + 1] ? undefined : cl.coach?.id;
-      const slots = { club: cl.name, city: cl.city, coach: h.name, succ, pos: pos.get(cl.id) ?? '–', years: yearsBetween(h.from, h.to) };
+      const yrs = yearsBetween(h.from, h.to);
+      const slots = { club: cl.name, city: cl.city, coach: h.name, succ, pos: pos.get(cl.id) ?? '–', years: yrs < 1 ? 'wenigen Monaten' : count(yrs, 'dat', ['Jahr', 'Jahren'], 'n') };
       const body = [c.say('co_lead', slots), c.say('co_grund', slots, [h.reason])];
       if (succ) body.push(c.say('co_nachfolger', slots));
       out.push(story(c, {
@@ -114,7 +119,7 @@ export function injuryStories(c: PressCtx): { stories: PressStory[]; briefs: Pre
       if (!c.inWindow(inj.date) || inj.days < (own ? 10 : 21)) continue;
       const squad = (c.g.clubs[p.clubId]?.playerIds ?? []).map((id) => c.g.players[id]?.overall ?? 0).sort((a, b) => b - a);
       const stamm = p.overall >= (squad[10] ?? 0);
-      const slots = { player: p.fullName, club: c.name(p.clubId), inj: inj.description, days: durationText(inj.days) };
+      const slots = { player: p.fullName, club: c.name(p.clubId), inj: inj.description, days: durationText(inj.days), daysdat: durationText(inj.days, true) };
       const flags = [inj.days >= 90 ? 'lang' : '', stamm ? 'stamm' : ''].filter(Boolean);
       items.push(story(c, {
         kind: 'verletzung', rubric: 'Lazarett', date: inj.date, weight: 10 + Math.max(0, p.overall - 60) / 2 + Math.min(20, inj.days / 6) + (own ? 25 : 0),
@@ -130,7 +135,8 @@ export function injuryStories(c: PressCtx): { stories: PressStory[]; briefs: Pre
 }
 
 // ------------------------------------------------------------ Pokal/Europa
-const intoPhrase = (name: string) => /runde/i.test(name) ? `in die ${name}` : /endspiel/i.test(name) ? 'ins Endspiel' : `ins ${name}`;
+const intoPhrase = (name: string) => /runde|phase/i.test(name) ? `in die ${name}` : /endspiel/i.test(name) ? 'ins Endspiel' : `ins ${name}`;
+const inPhrase = (name: string) => /runde|phase/i.test(name) ? `in der ${name}` : `im ${name}`;
 
 interface CupRes { r: PressResult; winner?: string; loser?: string; decided: boolean }
 
@@ -191,7 +197,7 @@ export function cupStories(c: PressCtx): PressStory[] {
         const out_ = !!focus.loser && isGer(focus.loser) && !(focus.winner && isGer(focus.winner));
         const club = out_ ? focus.loser! : clubId;
         const opp = focus.r.home === club ? focus.r.away : focus.r.home;
-        headline = c.say('hl_euro', { club: c.name(club), next, round: rd.round, opp: c.name(opp) }, [out_ ? 'aus' : '', rd.final && focus.decided && !out_ ? 'final' : ''].filter(Boolean));
+        headline = c.say('hl_euro', { club: c.name(club), next, round: rd.round, inround: inPhrase(rd.round), opp: c.name(opp) }, [out_ ? 'aus' : '', rd.final && focus.decided && !out_ ? 'final' : ''].filter(Boolean));
       } else if (focus.winner) {
         headline = c.say('hl_pokal', { w: c.name(focus.winner), l: c.name(focus.loser), next }, [focus === upset ? 'upset' : '', rd.final ? 'final' : ''].filter(Boolean));
       } else headline = `${comp}: ${c.name(focus.r.home)} – ${c.name(focus.r.away)} ${focus.r.hg}:${focus.r.ag}`;
@@ -251,7 +257,7 @@ export function talentStories(c: PressCtx): PressStory[] {
   if (!best) return [];
   const p = c.player(best.pid)!, m = best.m;
   const opp = m.homeClubId === p.clubId ? m.awayClubId : m.homeClubId;
-  const slots = { player: p.fullName, age: p.age, posname: posName(p), opp: c.name(opp), club: c.name(p.clubId), score: `${m.result!.homeGoals}:${m.result!.awayGoals}` };
+  const slots = { player: p.fullName, age: p.age, posname: posName(p, c.year), opp: c.name(opp), club: c.name(p.clubId), score: `${m.result!.homeGoals}:${m.result!.awayGoals}` };
   return [story(c, {
     kind: 'jugend', rubric: 'Talente', date: m.date, weight: 20 + (p.clubId === c.my ? 20 : 0),
     headline: c.say('hl_talent', slots), body: [c.say('tl_body', slots), c.say('tl_body', slots)],
@@ -266,6 +272,12 @@ const PRESS_FROM = /presse|redaktion|ticker|chronik/i;
 const SKIP_FROM = /Pressestelle|Spielbericht/;
 const YOUTH = /Jugend|Talent|Nachwuchs|Eigengewächs|Akademie/;
 
+/** Zeilen einer Nachricht für die Zeitung: ohne Menüpfade („(Jugend › …)“) und ohne Sätze, die dich direkt ansprechen. */
+function pressLines(lines: string[]): string[] {
+  return lines.map((l) => l.replace(/\s*\([^()]*›[^()]*\)/g, '').trim())
+    .filter((l) => l && !/›|\b(du|dich|dir|dein|deine|deinen|deinem|deiner)\b/i.test(l));
+}
+
 export function messageStories(c: PressCtx): { stories: PressStory[]; briefs: PressStory[] } {
   const stories: PressStory[] = [], briefs: PressStory[] = [];
   for (const m of c.g.messages) {
@@ -275,7 +287,7 @@ export function messageStories(c: PressCtx): { stories: PressStory[]; briefs: Pr
     if (/Trainer/.test(m.subject) && /entl|feuert|trennt/i.test(m.subject)) continue; // steht schon im Trainerkarussell
     const chronik = m.category === 'milestone';
     const base = {
-      date: m.date, headline: m.subject, body: [m.shortText, ...(m.bodyText && m.bodyText !== m.shortText ? m.bodyText.split(/\n+/) : [])].filter(Boolean),
+      date: m.date, headline: m.subject, body: pressLines([m.shortText, ...(m.bodyText && m.bodyText !== m.shortText ? m.bodyText.split(/\n+/) : [])]),
       clubs: [] as string[], own: m.category !== 'milestone' && m.from !== 'Europapokal-Chronik',
       targets: [{ kind: 'screen' as const, screen: 'dashboard' as const, label: 'Newscenter' }],
     };
@@ -300,8 +312,8 @@ export function commentStory(c: PressCtx): PressStory | null {
   const tenor = (w * 3 + d) / (last.length * 3);
   const mood = tenor >= 0.6 ? 'gut' : tenor >= 0.34 ? 'mittel' : 'schlecht';
   const pos = tableAt(c, c.date).find((r) => r.clubId === my)?.pos ?? '–';
-  const form = `${plural(w, 'Sieg', 'Siege')}, ${d ? `${d} Remis` : 'kein Remis'}, ${plural(l, 'Niederlage', 'Niederlagen')} aus den letzten ${last.length} Spielen`;
-  const slots = { club: c.name(my), pos, form };
+  const form = `${plural(w, 'Sieg', 'Siege')}, ${d === 1 ? 'ein Remis' : d ? `${d} Remis` : 'kein Remis'}, ${plural(l, 'Niederlage', 'Niederlagen')} ${last.length === 1 ? 'aus dem letzten Spiel' : `aus den letzten ${last.length} Spielen`}`;
+  const slots = { club: c.name(my), city: c.city(my), pos, form };
   return story(c, {
     kind: 'kommentar', rubric: 'Kommentar', date: c.date, weight: 12 + (mood === 'schlecht' ? 10 : 0),
     headline: c.say(`hl_kommentar_${mood}`, slots), body: [c.say(`km_${mood}`, slots), c.say('km_platz', slots)],
