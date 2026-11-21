@@ -3,6 +3,7 @@
 // Jugend, Entwicklung …). Ohne Oberfläche – die Shell reagiert über `ui`.
 // Rückgabe: true = Vorlauf darf weiterlaufen, false = anhalten (Aktion nötig).
 // =============================================================================
+import { migrateTacticsRefs } from './tacticsRefsMigration';
 import { bindMarketing, marketingMonthly } from './marketingGame';
 import { privateDaily } from './private/privateGame';
 import { fixtureWatchDaily } from './fixtureWatch';
@@ -98,6 +99,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   bindMarketing(g); // Werbewirkung des eigenen Vereins (game/marketingGame.ts)
   bindStaffFactor(g); // Stab → Spielstärke des eigenen Vereins (game/staffGame.ts)
   bindCoaching(g); // Niveau der Trainerteams → Entwicklung (game/coachingGame.ts)
+  migrateTacticsRefs(g); // Abgänge aus Startelf/Bank/Kapitän/Standards entfernen – wie beim Laden (game/tacticsRefsMigration.ts)
   const myClub = g.clubs[g.managedClubId];
 
   const cal = g.calendar;
