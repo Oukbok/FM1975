@@ -2,6 +2,7 @@
 // Text-Audit: Prüfregeln (Grammatik, Platzhalter, Epochen, Inhalte) und Bericht.
 // Genutzt von tests/text-audit.ts (npm run test:texts).
 // =============================================================================
+import { currencyAt } from '../src/engine/economy';
 
 export type Src = 'ticker' | 'press' | 'msg' | 'brief';
 
@@ -150,7 +151,12 @@ function checkLine(ch: Checker, s: Sample, t: string): void {
     if (s.ctx.home === 'ger') {
       if (y < 2002 && (m = /€|\bEuro\b|\bEUR\b/.exec(t))) add(ch, s, 'Währung', m[0]);
       if (y > 2001 && (m = /\d\s*(Mio\.|Tsd\.|Mrd\.)?\s*DM\b|D-Mark/.exec(t))) add(ch, s, 'Währung', m[0]);
-    } else if ((m = /\d\s*(Mio\.|Tsd\.|Mrd\.)?\s*DM\b|D-Mark/.exec(t))) add(ch, s, 'Währung', `${s.ctx.home}: ${m[0]}`);
+    } else {
+      // Anderes Heimatland: nie D-Mark (DDR: „DM“ erst ab der Währungsunion), Euro nur, wo er dort gilt (data/currencies.ts).
+      const code = currencyAt(y, `${y}-07-01`, s.ctx.home).code;
+      if (code !== 'DEM' && (m = /\d\s*(Mio\.|Tsd\.|Mrd\.)?\s*DM\b|D-Mark/.exec(t))) add(ch, s, 'Währung', `${s.ctx.home}: ${m[0]}`);
+      if (code !== 'EUR' && currencyAt(y + 1, `${y + 1}-07-01`, s.ctx.home).code !== 'EUR' && (m = /\d\s*(Mio\.|Tsd\.|Mrd\.)?\s*(€|EUR\b|Euro\b)/.exec(t))) add(ch, s, 'Währung', `${s.ctx.home}: ${m[0]}`);
+    }
   }
   // DDR nach der Wiedervereinigung (nur als Rückblick)
   if (y >= 1992 && s.src !== 'brief' && /\bDDR\b/.test(t) && !/ehemalig|früher|einstig|Wende|Wiedervereinigung|alte[nr]? |damals|Geschichte|bis 1991/.test(t)) add(ch, s, 'Epoche', 'DDR nach 1991');

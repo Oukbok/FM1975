@@ -44,12 +44,12 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quelle: engine/tvMoney.ts (Kirch-Vertrag 2000/01: 355 Mio. € für die Bundesliga).
   { from: 2000, to: 2001, lines: [
-    'Der Vertrag mit der Mediengruppe bringt der Bundesliga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht jede Mark fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
+    'Der Vertrag mit der Mediengruppe bringt der Bundesliga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht alles fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
     'Fernsehgeld in Rekordhöhe: Die Mediengruppe zahlt der Liga rund 355 Mio. € pro Saison. Das Fernsehen ist jetzt unsere größte planbare Einnahme.',
   ] },
   // Quellen: engine/economy.ts (Euro ab 2002); data/history.ts tvMarketFactor + engine/tvMoney.ts (Kirch-Pleite 2002, TV-Delle).
   { from: 2002, to: 2004, lines: [
-    'Seit 2002 rechnen wir in Euro. Und die Pleite der Mediengruppe zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen.',
+    'Die Pleite der Mediengruppe zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen. Seit 2002 rechnen wir in Euro.',
     'Neue Währung, alte Sorgen: Nach der Pleite der Rechte-Mediengruppe 2002 sind die TV-Gelder gesunken. Eine ordentliche Reserve ist jetzt Pflicht, nicht Kür.',
   ] },
   // Quelle: docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (2000er/2010er: Ausgliederungen,

@@ -245,6 +245,8 @@ function sponsorChanges(y: number, tier: number, first: boolean): GameChange[] {
   return out;
 }
 
+/** Währungsname ohne den Datenzusatz „(alt)“. */
+const plain = (name: string) => name.replace(' (alt)', '');
 function currencyChanges(y: number, first: boolean): GameChange[] {
   // Heimatwährung (data/currencies.ts): Umstellungen in dieser Saison (1.7.y – 30.6.y+1) taggenau.
   const cc = homeCurrencyCc();
@@ -252,18 +254,19 @@ function currencyChanges(y: number, first: boolean): GameChange[] {
   const cur = currencyAt(y, `${y}-07-01`);
   const fmtD = (iso: string) => `${Number(iso.slice(8, 10))}.${Number(iso.slice(5, 7))}.${iso.slice(0, 4)}`;
   const out: GameChange[] = [];
-  if (first) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${cur.name}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung deines Landes und ihrer Zeit – mit den Wechselkursen des jeweiligen Jahres.' });
-  for (const e of eras) {
+  if (first) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', title: `Gerechnet wird in ${plain(cur.name)}`, text: 'Alle Preise, Gehälter und Ablösen erscheinen in der Währung deines Landes und ihrer Zeit – mit den Wechselkursen des jeweiligen Jahres.' });
+  for (const [i, e] of eras.entries()) {
+    if (i > 0 && eras[i - 1].code === e.code && !e.note) continue; // dieselbe Währung läuft weiter (Rubelzone 1992)
     if (e.from > `${y}-07-01` && e.from <= `${y + 1}-06-30`) {
       out.push({
-        kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: e.code === 'EUR' ? 'Der Euro kommt' : `Neue Währung: ${e.name}`,
-        text: `Zum ${fmtD(e.from)} stellt ${cc === 'ger' ? 'das Spiel' : 'dein Land'} auf ${e.name} um${e.note ? ` (${e.note})` : ''}. Kontostand und Preise werden umgerechnet.`,
+        kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: e.code === 'EUR' ? 'Der Euro kommt' : `Neue Währung: ${plain(e.name)}`,
+        text: `Zum ${fmtD(e.from)} stellt ${cc === 'ger' ? 'das Spiel' : 'dein Land'} auf ${plain(e.name)} um${e.note ? ` (${e.note})` : ''}. Kontostand und Preise werden umgerechnet.`,
       });
     }
   }
   if (!first && !out.length) {
     const prev = currencyAt(y - 1, `${y - 1}-07-01`);
-    if (prev.code !== cur.code) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: `Erste ganze Saison in ${cur.name}`, text: `Alle Beträge – Gehälter, Ablösen, Eintritt – laufen jetzt in ${cur.name}.` });
+    if (prev.code !== cur.code) out.push({ kind: 'geld', icon: 'finances', source: 'Währung', major: true, title: `Erste ganze Saison in ${plain(cur.name)}`, text: `Alle Beträge – Gehälter, Ablösen, Eintritt – laufen jetzt in ${plain(cur.name)}.` });
   }
   return out;
 }

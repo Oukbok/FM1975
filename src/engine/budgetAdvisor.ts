@@ -7,6 +7,7 @@
 // =============================================================================
 import { eraLines } from '../data/budgetEras';
 import { formatMoneyShort } from './economy';
+import { localCurrencyText } from './moneyText';
 
 export interface AdvisorCtx {
   year: number;
@@ -58,7 +59,9 @@ const AREA_NAME: Record<keyof AdvisorCtx['shares'], string> = {
 export function advisorText(c: AdvisorCtx): AdvisorText {
   const f = (v: number) => formatMoneyShort(Math.round(v), c.year);
   const s = (k: string) => `${c.seed}:${k}`;
-  const era = pick(eraLines(c.year), s('era'));
+  // Epochen-Sätze nennen D-Mark/Euro: in der Heimatwährung, Sätze über die deutsche Währung fallen weg (engine/moneyText.ts).
+  const eras = eraLines(c.year).map((l) => localCurrencyText(l, c.year) ?? '');
+  const era = pick(eras, s('era')) || eras.find(Boolean) || '';
   const lines: string[] = [];
 
   // 1) Einnahmen dieses Jahres.

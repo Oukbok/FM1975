@@ -12,27 +12,18 @@
 // (Jahresdurchschnitte amtlicher Mittelkurse Frankfurt 1975–1998); EZB-Referenzkurse
 // ab 1999; für nicht frei konvertierbare Währungen (RGW-Staaten vor 1990) die
 // offiziellen Handels-/Touristenkurse; Hochinflationsjahre nur in groben Stufen.
+// Euro einheitlich ab BARGELD-Einführung (Gründer + Griechenland 1.1.2002): Preise,
+// Gehälter und Ablösen wurden 1999–2001 weiter in Landeswährung genannt; in diesen
+// Jahren gilt der unwiderrufliche Umrechnungskurs. Spätere Beitritte am Beitrittstag.
+// Aufgelöste Staaten (ČSSR, UdSSR, Jugoslawien): Ein Spiel behält sein Heimatland,
+// die Währung folgt dem Nachfolgestaat – nach der Stadt des eigenen Vereins
+// (data/currencySuccessors.ts, Schlüssel „tch:svk“ …), sonst dem größten Nachfolger.
 // Details: docs/research/waehrungen.md.
 // =============================================================================
 
-export interface CurrencyEra {
-  /** Stichtag (erster Tag der neuen Währung), ISO. */
-  from: string;
-  code: string;
-  /** Kurzzeichen in der Anzeige („£“, „Lire“, „€“). */
-  unit: string;
-  /** Name im Text („Pfund Sterling“). */
-  name: string;
-  /** [Jahr, DM je 1 Einheit] – aufsteigend. */
-  rates: [number, number][];
-  /** Umstellungskurs zur Vorgängerwährung (Anzeige im Briefing), z. B. „10.000 Zloty = 1 Zloty“. */
-  note?: string;
-}
-
-const DM_PER_EUR = 1.95583;
-const EURO = (from: string, note: string): CurrencyEra => ({ from, code: 'EUR', unit: '€', name: 'Euro', rates: [[1999, DM_PER_EUR]], note });
-/** Eurokurs-Reihe (Euro je Einheit) → DM je Einheit. */
-const eur = (rows: [number, number][]): [number, number][] => rows.map(([y, e]) => [y, e * DM_PER_EUR]);
+import { EURO, eur, type CurrencyEra } from './currencyParts';
+import { successorCurrencies } from './currencySuccessors';
+export type { CurrencyEra } from './currencyParts';
 
 const GBP: CurrencyEra = {
   from: '1971-02-15', code: 'GBP', unit: '£', name: 'Pfund Sterling',
@@ -104,7 +95,9 @@ export const CURRENCIES: Record<string, CurrencyEra[]> = {
     EURO('2008-01-01', '1 € = 0,585274 Zypern-Pfund'),
   ],
   mlt: [
-    { from: '1972-05-16', code: 'MTL', unit: 'Lm', name: 'Maltesische Lira', rates: [[1975, 6.10], [1978, 5.40], [1980, 5.30], [1985, 5.00], [1990, 5.00], [1995, 4.50], ...eur([[1999, 2.42], [2007, 2.33]])] },
+    // Bis 1983 „Malta-Pfund“ (£M), danach amtlich Lira (Lm) – dieselbe Währung, nur der Name wechselt (Central Bank of Malta).
+    { from: '1972-05-16', code: 'MTL', unit: '£M', name: 'Malta-Pfund', rates: [[1975, 6.10], [1978, 5.40], [1980, 5.30], [1983, 5.90]] },
+    { from: '1983-09-13', code: 'MTL', unit: 'Lm', name: 'Maltesische Lira', note: 'neuer Name, 1 Malta-Pfund = 1 Lira', rates: [[1983, 5.90], [1985, 6.30], [1990, 5.10], [1995, 4.06], [1998, 4.53], ...eur([[1999, 2.35], [2001, 2.48], [2005, 2.33], [2007, 2.33]])] },
     EURO('2008-01-01', '1 € = 0,4293 Maltesische Lira'),
   ],
   sui: [
@@ -125,7 +118,9 @@ export const CURRENCIES: Record<string, CurrencyEra[]> = {
   ],
   tur: [
     { from: '1923-10-29', code: 'TRL', unit: 'TL', name: 'Türkische Lira (alt)', rates: [[1975, 0.175], [1977, 0.098], [1979, 0.058], [1980, 0.024], [1982, 0.0128], [1985, 0.0057], [1988, 0.0012], [1990, 0.00062], [1992, 0.00023], [1994, 0.000055], [1995, 0.0000322], [1997, 0.0000114], [1999, 0.0000047], [2001, 0.0000018], [2004, 0.0000011]] },
-    { from: '2005-01-01', code: 'TRY', unit: 'TL', name: 'Neue Türkische Lira', note: '1.000.000 alte Lira = 1 Lira', rates: eur([[2005, 0.595], [2008, 0.53], [2010, 0.50], [2013, 0.39], [2015, 0.33], [2017, 0.24], [2018, 0.175], [2019, 0.157], [2020, 0.124], [2021, 0.095], [2022, 0.057], [2023, 0.0388], [2024, 0.0281], [2025, 0.0235]]) },
+    { from: '2005-01-01', code: 'TRY', unit: 'TL', name: 'Neue Türkische Lira', note: '1.000.000 alte Lira = 1 Lira', rates: eur([[2005, 0.595], [2008, 0.53]]) },
+    // 1.1.2009: das „Neue“ entfällt, die Währung heißt wieder Türkische Lira (TCMB); Kurs läuft weiter.
+    { from: '2009-01-01', code: 'TRY', unit: 'TL', name: 'Türkische Lira', note: 'nur der Name ändert sich, 1 : 1', rates: eur([[2008, 0.53], [2009, 0.463], [2010, 0.50], [2013, 0.39], [2015, 0.33], [2017, 0.24], [2018, 0.175], [2019, 0.157], [2020, 0.124], [2021, 0.095], [2022, 0.057], [2023, 0.0388], [2024, 0.0281], [2025, 0.0235]]) },
   ],
   pol: [
     { from: '1950-10-30', code: 'PLZ', unit: 'Zł', name: 'Złoty (alt)', rates: [[1975, 0.077], [1980, 0.059], [1982, 0.035], [1985, 0.0175], [1987, 0.0085], [1988, 0.0043], [1989, 0.0011], [1990, 0.000167], [1992, 0.000123], [1994, 0.0000740]] },
@@ -133,12 +128,13 @@ export const CURRENCIES: Record<string, CurrencyEra[]> = {
   ],
   tch: [
     { from: '1953-06-01', code: 'CSK', unit: 'Kčs', name: 'Tschechoslowakische Krone', rates: [[1975, 0.270], [1980, 0.250], [1985, 0.240], [1989, 0.200], [1990, 0.108], [1991, 0.0555], [1992, 0.0565]] },
+    // Fortsetzung nach der Teilung (8.2.1993): setzt der Abschluss unten aus `cze` an (Slowakei: „tch:svk“).
   ],
   cze: [
-    { from: '1993-02-08', code: 'CZK', unit: 'Kč', name: 'Tschechische Krone', rates: [[1993, 0.0567], [1995, 0.0544], [1997, 0.0542], ...eur([[1999, 0.0273], [2001, 0.0293], [2005, 0.0336], [2008, 0.0402], [2010, 0.0395], [2013, 0.0387], [2015, 0.0366], [2018, 0.0390], [2020, 0.0378], [2022, 0.0407], [2023, 0.0417], [2024, 0.0398], [2025, 0.0400]])] },
+    { from: '1993-02-08', code: 'CZK', unit: 'Kč', name: 'Tschechische Krone', note: '1 Tschechoslowakische Krone = 1 Krone', rates: [[1993, 0.0567], [1995, 0.0544], [1997, 0.0542], ...eur([[1999, 0.0273], [2001, 0.0293], [2005, 0.0336], [2008, 0.0402], [2010, 0.0395], [2013, 0.0387], [2015, 0.0366], [2018, 0.0390], [2020, 0.0378], [2022, 0.0407], [2023, 0.0417], [2024, 0.0398], [2025, 0.0400]])] },
   ],
   svk: [
-    { from: '1993-02-08', code: 'SKK', unit: 'Sk', name: 'Slowakische Krone', rates: [[1993, 0.0540], [1995, 0.0505], [1997, 0.0499], ...eur([[1999, 0.0225], [2001, 0.0232], [2005, 0.0259], [2008, 0.0320]])] },
+    { from: '1993-02-08', code: 'SKK', unit: 'Sk', name: 'Slowakische Krone', note: '1 Tschechoslowakische Krone = 1 Krone', rates: [[1993, 0.0540], [1995, 0.0505], [1997, 0.0499], ...eur([[1999, 0.0225], [2001, 0.0232], [2005, 0.0259], [2008, 0.0320]])] },
     EURO('2009-01-01', '1 € = 30,1260 Kronen'),
   ],
   hun: [
@@ -160,18 +156,21 @@ export const CURRENCIES: Record<string, CurrencyEra[]> = {
     { from: '1961-01-01', code: 'SUR', unit: 'Rbl', name: 'Rubel', rates: [[1975, 3.40], [1980, 2.80], [1985, 3.30], [1989, 2.70], [1990, 2.50], [1991, 0.040]] },
   ],
   rus: [
-    { from: '1992-01-01', code: 'RUR', unit: 'Rbl', name: 'Rubel (alt)', rates: [[1992, 0.0071], [1993, 0.00167], [1994, 0.00073], [1995, 0.00032], [1997, 0.00030]] },
+    { from: '1992-01-01', code: 'RUR', unit: 'Rbl', name: 'Rubel (alt)', note: 'Rubel der Russischen Föderation, 1 : 1 zum sowjetischen Rubel', rates: [[1992, 0.0071], [1993, 0.00167], [1994, 0.00073], [1995, 0.00032], [1997, 0.00030]] },
     { from: '1998-01-01', code: 'RUB', unit: 'Rbl', name: 'Rubel', note: '1.000 alte Rubel = 1 Rubel', rates: [[1998, 0.180], ...eur([[1999, 0.0383], [2000, 0.0384], [2005, 0.0284], [2008, 0.0274], [2010, 0.0248], [2013, 0.0236], [2014, 0.0196], [2015, 0.0147], [2018, 0.0135], [2020, 0.0121], [2022, 0.0139], [2023, 0.0109], [2024, 0.0101], [2025, 0.0105]])] },
   ],
   ukr: [
+    // Bis zum Karbowanez gilt der Rubel weiter (gleicher Code wie in der UdSSR = keine Meldung im Briefing).
+    { from: '1992-01-01', code: 'SUR', unit: 'Rbl', name: 'Rubel', rates: [[1992, 0.0071]] },
     { from: '1992-11-12', code: 'UAK', unit: 'Krb', name: 'Karbowanez', rates: [[1992, 0.0027], [1993, 0.00033], [1994, 0.000045], [1995, 0.0000100], [1996, 0.0000085]] },
     { from: '1996-09-02', code: 'UAH', unit: 'Hrn', name: 'Hrywnja', note: '100.000 Karbowanez = 1 Hrywnja', rates: [[1996, 0.83], [1998, 0.60], ...eur([[1999, 0.25], [2000, 0.20], [2005, 0.157], [2008, 0.136], [2009, 0.0910], [2010, 0.0951], [2014, 0.0640], [2015, 0.0413], [2018, 0.0312], [2020, 0.0325], [2022, 0.0290], [2023, 0.0253], [2024, 0.0229], [2025, 0.0222]])] },
   ],
   yug: [
     { from: '1966-01-01', code: 'YUD', unit: 'Din', name: 'Dinar', rates: [[1975, 0.147], [1978, 0.110], [1980, 0.077], [1982, 0.045], [1985, 0.0110], [1987, 0.0035], [1988, 0.0012], [1989, 0.00014]] },
-    { from: '1990-01-01', code: 'YUN', unit: 'Din', name: 'Neuer Dinar', note: '10.000 Dinar = 1 Neuer Dinar', rates: [[1990, 0.143], [1991, 0.060]] },
+    { from: '1990-01-01', code: 'YUN', unit: 'Din', name: 'Neuer Dinar', note: '10.000 Dinar = 1 Neuer Dinar', rates: [[1990, 0.143], [1991, 0.060], [1992, 0.0040]] },
   ],
   srb: [
+    { from: '1990-01-01', code: 'YUN', unit: 'Din', name: 'Neuer Dinar', rates: [[1990, 0.143], [1991, 0.060], [1992, 0.0040]] },
     // Bundesrepublik Jugoslawien, ab 2003 Serbien und Montenegro, ab 2006 Serbien. Hochinflation 1992–1994 nur in groben Stufen.
     { from: '1992-07-01', code: 'YUR', unit: 'Din', name: 'Dinar', note: '10 Dinar = 1 Dinar', rates: [[1992, 0.0040], [1993, 0.0000001]] },
     { from: '1994-01-24', code: 'YUM', unit: 'Din', name: 'Neuer Dinar', note: 'an die D-Mark gebunden: 1 Neuer Dinar = 1 DM', rates: [[1994, 1.0], [1995, 0.30], [1998, 0.17], [2000, 0.033], ...eur([[2002, 0.0165], [2005, 0.0121], [2008, 0.0123], [2010, 0.0097], [2013, 0.0088], [2015, 0.0083], [2018, 0.0085], [2020, 0.0085], [2025, 0.0085]])] },
@@ -185,3 +184,10 @@ export const CURRENCIES: Record<string, CurrencyEra[]> = {
     { from: '1985-09-04', code: 'ILS', unit: '₪', name: 'Neuer Schekel', rates: [[1992, 0.63], [1993, 0.62], [1995, 0.476], [1997, 0.505], ...eur([[1999, 0.227], [2001, 0.267], [2005, 0.179], [2008, 0.190], [2010, 0.202], [2013, 0.209], [2015, 0.232], [2018, 0.236], [2020, 0.255], [2022, 0.283], [2023, 0.251], [2024, 0.250], [2025, 0.255]])] },
   ],
 };
+
+// Aufgelöste Staaten: Währung des größten Nachfolgers anhängen (Tschechien, Russland, BR Jugoslawien/Serbien).
+CURRENCIES.tch = [...CURRENCIES.tch, ...CURRENCIES.cze];
+CURRENCIES.urs = [...CURRENCIES.urs, ...CURRENCIES.rus];
+CURRENCIES.yug = [...CURRENCIES.yug, ...CURRENCIES.srb.filter((e) => e.from > '1990-01-01')];
+// Übrige Nachfolgestaaten je Stadt des eigenen Vereins („tch:svk“, „urs:ukr“, „yug:cro“ …).
+Object.assign(CURRENCIES, successorCurrencies(CURRENCIES));

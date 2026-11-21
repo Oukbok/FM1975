@@ -1,4 +1,5 @@
 import { CURRENCIES, type CurrencyEra } from '../data/currencies';
+import { homeCurrencyKey } from '../data/currencySuccessors';
 // =============================================================================
 // 1975 – A Football Manager — Wirtschafts-/Epochen-Engine (Makro-Finanzkurve)
 // =============================================================================
@@ -129,7 +130,11 @@ export function currencyForYear(year: number): 'DM' | 'EUR' {
 // -----------------------------------------------------------------------------
 let _homeCc = 'ger';
 let _curDate: string | null = null;
-export function setHomeCurrency(cc: string | undefined): void { _homeCc = cc && CURRENCIES[cc] ? cc : 'ger'; }
+/** Heimatwährung setzen; `city` = Stadt des eigenen Vereins (Nachfolgestaat nach einer Auflösung, data/currencySuccessors.ts). */
+export function setHomeCurrency(cc: string | undefined, city?: string | null): void {
+  const key = homeCurrencyKey(cc, city);
+  _homeCc = key && CURRENCIES[key] ? key : cc && CURRENCIES[cc] ? cc : 'ger';
+}
 export function homeCurrencyCc(): string { return _homeCc; }
 export function setCurrencyDate(iso: string | null): void { _curDate = iso; }
 

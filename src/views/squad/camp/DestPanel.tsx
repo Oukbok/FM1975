@@ -8,6 +8,7 @@ import type { ProsCons } from '../../../engine/campPlan';
 import { CampStatus, campWeather, groundLabel, lodgingAltitude, regenLabel } from '../../../engine/trainingCamp';
 import { MON_FULL, fmtDM } from '../../../ui/format';
 import { ClimateStrip, Pips, clean, travelText } from '../campParts';
+import { localMoneyText } from '../../../engine/moneyText';
 
 export function DestPanel({ d, status, season, month, year, lodgings, lodgingId, onLodging, pc, costOf, aiCount }: {
   d?: CampDestination; status?: CampStatus; season: 'summer' | 'winter'; month: number; year: number;
@@ -52,7 +53,7 @@ export function DestPanel({ d, status, season, month, year, lodgings, lodgingId,
         })}
       </div>
       <ClimateStrip d={d} month={month} season={season} />
-      <div className="cp-dest-note">{clean(d.note)}</div>
+      <div className="cp-dest-note">{localMoneyText(clean(d.note), year)}</div>
     </div>
   );
 }

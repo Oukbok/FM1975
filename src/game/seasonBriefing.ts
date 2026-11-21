@@ -20,6 +20,8 @@ import {
 } from '../data/briefings';
 import { playerLevel } from './state';
 import { economyScale } from '../engine/economy';
+import { localCurrencyText } from '../engine/moneyText';
+import { eraTipsFor, type EraTip } from '../data/briefings/eraTips';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { GameChange, gameChangesFor } from './briefingChanges';
 import { Game } from './state';
@@ -129,6 +131,14 @@ export function shorten(text: string, max = 180): string {
   return t.length > max ? t.slice(0, max - 1).replace(/\s+\S*$/, '') + ' …' : t;
 }
 
+/** Epochen-Tipps der Saison, Beträge in der Heimatwährung; Tipps nur zur deutschen Währung fallen im Ausland weg. */
+export function localEraTips(startYear: number): EraTip[] {
+  return eraTipsFor(startYear).flatMap((t) => {
+    const text = localCurrencyText(t.text, startYear), inGame = localCurrencyText(t.inGame, startYear);
+    return text && inGame ? [text === t.text && inGame === t.inGame ? t : { ...t, text, inGame }] : [];
+  });
+}
+
 /**
  * Setzt das Briefing einer Saison zusammen. `opts.first` = erste Saison des
  * Spiels, `opts.tier` = Liga-Ebene (Lizenzauflagen), `opts.situation` = Ausgangslage.
@@ -137,17 +147,28 @@ export function composeBriefing(season: string, opts: { first?: boolean; tier?: 
   const y = startYearOf(season);
   const first = !!opts.first;
   const entry = briefingFor(y);
-  const active = differencesFor(y);
+  // Redaktionelle Beträge in der Heimatwährung; Einträge nur über D-Mark/Euro fallen im Ausland weg (engine/moneyText.ts).
+  const diffs = (list: DifferenceToToday[]) => list.flatMap((d) => {
+    const then = localCurrencyText(d.then, y), today = localCurrencyText(d.today, y);
+    return then && today ? [then === d.then && today === d.today ? d : { ...d, then, today }] : [];
+  });
+  const items = (list: BriefingItem[]) => list.flatMap((it) => {
+    const text = localCurrencyText(it.text, y);
+    if (!text) return [];
+    const inGame = it.inGame ? localCurrencyText(it.inGame, y) ?? undefined : undefined;
+    return [text === it.text && inGame === it.inGame ? it : { ...it, text, inGame }];
+  });
+  const active = diffs(differencesFor(y));
   const base = {
     season, startYear: y, first,
     title: first ? `So anders ist der Fußball ${season}` : `Was ist neu ${season}?`,
     headline: entry?.headline ?? (first ? 'Willkommen im Jahr ' + y : `Saison ${season}`),
     hasEntry: !!entry,
-    football: entry?.football ?? [],
+    football: items(entry?.football ?? []),
     society: entry?.society ?? [],
     differences: groupDifferences(active),
-    ended: first ? [] : differencesEnded(y),
-    started: first ? [] : differencesStarting(y),
+    ended: first ? [] : diffs(differencesEnded(y)),
+    started: first ? [] : diffs(differencesStarting(y)),
     lastSeason: active.filter((d) => d.to === y),
     inGame: gameChangesFor(y, { first, tier: opts.tier ?? opts.situation?.tier ?? 1 }),
     situation: opts.situation,
