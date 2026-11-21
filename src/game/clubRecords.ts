@@ -110,13 +110,23 @@ export function currentH2H(g: Game, oppId: string): H2HTuple[] {
     out.push([g.season, m.date, 'L', home ? 1 : 0, gf, ga]);
   }
   const cups = [g.cup, g.euroCups?.ec, g.euroCups?.cwc, g.euroCups?.uefa];
+  // Hin-/Rückspiel und Wiederholungsspiele stehen als einzelne Spiele in `legs`, Gruppenspiele in
+  // `groups` (wie in managerLog.ts seasonGames) – sonst fehlten sie im direkten Vergleich.
+  const add = (comp: 'P' | 'E', date: string, h: string, a: string, hg: number | null | undefined, ag: number | null | undefined) => {
+    if (hg == null || ag == null || !date) return;
+    const home = h === mid && a === oppId;
+    const away = a === mid && h === oppId;
+    if (!home && !away) return;
+    out.push([g.season, date, comp, home ? 1 : 0, home ? hg : ag, home ? ag : hg]);
+  };
   cups.forEach((cup, i) => {
-    for (const rd of cup?.rounds ?? []) for (const t of rd.ties) {
-      if (!t.played || t.homeGoals == null || t.awayGoals == null) continue;
-      const home = t.homeClubId === mid && t.awayClubId === oppId;
-      const away = t.awayClubId === mid && t.homeClubId === oppId;
-      if (!home && !away) continue;
-      out.push([g.season, t.date, i === 0 ? 'P' : 'E', home ? 1 : 0, home ? t.homeGoals : t.awayGoals, home ? t.awayGoals : t.homeGoals]);
+    const comp = i === 0 ? 'P' : 'E';
+    for (const rd of cup?.rounds ?? []) {
+      for (const t of rd.ties ?? []) {
+        if (t.legs?.length) { for (const l of t.legs) if (l.played) add(comp, l.date, l.home, l.away, l.homeGoals, l.awayGoals); }
+        else if (t.played) add(comp, t.date, t.homeClubId, t.awayClubId, t.homeGoals, t.awayGoals);
+      }
+      for (const gr of rd.groups ?? []) for (const m of gr.matches) add(comp, m.date, m.home, m.away, m.hg, m.ag);
     }
   });
   return out.sort((a, b) => a[1].localeCompare(b[1]));
@@ -163,9 +173,15 @@ export function recordSeasonEnd(g: Game, season: string, divisions: CurrentDivis
   const opps = new Set<string>();
   for (const m of g.fixtures) if (m.involvesPlayerClub) opps.add(m.homeClubId === g.managedClubId ? m.awayClubId : m.homeClubId);
   for (const cup of [g.cup, g.euroCups?.ec, g.euroCups?.cwc, g.euroCups?.uefa]) {
-    for (const rd of cup?.rounds ?? []) for (const t of rd.ties) {
-      if (t.homeClubId === g.managedClubId) opps.add(t.awayClubId);
-      else if (t.awayClubId === g.managedClubId) opps.add(t.homeClubId);
+    for (const rd of cup?.rounds ?? []) {
+      for (const t of rd.ties ?? []) {
+        if (t.homeClubId === g.managedClubId) opps.add(t.awayClubId);
+        else if (t.awayClubId === g.managedClubId) opps.add(t.homeClubId);
+      }
+      for (const gr of rd.groups ?? []) for (const m of gr.matches) {
+        if (m.home === g.managedClubId) opps.add(m.away);
+        else if (m.away === g.managedClubId) opps.add(m.home);
+      }
     }
   }
   for (const id of opps) {
