@@ -14,11 +14,15 @@ export const SITUATIONS: Grammar = {
     '@2008- {o} presst früh, {t} kommt nicht durch.', '{tn} findet keine Lücke und spielt zurück.',
   ],
   offside: [
-    'Abseits! Die Fahne geht hoch.', '{p} stand im Abseits.', 'Die Abseitsfalle von {o} schnappt zu.', 'Knapp, aber abseits – {p} war einen Schritt zu früh.',
+    'Abseits! Die Fahne geht hoch.', '{p} stand im Abseits.', 'Fahne oben – {p} war zu früh gestartet.', 'Abseits, der Angriff ist vorbei.', 'Die Abseitsfalle von {o} schnappt zu.', 'Knapp, aber abseits – {p} war einen Schritt zu früh.',
     'Der Linienrichter hebt die Fahne gegen {p}.', '@2017- Abseits – gut erkannt, das bestätigt auch die kalibrierte Linie.', '@-1990 Abseits, pfeift der Unparteiische. {p} protestiert.',
   ],
-  corner_plain: ['Ecke für {t}.', 'Eckball für {t}, {a} geht hinüber.', '{tn} bekommt einen Eckstoß.', 'Abgefälscht – Ecke.'],
-  corner_cleared: ['Die Ecke wird geklärt.', '{k} pflückt den Ball sicher herunter.', 'Kopfball abgewehrt, die Gefahr ist gebannt.', 'Zu weit – Abstoß.', 'Am ersten Pfosten geklärt.'],
+  corner_plain: [
+    'Ecke für {t}.', 'Eckball für {t}, {a} geht hinüber.', '{tn} bekommt einen Eckstoß.', 'Abgefälscht – Ecke.', '{a} holt eine Ecke heraus.',
+    'Der Ball geht über die Grundlinie – Ecke für {t}.', 'Eckstoß. {a} trabt zur Fahne.', 'Ein Abwehrbein lenkt den Ball ins Toraus, Ecke.',
+    'Wieder eine Ecke für {t}.', '{a} legt sich den Ball zur Ecke zurecht.',
+  ],
+  corner_cleared: ['Die Ecke wird geklärt.', '{k} pflückt den Ball sicher herunter.', 'Kopfball abgewehrt, die Gefahr ist gebannt.', 'Zu weit – Abstoß.', 'Am ersten Pfosten geklärt.', 'Die Hereingabe wird weggeköpft.', 'Zu kurz – die Ecke verpufft.', 'Getümmel, dann ist der Ball weg.'],
 
   // --- Fouls & Karten --------------------------------------------------------
   foul: [
@@ -36,7 +40,7 @@ export const SITUATIONS: Grammar = {
     'Pfiff – Elfmeter! {p} kommt im Strafraum zu spät gegen {d}.', '@2017- Nach Ansicht der Bilder: Elfmeter! {p} hatte {d} getroffen.',
   ],
   yellow: [
-    'Gelbe Karte für {p}.', '{p} sieht Gelb.', 'Dafür gibt es Gelb für {p}.', 'Der Schiedsrichter zückt Gelb – {p} ist verwarnt.',
+    'Gelbe Karte für {p}.', '{p} sieht Gelb.', 'Dafür gibt es Gelb für {p}.', 'Der Schiedsrichter zückt Gelb – {p} ist verwarnt.', 'Gelb! {p} hat es übertrieben.', '{p} wird verwarnt.',
     'Verwarnung für {p}. Er muss jetzt aufpassen.', 'Gelb für {p}, berechtigt.', '{p} reklamiert – und sieht Gelb.',
   ],
   yellowRed: [
@@ -51,7 +55,7 @@ export const SITUATIONS: Grammar = {
 
   // --- Verletzungen ---------------------------------------------------------
   injury: [
-    '{p} bleibt nach einem Zweikampf liegen.', '{p} greift sich an den Oberschenkel.', '{p} humpelt, der Physio kommt aufs Feld.',
+    '{p} bleibt nach einem Zweikampf liegen.', '{p} greift sich an den Oberschenkel.', '@1990- {p} humpelt, der Physio kommt aufs Feld.', '@-1989 {p} humpelt, der Masseur kommt aufs Feld.',
     '{p} hat sich wehgetan.', 'Sorgen um {p}: Er hält sich das Knie.', '{p} knickt um und bleibt sitzen.', 'Der Arzt eilt zu {p}.',
     '@-1990 Der Masseur sprintet mit dem Eisspray auf den Platz – {p} liegt am Boden.',
   ],
@@ -63,8 +67,8 @@ export const SITUATIONS: Grammar = {
     'Wechsel bei {t}: {p} kommt für {d}.', '{p} ersetzt {d}.', '{tn} wechselt: {d} geht, {p} kommt.', 'Frische Kräfte: {p} für {d}.',
     '{d} verlässt unter Applaus den Platz, {p} ist neu dabei.', 'Der Trainer von {t} reagiert: {p} für {d}.',
   ],
-  sub_reason_muede: ['{d} war platt.', '{d} hatte keine Kraft mehr.'],
-  sub_reason_taktik: ['Eine taktische Maßnahme.', '{tn} will neue Impulse.'],
+  sub_reason_muede: ['{d} war platt.', '{d} hatte keine Kraft mehr.', 'Die Beine von {d} wurden schwer.', '{d} ist ausgepumpt.'],
+  sub_reason_taktik: ['Eine taktische Maßnahme.', '{tn} will neue Impulse.', 'Frischer Wind soll her.', 'Der Trainer sucht eine neue Lösung.', 'Ein Wechsel aus taktischen Gründen.', '{p} soll für mehr Schwung sorgen.'],
   sub_reason_verletzt: ['{d} kann nicht mehr.'],
   sub_reason_torwart: ['Ersatztorwart {p} muss rein.'],
 
@@ -106,7 +110,7 @@ export const SITUATIONS: Grammar = {
     'Der Schiedsrichter pfeift an. {home} gegen {away}, {crowd} Zuschauer sind dabei.',
   ],
   kickoff_atmo: [
-    '{crowd} Zuschauer sind gekommen.', '?derby Derbytime! Die Stadt ist in zwei Lager gespalten.', '?derby Ein Derby – hier geht es um mehr als drei Punkte.',
+    '{crowd} Zuschauer sind gekommen.', '?derby Derbytime! Die Stadt ist in zwei Lager gespalten.', '@1995- ?derby Ein Derby – hier geht es um mehr als drei Punkte.', '@-1994 ?derby Ein Derby – hier geht es um mehr als zwei Punkte.',
     '?pokal Pokalabend! Hier zählt nur das Weiterkommen.', '?ausverkauft Ausverkauftes Haus!', '?regen Es regnet in Strömen, der Rasen ist tief.',
     '?schnee Schneefall – der Platz ist weiß gezuckert, gespielt wird mit dem orangen Ball.', '?hitze Brütende Hitze, das wird ein Kraftakt.',
     '?nebel Nebel zieht übers Stadion – von der Tribüne sieht man kaum das andere Tor.', '?wind Ein böiger Wind pfeift durchs Stadion.',

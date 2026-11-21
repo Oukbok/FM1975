@@ -16,7 +16,8 @@ export const CHANCES: Grammar = {
     'Ein Kurzpass-Festival von {t}. Am Ende landet die Kugel bei {a}.',
     'Ballstafette von {t} – {o} läuft nur hinterher.',
     '{a} dreht sich im Mittelfeld #geschickt# um die eigene Achse und spielt {p} an.',
-    '{tn} spielt sich mit One-Touch-Fußball in die Hälfte von {o}.',
+    '@2000- {tn} spielt sich mit One-Touch-Fußball in die Hälfte von {o}.',
+    '@-1999 {tn} kombiniert sich mit Direktpässen in die Hälfte von {o}.',
     '{a} legt ab, {p} geht mit und bekommt den Ball zurück.',
     '@2008- Schnelles Kurzpassspiel im Halbraum, {a} findet {p} zwischen den Linien.',
     '@-1990 {a} treibt den Ball nach vorn, lässt einen Gegenspieler stehen und sucht {p}.',
@@ -124,18 +125,20 @@ export const CHANCES: Grammar = {
   s_normal: [
     '{p} kommt zum Abschluss …', '{p} zieht ab …', '{p} schießt …', '{p} versucht es mit dem Innenrist …',
     '{p} nimmt den Ball direkt …', '{p} legt sich den Ball zurecht und schießt …', '{p} zieht aus #kurze_dist# ab …',
-    '{p} dreht sich und schießt …', '{p} mit dem Spann …', '{p} schlenzt ihn Richtung langes Eck …',
+    '{p} dreht sich und schießt …', '{p} mit dem Spann …', '{p} schlenzt ihn Richtung langes Eck …', '{p} fackelt nicht lange …',
+    '{p} nimmt Maß …', '{p} probiert es flach …', '{p} hält einfach drauf …', 'Abschluss {p} …',
   ],
   kurze_dist: ['elf Metern', 'zwölf Metern', 'vierzehn Metern', 'spitzem Winkel', 'halbrechter Position', 'halblinker Position', 'kurzer Distanz'],
   s_header: [
     '{p} steigt am höchsten und köpft …', '{p} kommt mit dem Kopf an den Ball …', 'Kopfball {p} …',
     '{p} wuchtet den Ball mit dem Kopf Richtung Tor …', '{p} hechtet in die Flanke …', '{p} verlängert per Kopf …',
-    '{p} setzt sich im Luftkampf gegen {d} durch und köpft …', 'Flugkopfball {p} …',
+    '{p} setzt sich im Luftkampf gegen {d} durch und köpft …', 'Flugkopfball {p} …', '{p} köpft wuchtig aufs Tor …', '{p} drückt den Ball mit der Stirn Richtung Tor …',
+    '{p} schraubt sich hoch …', 'Kopfballchance für {p} …',
   ],
   s_long: [
     '{p} fasst sich ein Herz – aus {dist} Metern …', '{p} zieht aus der Distanz ab …', 'Distanzschuss {p} …',
     '{p} probiert es einfach mal von weit draußen …', '{p} hält aus {dist} Metern drauf …', 'Warum nicht? {p} schießt aus der zweiten Reihe …',
-    '{p} mit einem Gewaltschuss aus der Distanz …',
+    '{p} mit einem Gewaltschuss aus der Distanz …', '{p} zieht von der Strafraumgrenze ab …', 'Fernschuss {p} …', '{p} versucht es mit einem Schlenzer aus der Ferne …',
   ],
   s_big: [
     '{p} ist frei vor {k} …', '{p} läuft allein auf {k} zu …', '{p} hat nur noch {k} vor sich …',
@@ -193,11 +196,11 @@ export const CHANCES: Grammar = {
   o_saved_penalty: ['{k} hält den Elfmeter! Er hat die Ecke geahnt!', 'Gehalten! {k} pariert den Strafstoß!', '{k} ist der Held! Elfmeter gehalten!'],
   o_wide: [
     'Vorbei! Der Ball streicht #knapp# am Pfosten vorbei.', 'Daneben! {p} verzieht.', 'Am Tor vorbei – {p} schlägt die Hände vors Gesicht.',
-    'Zu ungenau. Der Ball geht #klar# vorbei.', '{p} schiebt den Ball am langen Pfosten vorbei.', 'Knapp vorbei! {k} hätte keine Chance gehabt.',
+    'Zu ungenau. Der Ball geht #klar# vorbei.', '{p} schiebt den Ball am langen Pfosten vorbei.', 'Knapp vorbei! {k} hätte keine Chance gehabt.', 'Der Schuss verfehlt das Tor.', 'Neben das Tor – Abstoß.',
   ],
   o_over: [
     'Drüber! {p} setzt den Ball über die Latte.', 'Zu hoch! Der Ball fliegt auf die Tribüne.', 'Über das Tor – {p} hat zu viel Rücklage.',
-    'Der Ball steigt und steigt … und landet hinter dem Tor.', 'Knapp drüber!', '@-1995 Der Ball landet in der Kurve, ein Fan bringt ihn zurück.',
+    'Der Ball steigt und steigt … und landet hinter dem Tor.', 'Knapp drüber!', 'Über die Latte. {p} ärgert sich.', 'Weit drüber – das war nichts.', 'Der Ball zischt über das Gebälk.', '@-1995 Der Ball landet in der Kurve, ein Fan bringt ihn zurück.',
   ],
   o_post: [
     'Pfosten! Das Aluminium rettet für {o}!', 'Latte! Der Ball knallt ans Gebälk!', 'An den Innenpfosten – und wieder heraus!',

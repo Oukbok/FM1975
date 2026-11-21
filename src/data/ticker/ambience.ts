@@ -12,7 +12,7 @@ export const AMBIENCE: Grammar = {
     '{p} mit dem Ball, er schaut sich um.', 'Rückpass zu {k_t}. Kurze Verschnaufpause.', '{tn} sortiert sich.',
     '{o} läuft früh an, {t} spielt sich trotzdem heraus.', '{p} schlägt den Ball lang – zu lang, Abstoß.',
     '@-1991 Rückpass zum Torwart, der nimmt ihn auf und wartet. So vergeht die Zeit.', '@1992- {k_t} spielt mit, kurzer Pass auf {p}.',
-    '{p} dribbelt sich aus dem Pressing, gute Szene.', '{tn} hat den Ball, aber noch keine Idee.',
+    '@1987- {p} dribbelt sich aus dem Pressing, gute Szene.', '@-1986 {p} dribbelt sich aus der Umklammerung, gute Szene.', '{tn} hat den Ball, aber noch keine Idee.',
   ],
   flow_mid: [
     'Das Spiel spielt sich im Mittelfeld ab.', 'Viel Kampf, wenig Glanz im Mittelfeld.', '{p} und {d} beharken sich an der Mittellinie.',
@@ -31,16 +31,16 @@ export const AMBIENCE: Grammar = {
   // --- Farbe & Zwischentöne ---------------------------------------------------
   color: [
     '#publikum# singt sich warm.', 'Auf den Rängen wird gesungen.', 'Fahnen wehen in der Kurve.', 'Die Fans von {o} sind lautstark zu hören.',
-    '?regen Der Regen wird stärker, das Leder rutscht.', '?schnee Die Schneeflocken tanzen im Flutlicht.', '?hitze Trinkpause? Die Hitze macht allen zu schaffen.',
+    '?regen Der Regen wird stärker, das Leder rutscht.', '?schnee Die Schneeflocken tanzen im Flutlicht.', '@2010- ?hitze Trinkpause? Die Hitze macht allen zu schaffen.', '@-2009 ?hitze Die Hitze macht allen zu schaffen, an der Seitenlinie fliegen die Wasserflaschen.',
     '?nebel Der Nebel wird dichter – man sieht kaum noch die Gegengerade.', '?wind Der Wind trägt jeden langen Ball ins Aus.',
     '?derby Die Stimmung ist aufgeheizt, jeder Zweikampf wird bejubelt.', 'Der Trainer von {t} gestikuliert an der Seitenlinie.',
     'Auf der Bank von {o} wird diskutiert.', '{p} bindet sich die Schuhe neu.', 'Ein Balljunge ist schnell und bringt den Ball zurück.',
     '@-1989 Bratwurstduft zieht über die Stehplätze.', '@-1994 Ein Fotograf hinter dem Tor wechselt den Film.', '@2005- Die Ersatzspieler machen sich am Rand warm.',
-    '@1995- Die Werbebanden blinken – das Geschäft läuft mit.', '#zeitgeist#', 'Der Schiedsrichter lässt viel laufen.', 'Der Schiedsrichter pfeift kleinlich heute.',
+    '@2005- Die Werbebanden blinken – das Geschäft läuft mit.', '@1990-2004 Die Prismenbanden drehen sich – das Geschäft läuft mit.', '#zeitgeist#', 'Der Schiedsrichter lässt viel laufen.', 'Der Schiedsrichter pfeift kleinlich heute.',
     '?eigen Deine Elf hat gerade das Heft in der Hand.', '?gegner Deine Mannschaft läuft gerade hinterher.',
   ],
   stat_line: [
-    '@1992- Ballbesitz {t}: {poss} Prozent.', '{tn} kommt bisher auf {shots} Torschüsse.', '@1998- {tn} gewinnt aktuell {duels} Prozent der Zweikämpfe.',
+    '@1992- Ballbesitz {t}: {poss} Prozent.', '{tn} kommt bisher auf {shotsn}.', '@1998- {tn} gewinnt aktuell {duels} Prozent der Zweikämpfe.',
     '@2016- Expected Goals bisher: {xg_h} zu {xg_a}.', '@2003- {tn} hat bereits {passes} Pässe gespielt.', 'Eckenverhältnis: {corners}.',
   ],
   // --- Seltene Randgeschichten (nur gelegentlich) ---------------------------

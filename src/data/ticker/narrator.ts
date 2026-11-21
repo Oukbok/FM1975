@@ -11,6 +11,7 @@ import { AMBIENCE } from './ambience';
 import { CHANCES } from './chances';
 import { DUELS } from './duels';
 import { ATTR_DUELS } from './attrDuels';
+import { DUELS_MORE, withMore } from './duelsMore';
 import { Speaker, type TextCtx } from './grammar';
 import { LEXICON } from './lexicon';
 import { SITUATIONS } from './situations';
@@ -91,7 +92,7 @@ export class Narrator {
 
   constructor(private sim: MatchSim, public opts: NarratorOpts) {
     const seed = ((sim.seed ?? 0) ^ 0x5bd1e995) >>> 0;
-    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...DUELS, ...ATTR_DUELS }, mulberry(seed));
+    this.sp = new Speaker({ ...LEXICON, ...CHANCES, ...SITUATIONS, ...AMBIENCE, ...withMore(DUELS, DUELS_MORE), ...ATTR_DUELS }, mulberry(seed));
     this.r = mulberry((seed + 0x9e3779b9) >>> 0);
   }
 
@@ -295,7 +296,7 @@ export class Narrator {
     const possTot = st(this.sim.home).possession + st(this.sim.away).possession || 1;
     const c = this.ctx(ev, {
       p: pick(pt), d: pick(po), k_t: this.keeperName(side),
-      poss: Math.round((st(t).possession / possTot) * 100), shots: st(t).shots,
+      poss: Math.round((st(t).possession / possTot) * 100), shots: st(t).shots, shotsn: `${st(t).shots} ${st(t).shots === 1 ? 'Torschuss' : 'Torschüsse'}`,
       duels: Math.round((st(t).duelsWon / Math.max(1, st(t).duels)) * 100), passes: Math.round(st(t).passes),
       xg_h: st(this.sim.home).xg.toFixed(2), xg_a: st(this.sim.away).xg.toFixed(2),
       corners: `${st(this.sim.home).corners}:${st(this.sim.away).corners}`,

@@ -98,6 +98,7 @@ export class Speaker {
 /** Leerzeichen, doppelte Satzzeichen und Großschreibung am Satzanfang aufräumen. */
 export function tidy(s: string): string {
   let t = s.replace(/\s+/g, ' ').replace(/\s+([,.!?:;])/g, '$1').replace(/([.!?])\1+/g, '$1').replace(/,\./g, '.').trim();
-  t = t.replace(/(^|[.!?]\s+)([a-zäöü])/g, (_m, a: string, b: string) => a + b.toUpperCase());
+  // Nach Ordnungszahlen („der Tabellen-5. empfängt“) keine Großschreibung.
+  t = t.replace(/(^|(?:(?<!\d)\.|[!?])\s+)([a-zäöü])/g, (_m, a: string, b: string) => a + b.toUpperCase());
   return t;
 }
