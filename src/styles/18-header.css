@@ -7,7 +7,7 @@
   z-index: 40;
   display: flex;
   align-items: center;
-  gap: 29px;
+  gap: 22px; /* 29 px ließ bei langen Vereinsnamen („Mönchengladbach“) „Privat“ abschneiden (test:audit) */
   /* Einheitliche Menue-/Header-Hoehe auf ALLEN Seiten (wie Zentrale). */
   height: var(--shell-head-height);
   /* Inhaltskanten buendig zu den Zentrale-Boxen darunter: die aeussere Box-Kante
@@ -76,7 +76,7 @@
   background: var(--accent);
 }
 
-.hd-right { display: flex; align-items: center; gap: 19px; flex: 0 0 auto; margin-left: auto; }
+.hd-right { display: flex; align-items: center; gap: 14px; flex: 0 0 auto; margin-left: auto; }
 .hd-sep { width: 1px; height: 34px; background: var(--border); flex: 0 0 auto; }
 .hd-balance {
   display: inline-flex; align-items: center; gap: 11px; white-space: nowrap;
@@ -90,7 +90,7 @@
 .hd-balance-lbl { font-size: 16px; color: var(--text-2); }
 .hd-balance-val { font-size: 18px; font-weight: 800; color: var(--accent); }
 .hd-club { display: inline-flex; align-items: center; gap: 10px; }
-.hd-club-name { font-size: 16px; font-weight: 700; color: var(--text); max-width: 192px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hd-club-name { font-size: 16px; font-weight: 700; color: var(--text); max-width: 172px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* WEITER-Button: 1/4 hoeher + 1/2 breiter als zuvor (per Padding + fixe
    Icon-Box, damit die Masse in allen Zustaenden identisch bleiben).
    Aktiv-Zustand (.running) = passendes Beige bei GLEICHEN Massen.

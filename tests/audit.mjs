@@ -11,7 +11,7 @@
 import { mkdir, writeFile, access } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { chromium } from 'playwright';
-import { serveDist, closeAll } from './popup-probe.mjs';
+import { serveDist, closeAll as closeWindows } from './popup-probe.mjs';
 import { startNewGame } from './newgame-flow.mjs';
 import { pageChecks, tokenColors, scanColors, KINDS } from './audit-checks.mjs';
 import { writeReport } from './audit-report.mjs';
@@ -37,6 +37,19 @@ const saveFile = async (name) => {
   }
   return `public/saves/${name}.txt`;
 };
+
+/** Fenster schließen – auch die Vorschau „Nächstes Spiel“ (Spieltag im Stand) und das Briefing. */
+async function closeAll(page) {
+  for (let k = 0; k < 4; k++) {
+    const pm = await page.locator('.pm-root, .bf-modal, .bud-modal').first().isVisible().catch(() => false);
+    if (!pm) break;
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    const bf = page.locator('.bf-continue, .bud-confirm').first();
+    if (await bf.isVisible().catch(() => false)) await bf.click({ timeout: 1000 }).catch(() => {});
+  }
+  await closeWindows(page);
+}
 
 const { server, url } = serveDist();
 const browser = await chromium.launch();
@@ -133,7 +146,9 @@ async function session(saveName, view) {
       here.where = label;
       try {
         await goto(main, sub);
-        if (!(await open())) { add('nav', 'Auslöser nicht gefunden'); return; }
+        const opened = await open();
+        if (opened === 'skip') return;
+        if (!opened) { add('nav', 'Auslöser nicht gefunden'); return; }
         const ok = await page.waitForSelector(frame, { timeout: 6000 }).then(() => true).catch(() => false);
         if (!ok) { add('nav', `Fenster ${frame} öffnet nicht`); return; }
         await settle();
@@ -158,7 +173,8 @@ async function session(saveName, view) {
     const click = (sel) => async () => { const l = page.locator(sel).first(); if (!(await l.count())) return false; await l.click(); return true; };
     await popup('Spielerprofil', 'Kader', 'Übersicht', click('.app-main tbody tr[data-pid]'), '.modal', '.modal .pp-tabs .tab, .modal [role="tab"]');
     await popup('Vereinsprofil', 'Statistiken', 'Liga', click('.app-main .club-link >> nth=3'), '.cmx-modal', '.cmx-modal .cmx-tabs .tab');
-    await popup('Vereinsprofil Ausland', 'Statistiken', 'International', click('.app-main .club-link >> nth=-1'), '.cmx-modal', null);
+    // Ohne Europapokal-Teilnehmer auf der Seite (z. B. DDR-Stand) gibt es keinen Auslöser – kein Fehler.
+    await popup('Vereinsprofil Ausland', 'Statistiken', 'International', async () => (await click('.app-main .club-link >> nth=-1')()) || 'skip', '.cmx-modal', null);
     await popup('Länderprofil', 'Statistiken', 'Nationalteams', click('.app-main .cflag[data-country]'), '.cnx-modal', '.cnx-modal .cmx-tabs .tab');
     await popup('Spieler-Infokarte', 'Aufstellung', 'Aufstellung', async () => {
       const b = page.locator('.lu-row .pc-ibtn').nth(3);

@@ -22,6 +22,7 @@ export const KINDS = {
   font: { t: 'Schrift < 11 px (effektiv)', hard: false },
   color: { t: 'Textfarbe ohne Token (berechnet)', hard: false },
   nav: { t: 'Seite/Fenster nicht erreichbar', hard: true },
+  menu: { t: 'Menü passt nicht (Einträge verdeckt)', hard: true },
 };
 
 /** Läuft im Browser. `o.minFont` = kleinste erlaubte Schrift in Bildschirm-Pixeln. */
@@ -96,6 +97,11 @@ export function pageChecks(o) {
     if (main.scrollHeight > main.clientHeight + 2) add('scroll', `.app-main ${ov === 'hidden' || ov === 'clip' ? 'abgeschnitten' : 'scrollt'} ${main.scrollHeight} > ${main.clientHeight} (${cls(main.firstElementChild)})`);
   }
 
+  // ---- Kopfleiste und Untermenü: alle Einträge sichtbar
+  for (const el of document.querySelectorAll('.hd-nav, .tn-sub, .sub3-tabs')) {
+    if (vis(el) && el.scrollWidth > el.clientWidth + 2) add('menu', `${cls(el)} ${el.scrollWidth} > ${el.clientWidth}`);
+  }
+
   // ---- Boxen: überlaufen, leer, überlappen, ragen hinaus
   const boxes = [...document.querySelectorAll('.dbox')].filter(vis);
   const mainR = main?.getBoundingClientRect();
@@ -132,6 +138,7 @@ export function pageChecks(o) {
       if (sw > w + 2 && el.textContent.trim() && (o.autoTitles || !titled(el)) && ellN++ < 25) add('ellipsis', `${path(el)}: „${el.textContent.trim().slice(0, 40)}“`);
       continue;
     }
+    if (el.matches('.hd-nav, .tn-sub, .sub3-tabs')) continue;
     if (scrolls(s.overflowX)) { if (sw > w + 3 && hsN++ < 15) add('hscroll', `${path(el)} ${Math.round(sw / 1)} > ${w}`); continue; }
     if ((s.overflowX === 'hidden' || s.overflowX === 'clip') && sw > w + 3 && el.textContent.trim() && !el.querySelector('svg, canvas') && clipN++ < 25) {
       // Nur melden, wenn ein Kind mit Text wirklich über den Rand hinausreicht.

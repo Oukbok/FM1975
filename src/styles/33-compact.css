@@ -41,3 +41,10 @@
 [data-ui] .sf-kpi span, [data-ui] .sf-kpi i { font-size: 14px; }
 [data-ui] .sf-filters { gap: 8px; padding: 10px 12px; }
 [data-ui] .sf-filter { gap: 6px; }
+
+/* ---- Newscenter: Filterleiste auf dem schmaleren Aktenblatt ohne Zahlen, Kategorie darunter */
+[data-ui] .dz-news > .inbox-filter .b3-n { display: none; }
+[data-ui="narrow"] .dz-news > .inbox-filter { flex-wrap: wrap; row-gap: 4px; align-content: center; }
+[data-ui="narrow"] .dz-news > .inbox-filter .seg3 > * { padding: 0 5px; font-size: 12.5px; }
+/* Steam Deck: Liste ohne Spalte „Kategorie“ (steht im Lesebereich), damit der Betreff lesbar bleibt */
+[data-ui="narrow"] .dz-ntable .dz-ncol-cat { display: none; }
