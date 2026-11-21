@@ -226,7 +226,7 @@ export function bookHomeMatch(
       book(fin, date, Math.round((6000 + club.reputation * 120) * scale), 'tv_money', 'TV- und Mediengelder (Heimspiel)', trackDetail);
     }
     if (catering > 0) book(fin, date, catering, 'catering', `Catering / Wuerstchenbuden (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
-    if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserloese (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
+    if (matchday > 0) book(fin, date, matchday, 'matchday', `Programmhefte & Spieltagserlöse (${attendance.toLocaleString('de-DE')} Besucher)`, trackDetail);
     bookGroundsMatchday(club, attendance, date, trackDetail); // Stadionumfeld
   }
   // Leistungsprämie von Sponsoren/Gönnern (1975 ≈ 10.000 DM je Sieg; wächst wie das Stadiongeschäft)
@@ -435,7 +435,7 @@ export function bookMonthly(
   if (m.sponsorship > 0) book(fin, date, m.sponsorship, 'sponsorship', 'Sponsoring: Trikot, Ausrüster, Partner (Monatsrate)', trackDetail);
   if (m.advertising > 0) book(fin, date, m.advertising, 'advertising', 'Werbung: Banden, Wettpartner (Monatsrate)', trackDetail);
   if (m.merchGlobal > 0) book(fin, date, m.merchGlobal, 'merchandise', 'Fanartikel weltweit: Lizenzen, Versand (Monat)', trackDetail);
-  if (m.membership > 0) book(fin, date, m.membership, 'membership', 'Mitgliedsbeitraege (Monat)', trackDetail);
+  if (m.membership > 0) book(fin, date, m.membership, 'membership', 'Mitgliedsbeiträge (Monat)', trackDetail);
   if (m.cateringLease > 0) book(fin, date, m.cateringLease, 'catering', 'Catering-Pacht (Monat)', trackDetail);
   if (m.tv > 0) book(fin, date, m.tv, 'tv_money', 'TV-Gelder (zentrale Vermarktung)', trackDetail);
   if (m.commercial > 0) book(fin, date, m.commercial, 'commercial', 'Vermarktung (Monat)', trackDetail);
@@ -444,7 +444,7 @@ export function bookMonthly(
   book(fin, date, -m.wages, 'wages', 'Spielergehälter (Monat)', trackDetail);
   book(fin, date, -m.staffWages, 'staff_wages', 'Gehälter Betreuerstab (Monat)', trackDetail);
   book(fin, date, -m.stadiumMaintenance, 'stadium_maintenance', 'Stadionunterhalt (Monat)', trackDetail);
-  book(fin, date, -m.facilities, 'facilities', 'Gebaeude-Fixkosten (Monat)', trackDetail);
+  book(fin, date, -m.facilities, 'facilities', 'Gebäude-Fixkosten (Monat)', trackDetail);
   book(fin, date, -m.otherFixed, 'other', 'Sonstige Betriebskosten (Monat)', trackDetail);
   if (m.operations > 0) book(fin, date, -m.operations, 'operations', 'Betrieb & Vermarktung: Wareneinsatz, Sponsorenbetreuung, Verwaltung (Monat)', trackDetail);
 

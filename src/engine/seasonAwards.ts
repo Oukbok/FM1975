@@ -19,6 +19,7 @@
 // verglichen (Standardabweichungen über dem Mittel des Mannschaftsteils), damit
 // Torhüter und Stürmer fair gegeneinander stehen.
 // =============================================================================
+import { nOf } from './textNum';
 import type { PositionGroup } from '../types';
 
 export type AwardCat = PositionGroup; // 'GK' | 'DEF' | 'MID' | 'ATT'
@@ -123,15 +124,15 @@ export function reasonFlags(c: AwardCandidate, all: AwardCandidate[], ctx: Award
 export function reasonText(c: Pick<AwardCandidate, 'cat' | 'clean' | 'avg' | 'goals' | 'assists' | 'apps'>, f: number): string {
   const bits: string[] = [];
   if (c.cat === 'GK') {
-    bits.push(`${c.clean} Spiele zu null, Notenschnitt ${fmtAvg(c.avg)}`);
+    bits.push(`${nOf(c.clean, 'Spiel', 'Spiele')} zu null, Notenschnitt ${fmtAvg(c.avg)}`);
     if (f & WHY_BEST) bits.push('die wenigsten Gegentore aller Stammtorhüter');
   } else if (c.cat === 'DEF') {
-    bits.push(`Notenschnitt ${fmtAvg(c.avg)}, ${c.clean} Spiele zu null`);
+    bits.push(`Notenschnitt ${fmtAvg(c.avg)}, ${nOf(c.clean, 'Spiel', 'Spiele')} zu null`);
     if (c.goals + c.assists >= 6) bits.push(`dazu ${[c.goals ? `${c.goals} ${c.goals === 1 ? 'Tor' : 'Tore'}` : '', c.assists ? `${c.assists} ${c.assists === 1 ? 'Vorlage' : 'Vorlagen'}` : ''].filter(Boolean).join(' und ')}`);
   } else if (c.cat === 'MID') {
-    bits.push(`${c.goals} Tore und ${c.assists} Vorlagen, Notenschnitt ${fmtAvg(c.avg)}`);
+    bits.push(`${nOf(c.goals, 'Tor', 'Tore')} und ${nOf(c.assists, 'Vorlage', 'Vorlagen')}, Notenschnitt ${fmtAvg(c.avg)}`);
   } else {
-    bits.push(`${c.goals} Tore und ${c.assists} Vorlagen in ${c.apps} Spielen`);
+    bits.push(`${nOf(c.goals, 'Tor', 'Tore')} und ${nOf(c.assists, 'Vorlage', 'Vorlagen')} in ${nOf(c.apps, 'Spiel', 'Spielen')}`);
     if (f & WHY_KING) bits.push('Torschützenkönig');
   }
   if (f & WHY_BEST && c.cat !== 'GK') bits.push(`bester Notenschnitt aller ${CAT_PLURAL[c.cat]}`);

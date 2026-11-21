@@ -4,6 +4,7 @@
 // erreichte Runde, Stand (läuft / ausgeschieden / Sieger) und letztes Ergebnis.
 // Nur gelesen, kein Spielstand-Feld.
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import type { CupState, CupTie } from '../types';
 import type { Game } from './state';
 import type { TrophyShape } from './trophyCabinet';
@@ -83,7 +84,7 @@ export function ownCompetitions(g: Game): OwnComp[] {
   const total = g.fixtures.filter((m) => m.involvesPlayerClub).length;
   out.push({
     key: 'liga', name: pd.name, shape: pd.tier === 1 || pd.tier === 101 ? 'schale' : 'teller', state: played >= total && total > 0 ? (pos === 0 ? 'won' : 'out') : 'live',
-    status: row ? `${pos + 1}. Platz · ${row.points} Punkte` : 'Saison beginnt', steps: total ? { n: total, at: played } : undefined,
+    status: row ? `${pos + 1}. Platz · ${nOf(row.points, 'Punkt', 'Punkte')}` : 'Saison beginnt', steps: total ? { n: total, at: played } : undefined,
   });
   if (g.cup) { const e = cupEntry(g, g.cup, id, 'cup', 'Landespokal', 'pokal'); if (e) out.push(e); }
   for (const k of ['ec', 'cwc', 'uefa'] as const) {

@@ -25,6 +25,7 @@
 //              schaut auf die großen Ligen (Kalibrierung über die Epochen: tests/simAwards.ts)
 //   Einsätze   unter 20 Spielen im Jahr anteilig weniger (Faktor Einsätze/20).
 // =============================================================================
+import { nOf } from './textNum';
 import type { PositionGroup } from '../types';
 
 export type GBTitle = 'ec' | 'cwc' | 'uefa' | 'meister' | 'pokal';
@@ -108,9 +109,9 @@ export function gbReason(c: GBScored): string {
   if (big) bits.push(`Gewinner des ${GB_TITLE_LABEL[big].replace('Europapokal', 'Europapokals').replace('UEFA-Pokal', 'UEFA-Pokals')}`);
   if (c.titles.includes('meister')) bits.push(c.titles.includes('pokal') ? 'Double aus Meisterschaft und Pokal' : 'Meister');
   else if (c.titles.includes('pokal')) bits.push('Pokalsieger');
-  if (c.group === 'ATT' || (c.group === 'MID' && c.goals >= 10)) bits.push(`${c.goals} Tore${c.assists ? ` und ${c.assists} Vorlagen` : ''} im Kalenderjahr`);
-  else if (c.group === 'MID') bits.push(`${c.assists} Vorlagen, Notenschnitt ${fmt(c.avg)}`);
-  else bits.push(`${c.clean} Spiele zu null, Notenschnitt ${fmt(c.avg)}`);
+  if (c.group === 'ATT' || (c.group === 'MID' && c.goals >= 10)) bits.push(`${nOf(c.goals, 'Tor', 'Tore')}${c.assists ? ` und ${nOf(c.assists, 'Vorlage', 'Vorlagen')}` : ''} im Kalenderjahr`);
+  else if (c.group === 'MID') bits.push(`${nOf(c.assists, 'Vorlage', 'Vorlagen')}, Notenschnitt ${fmt(c.avg)}`);
+  else bits.push(`${nOf(c.clean, 'Spiel', 'Spiele')} zu null, Notenschnitt ${fmt(c.avg)}`);
   if (!bits.length || bits.length < 2) bits.push(c.ovr >= 88 ? 'Weltklasse in Bestform' : `konstant stark über ${c.apps} Spiele`);
   return bits.join(' – ').replace(/^./, (s) => s.toUpperCase()) + '.';
 }

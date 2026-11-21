@@ -3,6 +3,7 @@
 // Spieltage, Bewertungsrunden, Transferfenster, Saisonende) und die Vorschau des
 // Trainerstabs eine Woche vor jeder Bewertungsrunde. Aufgerufen aus game/day.ts.
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import { noteCupAppearances, ownAmrId, ownReserveCupMessage, withOwnReserveCup } from './reserveCup';
 import { superCupMatchday } from './superCupGame';
 import { snapshotAttributes } from '../engine/history';
@@ -84,8 +85,8 @@ export function processDayEvents(g: Game, ui: DayUi, todaysEvents: CalendarEvent
         const special = results.filter((r) => r.tag).map((r) => `• ${r.playerName}: ${r.tag} (${r.change > 0 ? '+' : ''}${r.change})`);
         pushMessage(g.messages, makeMessage({
           date: today, category: 'training', from: 'Trainerstab',
-          subject: `${label}: ${ups} Aufwertungen, ${downs} Abwertungen`,
-          shortText: special.length ? `${special.length} besondere Entwicklung(en) im Kader.` : 'Die Spielerwerte wurden neu bewertet.',
+          subject: `${label}: ${nOf(ups, 'Aufwertung', 'Aufwertungen')}, ${nOf(downs, 'Abwertung', 'Abwertungen')}`,
+          shortText: special.length ? `${nOf(special.length, 'besondere Entwicklung', 'besondere Entwicklungen')} im Kader.` : 'Die Spielerwerte wurden neu bewertet.',
           bodyText: `Der Trainerstab hat die ${label} abgeschlossen.\n\n`
             + (special.length ? `Besonders:\n${special.join('\n')}\n\n` : '')
             + (type !== 'small' ? 'Die Scouts haben ihre Potenzial-Einschätzungen aktualisiert.\n\n' : '')
@@ -230,7 +231,7 @@ export function processDayEvents(g: Game, ui: DayUi, todaysEvents: CalendarEvent
               book(
                 g.clubs[tie.winnerClubId].finances, tie.date,
                 Math.round(prize * economyScale(yearOf(tie.date)) * euroMoneyFactor(comp, yearOf(tie.date))), 'prize_money',
-                `${EURO_COMP_NAMES[comp]} - Praemie (${round.name})`,
+                `${EURO_COMP_NAMES[comp]} – Prämie (${round.name})`,
                 tie.winnerClubId === mid,
               );
             }

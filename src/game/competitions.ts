@@ -4,6 +4,7 @@ import { decisionBadge } from '../engine/cup';
 import { createEuroCup } from '../engine/euro';
 import { cupWinnersCupActive } from '../data/history';
 import { makeMessage } from '../engine/messages';
+import { fmtDMfull } from '../ui/format';
 import { Club, CupState, CupTie, GameCalendar, InboxMessage, Match } from '../types';
 import { hashSeed } from './state';
 import { scheduleDraws } from './cupDraw';
@@ -169,7 +170,7 @@ export function euroDrawMessage(
     from: 'Europapokal-Kommission',
     subject: `Auslosung ${round.name} — ${compName} ${cup.season}`,
     shortText: `Dein Los: ${gegner}`,
-    bodyText: `Die Auslosung der ${round.name} im ${compName} ${cup.season} ist erfolgt.\n\n`
+    bodyText: `Ausgelost: ${round.name} im ${compName} ${cup.season}.\n\n`
       + `Deine Begegnung: ${heim ? 'Heimspiel gegen' : 'Auswärts bei'} ${gegner} (${CalendarEngine.formatDate(round.date)}).\n\nViel Erfolg in Europa!`,
     actionRequired: false,
   });
@@ -195,11 +196,11 @@ export function euroResultMessage(
   if (isFinal && advanced) {
     subject = `Europapokalsieger! ${compName} ${cup.season}`;
     shortText = `Ihr habt den ${compName} gewonnen!`;
-    body = `Sensation! Im Finale des ${compName} ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nEin historischer Triumph in Europa! Prämie: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    body = `Sensation! Im Finale des ${compGen(compName)} ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nEin historischer Triumph in Europa! Prämie: ${fmtDMfull(Math.round(prize))}.`;
   } else if (advanced) {
     subject = `Europapokal: Weiter! ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} gewonnen — weiter in Europa.`;
-    body = `${round.name}, ${compName} ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    body = `${round.name}, ${compName} ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${fmtDMfull(Math.round(prize))}.`;
   } else {
     subject = `Europapokal-Aus: ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} verloren — in Europa ausgeschieden.`;
@@ -223,17 +224,20 @@ export function euroWinnerChronicle(
     date, category: 'media', from: 'Europapokal-Chronik',
     subject: `${compName} ${cup.season}: ${wname}`,
     shortText: `${wname} gewinnt den ${compName}.`,
-    bodyText: `Das Finale des ${compName} ${cup.season} ist entschieden. ${wname} sichert sich den Titel.`,
+    bodyText: `Das Finale des ${compGen(compName)} ${cup.season} ist entschieden. ${wname} sichert sich den Titel.`,
     actionRequired: false,
   });
 }
+
+/** Genitiv eines Wettbewerbsnamens: „des Pokals der Landesmeister“, „des Europa-Pokals“. */
+const compGen = (n: string) => n.replace(/^((?:Europa-)?Pokal)\b/, '$1s');
 
 /** Baut die erste Pokal-Auslosungs-Nachricht (1. Hauptrunde). */
 export function cupDrawMessage(cup: CupState, clubs: Record<string, Club>, managedClubId: string, date: string): InboxMessage {
   const round = cup.rounds[cup.currentRoundIndex];
   const myTie = round.ties.find((t) => t.involvesPlayerClub);
   const name = (id: string) => clubs[id]?.name ?? id;
-  let body = `Die Auslosung der ${round.name} des Landespokals ${cup.season} ist erfolgt. 32 Mannschaften kämpfen um den Pokal — 18 Bundesligisten und 14 Amateurvereine.\n\n`;
+  let body = `Ausgelost: ${round.name} im Landespokal ${cup.season}. ${round.ties.length * 2} Mannschaften kämpfen um den Pokal.\n\n`;
   if (myTie) {
     const heim = myTie.homeClubId === managedClubId;
     const gegner = heim ? name(myTie.awayClubId) : name(myTie.homeClubId);
@@ -259,7 +263,7 @@ export function cupNextDrawMessage(cup: CupState, clubs: Record<string, Club>, m
   const round = cup.rounds[roundIndex];
   const myTie = round.ties.find((t) => t.involvesPlayerClub);
   const name = (id: string) => clubs[id]?.name ?? id;
-  let body = `Die Auslosung des ${round.name} im Landespokal ${cup.season} ist erfolgt. Noch ${round.ties.length * 2} Mannschaften sind im Wettbewerb.\n\n`;
+  let body = `Ausgelost: ${round.name} im Landespokal ${cup.season}. Noch ${round.ties.length * 2} Mannschaften sind im Wettbewerb.\n\n`;
   if (myTie) {
     const heim = myTie.homeClubId === managedClubId;
     const gegner = heim ? name(myTie.awayClubId) : name(myTie.homeClubId);
@@ -295,11 +299,11 @@ export function cupResultMessage(cup: CupState, clubs: Record<string, Club>, man
   if (isFinal && advanced) {
     subject = `Landespokalsieger ${cup.season}!`;
     shortText = 'Ihr habt den Landespokal gewonnen!';
-    body = `Sensation! Im Finale des Landespokals ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nDer Landespokal steht in der Vitrine — ein historischer Triumph! Prämie: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    body = `Sensation! Im Finale des Landespokals ${cup.season} setzte sich dein Verein mit ${scoreLine} gegen ${opp} durch.\n\nDer Landespokal steht in der Vitrine – ein historischer Triumph! Prämie: ${fmtDMfull(Math.round(prize))}.`;
   } else if (advanced) {
     subject = `Pokal: Weiter! ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} gewonnen — weiter im Pokal.`;
-    body = `${round.name}, Landespokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${Math.round(prize).toLocaleString('de-DE')} DM.`;
+    body = `${round.name}, Landespokal ${cup.season}:\n\n${hName} ${scoreLine} ${aName}\n\nDein Verein steht in der nächsten Runde! Prämie für diese Runde: ${fmtDMfull(Math.round(prize))}.`;
   } else {
     subject = `Pokal-Aus: ${hName} ${scoreLine} ${aName}`;
     shortText = `${round.name} verloren — im Pokal ausgeschieden.`;

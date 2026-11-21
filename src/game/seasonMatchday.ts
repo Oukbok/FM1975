@@ -85,7 +85,7 @@ export function emitMatchMessage(game: Game, m: Match): void {
     date: m.date, category: 'match', from: 'Spielbericht',
     subject: `${m.matchday}. Spieltag: ${h.shortName} ${m.result.homeGoals}:${m.result.awayGoals} ${a.shortName}`,
     shortText: `${outcome} ${myGoals}:${oppGoals} gegen ${opp.shortName}.`,
-    bodyText: `Am ${m.matchday}. Spieltag ${myHome ? 'empfing' : 'gastierte'} ${myHome ? h.name + ' ' + a.name : h.name + ' gegen ' + a.name}.\n\nEndstand: ${h.name} ${m.result.homeGoals}:${m.result.awayGoals} ${a.name} — ein ${outcome} aus deiner Sicht.\n\nBallbesitz: ${m.result.homePossession}% : ${100 - m.result.homePossession}%\nSchüsse: ${m.result.homeShots} : ${m.result.awayShots}\nZuschauer: ${m.result.attendance.toLocaleString('de-DE')}\n\nDen ausführlichen Spielbericht öffnest du über den Spielplan.`,
+    bodyText: `Am ${m.matchday}. Spieltag ${myHome ? `empfing ${h.name} ${a.name}` : `gastierte ${a.name} bei ${h.name}`}.\n\nEndstand: ${h.name} ${m.result.homeGoals}:${m.result.awayGoals} ${a.name} – ${outcome === 'Niederlage' ? 'eine' : 'ein'} ${outcome} aus deiner Sicht.\n\nBallbesitz: ${m.result.homePossession} % : ${100 - m.result.homePossession} %\nSchüsse: ${m.result.homeShots} : ${m.result.awayShots}\nZuschauer: ${m.result.attendance.toLocaleString('de-DE')}\n\nDen ausführlichen Spielbericht öffnest du über den Spielplan.`,
     relatedId: m.id,
   }));
 }

@@ -7,6 +7,7 @@
 // Spiele des eigenen Vereins: volle Match-Engine (vorbereitet über Textmodus oder
 // Schnellsimulation); alle anderen: engine/euroLight.ts mit Statistik.
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import { euroCompName, euroFormat, groupBonusEur } from '../data/euroFormats';
 import type { EuroCompId } from '../data/europe';
 import { CalendarEngine } from '../engine/calendar';
@@ -203,7 +204,7 @@ function finishGroups(g: Game, comp: EuroCompId, cup: CupState, ri: number): voi
       subject: `${round.name} beendet: Platz ${pos}${mine.gr.name !== 'Ligaphase' ? ` in Gruppe ${mine.gr.name}` : ''}`,
       shortText: `Platz ${pos} – ${destName}.`,
       bodyText: `${euroCompName(comp, y)} ${cup.season}, ${round.name}:\n\n`
-        + mine.rows.map((r, i) => `${i + 1}. ${nameOf(g, r.id)} – ${r.pts} Punkte, ${r.gf}:${r.ga} Tore`).slice(0, mine.gr.name === 'Ligaphase' ? 12 : 8).join('\n')
+        + mine.rows.map((r, i) => `${i + 1}. ${nameOf(g, r.id)} – ${nOf(r.pts, 'Punkt', 'Punkte')}, ${r.gf}:${r.ga} Tore`).slice(0, mine.gr.name === 'Ligaphase' ? 12 : 8).join('\n')
         + `\n\nDein Verein: Platz ${pos} – ${destName}.`,
       actionRequired: false,
     }));

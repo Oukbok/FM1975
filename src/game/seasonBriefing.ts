@@ -13,6 +13,7 @@
 // der Ausgangslage); die Inhalte werden aus den Daten rekonstruiert.
 // Oberfläche: views/zentrale/BriefingModal.tsx (Popup) + BriefingView.tsx (Archiv).
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import {
   BRIEFING_TOPICS, BriefingItem, BriefingTopic, DifferenceToToday,
   briefingFor, differencesEnded, differencesFor, differencesStarting, topicMeta,
@@ -223,7 +224,7 @@ function briefingMessage(b: SeasonBriefing, date: string) {
   return makeMessage({
     date, category: 'milestone', from: 'Saison-Briefing',
     subject: `Saison-Briefing ${b.season}: ${b.headline}`,
-    shortText: b.first ? `So anders ist der Fußball ${b.season}.` : `Was ist neu? ${b.inGame.length} Änderungen im Spiel.`,
+    shortText: b.first ? `So anders ist der Fußball ${b.season}.` : `Was ist neu? ${nOf(b.inGame.length, 'Änderung', 'Änderungen')} im Spiel.`,
     bodyText: `${b.title}\n\n${lines.join('\n')}`,
   });
 }

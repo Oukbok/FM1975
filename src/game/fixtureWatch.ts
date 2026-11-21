@@ -96,7 +96,7 @@ function closestKind(date: string, list: Commitment[]): Kind | null {
   return best?.kind ?? null;
 }
 
-const fmt = (d: string) => `${WD_NAME[wdOf(d)]}, ${CalendarEngine.formatDate(d)}`;
+const fmt = (d: string) => `${WD_NAME[wdOf(d)]}, ${CalendarEngine.formatDate(d).replace(/^\S+, /, '')}`;
 const nameOf = (g: Game, id: string) => g.clubs[id]?.name ?? id;
 
 /** Ligaspiel verlegen: Datum, Kalender-Ereignis, Markierung. */

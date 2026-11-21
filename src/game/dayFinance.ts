@@ -32,7 +32,7 @@ export function monthlyFinanceClose(g: Game, today: string, curMonth: string): v
           + `Werbung (Banden, Wettpartner): +${fmtDM(m.advertising)}\n`
           + (m.merchGlobal > 0 ? `Fanartikel weltweit: +${fmtDM(m.merchGlobal)}\n` : '')
           + (m.tv > 0 ? `TV-Gelder: +${fmtDM(m.tv)}\n` : '')
-          + `Mitgliedsbeitraege: +${fmtDM(m.membership)}\n`
+          + `Mitgliedsbeiträge: +${fmtDM(m.membership)}\n`
           + (m.cateringLease > 0 ? `Catering-Pacht: +${fmtDM(m.cateringLease)}\n` : '')
           + (m.placementBonus > 0 ? `Platzierungsbonus: +${fmtDM(m.placementBonus)}\n` : '')
           + `Spielergehälter: -${fmtDM(m.wages)}\n`

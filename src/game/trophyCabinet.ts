@@ -10,6 +10,7 @@
 // Zeichnung der Trophäen: views/verein/trophies/TrophyArt.tsx, Foto-Slots
 // data/trophyImages.ts.
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import type { EuroCompId } from '../data/europe';
 import { euroCompName } from '../data/euroFormats';
 import { HIST_TOP_SCORERS, historicDivisions, historicFinal, type HistFinal } from '../data/history/seasons';
@@ -143,7 +144,7 @@ export function trophyTally(list: TrophyEntry[]): { title: string; n: number; sh
 // -----------------------------------------------------------------------------
 // Einzelheiten der Saison
 // -----------------------------------------------------------------------------
-const fmtPts = (r: ArchRow) => `${r[6]} Punkte`;
+const fmtPts = (r: ArchRow) => nOf(r[6], 'Punkt', 'Punkte');
 
 function leagueRows(g: Game, season: string, clubId: string, tier: number | undefined): ArchRow[] | null {
   const a = archivedSeason(g, season);

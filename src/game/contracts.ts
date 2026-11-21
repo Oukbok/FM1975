@@ -242,7 +242,9 @@ export function handleContractExpiry(g: Game, today: string): void {
       shortText: bosman ? 'Ablösefrei – nach dem Bosman-Urteil gibt es keine Entschädigung mehr.' : `Ablöse-Einnahmen: ${fmtPrice(income)}.`,
       bodyText: `Diese Spieler hatten keinen neuen Vertrag und sind gewechselt:\n\n${left.join('\n')}\n\n${bosman
         ? 'Seit dem Bosman-Urteil wechseln Spieler nach Vertragsende ablösefrei. Wichtige Verträge solltest du früh verlängern.'
-        : 'Auch ohne Vertrag steht uns noch eine Ablöse zu – das ändert sich erst mit dem Bosman-Urteil.'}`,
+        : year >= 1991
+          ? 'Auch ohne Vertrag steht uns noch eine Ablöse zu – noch: Ein belgischer Profi klagt vor Gericht gegen diese Regel.'
+          : 'Auch ohne Vertrag steht uns noch eine Ablöse zu – so will es das Transferrecht.'}`,
     }));
   }
   if (renewed.length) {

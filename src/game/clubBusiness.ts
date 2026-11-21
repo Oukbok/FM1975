@@ -3,6 +3,7 @@
 // Namensrechte, Ausgliederung/Investor (Aktionen), Überschuldung (Saisonwechsel).
 // Rechenlogik: engine/clubBusiness.ts.
 // =============================================================================
+import { nOf } from '../engine/textNum';
 import { checkBudget, noteBudgetSpend } from './budgetPlan';
 import { Game } from './state';
 import { Club, NamingRights } from '../types';
@@ -270,11 +271,11 @@ export function seasonClubBusiness(g: Game, newSeason: string, date: string): vo
     if (c.id === g.managedClubId) {
       pushMessage(g.messages, makeMessage({
         date, category: 'board', from: 'Lizenzierungsausschuss',
-        subject: v.relegate ? `Insolvenz: Zwangsabstieg und ${v.points} Punkte Abzug` : `${v.points} Punkte Abzug wegen Überschuldung`,
+        subject: v.relegate ? `Insolvenz: Zwangsabstieg und ${nOf(v.points, 'Punkt', 'Punkte')} Abzug` : `${nOf(v.points, 'Punkt', 'Punkte')} Abzug wegen Überschuldung`,
         shortText: v.text.slice(0, 90), bodyText: v.text, actionRequired: true,
       }));
     } else {
-      aiNews.push(`${c.name}: ${v.points} Punkte Abzug${v.relegate ? ', Insolvenz und Zwangsabstieg zum Saisonende' : ''}`);
+      aiNews.push(`${c.name}: ${nOf(v.points, 'Punkt', 'Punkte')} Abzug${v.relegate ? ', Insolvenz und Zwangsabstieg zum Saisonende' : ''}`);
     }
   }
   if (aiNews.length) {

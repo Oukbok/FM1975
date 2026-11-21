@@ -304,7 +304,7 @@ function renewalOffers(g: Game, c: Club, today: string): void {
       clauses: d.clauses.filter((x) => x.kind !== 'option').map((x) => (x.kind === 'image' ? { kind: 'image' as const, level: industryImage(d.industry, year, d.country) } : { ...x })).filter((x) => x.kind !== 'image' || x.level > 0),
       interest: 0.75, rounds: 0, until: `${year}-05-31`, renewal: true,
     });
-    msg(g, today, `${d.partner} möchte verlängern`, `Der Vertrag mit ${d.partner} (${def.name}) läuft im Sommer aus. Der Partner bietet ${formatMoney(value * economyScale(year), year, true)} pro Jahr für ${years} weitere Saisons. Du kannst annehmen, nachverhandeln – oder den Markt testen.`, true);
+    msg(g, today, `${d.partner} möchte verlängern`, `Der Vertrag mit ${d.partner} (${def.name}) läuft im Sommer aus. Der Partner bietet ${formatMoney(value * economyScale(year), year, true)} pro Jahr für ${years === 1 ? 'eine weitere Saison' : `${years} weitere Saisons`}. Du kannst annehmen, nachverhandeln – oder den Markt testen.`, true);
   }
 }
 
