@@ -4,7 +4,7 @@
 //   node scripts/run-ts.mjs tests/talent-test.ts            (SAVE=<datei> lädt zusätzlich einen alten Spielstand)
 import { readFileSync } from 'node:fs';
 import { decompressFromUTF16 } from 'lz-string';
-import { exceptionalPotential, longevity, maturity, youthTalentPotential } from '../src/engine/talent';
+import { exceptionalPotential, longevity, maturity, POT_CAP, youthTalentPotential } from '../src/engine/talent';
 import { createNewGame } from '../src/game/newGame';
 import { migrateLegacyLegends } from '../src/game/playerMigration';
 import { processDay, HEADLESS_UI } from '../src/game/day';
@@ -27,7 +27,13 @@ console.log(`Potenzial: ≥85 ${pct(n85)}, ≥90 ${pct(n90)}, ≥93 ${pct(n93)},
 if (n85 / N < 0.01 || n85 / N > 0.06) fail('Anteil ≥85 außerhalb 1–6 %');
 if (n93 / N > 0.004) fail('Zu viele Jahrhundert-Potenziale (≥93)');
 if (n93 === 0) fail('Kein einziges Potenzial ≥93 – Ausreißer-Schwanz fehlt');
-for (let i = 0; i < 1000; i++) { const v = exceptionalPotential(Math.random); if (v < 85 || v > 99) fail('Ausnahmepotenzial außerhalb 85–99'); }
+// Skala EA FC (engine/talent.ts): Ausreißer-Schwanz ab 84, Deckel POT_CAP (93) – nicht mehr 85–99.
+{
+  const xs = Array.from({ length: 1000 }, () => exceptionalPotential(Math.random));
+  if (xs.some((v) => v < 84 || v > POT_CAP)) fail(`Ausnahmepotenzial außerhalb 84–${POT_CAP}`);
+  const ge90 = xs.filter((v) => v >= 90).length / xs.length;
+  if (ge90 < 0.03 || ge90 > 0.15) fail(`Ausnahmepotenzial ≥ 90 bei ${(ge90 * 100).toFixed(1)} % statt rund 7 %`);
+}
 
 // 2) Verdeckte Eigenschaften: deterministisch, im Bereich, große Talente frühreifer.
 const fake = (id: string, pot: number) => ({ id, isYouth: false, overall: 60, development: { basePotential: pot, potentialAbility: pot } } as unknown as Player);
