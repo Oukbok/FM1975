@@ -355,6 +355,10 @@
 .st-btn.primary { background: var(--st-accent); color: var(--st-on); box-shadow: none; }
 .st-btn.primary:hover:not(:disabled) { filter: brightness(1.08); background: var(--st-accent); }
 .st-btn .cnt { font-family: var(--font-ui); font-size: 13px; font-weight: 700; opacity: 0.75; }
+/* Versionsnummer + Build-Kennung (engine/appVersion.ts); Desktop: Knopf zum Spielstand-Ordner */
+.st-version { position: absolute; left: 56px; bottom: 10px; display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: var(--st-muted); }
+.st-version button { font: inherit; color: var(--st-muted); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+.st-version button:hover { color: var(--st-accent); }
 .st-era {
   position: absolute;
   right: 40px;

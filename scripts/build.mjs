@@ -2,11 +2,18 @@
 //   node scripts/build.mjs          -> Produktions-Build nach dist/
 //   node scripts/build.mjs --serve  -> Entwicklungsserver mit Auto-Rebuild (http://localhost:5173)
 import * as esbuild from 'esbuild';
-import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const serve = process.argv.includes('--serve');
 const out = 'dist';
+
+// Versionsnummer (package.json) + Build-Kennung (Git-Kurzhash · Datum) für das Hauptmenü
+// (src/engine/appVersion.ts) und dist/version.json (Desktop-Build, Fehlerberichte).
+const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+let commit = process.env.GITHUB_SHA?.slice(0, 7) ?? '';
+if (!commit) { try { commit = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { /* ohne Git */ } }
+const buildId = [commit, new Date().toISOString().slice(0, 10)].filter(Boolean).join(' · ');
 
 // Lesbare Schrift auf kleinen Bildschirmen: styles/34-compact-fonts.css aus allen Stylesheets erzeugen.
 execFileSync(process.execPath, ['scripts/compact-fonts.mjs'], { stdio: 'inherit' });
@@ -16,6 +23,7 @@ cpSync('public', out, { recursive: true });
 // Alle Bilder liegen im Ordner images/ (Wunsch Pascal: ein Ort zum Finden und als Referenz);
 // im Spiel heißen sie weiter assets/… – deshalb nach dist/assets kopieren.
 cpSync('images', `${out}/assets`, { recursive: true });
+writeFileSync(`${out}/version.json`, JSON.stringify({ version, build: buildId }) + '\n');
 writeFileSync(`${out}/index.html`, `<!DOCTYPE html>
 <html lang="de">
   <head>
@@ -67,7 +75,7 @@ const options = {
   external: ['assets/*'],
   minify: !serve,
   sourcemap: serve,
-  define: { 'process.env.NODE_ENV': serve ? '"development"' : '"production"' },
+  define: { 'process.env.NODE_ENV': serve ? '"development"' : '"production"', __APP_VERSION__: JSON.stringify(version), __APP_BUILD__: JSON.stringify(buildId) },
   logLevel: 'info',
 };
 

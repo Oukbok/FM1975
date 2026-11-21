@@ -1,4 +1,6 @@
 import { AppSettings, SaveMeta, deleteSave, listSaves, storageAvailable } from '../engine/save';
+import { desktopApi } from '../engine/saveStore';
+import { versionLabel } from '../engine/appVersion';
 import { NewGameOptions } from '../types';
 import type { Game } from '../game/state';
 import { LoadGameScreen } from './LoadGameScreen';
@@ -43,7 +45,9 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
     );
   }
 
+  const desktop = desktopApi();
   const quit = () => {
+    if (desktop) { desktop.quit(); return; }
     // "Spiel verlassen": Tab/Fenster schließen; sonst Hinweis.
     window.open('', '_self');
     window.close();
@@ -75,6 +79,10 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
           <button className="st-btn" onClick={quit}>Beenden</button>
         </nav>
         {!storageAvailable() && <div className="st-note">Speichern/Laden ist in dieser Umgebung nicht verfügbar (localStorage gesperrt).</div>}
+        <div className="st-version">
+          <span>{versionLabel()}</span>
+          {desktop && <button onClick={() => { desktop.saves.openFolder(); }}>Spielstand-Ordner öffnen</button>}
+        </div>
         <div className="st-era" role="group" aria-label="Zeitreise">
           <span className="lbl">ZEITREISE</span>
           {ERAS.map((x) => (
