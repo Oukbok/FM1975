@@ -1,7 +1,7 @@
 // =============================================================================
 // REKORDKURVE DER ABLÖSESUMMEN (Spitzenablöse eines Jahres, nominal in EUR)
 // -----------------------------------------------------------------------------
-// Grundlage: Recherche in docs/recherche/transferrekorde.md (Weltrekorde und
+// Grundlage: Recherche in docs/research/transferrekorde.md (Weltrekorde und
 // Spitzentransfers je Jahr, Bundesliga-Rekordzugänge). Die Stützwerte sind
 // GEGLÄTTET: Ausreißer wie der 222-Mio.-Transfer 2017 heben die Kurve nur
 // teilweise an. Im Spiel ist die Kurve eine weiche Obergrenze – sie kann
@@ -14,7 +14,7 @@
 // (1976 erster Millionentransfer, 2001 Rekord mit 50 Mio. DM).
 // Ab 2027 fiktive Fortschreibung im Gleichschritt mit der Wirtschafts-Basis (engine/economy.ts economyScale;
 // früher fest +3,5 % pro Jahr – die Basis wächst nach 2030 nur ≈ 2 %, bis 2075 hätte sich die Spitzenablöse
-// gemessen am Umsatz der Vereine verdoppelt, docs/recherche/balance-100.md).
+// gemessen am Umsatz der Vereine verdoppelt, docs/research/balance-100.md).
 // =============================================================================
 
 import { economyScale } from '../engine/economy';

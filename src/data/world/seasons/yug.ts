@@ -1,4 +1,4 @@
-// Ligen Jugoslawien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_yug.md
+// Ligen Jugoslawien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_yug.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_YUG: Record<number, SeasonRow> = {

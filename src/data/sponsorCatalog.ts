@@ -2,7 +2,7 @@
 // SPONSORING 2.0 — Werbeflächen, Branchen, Herkunftsländer, Regulierung
 // -----------------------------------------------------------------------------
 // Rechnung: engine/sponsorship.ts · Spielablauf: game/sponsorGame.ts ·
-// Recherche: docs/recherche/sponsoring.md (Quellen [S1] …) und fcbayern_2026.md.
+// Recherche: docs/research/sponsoring.md (Quellen [S1] …) und fcbayern_2026.md.
 //
 // Werte: Jahreswert eines Vertrags für einen MEDIAN-Erstligisten (Reichweite 1),
 // nominal (DM bis 2001, Euro ab 2002 – intern in DM-Einheiten, 1 € = 1,95583).

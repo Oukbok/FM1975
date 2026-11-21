@@ -14,7 +14,7 @@
 //   nr      = laufende Nummer (01, 02, …) = eine Person
 //   alter   = 18 | 25 | 32 | 38 (Spieler) bzw. 35 | 45 | 55 | 65 (Mitarbeiter), optional
 // FACE_MASKS: Einträge, zu denen eine Trikot-Maske `<…>-maske.webp` vorliegt.
-// Anleitung: docs/bilder/BILDER.md, Abschnitt 2.
+// Anleitung: docs/images/BILDER.md, Abschnitt 2.
 // =============================================================================
 export const FACE_FILES: string[] = [
   'balkan/1970/03',

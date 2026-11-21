@@ -2,7 +2,7 @@
 // TALENT — organische Spielerkurven (ersetzt das frühere Legenden-System)
 // -----------------------------------------------------------------------------
 // Jeder Spieler entsteht nach denselben Regeln. Drei verdeckte Größen formen
-// seine Kurve (Recherche: docs/recherche/spielerkurven.md):
+// seine Kurve (Recherche: docs/research/spielerkurven.md):
 //  • Potenzial (OVR-Skala): meist 60–82, selten 85+, ganz selten 93+ – ein
 //    „Jahrhunderttalent“ entsteht nur aus dem äußersten Rand der Verteilung.
 //  • Frühreife (−1 … +1): frühreife Spieler wachsen bis 20 schneller und sind
@@ -81,7 +81,7 @@ export function declineShiftOf(p: Player): number {
 
 /**
  * Altersgerechter Reifegrad: Anteil des Potenzials, den ein Profi in diesem
- * Alter typischerweise erreicht (Kurven in docs/recherche/spielerkurven.md:
+ * Alter typischerweise erreicht (Kurven in docs/research/spielerkurven.md:
  * Normalprofi 66/73 mit 21, Kimmich 80/88, Messi 89/97 mit 20). Frühreife
  * verschiebt um bis zu ±8 %. Darüber wächst ein Spieler nur noch sehr langsam.
  */

@@ -1,5 +1,5 @@
 // Bilderliste für das Briefing-Archiv: je Saison Aufmacher + zwei Nebenthemen, dazu je Art
-// von „Neu im Spiel“ ein Bild. Schreibt docs/bilder/briefing.md.
+// von „Neu im Spiel“ ein Bild. Schreibt docs/images/briefing.md.
 //   node scripts/run-ts.mjs scripts/briefing-image-list.ts
 import { writeFileSync } from 'node:fs';
 import { composeBriefing } from '../src/game/seasonBriefing';
@@ -39,5 +39,5 @@ for (let y = 1975; y <= 2034; y++) {
   });
 }
 lines.push('', `Zusammen ${n} Ereignis-Bilder.`);
-writeFileSync('docs/bilder/briefing.md', lines.join('\n') + '\n');
-console.log(`docs/bilder/briefing.md: ${n} Ereignisse`);
+writeFileSync('docs/images/briefing.md', lines.join('\n') + '\n');
+console.log(`docs/images/briefing.md: ${n} Ereignisse`);

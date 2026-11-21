@@ -7,7 +7,7 @@
 // spürbare Wirkung („Sahnehäubchen“) – hier bewusst mit Folgen: Energie und
 // Weiterbildung wirken auf Training/Gespräche, Kontakte auf Vorstand/Sponsoren,
 // Kinder werden Spieler oder übernehmen den Verein (Generationen).
-// Recherche: docs/recherche/privatleben.md
+// Recherche: docs/research/privatleben.md
 // Geld privat NOMINAL (wie Vereinskonten, DM-Werte, Anzeige fmtDM): Preise unten in
 // DM von 1975 × Verbraucherpreise `cpi(year)` – nicht × economyScale, denn Häuser und
 // Brötchen werden nicht so schnell teurer wie Fußballergehälter.

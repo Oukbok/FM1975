@@ -1,4 +1,4 @@
-// Ligen Russland je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_rus.md
+// Ligen Russland je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_rus.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_RUS: Record<number, SeasonRow> = {

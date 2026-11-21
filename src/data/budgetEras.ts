@@ -9,13 +9,13 @@
 export interface BudgetEra { from: number; to: number; lines: string[] }
 
 export const BUDGET_ERAS: BudgetEra[] = [
-  // Quellen: docs/recherche/FINANZEN_Recherche_1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
+  // Quellen: docs/research/FINANZEN_Recherche_1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
   // TV-Rechte 1975/76 insgesamt 4,8 Mio. DM – Spiegel „TV-Gelder von 1965 bis heute“; Eintritt wichtigste Säule).
   { from: 1975, to: 1977, lines: [
     'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen die öffentlich-rechtlichen Sender 1975/76 der ganzen Bundesliga zusammen nur 4,8 Mio. DM.',
     'Das Geld kommt über die Kassenhäuschen. Fernsehgeld ist ein kleiner Zuschuss – die Sender zahlen der ganzen Bundesliga 1975/76 gerade 4,8 Mio. DM –, und Trikotwerbung gibt es erst seit 1973.',
   ] },
-  // Quelle: docs/recherche/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
+  // Quelle: docs/research/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
   { from: 1978, to: 1983, lines: [
     'Der Markt wird teurer: Seit 1976 ein belgischer Stürmer für eine Million DM nach Köln ging, sind Millionen-Ablösen kein Tabu mehr. Unsere Einnahmen wachsen aber weiter vor allem über die Ränge.',
     'Seit dem ersten Millionen-Transfer 1976 (ein Belgier nach Köln) ziehen die Ablösen an. Die Kasse füllt sich weiter in erster Linie am Spieltag – das Fernsehen bleibt ein Nebengeschäft.',
@@ -31,12 +31,12 @@ export const BUDGET_ERAS: BudgetEra[] = [
     'Mit dem Privatfernsehen steigt der Preis für die Bundesliga-Rechte sprunghaft: 1988/89 sind es rund 40 Mio. DM für die Liga. Das Fernsehgeld wird zum planbaren Posten.',
     'Das Fernsehen entdeckt den Fußball: Der neue Rechtevertrag 1988/89 bringt der Liga rund 40 Mio. DM – mehr als das Doppelte des alten. Damit können wir erstmals fest planen.',
   ] },
-  // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (Sat.1 „ran“).
+  // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (Sat.1 „ran“).
   { from: 1992, to: 1995, lines: [
     'Seit 1992/93 zahlt das Privatfernsehen rund 145 Mio. DM für die Liga – ein Privatsender zeigt sie als große Samstagsshow. Die TV-Gelder holen bei uns zu den Zuschauern auf.',
     'Die neuen Fernsehverträge verändern die Rechnung: Rund 145 Mio. DM fließen seit 1992/93 an die Liga. Der Spieltag bleibt wichtig, ist aber nicht mehr alles.',
   ] },
-  // Quelle: docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (Bosman-Urteil 15.12.1995:
+  // Quelle: docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (Bosman-Urteil 15.12.1995:
   // ablösefrei nach Vertragsende, Gehälter/Handgelder steigen, Vertragslaufzeiten entscheiden).
   { from: 1996, to: 1999, lines: [
     'Seit dem Bosman-Urteil vom Dezember 1995 gehen Spieler nach Vertragsende ablösefrei. Das gesparte Geld wandert in Gehälter und Handgelder – achte auf die Laufzeiten, sonst verlieren wir Werte umsonst.',
@@ -52,7 +52,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
     'Seit 2002 rechnen wir in Euro. Und die Pleite der Mediengruppe zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen.',
     'Neue Währung, alte Sorgen: Nach der Pleite der Rechte-Mediengruppe 2002 sind die TV-Gelder gesunken. Eine ordentliche Reserve ist jetzt Pflicht, nicht Kür.',
   ] },
-  // Quelle: docs/recherche/FINANZEN_Recherche_Entwicklung_1980_heute.md (2000er/2010er: Ausgliederungen,
+  // Quelle: docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (2000er/2010er: Ausgliederungen,
   // Mehrsäulenmodell, Sponsoring/Hospitality/Merchandising gewinnen gegenüber Eintritt).
   { from: 2005, to: 2012, lines: [
     'Wir stehen inzwischen auf mehreren Säulen: Fernsehen, Sponsoring und Hospitality tragen mehr als der Eintritt. Logen und Business-Seats sind kein Luxus mehr, sondern Einnahmequelle.',

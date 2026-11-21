@@ -1,4 +1,4 @@
-// Vereine Schottland 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_sco.md
+// Vereine Schottland 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_sco.md
 import type { RealClub } from '../types';
 
 export const CLUBS_SCO: RealClub[] = [

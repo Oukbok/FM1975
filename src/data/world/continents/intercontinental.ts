@@ -1,7 +1,7 @@
 // =============================================================================
 // INTERKONTINENTALE WETTBEWERBE DER VEREINE – Formate je Epoche (Namen verfremdet).
 // -----------------------------------------------------------------------------
-// Vorbilder (Quellen in docs/recherche/kontinente.md):
+// Vorbilder (Quellen in docs/research/kontinente.md):
 //  • „Weltpokal“ (Intercontinental Cup) 1960–2004: Europas Landesmeister gegen den
 //    Sieger Südamerikas. 1960–1979 Hin- und Rückspiel (Nov./Dez. bzw. bis März),
 //    in den 1970ern sagten Europas Meister mehrfach ab (Finalist sprang ein, 1975

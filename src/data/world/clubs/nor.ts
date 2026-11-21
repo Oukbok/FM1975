@@ -1,4 +1,4 @@
-// Vereine Norwegen 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_nor.md
+// Vereine Norwegen 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_nor.md
 import type { RealClub } from '../types';
 
 export const CLUBS_NOR: RealClub[] = [

@@ -11,7 +11,7 @@
 // Alle Verschiebungen sind auf typische Ligawerte zentriert (NEUTRAL_TRAITS,
 // gemessen über alle Epochen), damit Tore und Chancen je Epoche gleich bleiben
 // (Messung `MODE=attrs node scripts/matchbench.mjs`, Soll/Ist `MODE=era`).
-// Recherche und Tabelle Attribut → Wirkung: docs/recherche/attribute-engine.md.
+// Recherche und Tabelle Attribut → Wirkung: docs/research/attribute-engine.md.
 // =============================================================================
 import type { MPlayer } from './types';
 import { DUEL_K, logistic, paceSkill, phys, energyF, recoverSkill } from './skills';

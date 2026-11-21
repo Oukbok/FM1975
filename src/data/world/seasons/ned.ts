@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten ned: Ligen je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1/t2 in Reihenfolge der Abschlusstabelle; t2b = zweite Staffel der 2. Liga.
-// Quellen und Unsicherheiten (welche Felder aus Wissen, ungeprüft): docs/recherche/weltvereine_ned.md.
+// Quellen und Unsicherheiten (welche Felder aus Wissen, ungeprüft): docs/research/weltvereine_ned.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

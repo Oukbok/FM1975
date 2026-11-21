@@ -1,4 +1,4 @@
-// Ligen Slowakei je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_svk.md
+// Ligen Slowakei je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_svk.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_SVK: Record<number, SeasonRow> = {

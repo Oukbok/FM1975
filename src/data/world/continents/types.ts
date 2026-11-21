@@ -7,7 +7,7 @@
 // Name nach Stadt/Farbe verfremdet, Farben, Stadt und Stärke je Epoche
 // (Stützjahre 1975/1990/2005/2025, dazwischen linear, danach gehalten; einzelne
 // Ausreißer als Zusatzpunkte `x`). Echte Vorbilder und Quellen nur in
-// docs/recherche/kontinente.md. Vereins-IDs `w_ct_<land>_<kürzel>` (Präfix w_ = Auslandsverein wie die Weltdaten: überall von deutschen Abläufen ausgenommen) – die Reihenfolge
+// docs/research/kontinente.md. Vereins-IDs `w_ct_<land>_<kürzel>` (Präfix w_ = Auslandsverein wie die Weltdaten: überall von deutschen Abläufen ausgenommen) – die Reihenfolge
 // je Land ist Teil des Spielstand-Formats (Platzierungen werden als Index
 // gespeichert): neue Vereine nur HINTEN anhängen.
 // =============================================================================

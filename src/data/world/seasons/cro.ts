@@ -1,4 +1,4 @@
-// Ligen Kroatien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_cro.md
+// Ligen Kroatien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_cro.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_CRO: Record<number, SeasonRow> = {

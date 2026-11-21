@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 // Liegt ein Foto unter `images/press/<epoche>/<motiv>.webp`, hier eintragen –
 // erst dann wird es geladen (keine 404-Anfragen). Ohne Eintrag zeigt die Nachricht
-// kein Foto. Motive und Größen: docs/bilder/BILDER.md, Abschnitt „Akte“.
+// kein Foto. Motive und Größen: docs/images/BILDER.md, Abschnitt „Akte“.
 // Epoche = Jahr, ab dem die Fassung gilt (1975 = Schwarzweiß der 70er …).
 // =============================================================================
 import type { InboxMessage } from '../types';

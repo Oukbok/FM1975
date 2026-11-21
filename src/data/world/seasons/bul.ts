@@ -1,4 +1,4 @@
-// Ligen Bulgarien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_bul.md
+// Ligen Bulgarien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_bul.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_BUL: Record<number, SeasonRow> = {

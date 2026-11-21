@@ -1,4 +1,4 @@
-// Ligen Polen je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_pol.md
+// Ligen Polen je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_pol.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_POL: Record<number, SeasonRow> = {

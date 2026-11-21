@@ -1,4 +1,4 @@
-// Ligen Rumänien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_rou.md
+// Ligen Rumänien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_rou.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_ROU: Record<number, SeasonRow> = {

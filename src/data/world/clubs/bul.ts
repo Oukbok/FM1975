@@ -1,4 +1,4 @@
-// Vereine Bulgarien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_bul.md
+// Vereine Bulgarien (verfremdet). Quellen/echte Namen: docs/research/weltvereine_bul.md
 import type { RealClub } from '../types';
 
 export const CLUBS_BUL: RealClub[] = [

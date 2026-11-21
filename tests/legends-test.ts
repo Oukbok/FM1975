@@ -1,6 +1,6 @@
 // =============================================================================
 // Ausnahmetalente der Fußballgeschichte (npm run test:legends, Logik-Teil):
-// 132 Einträge, verfremdete Namen ≠ Vorbilder (docs/recherche/legenden.md),
+// 132 Einträge, verfremdete Namen ≠ Vorbilder (docs/research/legenden.md),
 // Spawn-Jahr/-Alter/Verein, Gewichtung nach Ausbildungsqualität, fester Verein,
 // Determinismus je Spielstand, Option aus, keine Nachrichten, verdeckte Werte
 // übernommen, Datensatz leer = keine, Alt-Migration lässt neue Felder stehen.
@@ -29,7 +29,7 @@ const ids = new Set(BUILTIN_LEGENDS.map((l) => l.id)), names = new Set(BUILTIN_L
 if (ids.size !== BUILTIN_LEGENDS.length || names.size !== BUILTIN_LEGENDS.length) fail('IDs/Namen nicht eindeutig');
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/[^a-z ]/g, '').trim();
 const lev = (a: string, b: string) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
-const doc = readFileSync('docs/recherche/legenden.md', 'utf8');
+const doc = readFileSync('docs/research/legenden.md', 'utf8');
 const real = new Map<string, string>();
 for (const m of doc.matchAll(/^\| ([a-z_-]+) \| ([^|]+) \| [^|]+ \| \d{4}/gm)) real.set(m[1], m[2].trim());
 if (real.size !== BUILTIN_LEGENDS.length) fail(`Recherche-Tabelle hat ${real.size} Vorbilder`);

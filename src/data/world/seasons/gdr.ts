@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten DDR: Oberliga (t1) und DDR-Liga (t2, alle Staffeln nacheinander) 1975/76–1990/91,
 // FDGB-Pokal, Europapokal-Teilnehmer. Ab 1991/92: seasons/ger.ts.
-// Quellen und Unsicherheiten: docs/recherche/weltvereine_gdr.md
+// Quellen und Unsicherheiten: docs/research/weltvereine_gdr.md
 // =============================================================================
 import type { SeasonRow } from '../types';
 

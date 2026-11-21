@@ -1,5 +1,5 @@
 // =============================================================================
-// Zusätzliche Varianten der Einzelduelle (Text-Audit, docs/recherche/text-audit.md):
+// Zusätzliche Varianten der Einzelduelle (Text-Audit, docs/research/text-audit.md):
 // Die häufigsten Duell-Zeilen kamen in einem Spiel bis zu fünfmal wörtlich vor.
 // Ergänzt die Symbole aus duels.ts (dort unverändert), zusammengeführt im
 // Erzähler über `withMore`. Slots wie in duels.ts: {p} Verlierer (angreifendes

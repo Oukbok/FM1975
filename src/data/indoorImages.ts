@@ -5,7 +5,7 @@
 // eintragen – dann liegt das Foto über der gezeichneten Halle (die bleibt Rückfall,
 // auch bei Ladefehlern). Nur eingetragene Epochen werden geladen (keine 404-Anfragen).
 // Format: WebP 1920 × 1080 px, Halleninneres mit Tribünen und Rundumbande, ohne
-// erkennbare Personen und Logos, entsättigt und kühl abgedunkelt. Motive: docs/bilder/BILDER.md.
+// erkennbare Personen und Logos, entsättigt und kühl abgedunkelt. Motive: docs/images/BILDER.md.
 // =============================================================================
 export type HallEra = '70er' | '80er' | '90er' | '2000er';
 

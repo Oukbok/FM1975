@@ -1,4 +1,4 @@
-// Vereine Kroatien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_cro.md
+// Vereine Kroatien (verfremdet). Quellen/echte Namen: docs/research/weltvereine_cro.md
 import type { RealClub } from '../types';
 
 export const CLUBS_CRO: RealClub[] = [

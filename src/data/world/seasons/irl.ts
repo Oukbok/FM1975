@@ -1,4 +1,4 @@
-// Ligen Irland je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_irl.md
+// Ligen Irland je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_irl.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_IRL: Record<number, SeasonRow> = {

@@ -1,7 +1,7 @@
 // Ausnahmetalente 1–50: Deutschland, Niederlande, Frankreich, Italien.
 // Namen frei erfunden (nur Anklang). Werte: [Frühreife, Langlebigkeit],
 // [Konstanz, Nerven, Verletzung, Tempo, Professionalität, Ehrgeiz, Anpassung],
-// [Loyalität, Geld, Heimat, Abenteuer, Rampenlicht, Familie]. Recherche: docs/recherche/legenden.md
+// [Loyalität, Geld, Heimat, Abenteuer, Rampenlicht, Familie]. Recherche: docs/research/legenden.md
 import { L, type LegendDef } from './types';
 
 export const LEGENDS_A: LegendDef[] = [

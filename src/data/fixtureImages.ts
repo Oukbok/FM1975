@@ -9,7 +9,7 @@
 // das nächstspätere, sonst die gezeichnete Kurve. Nur eingetragene Dateien werden
 // geladen (keine 404-Anfragen).
 // Eigene Motive: `images/spielplan/fans-<jahrzehnt>.webp` (1200 × 450) oder die
-// Pressefotos „fans“ der Epoche (1200 × 600). Prompts: docs/bilder/BILDER.md,
+// Pressefotos „fans“ der Epoche (1200 × 600). Prompts: docs/images/BILDER.md,
 // Abschnitt „Spielplan – Fanbild“.
 // =============================================================================
 

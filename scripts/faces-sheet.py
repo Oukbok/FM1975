@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # Übersichtsbilder der Gesichtsbilder zum Sichten der Ethnie (Wunsch Pascal).
-#   python3 scripts/faces-sheet.py          nur noch nicht gesichtete (docs/bilder/faces-gesichtet.txt)
+#   python3 scripts/faces-sheet.py          nur noch nicht gesichtete (docs/images/faces-gesichtet.txt)
 #   python3 scripts/faces-sheet.py --alle   alle Bilder
 # Ausgabe: test-output/faces-sichtung/sheetNN.jpg (10 × 6 je Blatt, Nummer + Pfad darunter)
 import os, sys, json
 from PIL import Image, ImageDraw, ImageFont
-ROOT, OUT, REVIEW = 'images/faces', 'test-output/faces-sichtung', 'docs/bilder/faces-gesichtet.txt'
+ROOT, OUT, REVIEW = 'images/faces', 'test-output/faces-sichtung', 'docs/images/faces-gesichtet.txt'
 # Ordner (englisch) -> Gruppen-ID wie im Register/in der Sichtungsliste (src/data/faceDirs.json)
 DIRS = json.load(open('src/data/faceDirs.json', encoding='utf8'))
 GROUP_OF_DIR = {d: g for g, d in DIRS.items()}

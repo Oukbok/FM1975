@@ -8,7 +8,7 @@
 // data/origins.ts. Nachnamen bleiben über die Zeit gleich.
 //
 // Quellen (Ranglisten der häufigsten Jungennamen je Jahrzehnt, nur gängige
-// Namen übernommen; Details und Links: docs/recherche/namen.md):
+// Namen übernommen; Details und Links: docs/research/namen.md):
 //  - Deutschland West: Knud Bielefeld, beliebte-vornamen.de (Jahrgangslisten ab
 //    1890); Gesellschaft für deutsche Sprache (GfdS, Vornamenstatistik ab 1977).
 //  - DDR: beliebte-vornamen.de (DDR-Jahrgänge 1950–1989), GfdS-Auswertung Ost.

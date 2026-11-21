@@ -3,7 +3,7 @@
 // =============================================================================
 // Bucht Einnahmen und Ausgaben fortlaufend über die Saison und schreibt den
 // Kontostand real fort. Alle Grundwerte in 1975-DM (Recherche
-// docs/recherche/FINANZEN_Recherche_1975.md: Erstligist ≈ 4,5 Mio. DM Umsatz,
+// docs/research/FINANZEN_Recherche_1975.md: Erstligist ≈ 4,5 Mio. DM Umsatz,
 // Spanne ≈ 1,7–8,3 Mio.), gebucht nominal mit der Skala des Buchungsjahres.
 //
 // EINNAHMEN

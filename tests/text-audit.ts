@@ -7,7 +7,7 @@
 //   JSON=datei                        Zahlen als JSON ablegen (Vergleich vorher/nachher)
 //   LOOSE=1                           nur berichten (sonst: harte Fehler – Platzhalter, Mehrzahl, Epoche … – → Exit 1)
 //   CAT=Epoche  TOP=40  DUMP_TEXTS=datei   alle Beispiele einer Art / längere Wiederholungslisten / alle Texte als TSV
-// Prüfregeln und Bericht: tests/textAuditChecks.ts. Bericht: docs/recherche/text-audit.md.
+// Prüfregeln und Bericht: tests/textAuditChecks.ts. Bericht: docs/research/text-audit.md.
 // =============================================================================
 import { readFileSync, writeFileSync } from 'node:fs';
 import { decompressFromUTF16 } from 'lz-string';

@@ -4,7 +4,7 @@
 // Leichte Hintergrund-Simulation (game/continents.ts): je Land nur die Spitzen-
 // vereine, je Saison nur eine gewichtete Ziehung der Platzierung, je Kontinent ein
 // schlanker K.-o.-Pokal. Nichts davon ist spielbar (kein Heimatland, kein Assistent).
-// Kontinentalpokale (Namen verfremdet; Vorbilder/Quellen docs/recherche/kontinente.md):
+// Kontinentalpokale (Namen verfremdet; Vorbilder/Quellen docs/research/kontinente.md):
 //   Südamerika  ab 1960 „Südamerika-Pokal der Landesmeister“
 //   Afrika      ab 1964 „Afrika-Pokal der Landesmeister“, ab 1997 „Afrikanische Meisterliga“
 //   Asien       1967–1971 und ab 1985/86 „Asien-Pokal der Landesmeister“, ab 2002/03 „Asiatische Meisterliga“

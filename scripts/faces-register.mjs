@@ -9,7 +9,7 @@
 //   + optional <nr>[-<alter>]-maske.webp (Trikotfläche, nur Alpha zählt)
 // <ordner> = englischer Ordner der Gesichtsgruppe (src/data/faceDirs.json, z. B.
 // central-europe = mitteleuropa); im Register steht die Gruppen-ID wie im Spielstand.
-// Anleitung: docs/bilder/BILDER.md, Abschnitt 2.
+// Anleitung: docs/images/BILDER.md, Abschnitt 2.
 // =============================================================================
 import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -83,8 +83,8 @@ for (const g of [...GROUPS, 'staff']) {
   if (!table[g]) continue;
   console.log(`  ${g.padEnd(14)} ${EPOCHS.map((e) => `${e}: ${String(table[g][e]?.size ?? 0).padStart(3)}`).join('  ')}`);
 }
-// Gesichtet? (docs/bilder/faces-gesichtet.txt – jedes Bild einmal angesehen und seiner Ethnie zugeordnet)
-const REVIEW = process.env.FACES_REVIEW ?? 'docs/bilder/faces-gesichtet.txt';
+// Gesichtet? (docs/images/faces-gesichtet.txt – jedes Bild einmal angesehen und seiner Ethnie zugeordnet)
+const REVIEW = process.env.FACES_REVIEW ?? 'docs/images/faces-gesichtet.txt';
 if (existsSync(REVIEW)) {
   const seen = new Set(readFileSync(REVIEW, 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')));
   const fresh = files.filter((k) => !seen.has(k) && !k.startsWith('staff/'));

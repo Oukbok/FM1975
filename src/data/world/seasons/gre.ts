@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten gre: Alpha Ethniki / Super League je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1 in Reihenfolge der Abschlusstabelle; cup/cupFinalist = Landespokal; euro = Europapokal-Teilnehmer.
-// Quellen und Unsicherheiten: docs/recherche/weltvereine_gre.md.
+// Quellen und Unsicherheiten: docs/research/weltvereine_gre.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

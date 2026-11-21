@@ -1,4 +1,4 @@
-// Ligen Ukraine je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_ukr.md
+// Ligen Ukraine je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_ukr.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_UKR: Record<number, SeasonRow> = {

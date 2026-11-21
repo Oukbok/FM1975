@@ -1,4 +1,4 @@
-// Vereine Russland (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_rus.md
+// Vereine Russland (verfremdet). Quellen/echte Namen: docs/research/weltvereine_rus.md
 import type { RealClub } from '../types';
 
 export const CLUBS_RUS: RealClub[] = [

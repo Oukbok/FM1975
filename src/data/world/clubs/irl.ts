@@ -1,4 +1,4 @@
-// Vereine Irland 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_irl.md
+// Vereine Irland 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_irl.md
 import type { RealClub } from '../types';
 
 export const CLUBS_IRL: RealClub[] = [

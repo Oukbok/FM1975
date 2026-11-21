@@ -1,4 +1,4 @@
-// Vereine Finnland 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_fin.md
+// Vereine Finnland 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_fin.md
 import type { RealClub } from '../types';
 
 export const CLUBS_FIN: RealClub[] = [

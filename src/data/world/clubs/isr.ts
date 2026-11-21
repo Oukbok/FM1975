@@ -1,6 +1,6 @@
 // =============================================================================
 // Weltdaten isr: alle Vereine der erfassten Ligen 1975/76–2025/26 (verfremdete Namen).
-// Echte Namen und Quellen: docs/recherche/weltvereine_isr.md. Format: docs/specs/WELTDATEN_SPEC.md.
+// Echte Namen und Quellen: docs/research/weltvereine_isr.md. Format: docs/specs/WELTDATEN_SPEC.md.
 // =============================================================================
 import type { RealClub } from '../types';
 

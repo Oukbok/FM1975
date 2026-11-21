@@ -1286,6 +1286,6 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
 //  - en.wikipedia.org: Bosman ruling, Promotion to the Bundesliga (Relegation 1981/82–1990/91,
 //    1992/93–2007/08 drei Direktaufsteiger), Foreign football players in Germany.
 //  - museumofjerseys.com, „Great one-offs: Hamburg and Stuttgart 1992“.
-//  - Projektintern: docs/recherche/fussball_historie_designdaten_1975_2030.md,
+//  - Projektintern: docs/research/fussball_historie_designdaten_1975_2030.md,
 //    data/indoorHistory.ts, data/campDestinations.ts, data/timeline.ts, data/reforms.ts.
 // =============================================================================

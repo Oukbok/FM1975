@@ -12,7 +12,7 @@
 // (Jahresdurchschnitte amtlicher Mittelkurse Frankfurt 1975–1998); EZB-Referenzkurse
 // ab 1999; für nicht frei konvertierbare Währungen (RGW-Staaten vor 1990) die
 // offiziellen Handels-/Touristenkurse; Hochinflationsjahre nur in groben Stufen.
-// Details: docs/recherche/waehrungen.md.
+// Details: docs/research/waehrungen.md.
 // =============================================================================
 
 export interface CurrencyEra {

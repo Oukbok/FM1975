@@ -6,7 +6,7 @@
 // (die Zeichnung bleibt Rückfall, auch bei Ladefehlern). Nur eingetragene Logos werden geladen
 // (keine 404-Anfragen). Slug = Firmenname klein, Umlaute ausgeschrieben, Akzente weg, alles
 // außer Buchstaben/Ziffern → „-“ (Beispiel „Kesselberg Bräu“ → `kesselberg-braeu`).
-// Liste aller Firmen mit Branche/Land/Zeitraum/Stil: docs/bilder/sponsorlogos.md.
+// Liste aller Firmen mit Branche/Land/Zeitraum/Stil: docs/images/sponsorlogos.md.
 // Format: 600 × 300 px, transparent (WebP oder PNG mit Alpha), Logo mittig mit ~8 % Rand.
 // =============================================================================
 

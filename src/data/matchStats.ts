@@ -27,7 +27,7 @@
 //    https://www.bundesliga.com/de/bundesliga/statistiken/clubs/passquote
 //  - Ergebnisse aller Bundesligaspiele 1963/64–2008/09 (R-Paket vcd, Datensatz „Bundesliga“,
 //    https://raw.github.com/vincentarelbundock/Rdatasets/master/doc/vcd/Bundesliga.html) – ausgewertet
-//    11/2026 je Epoche: Tore/Spiel, Heim/Remis/Auswärts, 0:0-Anteil (Tabelle docs/recherche/attribute-engine.md):
+//    11/2026 je Epoche: Tore/Spiel, Heim/Remis/Auswärts, 0:0-Anteil (Tabelle docs/research/attribute-engine.md):
 //      1975–84 3,41 Tore, 56,7 % / 24,2 % / 19,1 %, 0:0 5,1 % · 1985–94 2,93 Tore, 49,3 / 29,2 / 21,5 %, 0:0 8,2 %
 //      1995–2004 2,87 Tore, 48,5 / 25,8 / 25,8 %, 0:0 6,9 %
 //  - Spielstatistik je Spiel 1993/94–2025/26 (football-data.co.uk, Spiegel github.com/datasets/football-datasets,

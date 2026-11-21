@@ -1,4 +1,4 @@
-// Vereine Jugoslawien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_yug.md
+// Vereine Jugoslawien (verfremdet). Quellen/echte Namen: docs/research/weltvereine_yug.md
 import type { RealClub } from '../types';
 
 export const CLUBS_YUG: RealClub[] = [

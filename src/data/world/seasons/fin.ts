@@ -1,4 +1,4 @@
-// Ligen Finnland je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_fin.md
+// Ligen Finnland je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_fin.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_FIN: Record<number, SeasonRow> = {

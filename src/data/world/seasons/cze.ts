@@ -1,4 +1,4 @@
-// Ligen Tschechien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_cze.md
+// Ligen Tschechien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_cze.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_CZE: Record<number, SeasonRow> = {

@@ -344,7 +344,7 @@ export const MERCH_COGS = 0.35;
  * Betrieb & Vermarktung (Monat, nominal): Wareneinsatz der Fanartikel, Betreuung der
  * Sponsoren, Geschäftsstelle/Beratung/Reisen als Anteil am Umsatz der Vorsaison.
  * FC Bayern 2024/25: Materialaufwand 59,9 + sonstige betriebliche Aufwendungen 310 Mio. €
- * (docs/recherche/fcbayern_2026.md) – ein Teil davon steckt im Spiel schon in Stadion,
+ * (docs/research/fcbayern_2026.md) – ein Teil davon steckt im Spiel schon in Stadion,
  * Gelände und Umfeld, der Rest hier.
  */
 export function operationsMonthly(c: Club, year: number, sponsorMonth: number, commercialMonth: number, merchGlobalMonth: number): number {

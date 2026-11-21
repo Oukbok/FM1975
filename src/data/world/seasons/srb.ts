@@ -1,4 +1,4 @@
-// Ligen Serbien je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_srb.md
+// Ligen Serbien je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_srb.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_SRB: Record<number, SeasonRow> = {

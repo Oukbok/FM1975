@@ -1,6 +1,6 @@
 # FINANZEN_SPEC — Tiefes Finanzsystem für „1975 – A Football Manager"
 
-> **Finanzniveau (Sammel-Update v11):** Alle Werte unten sind auf das recherchierte Niveau gebracht (`docs/recherche/FINANZEN_Recherche_1975.md`): Erstligist 1975/76 im Median ≈ **4,5 Mio. DM** Umsatz (Spanne ≈ 2,5–9 Mio.), Marktgehalt `1.400 × 2^((Stärke − 72)/11)` DM/Woche (Stammspieler ≈ 73.000, Star ≈ 230.000 DM/Jahr), TV-Topf 4,2 Mio. DM, Bezugsumsatz `AVG_REVENUE_1975 = 4,5 Mio.` Ablösen/Marktwerte folgen unverändert der Rekordkurve. Zuschauer: Grund-Auslastung × Nachfrage der Epoche (`attendanceDemand`), Preise je Besucher × `matchdayPriceScale = revenueScale('matchday') / attendanceDemand`. Alte Spielstände rechnet `game/financeMigration.ts` einmalig um. Gesamtbild und Kalibrierung: Abschnitt 9.
+> **Finanzniveau (Sammel-Update v11):** Alle Werte unten sind auf das recherchierte Niveau gebracht (`docs/research/FINANZEN_Recherche_1975.md`): Erstligist 1975/76 im Median ≈ **4,5 Mio. DM** Umsatz (Spanne ≈ 2,5–9 Mio.), Marktgehalt `1.400 × 2^((Stärke − 72)/11)` DM/Woche (Stammspieler ≈ 73.000, Star ≈ 230.000 DM/Jahr), TV-Topf 4,2 Mio. DM, Bezugsumsatz `AVG_REVENUE_1975 = 4,5 Mio.` Ablösen/Marktwerte folgen unverändert der Rekordkurve. Zuschauer: Grund-Auslastung × Nachfrage der Epoche (`attendanceDemand`), Preise je Besucher × `matchdayPriceScale = revenueScale('matchday') / attendanceDemand`. Alte Spielstände rechnet `game/financeMigration.ts` einmalig um. Gesamtbild und Kalibrierung: Abschnitt 9.
 >
 > **Hinweis (Finanzen 2.0):** Die 1975-Werte dieser Spezifikation gelten weiter. Wie die Erlösarten über die Jahrzehnte wachsen (Erlös-Mix, zentrale TV-Verteilung statt Heimspiel-TV, Vermarktung & Hospitality, Marke, KI-Haushalt, Fairplay) regeln `engine/economy.ts` (`revenueScale`) und `engine/clubEconomy.ts`; Beschreibung im In-Game-Wiki (Artikel `finance-epochs`).
 
@@ -208,7 +208,7 @@ Kosten (1975-Basis, alle ≈ × 0,3 gegenüber vorher, wo keine Recherche-Anker 
 
 ## 10. Sponsoring 2.0, TV-Verträge, Spitzenklub (Update 11/2026)
 
-Recherche: `docs/recherche/sponsoring.md` (Flächen, Branchen, Verbote, Klauseln) und `docs/recherche/fcbayern_2026.md` (FC Bayern 2024/25: 978,3 Mio. € Konzernumsatz, ≈ 861 Mio. € ohne Transfers; Sponsoring 240,4, Merchandising 150,5, Medien ≈ 103–105, UEFA 105,9; Personal 408,3 = 47 % des Umsatzes ohne Transfers, Material 59,9, sonstige betriebliche 310,0, Abschreibungen 132,3).
+Recherche: `docs/research/sponsoring.md` (Flächen, Branchen, Verbote, Klauseln) und `docs/research/fcbayern_2026.md` (FC Bayern 2024/25: 978,3 Mio. € Konzernumsatz, ≈ 861 Mio. € ohne Transfers; Sponsoring 240,4, Merchandising 150,5, Medien ≈ 103–105, UEFA 105,9; Personal 408,3 = 47 % des Umsatzes ohne Transfers, Material 59,9, sonstige betriebliche 310,0, Abschreibungen 132,3).
 
 ### 10.1 Werbeflächen (`data/sponsorCatalog.ts`, `engine/sponsorship.ts`)
 Ersetzt Trikot-/Bandenvertrag (§2.1/2.2) und den Partner-Anteil der Vermarktungspauschale. Je Fläche Verträge `SponsorDeal` (1975-Basis, Buchung × `economyScale` des Buchungsjahres) an `Club.commerce.deals`; `shirtSponsor`/`banden` bleiben als Spiegel.

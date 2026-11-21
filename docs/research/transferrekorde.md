@@ -55,7 +55,7 @@ Werte zwischen 1976 und 2001 sind nicht einzeln belegt; die Kurve interpoliert d
 
 - Die Spielkurve ist **geglättet**: einzelne Ausreißer (2017) heben sie nur teilweise.
 - Sie ist eine **weiche Obergrenze**. Bis 70 % der Kurve wirkt sie nicht. Darüber werden Forderungen gestaucht. Einzelne Spitzendeals bekommen einen zufälligen „Bieterwettstreit“-Faktor und können die Kurve übertreffen (Ziel: etwa jedes zehnte Spitzengeschäft).
-- Ab 2027 fiktive Fortschreibung im Gleichschritt mit der Wirtschafts-Basis (`economyScale`, nach 2030 ≈ 2 % pro Jahr; früher fest +3,5 %, siehe `docs/recherche/balance-100.md`).
+- Ab 2027 fiktive Fortschreibung im Gleichschritt mit der Wirtschafts-Basis (`economyScale`, nach 2030 ≈ 2 % pro Jahr; früher fest +3,5 %, siehe `docs/research/balance-100.md`).
 
 ## Quellen
 - [football365 – World transfer record progression](https://www.football365.com/news/feature-football-transfer-record-historic-progression-neymar)

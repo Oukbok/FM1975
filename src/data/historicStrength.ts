@@ -191,7 +191,7 @@ export const HIST_FADE_HALF_LIFE = 25;
  * Stärke der historischen Lenkung im Jahr (1 bis HIST_DATA_END, danach Halbwertszeit 25 Jahre:
  * 2050 halb so stark, 2075 ein Viertel). Nach 2025 gibt es keine „echte Geschichte“ mehr – ohne
  * Auslaufen hielt die Lenkung die Rangordnung von 2025 für immer fest (Langzeit-Balance
- * 1975–2075, docs/recherche/balance-100.md: München Rot 60 von 100 Titeln, England dauerhaft 100).
+ * 1975–2075, docs/research/balance-100.md: München Rot 60 von 100 Titeln, England dauerhaft 100).
  * Gilt für die Lenkung (Gewichte), nicht für die Kurve selbst.
  */
 export function historicFade(year: number): number {

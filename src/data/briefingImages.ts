@@ -7,7 +7,7 @@
 // `images/briefing/new/<art>.webp`. Liegt ein Bild vor, hier den Schlüssel eintragen –
 // nur Eingetragenes wird geladen (keine 404-Anfragen); sonst zeichnet die Seite einen
 // ruhigen Ersatz mit Themen-Symbol. Vollständige Liste mit Motiven:
-// docs/bilder/briefing.md (erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`).
+// docs/images/briefing.md (erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`).
 // Format: WebP 1280 × 720 px (16:9), keine echten Logos, Vereine, Personen oder Marken.
 // =============================================================================
 

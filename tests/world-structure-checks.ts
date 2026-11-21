@@ -36,7 +36,7 @@ for (const cc of CCS) {
   }
 }
 const SAMPLES: [string, number, number, number | null][] = [
-  // Land, Saison, 1. Liga, 2. Ebene (gesamt) – Quellen: docs/recherche/ligastruktur-ausland.md
+  // Land, Saison, 1. Liga, 2. Ebene (gesamt) – Quellen: docs/research/ligastruktur-ausland.md
   ['eng', 1986, 22, 22], ['eng', 1987, 20, 22], ['eng', 1988, 20, 24], ['eng', 1991, 22, 24], ['eng', 1995, 20, 24],
   ['ita', 1987, 16, 20], ['ita', 1988, 18, 20], ['ita', 2004, 20, 22],
   ['esp', 1986, 18, 18], ['esp', 1987, 20, 20], ['esp', 1995, 22, 20], ['esp', 1997, 20, 22],

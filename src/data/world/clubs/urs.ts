@@ -1,4 +1,4 @@
-// Vereine Sowjetunion (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_urs.md
+// Vereine Sowjetunion (verfremdet). Quellen/echte Namen: docs/research/weltvereine_urs.md
 import type { RealClub } from '../types';
 
 export const CLUBS_URS: RealClub[] = [

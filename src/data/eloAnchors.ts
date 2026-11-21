@@ -8,7 +8,7 @@
 // (alle Mannschaften starten 1872 bzw. beim ersten Spiel mit 1500, Nachfolger
 // übernehmen die Punkte: Tschechien ← Tschechoslowakei, Serbien ← Jugoslawien,
 // Russland ← Sowjetunion). Skript `scripts/elo-anchors.mjs`, Quellen und Formel
-// in docs/recherche/weltrangliste.md. Die Werte liegen etwas unter denen der
+// in docs/research/weltrangliste.md. Die Werte liegen etwas unter denen der
 // Originalseite (andere Startwerte), die Reihenfolge stimmt grob überein.
 // =============================================================================
 import { NATION_BY_CODE, baseStrength, type NationDef } from './nationalTeams';

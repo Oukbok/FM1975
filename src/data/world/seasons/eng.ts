@@ -1,4 +1,4 @@
-// Ligen England je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_eng.md
+// Ligen England je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_eng.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_ENG: Record<number, SeasonRow> = {

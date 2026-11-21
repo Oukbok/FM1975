@@ -1,4 +1,4 @@
-// Vereine England 1975–2025 (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_eng.md
+// Vereine England 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_eng.md
 import type { RealClub } from '../types';
 
 export const CLUBS_ENG: RealClub[] = [

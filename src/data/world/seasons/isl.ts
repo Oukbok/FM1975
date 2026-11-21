@@ -1,4 +1,4 @@
-// Ligen Island je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_isl.md
+// Ligen Island je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_isl.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_ISL: Record<number, SeasonRow> = {

@@ -3,7 +3,7 @@
 // Pools je Land deutlich größer, Vornamen je Jahrzehnt, Namen der Ethnien im Land).
 // Nur in der Bevölkerung häufige Vor- und Nachnamen (Ranglisten der häufigsten
 // Familiennamen bzw. Jungennamen je Geburtsjahrzehnt; Quellen wie in
-// data/nameEras.ts und docs/recherche/namen.md). Keine Rücksicht auf Fußballer –
+// data/nameEras.ts und docs/research/namen.md). Keine Rücksicht auf Fußballer –
 // Paare entstehen zufällig, bekannte reale Paare sperrt BLOCKED_NAMES.
 // Eingemischt in data/origins.ts (`mergeXL`): Nachnamen/Grundvornamen ohne Dubletten,
 // Vornamen je Jahrzehnt zusätzlich zu den vorhandenen Stufen (bestehende bleiben).

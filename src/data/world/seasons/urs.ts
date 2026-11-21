@@ -1,4 +1,4 @@
-// Ligen Sowjetunion je Saison (Schlüssel = Startjahr). Quellen: docs/recherche/weltvereine_urs.md
+// Ligen Sowjetunion je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_urs.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_URS: Record<number, SeasonRow> = {

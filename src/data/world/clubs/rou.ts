@@ -1,4 +1,4 @@
-// Vereine Rumänien (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_rou.md
+// Vereine Rumänien (verfremdet). Quellen/echte Namen: docs/research/weltvereine_rou.md
 import type { RealClub } from '../types';
 
 export const CLUBS_ROU: RealClub[] = [

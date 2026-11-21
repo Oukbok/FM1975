@@ -1,4 +1,4 @@
-// Vereine Polen (verfremdet). Quellen/echte Namen: docs/recherche/weltvereine_pol.md
+// Vereine Polen (verfremdet). Quellen/echte Namen: docs/research/weltvereine_pol.md
 import type { RealClub } from '../types';
 
 export const CLUBS_POL: RealClub[] = [

@@ -11,7 +11,7 @@ Europapokal-Teilnehmer. Dieses Dokument legt das gemeinsame Datenformat fest –
   Ligen gespielt haben: `export const CLUBS_<CC>: RealClub[]`.
 - `src/data/world/seasons/<cc>.ts` – je Saison die Ligen: `export const SEASONS_<CC>: Record<number, SeasonRow>`
   (Schlüssel = Startjahr: `1975` = Saison 1975/76).
-- `docs/recherche/weltvereine_<cc>.md` – Quellen, **echte Namen** ↔ verfremdete Namen/IDs, Unsicherheiten.
+- `docs/research/weltvereine_<cc>.md` – Quellen, **echte Namen** ↔ verfremdete Namen/IDs, Unsicherheiten.
   Echte Vereinsnamen stehen **nur** hier, nie im Code/Spiel.
 - `<cc>` = dreistelliger Ländercode klein (FIFA/IOC-Stil): `ger`, `gdr`, `eng`, `sco`, `ita`, `esp`,
   `fra`, `ned`, `por`, `bel`, `aut`, `sui`, `tur`, `gre`, `urs`, `rus`, `ukr`, `yug`, `srb`, `cro`, `tch`,
