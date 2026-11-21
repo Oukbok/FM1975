@@ -382,7 +382,7 @@ Bei einem Startjahr von 1975 bis 1990 kannst du im Assistenten unter **Verein** 
 - **Europapokal:** In der ersten Saison die echten DDR-Starter, danach Meister (Landesmeister), Pokalsieger (Pokalsieger-Wettbewerb) und die nächsten zwei der Oberliga (UEFA-Pokal) – zusätzlich zu den Startern aus der Bundesliga.
 - **Wiedervereinigung:** Zur Saison 1991/92 verteilt das Spiel die Vereine wie oben beschrieben nach dem Endstand der Oberliga 1990/91. Dein Verein spielt danach im gesamtdeutschen System weiter (1. Liga, 2. Liga oder NOFV-Oberliga), dein Heimatland ist ab dann Deutschland – mit D-Mark, DFB-Pokal und allen weiteren Ligareformen.
 
-Vereinfachungen: Sponsoren, Trainingslager und Jugendwettbewerbe laufen wie im Westen; die Chronik und das Saison-Briefing erzählen den deutschen Fußball insgesamt.
+Vereinfachungen: Sponsoren, Trainingslager und Jugendwettbewerbe laufen wie im Westen; die Chronik und das Saison-Briefing erzählen den deutschen Fußball insgesamt. Triffst du im Europapokal auf einen Verein der **Bundesliga**, wird das Spiel im Hintergrund nach Stärke entschieden (die Bundesliga läuft ohne volle Kader) – das Ergebnis steht danach in den Nachrichten und unter Statistiken › International.
 
 ## Reihenfolge der Reformen
 Die 1981er-Reform (eingleisige 2. Liga) liegt vor der Wiedervereinigung, die Regionalliga-Reform (1994/95) danach. Alle Reformen greifen sauber ineinander, und dein eigener Verein bleibt jederzeit geschützt (fällt nie aus der Simulation).`,

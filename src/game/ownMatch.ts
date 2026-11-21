@@ -60,8 +60,23 @@ function tieInfo(g: Game, kind: 'pokal' | 'euro', cup: CupState, ri: number, tie
   };
 }
 
-/** Steht heute ein eigenes, noch nicht gespieltes Spiel an? */
+/**
+ * Steht heute ein eigenes, noch nicht gespieltes Spiel an? Nur Spiele, deren Gegner sich als voller
+ * Verein aufbauen lässt (`canBuildClubs`): sonst entscheidet der Spieltag sie im Hintergrund
+ * (euroFlow.ts `playOne` → `lightMatch`), statt dass der Tag ewig auf „Simulieren“ wartet –
+ * z. B. Start in der DDR, Europapokal gegen einen simulierten Bundesligisten (tests/savecompat-test.ts).
+ */
 export function findOwnMatchDue(g: Game): OwnMatchInfo | null {
+  const info = findOwnMatchDueRaw(g);
+  return info && canBuildClubs(g, info) ? info : null;
+}
+
+/** Lassen sich beide Vereine für die Match-Engine aufbauen (ohne etwas anzulegen)? */
+export function canBuildClubs(g: Game, info: OwnMatchInfo): boolean {
+  return [info.homeId, info.awayId].every((id) => !!g.clubs[id] || isContinentalId(id) || !!g.euroClubs?.[id]);
+}
+
+function findOwnMatchDueRaw(g: Game): OwnMatchInfo | null {
   const cal = g.calendar;
   if (cal.pendingAdvance || CalendarEngine.isSeasonOver(cal)) return null;
   const today = cal.currentDate;
