@@ -4,16 +4,16 @@
 // Schwarz-Weiß-Fotos von Fans, je Jahrzehnt eigene Motive (Kleidung, Fahnen,
 // Schals, Pyro, Handys … ändern sich über die Zeit). Keine Farben im Bild, damit
 // es zu jedem Verein passt – die Seite legt die Vereinsfarbe ganz leicht darüber.
-// Je Jahrzehnt eine Liste von Bildpfaden (unter bilder/ = assets/); die Seite
+// Je Jahrzehnt eine Liste von Bildpfaden (unter images/ = assets/); die Seite
 // wechselt fest je Spiel. Fehlt ein Jahrzehnt, nimmt sie das nächstfrühere, sonst
 // das nächstspätere, sonst die gezeichnete Kurve. Nur eingetragene Dateien werden
 // geladen (keine 404-Anfragen).
-// Eigene Motive: `bilder/spielplan/fans-<jahrzehnt>.webp` (1200 × 450) oder die
+// Eigene Motive: `images/spielplan/fans-<jahrzehnt>.webp` (1200 × 450) oder die
 // Pressefotos „fans“ der Epoche (1200 × 600). Prompts: docs/bilder/BILDER.md,
 // Abschnitt „Spielplan – Fanbild“.
 // =============================================================================
 
-const press1975 = ['fans', ...Array.from({ length: 10 }, (_, i) => `fans_${String(i + 1).padStart(2, '0')}`)].map((n) => `assets/presse/1975/${n}.webp`);
+const press1975 = ['fans', ...Array.from({ length: 10 }, (_, i) => `fans_${String(i + 1).padStart(2, '0')}`)].map((n) => `assets/press/1975/${n}.webp`);
 
 export const FAN_PHOTOS: Record<number, string[]> = {
   1970: press1975,

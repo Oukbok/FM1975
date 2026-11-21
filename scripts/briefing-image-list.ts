@@ -10,12 +10,12 @@ import { topicMeta } from '../src/data/briefings';
 const lines: string[] = [
   '# Bilder: Saison-Briefing (Zentrale › Briefing)',
   '',
-  'Erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`. Ablage `bilder/briefing/<datei>.webp`,',
+  'Erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`. Ablage `images/briefing/<datei>.webp`,',
   'danach den Schlüssel in `src/data/briefingImages.ts` (`BRIEFING_PHOTOS`) eintragen. Format WebP 1280 × 720 (16:9),',
   'Fotostil wie Pressefotos der jeweiligen Zeit (Farbe/Körnung passend zum Jahrzehnt), keine echten Logos, Vereine,',
   'Marken, Personen oder lesbaren Namen; Trikots in neutralen Farben. Das erste Bild je Saison ist der große Aufmacher.',
   '',
-  '## Neu im Spiel (je Art ein Bild, `bilder/briefing/neu/<art>.webp`, Schlüssel in `BRIEFING_KIND_PHOTOS`)',
+  '## Neu im Spiel (je Art ein Bild, `images/briefing/new/<art>.webp`, Schlüssel in `BRIEFING_KIND_PHOTOS`)',
   '',
   '| Datei | Art | Motiv |',
   '|---|---|---|',
@@ -27,7 +27,7 @@ const KIND_MOTIF: Record<string, string> = {
   halle: 'Hallenfußball mit Bande', jugend: 'Nachwuchsspieler auf dem Trainingsplatz', umfeld: 'Stadionvorplatz mit Fans und Ständen',
   einrichtung: 'Modernes Vereinsgebäude/Trainingszentrum',
 };
-for (const [k, m] of Object.entries(CHANGE_KIND_META)) lines.push(`| \`neu/${k}.webp\` | ${m.label} | ${KIND_MOTIF[k] ?? m.label} |`);
+for (const [k, m] of Object.entries(CHANGE_KIND_META)) lines.push(`| \`new/${k}.webp\` | ${m.label} | ${KIND_MOTIF[k] ?? m.label} |`);
 lines.push('', '## Ereignisse je Saison', '', '| Datei | Saison | Platz | Titel | Motiv (aus dem Text) |', '|---|---|---|---|---|');
 let n = 0;
 for (let y = 1975; y <= 2034; y++) {

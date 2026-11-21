@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
 Gesichtsbilder aus Pascals Batches einlesen (PNG, Name <epoche>_<nr>_<gruppe>.png)
-und ins Spielformat bringen: bilder/faces/<gruppe>/<epoche>/<nr>.webp
+und ins Spielformat bringen: images/faces/<ordner>/<epoche>/<nr>.webp
+(<gruppe> im Dateinamen = Gruppen-ID wie mitteleuropa, <ordner> = englischer Ordner aus src/data/faceDirs.json)
 (512x600, Seitenverhältnis bleibt, transparent aufgefüllt, unten bündig, WebP q80).
 Ohne Altersstufe = ein Gesicht für alle Altersstufen.
 
   python3 -I scripts/faces-import.py <ordner-oder-zip> [...]   danach: node scripts/faces-register.mjs
 """
-import re, sys, zipfile, io
+import re, sys, zipfile, io, json
 from pathlib import Path
 from PIL import Image
 
-OUT = Path('bilder/faces')
-GROUPS = {'mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan', 'tuerkei', 'westafrika', 'lateinamerika', 'ostasien', 'nordafrika', 'staff'}
+OUT = Path('images/faces')
+DIRS = json.load(open('src/data/faceDirs.json', encoding='utf8'))  # Gruppen-ID -> Ordner
+GROUPS = set(DIRS)
 EPOCHS = {1970, 1980, 1990, 2000, 2010, 2020}
 NAME = re.compile(r'^(\d{4})_(\d{1,4})_([a-z_]+)\.png$', re.I)
 W, H = 512, 600
@@ -47,7 +49,7 @@ for name, data in sources(sys.argv[1:]):
     im.thumbnail((W, H), Image.LANCZOS)
     canvas = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     canvas.paste(im, ((W - im.width) // 2, H - im.height), im)
-    dst = OUT / group / str(epoch) / f'{nr:02d}.webp'
+    dst = OUT / DIRS[group] / str(epoch) / f'{nr:02d}.webp'
     dst.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(dst, 'WEBP', quality=80, method=6)
     ok += 1

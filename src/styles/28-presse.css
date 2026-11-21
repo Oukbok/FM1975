@@ -8,7 +8,7 @@
 .np-nav-list { display: inline-flex; gap: 4px; }
 
 .np-box .dbox-body.flush { overflow: hidden; }
-/* Doppelseite auf dem Zeitungsbild (bilder/akte/zeitung.webp, 1838×856, Wunsch Pascal):
+/* Doppelseite auf dem Zeitungsbild (images/dossier/zeitung.webp, 1838×856, Wunsch Pascal):
    Raster in Prozent der Bildmaße, Falz bei 49,6 % bleibt frei. Spalten: Rand | linke Seite | Falz |
    rechte Seite | Rand; Zeilen: Rand | Kopf | Seiten | Kurz notiert | Rand. */
 .np-sheet {

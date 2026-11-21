@@ -5,7 +5,7 @@
    darunter) ab: helles Papier statt Foto, Dunkelblau (--navy) für Kopfleiste und
    Boxköpfe, EIN Akzent = Vereinsfarbe des eigenen Vereins (--club-accent, gesetzt
    von ui/clubAccent.ts; zu nah am Dunkelblau → Zweitfarbe; Standard Rot).
-   Bilder (bilder/akte/…) kommen über Tokens; fehlt eins, bleibt die CSS-Fassung.
+   Bilder (images/dossier/…) kommen über Tokens; fehlt eins, bleibt die CSS-Fassung.
    ============================================================================= */
 
 :root {
@@ -20,28 +20,28 @@
   --paper-page: #e8e6e1;     /* unter der Papiertextur */
   --paper-sheet: #fbfaf7;    /* Blatt (Liste, Lesebereich) */
   --paper-card: #f6f5f1;     /* Boxen */
-  --folder: #d8d3c6;         /* Aktenmappe (Ersatz bis bilder/akte/mappe.png) */
+  --folder: #d8d3c6;         /* Aktenmappe (Ersatz bis images/dossier/mappe.png) */
   --folder-2: #cbc5b5;
   --folder-edge: #b9b2a1;
   --sheet-shadow: 0 1px 2px rgba(20, 28, 40, 0.12), 0 6px 16px rgba(20, 28, 40, 0.10);
   /* Bild-Slots: Pascal reicht Mappe/Blatt/Klammer/Korn nach (docs/bilder/BILDER.md, Abschnitt Akte).
-     Liegt eine Datei vor, hier url('assets/akte/<datei>') eintragen. */
-  --akte-paper: url('assets/akte/papier.webp');
-  --akte-folder: url('assets/akte/mappe.webp');
-  --akte-sheet: url('assets/akte/blatt.webp');
+     Liegt eine Datei vor, hier url('assets/dossier/<datei>') eintragen. */
+  --akte-paper: url('assets/dossier/papier.webp');
+  --akte-folder: url('assets/dossier/mappe.webp');
+  --akte-sheet: url('assets/dossier/blatt.webp');
   --akte-grain: none;
-  --np-paper: url('assets/akte/zeitung.webp');   /* Presse: Doppelseite */
-  --cal-paper: url('assets/akte/kalender.webp');  /* Kalender: Ringbuch */
+  --np-paper: url('assets/dossier/zeitung.webp');   /* Presse: Doppelseite */
+  --cal-paper: url('assets/dossier/kalender.webp');  /* Kalender: Ringbuch */
   /* Karriere › Bilanz als Ringmappe (views/office/career/BilanzTab.tsx, 28-career-binder.css) */
-  --bnd-folder: url('assets/akte/bilanz.webp');
-  --bnd-blatt: url('assets/akte/bilanz/zettel-blatt.webp');
-  --bnd-abriss: url('assets/akte/bilanz/zettel-abriss.webp');
-  --bnd-zeitung: url('assets/akte/bilanz/zettel-zeitung.webp');
-  --bnd-orange: url('assets/akte/bilanz/zettel-orange.webp');
-  --bnd-gelb: url('assets/akte/bilanz/zettel-gelb.webp');
-  --bnd-klein: url('assets/akte/bilanz/zettel-klein.webp');
-  --bnd-tape: url('assets/akte/bilanz/klebestreifen.webp');
-  --bnd-polaroid: url('assets/akte/bilanz/polaroid.webp');
+  --bnd-folder: url('assets/dossier/bilanz.webp');
+  --bnd-blatt: url('assets/dossier/balance/zettel-blatt.webp');
+  --bnd-abriss: url('assets/dossier/balance/zettel-abriss.webp');
+  --bnd-zeitung: url('assets/dossier/balance/zettel-zeitung.webp');
+  --bnd-orange: url('assets/dossier/balance/zettel-orange.webp');
+  --bnd-gelb: url('assets/dossier/balance/zettel-gelb.webp');
+  --bnd-klein: url('assets/dossier/balance/zettel-klein.webp');
+  --bnd-tape: url('assets/dossier/balance/klebestreifen.webp');
+  --bnd-polaroid: url('assets/dossier/balance/polaroid.webp');
   --bnd-ink: #1f2a3d;          /* Schrift auf dem Papier (Tinte, dunkles Blaugrau) */
   --bnd-ink-2: #4c5568;        /* Beschriftungen */
   --bnd-ink-3: #7a8191;        /* Nebeninfo */
@@ -237,7 +237,7 @@ body { background: var(--paper-page); }
 .dz-fn-item { border-bottom-color: var(--border-soft); }
 
 /* ---- Newscenter als Aktenmappe ----------------------------------------------- */
-/* Bild bilder/akte/mappe.webp (1327×1185, Wunsch Pascal): Mappe mit zwei Blättern – links
+/* Bild images/dossier/mappe.webp (1327×1185, Wunsch Pascal): Mappe mit zwei Blättern – links
    die Nachrichtenliste, rechts der Lesebereich. Raster in Prozent der Bildmaße, damit Liste
    und Text genau auf den Blättern liegen. Der durchsichtige Bildrand (≈ 4 %) liegt außerhalb
    der Box (Hintergrund 108 % groß, mittig), damit die Mappe bündig mit den Nachbarboxen steht.
@@ -375,7 +375,7 @@ body { background: var(--paper-page); }
 .hd-nav-item:hover, .hd-nav-item:focus-visible { background: transparent; border-color: transparent; color: #ffffff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.55), 0 0 2px rgba(255, 255, 255, 0.4); }
 .hd-nav-item.active:hover { color: var(--accent-ink); }
 
-/* ---- Kalender als Ringbuch (bilder/akte/kalender.webp, 1511×1041, Wunsch Pascal) ------------
+/* ---- Kalender als Ringbuch (images/dossier/kalender.webp, 1511×1041, Wunsch Pascal) ------------
    Durchsichtiger Bildrand liegt außerhalb der Box (Hintergrund 104,3 % × 107,4 %, Mitte), Werte bezogen auf
    das Ringbuch (x 28–1477, y 34–1003 px): Ringe bis ≈ 7 %, Blatt rechts bis 95,7 %, unten bis 94 %.
    Zeilen: Rand | Hinweis | Wochentage | Raster | Legende | Rand. */

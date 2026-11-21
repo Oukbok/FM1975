@@ -35,8 +35,8 @@ const fail = (m) => errors.push(m);
 page.on('pageerror', (e) => fail('JS-Fehler (Editor): ' + e.message));
 page.on('console', (m) => { if (m.type() === 'error' && !/fonts\.|Failed to load resource/.test(m.text())) fail('Konsole: ' + m.text()); });
 await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
-const photo = await readFile('bilder/presse/1975/vertrag.webp');
-const photo2 = await readFile('bilder/presse/1975/training.webp');
+const photo = await readFile('images/press/1975/vertrag.webp');
+const photo2 = await readFile('images/press/1975/training.webp');
 const step = async (name, fn) => { try { await fn(); } catch (e) { fail(`${name}: ${e.message.split('\n')[0]}`); } };
 
 // --- 1) Editor: Startseite, Neu -------------------------------------------------------------

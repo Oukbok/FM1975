@@ -5,18 +5,23 @@
 //   node scripts/faces-register.mjs --check    (nur prüfen, nichts schreiben)
 //   FACES_DIR=… node scripts/faces-register.mjs (anderer Bildordner, z. B. für Tests)
 //
-// Erwartet: bilder/faces/<gruppe>/<epoche>/<nr>[-<alter>].webp
+// Erwartet: images/faces/<ordner>/<epoche>/<nr>[-<alter>].webp
 //   + optional <nr>[-<alter>]-maske.webp (Trikotfläche, nur Alpha zählt)
+// <ordner> = englischer Ordner der Gesichtsgruppe (src/data/faceDirs.json, z. B.
+// central-europe = mitteleuropa); im Register steht die Gruppen-ID wie im Spielstand.
 // Anleitung: docs/bilder/BILDER.md, Abschnitt 2.
 // =============================================================================
 import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
-const ROOT = process.env.FACES_DIR ?? 'bilder/faces';
+const ROOT = process.env.FACES_DIR ?? 'images/faces';
 const OUT = process.env.FACES_OUT ?? 'src/data/faceImages.ts';
 const CHECK = process.argv.includes('--check');
 
 const GROUPS = ['mitteleuropa', 'nordeuropa', 'suedeuropa', 'osteuropa', 'balkan', 'tuerkei', 'westafrika', 'lateinamerika', 'ostasien', 'nordafrika'];
+// Ordner (englisch) → Gruppen-ID: eine Quelle mit dem Spiel (src/data/faceDirs.json).
+const FACE_DIRS = JSON.parse(readFileSync(new URL('../src/data/faceDirs.json', import.meta.url), 'utf8'));
+const GROUP_OF_DIR = Object.fromEntries(Object.entries(FACE_DIRS).map(([id, dir]) => [dir, id]));
 const EPOCHS = [1970, 1980, 1990, 2000, 2010, 2020];
 const AGES = { player: [18, 25, 32, 38], staff: [35, 45, 55, 65] };
 
@@ -40,12 +45,15 @@ for (const abs of walk(ROOT)) {
   const rel = relative(ROOT, abs).split(sep).join('/');
   const base = rel.split('/').pop();
   if (ignored.has(base)) continue;
+  const dir = rel.split('/')[0];
+  if (rel.includes('/') && !GROUP_OF_DIR[dir]) { problems.push(`${rel}: unbekannter Ordner „${dir}“ (erlaubt: ${Object.values(FACE_DIRS).join(', ')})`); continue; }
   if (!rel.toLowerCase().endsWith('.webp')) { problems.push(`${rel}: kein WebP – bitte als .webp speichern (z. B. mit squoosh.app).`); continue; }
-  let key = rel.slice(0, -5);
+  // Schlüssel mit Gruppen-ID statt Ordnername (Register/Spielstand unverändert).
+  let key = (rel.includes('/') ? GROUP_OF_DIR[dir] + rel.slice(dir.length) : rel).slice(0, -5);
   const isMask = key.endsWith('-maske');
   if (isMask) key = key.slice(0, -6);
   const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,4})(?:-(\d{2}))?$/);
-  if (!m) { problems.push(`${rel}: Name passt nicht zu <gruppe>/<epoche>/<nr>[-<alter>].webp`); continue; }
+  if (!m) { problems.push(`${rel}: Name passt nicht zu <ordner>/<epoche>/<nr>[-<alter>].webp`); continue; }
   const [, group, epoch, , age] = m;
   const isStaff = group === 'staff';
   if (!isStaff && !GROUPS.includes(group)) { problems.push(`${rel}: unbekannte Gruppe „${group}“ (erlaubt: ${GROUPS.join(', ')}, staff)`); continue; }

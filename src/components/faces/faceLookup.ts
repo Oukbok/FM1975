@@ -11,6 +11,7 @@
 // Fehlt ein passendes Bild (Gruppe/Epoche leer), gibt es null → gezeichnetes Gesicht.
 // =============================================================================
 import { FACE_FILES, FACE_MASKS } from '../../data/faceImages';
+import { faceDir } from '../../data/faceGroups';
 
 export const FACE_EPOCHS = [1970, 1980, 1990, 2000, 2010, 2020] as const;
 export const PLAYER_AGE_STAGES = [18, 25, 32, 38] as const;
@@ -106,11 +107,14 @@ export function faceImageFor(q: FaceQuery): FaceImage | null {
   const staged = person.ages.filter((a) => a > 0);
   let pick = staged.length ? staged[0] : 0;
   for (const a of staged) if (Math.abs(a - age) < Math.abs(pick - age)) pick = a;
-  const key = `${groupId}/${epoch}/${person.nr}${pick ? `-${pick}` : ''}`;
+  const file = `${epoch}/${person.nr}${pick ? `-${pick}` : ''}`;
+  const key = `${groupId}/${file}`;
+  // Schlüssel = Gruppen-ID (wie im Register), Datei liegt im englischen Ordner (data/faceDirs.json).
+  const path = `${FACE_BASE}/${faceDir(groupId)}/${file}`;
   return {
     key,
-    src: `${FACE_BASE}/${key}.webp`,
-    mask: person.masks.has(pick) ? `${FACE_BASE}/${key}-maske.webp` : null,
+    src: `${path}.webp`,
+    mask: person.masks.has(pick) ? `${path}-maske.webp` : null,
   };
 }
 

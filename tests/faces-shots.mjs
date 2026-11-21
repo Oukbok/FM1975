@@ -1,4 +1,4 @@
-// Screenshots der Gesichtsbilder (PlayerAvatar mit Foto aus bilder/faces):
+// Screenshots der Gesichtsbilder (PlayerAvatar mit Foto aus images/faces):
 // Spielerprofil, Zentrale (Newscenter), Presse, Budget-Berater (Mitarbeiter-Foto).
 //   npm run build && node tests/faces-shots.mjs [ordner]
 //   Standard-Spielstand: Vorlage „Test 3 Jahre“; anderer mit SAVE=…; VIEW=1366x768;

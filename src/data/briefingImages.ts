@@ -2,9 +2,9 @@
 // Bild-Slots des Saison-Briefings (Zentrale › Briefing, Wunsch Pascal: Archiv im
 // Zeitungslayout mit Fotos je Ereignis)
 // -----------------------------------------------------------------------------
-// Je Ereignis einer Saison ein Foto unter `bilder/briefing/<jahr>-<titel-slug>.webp`
+// Je Ereignis einer Saison ein Foto unter `images/briefing/<jahr>-<titel-slug>.webp`
 // (Schlüssel aus `briefingImageKey`), je Art von „Neu im Spiel“ eines unter
-// `bilder/briefing/neu/<art>.webp`. Liegt ein Bild vor, hier den Schlüssel eintragen –
+// `images/briefing/new/<art>.webp`. Liegt ein Bild vor, hier den Schlüssel eintragen –
 // nur Eingetragenes wird geladen (keine 404-Anfragen); sonst zeichnet die Seite einen
 // ruhigen Ersatz mit Themen-Symbol. Vollständige Liste mit Motiven:
 // docs/bilder/briefing.md (erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`).
@@ -35,5 +35,5 @@ export function briefingPhoto(key: string): string | null {
 }
 
 export function briefingKindPhoto(kind: string): string | null {
-  return BRIEFING_KIND_PHOTOS[kind] ? `assets/briefing/neu/${kind}.webp` : null;
+  return BRIEFING_KIND_PHOTOS[kind] ? `assets/briefing/new/${kind}.webp` : null;
 }

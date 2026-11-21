@@ -12,7 +12,7 @@ const out = process.argv[2] || 'test-output/photos-prep.json';
 const txt = readFileSync('public/saves/test-3-jahre.txt', 'utf8');
 const wrap = JSON.parse(txt.startsWith('LZ1:') ? decompressFromUTF16(txt.slice(4))! : txt) as { game: Game };
 const g = wrap.game;
-const files = ['bilder/faces/mitteleuropa', 'bilder/faces/nordeuropa'].map((d) => `${d}/1970`);
+const files = ['images/faces/central-europe', 'images/faces/northern-europe'].map((d) => `${d}/1970`);
 const { readdirSync } = await import('node:fs');
 const img = (dir: string, i: number) => `data:image/webp;base64,${readFileSync(`${dir}/${readdirSync(dir)[i]}`).toString('base64')}`;
 const msg = g.messages.find((m) => messagePlayers(g, m).length && !(m.choices?.length && m.eventRef && !m.eventRef.resolved));

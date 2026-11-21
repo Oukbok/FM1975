@@ -30,7 +30,7 @@ export const TROPHY_CATS: { key: TrophyCat; label: string }[] = [
   { key: 'jugend', label: 'Jugend' }, { key: 'andere', label: 'Andere' },
 ];
 
-/** Form der gezeichneten Trophäe = Name des Foto-Slots (`bilder/trophies/<shape>.webp`). */
+/** Form der gezeichneten Trophäe = Name des Foto-Slots (`images/trophies/<shape>.webp`). */
 export type TrophyShape =
   | 'schale' | 'ddr' | 'teller' | 'pokal' | 'henkel' | 'cwc' | 'konferenz' | 'uefa'
   | 'halle' | 'jugend' | 'uyl' | 'aufstieg' | 'welt';

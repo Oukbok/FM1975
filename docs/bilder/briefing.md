@@ -1,24 +1,24 @@
 # Bilder: Saison-Briefing (Zentrale › Briefing)
 
-Erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`. Ablage `bilder/briefing/<datei>.webp`,
+Erzeugt mit `node scripts/run-ts.mjs scripts/briefing-image-list.ts`. Ablage `images/briefing/<datei>.webp`,
 danach den Schlüssel in `src/data/briefingImages.ts` (`BRIEFING_PHOTOS`) eintragen. Format WebP 1280 × 720 (16:9),
 Fotostil wie Pressefotos der jeweiligen Zeit (Farbe/Körnung passend zum Jahrzehnt), keine echten Logos, Vereine,
 Marken, Personen oder lesbaren Namen; Trikots in neutralen Farben. Das erste Bild je Saison ist der große Aufmacher.
 
-## Neu im Spiel (je Art ein Bild, `bilder/briefing/neu/<art>.webp`, Schlüssel in `BRIEFING_KIND_PHOTOS`)
+## Neu im Spiel (je Art ein Bild, `images/briefing/new/<art>.webp`, Schlüssel in `BRIEFING_KIND_PHOTOS`)
 
 | Datei | Art | Motiv |
 |---|---|---|
-| `neu/regel.webp` | Spielregeln | Schiedsrichter mit Pfeife und Karten am Spielfeldrand |
-| `neu/liga.webp` | Ligasystem | Tabellenaushang/Anzeigetafel mit Ligatabelle |
-| `neu/wettbewerb.webp` | Wettbewerbe | Pokal auf einem Podest im Flutlicht |
-| `neu/geld.webp` | Geld & Recht | Verhandlungstisch mit Vertrag, Füller und Geldscheinen |
-| `neu/technik.webp` | Technik | Kamera/Technik am Tor oder im Stadion |
-| `neu/training.webp` | Trainingslager | Mannschaft beim Training in einem Trainingslager |
-| `neu/halle.webp` | Hallenfußball | Hallenfußball mit Bande |
-| `neu/jugend.webp` | Nachwuchs | Nachwuchsspieler auf dem Trainingsplatz |
-| `neu/umfeld.webp` | Stadionumfeld | Stadionvorplatz mit Fans und Ständen |
-| `neu/einrichtung.webp` | Einrichtungen | Modernes Vereinsgebäude/Trainingszentrum |
+| `new/regel.webp` | Spielregeln | Schiedsrichter mit Pfeife und Karten am Spielfeldrand |
+| `new/liga.webp` | Ligasystem | Tabellenaushang/Anzeigetafel mit Ligatabelle |
+| `new/wettbewerb.webp` | Wettbewerbe | Pokal auf einem Podest im Flutlicht |
+| `new/geld.webp` | Geld & Recht | Verhandlungstisch mit Vertrag, Füller und Geldscheinen |
+| `new/technik.webp` | Technik | Kamera/Technik am Tor oder im Stadion |
+| `new/training.webp` | Trainingslager | Mannschaft beim Training in einem Trainingslager |
+| `new/halle.webp` | Hallenfußball | Hallenfußball mit Bande |
+| `new/jugend.webp` | Nachwuchs | Nachwuchsspieler auf dem Trainingsplatz |
+| `new/umfeld.webp` | Stadionumfeld | Stadionvorplatz mit Fans und Ständen |
+| `new/einrichtung.webp` | Einrichtungen | Modernes Vereinsgebäude/Trainingszentrum |
 
 ## Ereignisse je Saison
 

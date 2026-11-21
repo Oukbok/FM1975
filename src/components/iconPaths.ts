@@ -8,7 +8,7 @@
 //   Off-White  #f2eeea  (= Theme var(--text))
 //   Türkis     #f1a037  (= Theme var(--accent))
 // Dieselben Rohdaten erzeugen via scripts/gen-icons.mjs die einzelnen
-// bilder/icons/*.svg — Stil bleibt garantiert identisch.
+// images/icons/*.svg — Stil bleibt garantiert identisch.
 // Neue Icons: hier einen weiteren Eintrag ergänzen (siehe docs/ICON_STYLE.md).
 // =============================================================================
 

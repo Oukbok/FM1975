@@ -16,13 +16,13 @@ export function money(v: number): string {
 }
 
 /**
- * Freigeschaltete Bilder unter `bilder/merch/<name>.webp` (z. B. `trikot: true`). Nur
+ * Freigeschaltete Bilder unter `images/merch/<name>.webp` (z. B. `trikot: true`). Nur
  * eingetragene Bilder werden geladen – sonst gäbe jeder Slot eine 404-Anfrage (test:audit).
  */
 const MERCH_PHOTOS: Record<string, true> = {};
 
 /**
- * Bild-Slot: `bilder/merch/<name>.webp`; fehlt die Datei, bleibt eine ruhige
+ * Bild-Slot: `images/merch/<name>.webp`; fehlt die Datei, bleibt eine ruhige
  * Fläche mit Icon stehen (Bildwünsche im Bericht / Wiki).
  */
 export function MerchImage({ name, alt, icon = 'merch', className = '' }: { name: string; alt: string; icon?: IconName; className?: string }) {

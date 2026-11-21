@@ -1,7 +1,7 @@
 // =============================================================================
 // Pressefotos im Lesebereich des Newscenters (Look „Akte“, Wunsch Pascal)
 // -----------------------------------------------------------------------------
-// Liegt ein Foto unter `bilder/presse/<epoche>/<motiv>.webp`, hier eintragen –
+// Liegt ein Foto unter `images/press/<epoche>/<motiv>.webp`, hier eintragen –
 // erst dann wird es geladen (keine 404-Anfragen). Ohne Eintrag zeigt die Nachricht
 // kein Foto. Motive und Größen: docs/bilder/BILDER.md, Abschnitt „Akte“.
 // Epoche = Jahr, ab dem die Fassung gilt (1975 = Schwarzweiß der 70er …).
@@ -108,7 +108,7 @@ export function pressPhotoFor(m: InboxMessage, opts?: { won?: boolean }): string
     if (!have.length) continue;
     const motif = have[hash(m.id) % have.length];
     const v = hash(`v|${m.id}|${m.date}`) % (1 + (PRESS_VARIANTS[`${era}:${motif}`] ?? 0));
-    return `assets/presse/${era}/${motif}${v ? `_${String(v).padStart(2, '0')}` : ''}.webp`;
+    return `assets/press/${era}/${motif}${v ? `_${String(v).padStart(2, '0')}` : ''}.webp`;
   }
   return null;
 }

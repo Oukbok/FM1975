@@ -1,7 +1,7 @@
 # Bilderliste – generierte Bilder für den AAA-Look
 
 Lebende Liste (Wunsch Pascal): Jeder neue oder umgebaute Bereich trägt hier seine Bildwünsche ein.
-Bilder kommen nach `bilder/<bereich>/`. Jede Stelle hat eine gezeichnete Ersatzdarstellung,
+Bilder kommen nach `images/<bereich>/`. Jede Stelle hat eine gezeichnete Ersatzdarstellung,
 das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im jeweiligen Register
 (z. B. `src/data/trophyImages.ts`) eingetragen ist.
 
@@ -14,9 +14,9 @@ das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im j
 2. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
 3. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
 4. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
-5. **Korn** `akte/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
+5. **Korn** `dossier/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
 
-**Entfällt mit dem Look „Akte“:** Hintergrundfotos für die Seiten (Abschnitt 1, `bg/stadion-*`, `bg/buero-*` …) und `press/zeitung-<epoche>` (ersetzt durch `akte/zeitung.webp`). Nur noch die dunklen Bühnen (Auslosung, Gala, Halle, Textmodus, „Nächstes Spiel“) nutzen Fotos.
+**Entfällt mit dem Look „Akte“:** Hintergrundfotos für die Seiten (Abschnitt 1, `bg/stadion-*`, `bg/buero-*` …) und `press/zeitung-<epoche>` (ersetzt durch `dossier/zeitung.webp`). Nur noch die dunklen Bühnen (Auslosung, Gala, Halle, Textmodus, „Nächstes Spiel“) nutzen Fotos.
 
 ## Gemeinsamer Bildstil (für alle Motive)
 - **Look „Akte“ (Papier, Mappen, Kalender, Zeitung):** gerade Draufsicht, helles Papier ohne Vergilbung, weiche kurze Schatten, transparenter Rand für den Schatten, **keine Schrift, keine Zahlen** (das Spiel schreibt die Inhalte hinein).
@@ -36,13 +36,13 @@ Stil: helles Papier, gerade Draufsicht, keine Schrift/Logos. Einbindung über To
 
 | Datei | Motiv | Größe | Stand |
 |---|---|---|---|
-| `akte/papier.webp` | Papiertextur, nahtlos kachelbar | 1254×1254 | **vorhanden** – Seitenhintergrund, Untermenü |
-| `akte/mappe.webp` | Aktenmappe mit zwei Blättern (links Liste, rechts Inhalt), transparent | 1327×1185 | **vorhanden** – Newscenter (Raster in % der Bildmaße, bei neuer Fassung Maße in `31-akte.css` anpassen) |
-| `akte/zeitung.webp` | Aufgeschlagene Zeitungs-Doppelseite, transparent, Falz bei 49,6 % | 1838×856 | **vorhanden** – Zentrale › Presse (Raster in % in `28-presse.css`) |
-| `akte/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
-| `akte/kalender.webp` | Ringbuch-Kalender (Kraftdeckel, Ringe links, Blattstapel), transparent | 1511×1041 | **vorhanden** – Zentrale › Kalender (Raster in % in `31-akte.css`) |
-| `akte/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
-| `presse/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel`, `verletzung`, `fans`, `abpfiff`, `kopfball`, `stadion`, `training`, `auslosung`, `vertrag`, `vorstand`, `zweikampf`, `torschuss`, `torwart` **vorhanden** (alle 13); weitere Fassungen je Motiv als `<motiv>_01.webp` … und in `data/pressPhotos.ts` `PRESS_VARIANTS` eintragen (Abpfiff, Fans, Torschuss, Training, Verletzung und Vorstand je 10, Torwart 7, Torjubel 6, Kopfball 3 weitere vorhanden, wechseln je Nachricht; zu moderne Motive – heutiger Ball, Arena-Flutlicht, moderne Frisuren – nicht für 1975 nehmen); später je Epoche 1985/2000/2015 |
+| `dossier/papier.webp` | Papiertextur, nahtlos kachelbar | 1254×1254 | **vorhanden** – Seitenhintergrund, Untermenü |
+| `dossier/mappe.webp` | Aktenmappe mit zwei Blättern (links Liste, rechts Inhalt), transparent | 1327×1185 | **vorhanden** – Newscenter (Raster in % der Bildmaße, bei neuer Fassung Maße in `31-akte.css` anpassen) |
+| `dossier/zeitung.webp` | Aufgeschlagene Zeitungs-Doppelseite, transparent, Falz bei 49,6 % | 1838×856 | **vorhanden** – Zentrale › Presse (Raster in % in `28-presse.css`) |
+| `dossier/blatt.webp` | Einzelblatt mit Büttenrand, transparent, Rand ≥ 60 px | 1200×1600 | **vorhanden** – Neun-Teile-Rahmen für weitere Blätter |
+| `dossier/kalender.webp` | Ringbuch-Kalender (Kraftdeckel, Ringe links, Blattstapel), transparent | 1511×1041 | **vorhanden** – Zentrale › Kalender (Raster in % in `31-akte.css`) |
+| `dossier/korn.png` | feines Druck-Korn, nahtlos | 512×512 | offen – über Kopfleiste/Balken |
+| `press/<epoche>/<motiv>.webp` | Pressefoto (Epoche 1975 = Schwarzweiß der 70er), erfundene Spieler, keine Wappen | 1200×600 | `1975/torjubel`, `verletzung`, `fans`, `abpfiff`, `kopfball`, `stadion`, `training`, `auslosung`, `vertrag`, `vorstand`, `zweikampf`, `torschuss`, `torwart` **vorhanden** (alle 13); weitere Fassungen je Motiv als `<motiv>_01.webp` … und in `data/pressPhotos.ts` `PRESS_VARIANTS` eintragen (Abpfiff, Fans, Torschuss, Training, Verletzung und Vorstand je 10, Torwart 7, Torjubel 6, Kopfball 3 weitere vorhanden, wechseln je Nachricht; zu moderne Motive – heutiger Ball, Arena-Flutlicht, moderne Frisuren – nicht für 1975 nehmen); später je Epoche 1985/2000/2015 |
 
 Neues Pressefoto: Datei ablegen und Motiv in `PRESS_PHOTOS` (data/pressPhotos.ts) unter der Epoche eintragen.
 
@@ -63,7 +63,7 @@ Die Seiten liegen jetzt auf Papier; diese Fotos werden nur noch für die dunklen
 
 **Epoche 1990 (2026-11-19):** 300 Bilder aus 30 Paketen (242 und 297 nachgeliefert, auf den Ausschnitt der übrigen eingepasst), nach Aussehen einsortiert – gemischte Herkunft (z. B. „französisch-senegalesisch“) liegt bei `westafrika`/`nordafrika`. Prompt für die 2000er: `docs/bilder/faces-2000-prompt.md`.
 
-**Ethnie gesichtet (2026-11-18):** Alle 615 Bilder angesehen. Die Ordner passen zum Aussehen; einzige Ausnahme `suedeuropa/1980/159` (gemischte Herkunft, wirkt südamerikanisch) liegt jetzt unter `lateinamerika/1980/159`. Neue Bilder: nach dem Ablegen `node scripts/faces-register.mjs` – es listet nicht gesichtete Bilder; Übersichtsbilder `python3 scripts/faces-sheet.py`, Liste `docs/bilder/faces-gesichtet.txt`. Am dringendsten fehlen mit wachsender Vielfalt ab den 90ern: `westafrika`, `nordafrika`, `tuerkei`, `lateinamerika` sowie alle Gruppen ab Epoche `1990`.
+**Ethnie gesichtet (2026-11-18):** Alle 615 Bilder angesehen. Die Ordner passen zum Aussehen; einzige Ausnahme `suedeuropa/1980/159` (gemischte Herkunft, wirkt südamerikanisch) liegt jetzt unter `lateinamerika/1980/159` (Ordner `latin-america/1980/159`). Neue Bilder: nach dem Ablegen `node scripts/faces-register.mjs` – es listet nicht gesichtete Bilder; Übersichtsbilder `python3 scripts/faces-sheet.py`, Liste `docs/bilder/faces-gesichtet.txt`. Am dringendsten fehlen mit wachsender Vielfalt ab den 90ern: `westafrika`, `nordafrika`, `tuerkei`, `lateinamerika` sowie alle Gruppen ab Epoche `1990`.
 
 Technik steht (Register `src/data/faceImages.ts`, Zuordnung `src/components/faces/faceLookup.ts`, Anzeige `src/components/PlayerAvatar.tsx`).
 Jedes Bild, das du ablegst, erscheint sofort an **allen** Stellen mit Gesicht: Spielerprofil, Presse,
@@ -72,31 +72,31 @@ Ehrungen/Gala, Transferverhandlung, Fanartikel – Trainer/Berater/Manager über
 Fehlt ein Bild, zeichnet das Spiel das Gesicht wie bisher (Hautton passend zur Herkunft).
 
 ### Ordner und Dateinamen
-`bilder/faces/<gruppe>/<epoche>/<nr>-<alter>.webp`
+`images/faces/<ordner>/<epoche>/<nr>-<alter>.webp`
 
 | Teil | Werte | Bedeutung |
 |---|---|---|
-| `gruppe` | `mitteleuropa`, `nordeuropa`, `suedeuropa`, `osteuropa`, `balkan`, `tuerkei`, `westafrika`, `lateinamerika`, `ostasien`, `nordafrika`, `staff` | Aussehen nach Herkunft (Tabelle unten); `staff` = Trainer, Berater, Funktionäre, Manager |
+| `ordner` | `central-europe`, `northern-europe`, `southern-europe`, `eastern-europe`, `balkans`, `turkey`, `west-africa`, `latin-america`, `east-asia`, `north-africa`, `staff` | Aussehen nach Herkunft (Tabelle unten); `staff` = Trainer, Berater, Funktionäre, Manager. Ordnernamen englisch; im Spiel (Spielstand, Datensatz, Register `faceImages.ts`, `faces-gesichtet.txt`) heißt die Gruppe weiter nach ihrer ID (`mitteleuropa` …) – Zuordnung ID → Ordner in `src/data/faceDirs.json`. |
 | `epoche` | `1970`, `1980`, `1990`, `2000`, `2010`, `2020` | Spieler: Jahrzehnt, in dem er etwa 25 ist (Frisur/Bart seiner aktiven Zeit – bleibt ein Spielerleben lang gleich). Mitarbeiter: laufendes Spieljahrzehnt (Kleidung der Zeit). Fehlt eine Epoche, nimmt das Spiel die nächstgelegene vorhandene derselben Gruppe. |
 | `nr` | `01`, `02`, … | eine Person. Gleiche Nummer = gleiche Person in verschiedenen Altersstufen. |
 | `alter` | Spieler `18`, `25`, `32`, `38` · Mitarbeiter `35`, `45`, `55`, `65` (optional) | Das Spiel zeigt die Stufe, die dem aktuellen Alter am nächsten liegt – so altert ein Spieler. Ohne Altersangabe (`<nr>.webp`) passt das Bild zu jedem Alter. |
 | Maske (optional) | `<nr>-<alter>-maske.webp` | Trikotfläche weiß/deckend, Rest transparent – damit färbt das Spiel das Trikot in der Vereinsfarbe. Ohne Maske bleibt das Trikot grau. |
 
-Beispiele: `faces/mitteleuropa/1970/01-25.webp`, `faces/mitteleuropa/1970/01-32.webp` (dieselbe Person sieben Jahre älter), `faces/mitteleuropa/1970/01-25-maske.webp`, `faces/staff/1990/04-55.webp`.
+Beispiele: `faces/central-europe/1970/01-25.webp`, `faces/central-europe/1970/01-32.webp` (dieselbe Person sieben Jahre älter), `faces/central-europe/1970/01-25-maske.webp`, `faces/staff/1990/04-55.webp`.
 
 ### Herkunft → Gruppe (aus `src/data/origins.ts`)
-| Gruppe | Herkünfte im Spiel |
-|---|---|
-| `mitteleuropa` | deutsch (West, Ost/DDR, „modern“), Österreich, Schweiz, Niederlande, Belgien, Frankreich, England, Schottland, USA |
-| `nordeuropa` | Dänemark, Schweden, Norwegen |
-| `suedeuropa` | Italien, Spanien, Portugal, Griechenland, Deutsche mit italienischen Wurzeln |
-| `osteuropa` | Polen, Tschechoslowakei/Tschechien, Ungarn, Sowjetunion/Russland, Deutsche mit polnischen Wurzeln |
-| `balkan` | Jugoslawien, Kroatien, Serbien, Deutsche mit jugoslawischen Wurzeln |
-| `tuerkei` | Türkei, Deutsch-Türken |
-| `westafrika` | Ghana, Nigeria, Kamerun, Deutsche/Franzosen mit afrikanischen Wurzeln |
-| `lateinamerika` | Brasilien, Argentinien |
-| `ostasien` | Japan, Korea |
-| `nordafrika` | Marokko |
+| Gruppe (ID) | Ordner | Herkünfte im Spiel |
+|---|---|---|
+| `mitteleuropa` | `central-europe` | deutsch (West, Ost/DDR, „modern“), Österreich, Schweiz, Niederlande, Belgien, Frankreich, England, Schottland, USA |
+| `nordeuropa` | `northern-europe` | Dänemark, Schweden, Norwegen |
+| `suedeuropa` | `southern-europe` | Italien, Spanien, Portugal, Griechenland, Deutsche mit italienischen Wurzeln |
+| `osteuropa` | `eastern-europe` | Polen, Tschechoslowakei/Tschechien, Ungarn, Sowjetunion/Russland, Deutsche mit polnischen Wurzeln |
+| `balkan` | `balkans` | Jugoslawien, Kroatien, Serbien, Deutsche mit jugoslawischen Wurzeln |
+| `tuerkei` | `turkey` | Türkei, Deutsch-Türken |
+| `westafrika` | `west-africa` | Ghana, Nigeria, Kamerun, Deutsche/Franzosen mit afrikanischen Wurzeln |
+| `lateinamerika` | `latin-america` | Brasilien, Argentinien |
+| `ostasien` | `east-asia` | Japan, Korea |
+| `nordafrika` | `north-africa` | Marokko |
 
 ### Bildvorgaben
 - **Format:** WebP mit Alpha-Kanal (transparenter Hintergrund), **512 × 600 px**, Qualität ~80, Ziel < 150 KB.
@@ -115,7 +115,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 
 ### So schaltest du Bilder frei (Schritt für Schritt)
 1. Bilder nach den Vorgaben oben erzeugen und als `.webp` speichern (z. B. mit squoosh.app: „WebP“, Qualität 80, Alpha an).
-2. In den passenden Ordner legen, z. B. `bilder/faces/mitteleuropa/1970/01-25.webp` (Ordner bei Bedarf anlegen).
+2. In den passenden Ordner legen, z. B. `images/faces/central-europe/1970/01-25.webp` (Ordner bei Bedarf anlegen).
 3. Optional die Trikotmaske daneben legen: `01-25-maske.webp` (Trikot weiß, alles andere transparent).
 4. Im Projektordner ausführen: `node scripts/faces-register.mjs` – das Skript prüft alle Dateinamen, zeigt eine Übersicht Gruppe × Epoche und schreibt das Register `src/data/faceImages.ts` neu. Hinweise (falscher Name, PNG statt WebP, zu groß, Maske ohne Bild) stehen darunter. Nur prüfen: `node scripts/faces-register.mjs --check`.
 5. `npm run build` (bzw. `npm run dev`) und ein Spiel laden – die Gesichter erscheinen überall. Kontrolle mit Screenshots: `node tests/faces-shots.mjs test-output/faces` (Profil, Presse, Budget-Berater, Textmodus; meldet fehlende Dateien und Größensprünge).
@@ -163,12 +163,12 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 |---|---|---|---|
 | `newgame/schritt-<n>.webp` | Stimmungsbild je Assistenten-Schritt (Vertrag unterschreiben, Landkarte, Stadioneingang, Willkommensschild) | 1920×1080 | Neues-Spiel-Assistent |
 | `intro/saison-<jahr>.webp` | Zeitgeist-Collage je Jahrzehnt (Fernseher, Zeitung, Fankultur) | 1920×1080 | Saison-Auftakt-Animation |
-| `press/zeitung-<epoche>.webp` | **entfällt** – ersetzt durch `akte/zeitung.webp` (später ggf. Fassungen je Epoche im selben Format 1838×856) | – | Presse |
+| `press/zeitung-<epoche>.webp` | **entfällt** – ersetzt durch `dossier/zeitung.webp` (später ggf. Fassungen je Epoche im selben Format 1838×856) | – | Presse |
 
 ---
 
 ## Spielplan – Fanbild (Aufstellung › Spielplan, Wunsch Pascal)
-Schmales Foto links in der Leiste „Nächstes Pflichtspiel“. **Schwarzweiß, keine Farben**, damit es zu jedem Verein passt (die Seite legt die Vereinsfarbe leicht darüber). Je Jahrzehnt ein Motiv: `spielplan/fans-<jahrzehnt>.webp` (1970 … 2030), 1200 × 450 px (8 : 3), danach in `src/data/fixtureImages.ts` `FAN_PHOTOS` eintragen (Liste je Jahrzehnt, wechselt je Spiel). Fehlt ein Jahrzehnt, nimmt die Seite das nächstfrühere. **Vorhanden:** 70er = die 11 Pressefotos `presse/1975/fans*.webp` (auch im Newscenter je Nachricht wechselnd).
+Schmales Foto links in der Leiste „Nächstes Pflichtspiel“. **Schwarzweiß, keine Farben**, damit es zu jedem Verein passt (die Seite legt die Vereinsfarbe leicht darüber). Je Jahrzehnt ein Motiv: `spielplan/fans-<jahrzehnt>.webp` (1970 … 2030), 1200 × 450 px (8 : 3), danach in `src/data/fixtureImages.ts` `FAN_PHOTOS` eintragen (Liste je Jahrzehnt, wechselt je Spiel). Fehlt ein Jahrzehnt, nimmt die Seite das nächstfrühere. **Vorhanden:** 70er = die 11 Pressefotos `press/1975/fans*.webp` (auch im Newscenter je Nachricht wechselnd).
 
 Grundprompt (gleich für alle Jahrzehnte, nur den Jahrzehnt-Teil tauschen):
 > Black-and-white documentary press photograph, wide horizontal crop 8:3, a packed standing terrace behind the goal seen from slightly below, dense crowd of football supporters filling the whole frame, many faces partly in shadow, raised arms, scarves held up and flags on poles, grain and soft contrast like a period newspaper photo, overcast light, no readable text, no logos, no club crests, no recognizable real people, no color at all (pure monochrome, neutral grey tones), the left two thirds busy and detailed, the right third calmer and slightly darker so it can fade out. [JAHRZEHNT]
@@ -187,7 +187,7 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 
 | Bereich | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|---|
-| Gesichter (Start) | `faces/mitteleuropa/{1970,1980}/{01..20}-25.webp` (+ `-maske.webp`) | 40 Spielerporträts nach Abschnitt 2 – deckt die ersten 15 Spieljahre ab; danach Altersstufen 18/32/38 und weitere Gruppen | 512×600, Alpha | überall mit Gesicht (Ersatz: gezeichnetes Gesicht) |
+| Gesichter (Start) | `faces/central-europe/{1970,1980}/{01..20}-25.webp` (+ `-maske.webp`) | 40 Spielerporträts nach Abschnitt 2 – deckt die ersten 15 Spieljahre ab; danach Altersstufen 18/32/38 und weitere Gruppen | 512×600, Alpha | überall mit Gesicht (Ersatz: gezeichnetes Gesicht) |
 | Gesichter Mitarbeiter | `faces/staff/{1970,1990,2010}/{01..10}-55.webp` | Trainer/Berater/Funktionäre in Anzug oder Trainingsjacke der Zeit | 512×600, Alpha | Budget-Berater, Presse (Trainer), Manager im Assistenten |
 | Erstes Training | `promises/erstes-training.webp` | Trainingsauftakt: Spieler im Halbkreis um den Trainer auf dem Trainingsplatz, Hütchen, Zaun; entsättigt, kühl abgedunkelt, Querformat | 1200×340 | Kopf des Versprechen-Popups (Ersatz: gezeichneter Trainingsplatz) |
 | Auslosung | `draw/gala-buehne.webp` | Gala-Bühne mit Scheinwerfern und Lichtwänden, entsättigt, kühl | 1920×1080 | hinter der Auslosungs-Show (Ersatz: gezeichnete Bühne) |
@@ -223,17 +223,17 @@ Werden beim Zusammenführen der Stränge ergänzt (Erstes Training, Trainingslag
 | Datei | Motiv | Größe | Einsatzort |
 |---|---|---|---|
 | `briefing/<jahr>-<titel>.webp` (180 Stück, Liste mit Motiven: `docs/bilder/briefing.md`) | Pressefoto zum Ereignis der Saison (Aufmacher groß, zwei Nebenthemen), Farbe/Körnung passend zum Jahrzehnt, ohne echte Logos/Personen | 1280×720 | Archiv: Aufmacher + Nebenthemen (Ersatz: Themen-Symbol auf Dunkelblau); freischalten in `src/data/briefingImages.ts` |
-| `briefing/neu/<art>.webp` (10 Arten) | Symbolbild je Art von „Neu im Spiel“ (Regeln, Liga, Technik …) | 1280×720 | Archiv: Karten „Neu im Spiel“ |
+| `briefing/new/<art>.webp` (10 Arten) | Symbolbild je Art von „Neu im Spiel“ (Regeln, Liga, Technik …) | 1280×720 | Archiv: Karten „Neu im Spiel“ |
 
 ## Karriere › Bilanz als Ringmappe (Wunsch Pascal, Vorschlag 2 „Akten- & Scrapbook-Design“) – vorhanden
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|
-| `akte/bilanz.webp` | aufgeschlagene Ringmappe: gelber Block links (Reiter orange/grün), Karopapier rechts, Pappreiter | 2400×1174 | Hintergrund der Bilanz |
-| `akte/bilanz/zettel-blatt.webp` | linierter Abriss-Zettel | 1200×770 | Je Wettbewerb |
-| `akte/bilanz/zettel-abriss.webp` | glatter Abriss-Zettel | 900×560 | Titel & Rekorde |
-| `akte/bilanz/zettel-zeitung.webp` | leerer Zeitungsausschnitt | 800×533 | Zeitungsdienst |
-| `akte/bilanz/zettel-orange.webp`, `zettel-gelb.webp`, `zettel-klein.webp` | Haftnotizen | 700 / 380 px | Meilensteine, Gegner, nächster Meilenstein |
-| `akte/bilanz/klebestreifen.webp`, `polaroid.webp` | Klebestreifen, Sofortbild (Fotofeld grau) | 380 / 440 px | Befestigung, Wappen |
+| `dossier/bilanz.webp` | aufgeschlagene Ringmappe: gelber Block links (Reiter orange/grün), Karopapier rechts, Pappreiter | 2400×1174 | Hintergrund der Bilanz |
+| `dossier/balance/zettel-blatt.webp` | linierter Abriss-Zettel | 1200×770 | Je Wettbewerb |
+| `dossier/balance/zettel-abriss.webp` | glatter Abriss-Zettel | 900×560 | Titel & Rekorde |
+| `dossier/balance/zettel-zeitung.webp` | leerer Zeitungsausschnitt | 800×533 | Zeitungsdienst |
+| `dossier/balance/zettel-orange.webp`, `zettel-gelb.webp`, `zettel-klein.webp` | Haftnotizen | 700 / 380 px | Meilensteine, Gegner, nächster Meilenstein |
+| `dossier/balance/klebestreifen.webp`, `polaroid.webp` | Klebestreifen, Sofortbild (Fotofeld grau) | 380 / 440 px | Befestigung, Wappen |
 Keine Büroklammern (Wunsch Pascal). Lagen in % der Mappe in `src/styles/28-career-binder.css`.
 
 

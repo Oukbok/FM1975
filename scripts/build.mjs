@@ -13,9 +13,9 @@ execFileSync(process.execPath, ['scripts/compact-fonts.mjs'], { stdio: 'inherit'
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 cpSync('public', out, { recursive: true });
-// Alle Bilder liegen im Ordner bilder/ (Wunsch Pascal: ein Ort zum Finden und als Referenz);
+// Alle Bilder liegen im Ordner images/ (Wunsch Pascal: ein Ort zum Finden und als Referenz);
 // im Spiel heißen sie weiter assets/… – deshalb nach dist/assets kopieren.
-cpSync('bilder', `${out}/assets`, { recursive: true });
+cpSync('images', `${out}/assets`, { recursive: true });
 writeFileSync(`${out}/index.html`, `<!DOCTYPE html>
 <html lang="de">
   <head>
@@ -63,7 +63,7 @@ const options = {
   chunkNames: 'chunks/[name]-[hash]',
   target: 'es2020',
   jsx: 'automatic',
-  // Bilder liegen in bilder/ und werden im Spiel relativ als "assets/..." referenziert.
+  // Bilder liegen in images/ und werden im Spiel relativ als "assets/..." referenziert.
   external: ['assets/*'],
   minify: !serve,
   sourcemap: serve,
