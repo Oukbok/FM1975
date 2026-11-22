@@ -107,6 +107,7 @@ export const StatistikenDashboard = lz(() => import('../views/categoryDashboards
 export const MatchScreen = lz(() => import('../screens/match/MatchScreen'), 'MatchScreen');
 export const PrematchScreen = lz(() => import('../screens/prematch/PrematchScreen'), 'PrematchScreen');
 export const ContractScreen = lz(() => import('../screens/contract/ContractScreen'), 'ContractScreen');
+export const GameOverScreen = lz(() => import('../screens/GameOverScreen'), 'GameOverScreen');
 export const MatchModal = lz(() => import('../views/matchday/MatchModal'), 'MatchModal');
 export const DrawShow = lz(() => import('../screens/draw/DrawShow'), 'DrawShow');
 export const RatingShow = lz(() => import('../screens/rating/RatingShow'), 'RatingShow');

@@ -4,7 +4,7 @@
 // PopupLayer), Kopfleiste (HeaderBar), Routing der Seiten (ScreenRouter).
 // =============================================================================
 import { setMastersScoring } from '../game/indoorMasters';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { ClubProfileProvider } from '../components/club/ClubProfileContext';
 import { PlayerMenuProvider } from '../components/playerMenu/PlayerContextMenu';
 import { CountryProfileProvider } from '../components/country/CountryProfileContext';
@@ -22,7 +22,8 @@ import { setCrestDate } from '../data/dataset/apply';
 import { setPortraitGame } from '../game/playerPortraits';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
-import { preloadEarlyParts, preloadShellParts } from './lazyParts';
+import { GameOverScreen, preloadEarlyParts, preloadShellParts } from './lazyParts';
+import { OverlayLoading } from './LazyFallback';
 import { NEUTRAL_SCREENS, Screen, TopNav, menuFor, screensOf } from './navigation';
 import { setViewMode, useViewMode } from './viewMode';
 import { activeJob } from '../game/national/nationalJob';
@@ -173,6 +174,9 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   // Kalender-Overlay (CalendarOverlay.tsx): nur solange die Zeit läuft und kein Popup offen ist.
   const calLive = running && !q.textMatch && !q.liveMatchId && !q.ratingCeremony && !q.popupHold && !q.devReveal
     && q.drawQueue.length === 0 && !showSettings && !saveLoadMode && !clubEditorOpen && !q.indoorDue && !contractReq;
+
+  // Spielende nach dem Abstieg aus der untersten Liga (game/relegationGame.ts): nur noch der Abschluss-Bildschirm.
+  if (g.over) return <Suspense fallback={<OverlayLoading />}><GameOverScreen g={g} onExit={onExit} onLoad={onLoad} /></Suspense>;
 
   return (
     // Vereinsprofil: jeder <ClubLink> im Spiel öffnet es (components/club/ClubProfileContext.tsx).
