@@ -24,7 +24,7 @@ export function hallTrack(g: Game): void {
 export function hallSummary(): void {
   const span = (a: number, b: number) => rows.filter((r) => r.y >= a && r.y <= b);
   const avg = (xs: number[]) => (xs.length ? (xs.reduce((s, x) => s + x, 0) / xs.length).toFixed(1) : '-');
-  for (const [a, b, l] of [[1976, 1987, 'früh'], [1988, 2001, 'Masters'], [2002, 2004, 'spät'], [2005, 2012, 'danach']] as const) {
+  for (const [a, b, l] of [[1976, 1987, 'früh'], [1988, 2001, 'Hallenfinale'], [2002, 2004, 'spät'], [2005, 2012, 'danach']] as const) {
     const r = span(a, b);
     if (r.length) console.log(`HALLE ${l} ${a}–${b}: Spezialisten Ø ab 35 ${avg(r.map((x) => x.fix35))} (min ${Math.min(...r.map((x) => x.fix35))}, max ${Math.max(...r.map((x) => x.fix35))}) | jetzt Ø ${avg(r.map((x) => x.now))} (min ${Math.min(...r.map((x) => x.now))}, max ${Math.max(...r.map((x) => x.now))})`);
   }

@@ -104,7 +104,7 @@ console.log(`Ziele (Spitzenverein): 1975 ${unlocked(1975).join('/')} | 1992 ${un
 
 // 2) Hallen-Phasen
 expect(indoorPhase(1976) === 'invitational' && indoorPhase(1987) === 'invitational', 'Vorläufer-Phase');
-expect(indoorPhase(1988) === 'masters' && indoorPhase(MASTERS_LAST_WINTER) === 'masters', 'Masters-Phase');
+expect(indoorPhase(1988) === 'masters' && indoorPhase(MASTERS_LAST_WINTER) === 'masters', 'Hallenfinal-Phase');
 expect(indoorPhase(2002) === 'regional' && indoorPhase(INDOOR_LAST_WINTER) === 'regional', 'Auslauf');
 for (let y = INDOOR_LAST_WINTER + 1; y <= 2060; y++) expect(indoorPhase(y) === 'none', `Hallenturniere nach dem Endjahr (${y})`);
 
@@ -160,20 +160,20 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   const cur = st.current!;
   expect(cur.phase === 'masters' && cur.winterYear === 1991, 'Phase 1990/91');
   expect(cur.tournaments.length === 16 && cur.tournaments.every((t) => t.done && t.clubIds.length === 6), 'Tour 1990/91 nicht vollständig');
-  expect(!!cur.masters?.done && cur.masters.clubIds.length === 8, 'Masters 1991 nicht gespielt');
+  expect(!!cur.masters?.done && cur.masters.clubIds.length === 8, 'Hallenfinale 1991 nicht gespielt');
   const fin = cur.masters!.result!.matches.find((m) => m.stage === 'F')!;
   const h = st.history.find((x) => x.year === 1991);
-  expect(!!h?.mastersWinner && h.mastersWinner === cur.masters!.result!.ranking[0], 'Masters-Sieger nicht in der Historie');
-  expect(titlesOf(g, h!.mastersWinner!).some((t) => t.kind === 'halle'), 'Masters-Titel fehlt in der Vereinshistorie');
+  expect(!!h?.mastersWinner && h.mastersWinner === cur.masters!.result!.ranking[0], 'Hallenfinal-Sieger nicht in der Historie');
+  expect(titlesOf(g, h!.mastersWinner!).some((t) => t.kind === 'halle'), 'Hallenfinal-Titel fehlt in der Vereinshistorie');
   expect((cur.tour ?? []).length >= 20, 'Tour-Wertung zu klein');
   expect(!cur.tournaments.some((t) => t.result!.ranking.includes(g.managedClubId) && t.own === 'decline'), 'abgesagtes Turnier trotzdem gespielt');
   expect(st.snub >= 0 && own.finances.balance !== bal0, 'keine Buchungen/Verärgerung');
   const injured = Object.values(g.players).filter((p) => p.injury?.description.includes('Halle') || p.injury?.description.includes('Bande')).length;
-  console.log(`Halle 1990/91: 16 Turniere, Masters ${cur.masters!.city}: ${g.clubs[fin.a]?.shortName ?? fin.a} – ${g.clubs[fin.b]?.shortName ?? fin.b} ${fin.ga}:${fin.gb}${fin.pa != null ? ` (${fin.pa}:${fin.pb} n. N.)` : ''}, Sieger ${g.clubs[h!.mastersWinner!]?.name ?? h!.mastersWinner}, abgesagt: ${cur.mastersDeclined?.length ?? 0}, Hallenverletzte ${injured}, eigenes Konto ${Math.round((own.finances.balance - bal0) / 1000)}k, Verärgerung ${st.snub}`);
+  console.log(`Halle 1990/91: 16 Turniere, Hallenfinale ${cur.masters!.city}: ${g.clubs[fin.a]?.shortName ?? fin.a} – ${g.clubs[fin.b]?.shortName ?? fin.b} ${fin.ga}:${fin.gb}${fin.pa != null ? ` (${fin.pa}:${fin.pb} n. N.)` : ''}, Sieger ${g.clubs[h!.mastersWinner!]?.name ?? h!.mastersWinner}, abgesagt: ${cur.mastersDeclined?.length ?? 0}, Hallenverletzte ${injured}, eigenes Konto ${Math.round((own.finances.balance - bal0) / 1000)}k, Verärgerung ${st.snub}`);
 
   // 4) Kein Hallenfußball nach dem Endjahr, Auslauf ohne Masters
   runWinter(g, '2001/02');
-  expect(indoorState(g).current!.phase === 'regional' && !indoorState(g).current!.masters, '2002 ohne Masters');
+  expect(indoorState(g).current!.phase === 'regional' && !indoorState(g).current!.masters, '2002 ohne Hallenfinale');
   runWinter(g, `${INDOOR_LAST_WINTER - 1}/${String(INDOOR_LAST_WINTER % 100).padStart(2, '0')}`);
   expect(indoorState(g).current!.tournaments.length > 0, 'Auslauf-Turniere fehlen');
   for (const s of ['2004/05', '2010/11', '2025/26']) {
@@ -356,7 +356,7 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
   expect(cur.tournaments.every((t) => t.done) && !!cur.masters?.done && !cur.live, 'Winter mit Shows nicht abgeschlossen');
   expect((cur.tour ?? []).some((s) => s.id === g.managedClubId), 'Show-Ergebnisse fehlen in der Tour');
   expect(indoorState(g).history.some((h) => h.year === 1991), 'Historie 1991 fehlt (Shows)');
-  console.log(`Hallen-Show 1990/91: ${shows} Turniere live gespielt, 1 offen gebliebenes im Hintergrund nachgeholt, Masters ${cur.masters!.clubIds.includes(g.managedClubId) ? 'mit' : 'ohne'} dir`);
+  console.log(`Hallen-Show 1990/91: ${shows} Turniere live gespielt, 1 offen gebliebenes im Hintergrund nachgeholt, Hallenfinale ${cur.masters!.clubIds.includes(g.managedClubId) ? 'mit' : 'ohne'} dir`);
 }
 // 7) Masters mit Platzierungspunkten (Option), Hallenruf, Hallentraining
 {
@@ -390,13 +390,13 @@ function runWinter(g: Game, season: string, beforeEachDay?: (d: string) => void)
     const credited = Object.values(rec).reduce((n, x) => n + x.g, 0);
     expect(credited === goals, `Hallentore ${credited} statt ${goals} verbucht`);
     const champ = cur.masters!.result!.ranking[0];
-    expect(!g.clubs[champ] || Object.values(rec).some((x) => x.m > 0 && x.c === champ), 'Masters-Sieg fehlt im Hallenruf');
+    expect(!g.clubs[champ] || Object.values(rec).some((x) => x.m > 0 && x.c === champ), 'Hallenfinal-Sieg fehlt im Hallenruf');
     const top = hallKings(g, 'ruf', 3);
-    console.log(`Masters ${mode}: Feld ${fields[mode].map((id) => g.clubs[id]?.shortName ?? id).join(', ')} | Hallenruf: ${Object.keys(rec).length} Spieler, ${credited} Tore, beste ${top.map((k) => `${k.r.n} ${k.ruf}`).join(' / ')}`);
+    console.log(`Hallenfinale ${mode}: Feld ${fields[mode].map((id) => g.clubs[id]?.shortName ?? id).join(', ')} | Hallenruf: ${Object.keys(rec).length} Spieler, ${credited} Tore, beste ${top.map((k) => `${k.r.n} ${k.ruf}`).join(' / ')}`);
   }
   setMastersScoring(undefined);
-  expect(fields.schnitt.join() !== fields.platz.join() || fields.schnitt.length === 8, 'Masters-Feld fehlt');
-  console.log(`Masters-Feld unterscheidet sich in ${fields.platz.filter((id) => !fields.schnitt.includes(id)).length} Vereinen`);
+  expect(fields.schnitt.join() !== fields.platz.join() || fields.schnitt.length === 8, 'Hallenfinal-Feld fehlt');
+  console.log(`Hallenfinal-Feld unterscheidet sich in ${fields.platz.filter((id) => !fields.schnitt.includes(id)).length} Vereinen`);
 
   // Hallenruf über viele Winter (gleicher Kader, 1988/89–1997/98): wie viele werden Spezialisten?
   const g = fresh();

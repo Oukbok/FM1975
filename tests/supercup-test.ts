@@ -13,7 +13,7 @@ import { trophiesOf } from '../src/game/trophyCabinet';
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
 let ownSc = 0;
-const ui: DayUi = { onOwnMatchDue: (d) => { if (/Supercup|Ligapokal/.test(d.label)) ownSc++; }, onOwnMatch() {}, onRatingCeremony() {}, onSeasonEnd() {}, onCupDraw: (d) => d.involvesMe, onCampEnd: () => true, onTransferWindow: () => true, onIndoorShow: () => false };
+const ui: DayUi = { onOwnMatchDue: (d) => { if (/Gipfelpokal|Auftaktpokal/.test(d.label)) ownSc++; }, onOwnMatch() {}, onRatingCeremony() {}, onSeasonEnd() {}, onCupDraw: (d) => d.involvesMe, onCampEnd: () => true, onTransferWindow: () => true, onIndoorShow: () => false };
 
 function make(year: number) {
   const g = createNewGame({ managedClubId: 'muc', manager: { name: 'T', nationality: 'GER', birthYear: year - 35, style: 'balanced', background: 'newcomer' } as any, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: year } as any);
@@ -33,7 +33,7 @@ function runUntil(g: ReturnType<typeof make>, until: string) {
   return ownSc;
 }
 
-for (const [year, name, n] of [[2012, 'Supercup', 1], [1999, 'Ligapokal', 3], [1990, 'Supercup', 1]] as const) {
+for (const [year, name, n] of [[2012, 'Gipfelpokal', 1], [1999, 'Auftaktpokal', 3], [1990, 'Gipfelpokal', 1]] as const) {
   const g = make(year);
   setupSuperCups(g, seeds(g));
   const st = superCupState(g);
@@ -43,9 +43,9 @@ for (const [year, name, n] of [[2012, 'Supercup', 1], [1999, 'Ligapokal', 3], [1
   ok(ev && ev.matches.every((m) => m.date < first && m.date >= `${year}-07-01`), `${year}: alle Spiele vor dem ersten Ligaspieltag (${first})`);
   ok(ev && ev.matches.every((m) => !g.fixtures.some((f) => f.date === m.date && (f.homeClubId === m.home || f.awayClubId === m.home))), `${year}: keine Kollision mit Ligaspielen`);
   const own = runUntil(g, first);
-  ok(own >= (name === 'Ligapokal' ? 1 : n), `${year}: eigenes Spiel über findOwnMatchDue (${own}×)`);
+  ok(own >= (name === 'Auftaktpokal' ? 1 : n), `${year}: eigenes Spiel über findOwnMatchDue (${own}×)`);
   ok(ev?.winner && ev.matches.every((m) => m.played), `${year}: Sieger ${ev?.winner ? g.clubs[ev.winner]?.name : '-'}${ev?.shared ? ' (geteilt)' : ''}`);
-  const won = titlesOf(g, ev!.winner!).some((t) => t.kind === (name === 'Ligapokal' ? 'ligapokal' : 'super'));
+  const won = titlesOf(g, ev!.winner!).some((t) => t.kind === (name === 'Auftaktpokal' ? 'ligapokal' : 'super'));
   ok(won, `${year}: Titel beim Sieger eingetragen`);
   const tr = trophiesOf(g, ev!.winner!).find((t) => t.kind === 'super' || t.kind === 'ligapokal');
   ok(tr && tr.cat === 'pokal', `${year}: Trophäenschrank „${tr?.title}“ (${tr?.cat})`);
@@ -58,7 +58,7 @@ for (const [year, name, n] of [[2012, 'Supercup', 1], [1999, 'Ligapokal', 3], [1
   const u = st.events.find((e) => e.key === 'uefa');
   if (u) {
     runUntil(g, `${year}-09-05`);
-    ok(u.winner, `${year}: Europäischer Supercup am ${u.matches[0].date}: ${u.matches[0].hg}:${u.matches[0].ag}`);
+    ok(u.winner, `${year}: Europäischer Gipfelpokal am ${u.matches[0].date}: ${u.matches[0].hg}:${u.matches[0].ag}`);
   }
   if (process.env.DUMP && year === 2012) {
     // Spielstand für Screenshots (Statistiken › Supercup, Karriere › Saisons).
@@ -86,5 +86,5 @@ if (process.argv[2] === 'voll') {
   ok(ev && ev.season === '2010/11' && ev.winner, `Saisonwechsel: ${ev?.name} ${ev?.season}, ${ev?.teams.map((id) => g.clubs[id]?.name).join(' – ')}, Sieger ${ev?.winner}`);
 }
 
-console.log(fails ? `\n${fails} Fehler.` : '\nSupercup: alle Prüfungen bestanden.');
+console.log(fails ? `\n${fails} Fehler.` : '\nGipfelpokal: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

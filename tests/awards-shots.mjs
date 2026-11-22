@@ -84,7 +84,7 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
           const box = await page.evaluate((s2) => { const b = document.querySelector(s2)?.closest('.dbox-body'); return b ? [b.scrollHeight - b.clientHeight, b.scrollWidth - b.clientWidth] : [0, 0]; }, sel);
           if (box[0] > 2 || box[1] > 2) errors.push(`${name} ${vw}: ${label} läuft in der Box über (${box.join('/')} px)`);
         };
-        await pick('Goldener Schuh', 'schuh', '.gs-table');
+        await pick('Torjägerstern', 'schuh', '.gs-table');
         await pick('Trainer des Jahres', 'trainer', '.tdj-grid');
         // Elf der eigenen Liga steht zuerst in der Gruppe – je nach Spielstand 1. oder 2. Liga.
         await pick(/Elf der Saison · .*(Liga|liga)/, 'elf', '.tos-pitch');

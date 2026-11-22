@@ -37,7 +37,7 @@ await page.waitForTimeout(500);
 await page.locator('.sub3-tabs .tab:has-text("Welt")').first().click();
 await page.waitForTimeout(600);
 await page.screenshot({ path: `${outDir}/welt_${W}_klubwm.png` });
-await overflow('Klub-WM');
+await overflow('Klub-Weltturnier');
 for (const [label, file] of [['wp', 'weltpokal'], ['sa', 'suedamerika'], ['af', 'afrika']]) {
   await pickOption(page, page.locator('.wcx-comp').first(), label).catch((e) => errors.push(`Wettbewerb ${label}: ${e.message}`));
   await page.waitForTimeout(500);
@@ -65,13 +65,13 @@ if (await page.waitForSelector('.cnx-modal', { timeout: 5000 }).then(() => true)
 
 // 3) Vorschau Weltpokal 1985
 await loadSave(page, url(), `${outDir}/wp-1985.txt`);
-await walkToPrematch(page, 'Weltpokal 1985', 120, async (m) => { errors.push(m); });
+await walkToPrematch(page, 'Transatlantik-Pokal 1985', 120, async (m) => { errors.push(m); });
 if (await page.locator('.pm-root').first().isVisible().catch(() => false)) {
   await page.waitForTimeout(600);
   await page.screenshot({ path: `${outDir}/vorschau_${W}_weltpokal.png` });
   const txt = await page.locator('.pm-root').innerText();
-  if (!/Weltpokal/.test(txt)) errors.push('Vorschau: „Weltpokal“ fehlt');
-} else errors.push('Vorschau Weltpokal nicht erreicht');
+  if (!/Transatlantik-Pokal/.test(txt)) errors.push('Vorschau: „Transatlantik-Pokal“ fehlt');
+} else errors.push('Vorschau Transatlantik-Pokal nicht erreicht');
 
 await browser.close();
 server.close();

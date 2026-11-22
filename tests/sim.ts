@@ -197,7 +197,7 @@ function report(game: Game) {
     const nm = (id: string) => game.clubs[id]?.shortName ?? game.simClubs?.[id]?.shortName ?? game.euroClubs?.[id]?.shortName ?? id;
     const dest: Record<string, number> = {};
     for (const a of camps?.ai ?? []) if (a.destId) dest[a.destId] = (dest[a.destId] ?? 0) + 1;
-    console.log(`   WINTER ${cur?.phase ?? '-'} Turniere ${cur?.tournaments?.length ?? 0}${cur?.masters?.done ? ` Masters ${nm(cur.masters.result.ranking[0])} (${cur.masters.city})` : ''} | KI-Lager ${Object.entries(dest).map(([k, v]) => k + ':' + v).join(' ')}`);
+    console.log(`   WINTER ${cur?.phase ?? '-'} Turniere ${cur?.tournaments?.length ?? 0}${cur?.masters?.done ? ` Hallenfinale ${nm(cur.masters.result.ranking[0])} (${cur.masters.city})` : ''} | KI-Lager ${Object.entries(dest).map(([k, v]) => k + ':' + v).join(' ')}`);
   }
   if (process.env.YOUTH) youthReport(game, ps);
   if (process.env.TOP) topReport(game, ps);

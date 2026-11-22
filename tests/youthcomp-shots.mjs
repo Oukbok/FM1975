@@ -56,7 +56,7 @@ const compSel = () => page.locator('.cmp-select .sel3').nth(1);
 const seasonSel = () => page.locator('.cmp-select .sel3').nth(0);
 const opts = (await optionsOf(page, compSel())).map((o) => o.label);
 console.log('Optionen:', opts.join(' | '));
-for (const [want, n] of [['A-Jugendmeisterschaft – Endrunde', 'yc_endrunde'], ['A-Junioren-Bundesliga – Endrunde', 'yc_endrunde'], ['Nachwuchsliga U19 – Endrunde', 'yc_endrunde'],
+for (const [want, n] of [['A-Jugendmeisterschaft – Endrunde', 'yc_endrunde'], ['A-Junioren-Liga – Endrunde', 'yc_endrunde'], ['Nachwuchsliga U19 – Endrunde', 'yc_endrunde'],
   ['Verbandsliga', 'yc_c'], ['Bayernliga', 'yc_c'], ['C-Junioren-Regionalliga', 'yc_c'], ['Bezirksliga', 'yc_d'], ['Kreisliga', 'yc_e'], ['ohne Tabelle', 'yc_fest'],
   ['Jugend-Meisterliga – Gruppenphase', 'yc_uyl_gruppen'], ['Jugend-Meisterliga – K.-o.-Runde', 'yc_uyl_ko'], ['Junioren-', 'yc_pokal'], ['DDR-', 'yc_ddr'], ['Staffel West', 'yc_staffel_west']]) {
   const i = opts.findLastIndex((t) => t.includes(want));

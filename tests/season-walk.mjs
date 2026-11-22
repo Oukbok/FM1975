@@ -114,8 +114,8 @@ for (let step = 0; step < 4000; step++) {
     if (await has('.gb-root')) {
       // kürzester Weg: „Überspringen“ (zum Sieger), dann „Weiter“
       const sk = page.locator('.gb-root footer button:has-text("Überspringen")');
-      if (await sk.isVisible().catch(() => false)) { await note('Goldener Ball'); await shotOnce('Goldener Ball'); await sk.click(); tap('Goldener Ball'); await page.waitForTimeout(500); }
-      if (await has('.gb-root')) { const b = page.locator('.gb-root .btn-primary').first(); await b.click().catch(() => {}); tap('Goldener Ball'); await page.waitForTimeout(400); }
+      if (await sk.isVisible().catch(() => false)) { await note('Goldener Stern'); await shotOnce('Goldener Stern'); await sk.click(); tap('Goldener Stern'); await page.waitForTimeout(500); }
+      if (await has('.gb-root')) { const b = page.locator('.gb-root .btn-primary').first(); await b.click().catch(() => {}); tap('Goldener Stern'); await page.waitForTimeout(400); }
       continue;
     }
     if (await has('.ix-root')) {

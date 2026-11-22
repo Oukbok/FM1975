@@ -71,7 +71,7 @@ ok(campTotal > 20, `Pflichtreisen kommen vor (${campTotal} Angebote mit Klausel)
 const sumSlots = (c: Club, y: number) => slotsFor(y, 1).reduce((a, s) => a + slotMarketValue(c, s.id, y, 1) * s.count(y, 1), 0);
 const med = fake(74), top = fake(95);
 top.brand = { regional: 100, national: 100, international: 100 };
-ok(sumSlots(med, 2024) > 25e6 * 1.956 && sumSlots(med, 2024) < 60e6 * 1.956, `Sponsoring Median-Erstligist 2024 ≈ ${E(sumSlots(med, 2024))} (Soll 25–60)`);
+ok(sumSlots(med, 2024) > 25e6 * 1.956 && sumSlots(med, 2024) < 60e6 * 1.956, `Sponsoring Median-Klub der 1. Liga 2024 ≈ ${E(sumSlots(med, 2024))} (Soll 25–60)`);
 ok(sumSlots(top, 2024) > 180e6 * 1.956, `Weltmarke 2024 ≈ ${E(sumSlots(top, 2024))} (FC Bayern 2024/25: 240 Mio. €)`);
 ok(sumSlots(med, 1975) > 300_000 && sumSlots(med, 1975) < 900_000, `Sponsoring Median 1975 ≈ ${(sumSlots(med, 1975) / 1e6).toFixed(2)} Mio. DM`);
 

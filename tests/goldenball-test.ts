@@ -72,4 +72,4 @@ expect(JSON.stringify(st) === snap, 'Migration nicht idempotent');
 const old = { ...g } as any; delete old.goldenBall; migrateGoldenBall(old);
 expect(old.goldenBall === undefined, 'Migration legt Feld an');
 console.log(`Spielstand: ${(JSON.stringify(st.years[0]).length / 1024).toFixed(1)} KB je Jahr`);
-console.log('OK – Goldener Ball');
+console.log('OK – Goldener Stern');
