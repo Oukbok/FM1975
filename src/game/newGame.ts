@@ -1,3 +1,4 @@
+import { NEUTRAL_NAMES_V } from './neutralNamesMigration';
 import { cateringSeasonStart } from './cateringGame';
 import { landNation } from '../data/nationEras';
 import { NAT_VERSION, syncNationalities } from './nationSync';
@@ -349,6 +350,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)
   g0.faceNameV = FACE_NAME_VERSION; // neue Spieler: Name passt schon zur Ethnie (data/ethnicity.ts)
+  g0.namesV = NEUTRAL_NAMES_V; // Texte tragen schon die neutralen Namen (data/neutralNames.ts)
   migrateCohesion(g0); // Eingespieltheit: jeder Verein startet eingespielt auf seine Taktik (game/cohesionGame.ts)
   bindMarketing(g0);
   bindHonours(g0, true); // Vereinsauszeichnungen: leere Wirkungstabelle für das neue Spiel
