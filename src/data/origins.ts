@@ -7,6 +7,7 @@ import { XL_WORLD } from './namePoolsXL3';
 import { XL4_WEST } from './namePoolsXL4West';
 import { XL4_SOUTH } from './namePoolsXL4South';
 import { XL4_WORLD } from './namePoolsXL4World';
+import { XL5 } from './namePoolsXL5';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -312,7 +313,7 @@ for (const [id, eras] of Object.entries(FIRST_BY_ERA)) {
 
 // -----------------------------------------------------------------------------
 // Vierte Stufe der Namenspools (Wunsch Pascal: Namen wiederholten sich zu oft;
-// data/namePoolsXL*.ts). Neue Herkünfte für Ethnien im Land (Karibik, Maghreb,
+// data/namePoolsXL*.ts; sechste Stufe XL5 = Namen je Land nach simulierten Vereinen, data/namePoolsXL5.ts). Neue Herkünfte für Ethnien im Land (Karibik, Maghreb,
 // Suriname) anlegen; Nachnamen/Grundvornamen ohne Dubletten anhängen; Vornamen
 // je Geburtsjahr: Stufen = Vereinigung der alten und neuen Stufenjahre, jede Stufe
 // enthält die bisher dort geltenden Namen plus die neuen der Zeit (nichts fällt weg).
@@ -337,7 +338,7 @@ export function mergeXL(o: Origin, x: XLNames): void {
   o.firstByEra = years.map((y) => [y, [...new Set([...activeAt(old, y), ...activeAt(x.eras!, y)])]] as FirstNameEra);
 }
 for (const [id, x] of [...Object.entries(XL_WEST), ...Object.entries(XL_SOUTH_EAST), ...Object.entries(XL_WORLD),
-  ...Object.entries(XL4_WEST), ...Object.entries(XL4_SOUTH), ...Object.entries(XL4_WORLD)]) {
+  ...Object.entries(XL4_WEST), ...Object.entries(XL4_SOUTH), ...Object.entries(XL4_WORLD), ...Object.entries(XL5)]) {
   const o = ORIGINS[id];
   if (o) mergeXL(o, x);
 }
