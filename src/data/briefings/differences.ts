@@ -112,7 +112,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 1980, topic: 'liga',
     title: 'Keine Relegation (Staffelzeit)',
-    then: 'Drei Erstligisten steigen direkt ab; die Staffel-Zweiten der 2. Liga spielen den dritten Aufsteiger aus.',
+    then: 'Aus der 1. Liga steigen drei Vereine direkt ab; die Staffel-Zweiten der 2. Liga spielen den dritten Aufsteiger aus.',
     today: 'Der 16. der 1. Liga spielt in der Relegation gegen den Dritten der 2. Liga.',
   },
   {
@@ -183,21 +183,21 @@ export const DIFFERENCES: DifferenceToToday[] = [
   },
   {
     from: 1997, to: 2007, topic: 'liga',
-    title: 'Ligapokal',
-    then: 'Vor der Saison spielen die besten Erstligisten den Ligapokal aus.',
-    today: 'Stattdessen gibt es den Supercup zwischen Meister und Pokalsieger.',
+    title: 'Auftaktpokal',
+    then: 'Vor der Saison spielen die besten Vereine der 1. Liga den Auftaktpokal aus.',
+    today: 'Stattdessen gibt es den Gipfelpokal zwischen Meister und Pokalsieger.',
   },
   {
     from: 1975, to: 1986, topic: 'liga',
-    title: 'Kein Supercup',
+    title: 'Kein Gipfelpokal',
     then: 'Ein Spiel zwischen Meister und Pokalsieger gibt es nicht.',
-    today: 'Der Supercup eröffnet jede Saison.',
+    today: 'Der Gipfelpokal eröffnet jede Saison.',
   },
   {
     from: 1975, to: 2004, topic: 'liga',
-    title: 'Weltpokal statt Klub-WM',
-    then: 'Der Europapokalsieger der Landesmeister spielt gegen den Sieger Südamerikas um den Weltpokal.',
-    today: 'Der Weltverband veranstaltet eine Klub-Weltmeisterschaft mit Teams aller Kontinente.',
+    title: 'Transatlantik-Pokal statt Klub-Weltturnier',
+    then: 'Der Europapokalsieger der Landesmeister spielt gegen den Sieger Südamerikas um den Transatlantik-Pokal.',
+    today: 'Der Weltverband veranstaltet ein Klub-Weltturnier mit Teams aller Kontinente.',
   },
   {
     from: 1975, to: 2014, topic: 'liga',
@@ -214,14 +214,14 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 2003, topic: 'liga',
     title: 'Profis in der Halle',
-    then: 'In der Winterpause spielen Erstligisten Hallenturniere mit Bande vor vollen Rängen.',
+    then: 'In der Winterpause spielen die Profis der 1. Liga Hallenturniere mit Bande vor vollen Rängen.',
     today: 'Hallenfußball mit Profimannschaften gibt es nicht mehr.',
   },
   {
     from: 1987, to: 2000, topic: 'liga',
-    title: 'Hallen-Masters',
+    title: 'Hallenfinale',
     then: 'Der Hallenpokal mit Qualifikationsturnieren und Endrunde im Januar ist ein offizieller Wettbewerb.',
-    today: 'Nach der Endrunde 2001 wurde das Hallen-Masters abgeschafft.',
+    today: 'Nach der Endrunde 2001 wurde das Hallenfinale abgeschafft.',
   },
   {
     from: 1975, to: 1981, topic: 'liga',
@@ -368,7 +368,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 2005, topic: 'medien',
     title: 'Laufbahn, Zaun und offene Kurven',
     then: 'Viele Stadien haben eine Laufbahn, unüberdachte Stehkurven und hohe Zäune vor den Rängen.',
-    today: 'Die meisten Erstligisten spielen in reinen Fußballstadien mit Dach und ohne Zaun.',
+    today: 'Die meisten Vereine der 1. Liga spielen in reinen Fußballstadien mit Dach und ohne Zaun.',
   },
   {
     from: 1975, to: 1997, topic: 'medien',

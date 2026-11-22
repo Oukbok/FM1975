@@ -90,7 +90,7 @@ function setupGermanWinter(g: Game, cur: IndoorWinter, today: string, ownBusy: S
   }
   if (mastersDays.length) {
     const mv = mastersVenue(winterYear);
-    cur.masters = { id: `hm${winterYear}`, name: `Hallen-Masters ${winterYear}`, city: mv.city, hall: mv.hall, date: mastersDays[0], days: 2, kind: 'masters', clubIds: [], squads: {}, done: false };
+    cur.masters = { id: `hm${winterYear}`, name: `Hallenfinale ${winterYear}`, city: mv.city, hall: mv.hall, date: mastersDays[0], days: 2, kind: 'masters', clubIds: [], squads: {}, done: false };
   }
   // Eigener Verein: Einladungen (Größe, Liga, Verärgerung über frühere Absagen).
   const pool = buildPool(g);
@@ -521,7 +521,7 @@ function finishWinter(g: Game, today: string): void {
   let own: string | undefined;
   if (mine.length) {
     const best = mine.map((t) => ({ t, p: t.result!.ranking.indexOf(mid) })).sort((a, b) => a.p - b.p || Number(b.t.kind === 'masters') - Number(a.t.kind === 'masters'))[0];
-    own = `${best.p === 0 ? 'Sieg' : `Platz ${best.p + 1}`} ${best.t.kind === 'masters' ? 'Masters' : best.t.city}`;
+    own = `${best.p === 0 ? 'Sieg' : `Platz ${best.p + 1}`} ${best.t.kind === 'masters' ? 'Hallenfinale' : best.t.city}`;
   }
   const entry: IndoorHistoryEntry = { year: cur.winterYear, phase: cur.phase, own, winners: cur.tournaments.filter((t) => t.done).map((t) => t.result!.ranking[0]) };
   const m = cur.masters;

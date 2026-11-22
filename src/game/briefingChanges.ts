@@ -126,8 +126,8 @@ function campChanges(y: number, first: boolean): GameChange[] {
 
 const INDOOR_TEXT: Record<string, { title: string; text: string }> = {
   invitational: { title: 'Hallenturniere im Winter', text: 'In der Winterpause laden Veranstalter zu Hallenturnieren ein – Antrittsgeld, Prämien und Spielpraxis, aber auch Verletzungsrisiko.' },
-  masters: { title: 'Hallen-Masters', text: 'Der Verband richtet ein offizielles Hallen-Masters aus: Über die Turniere der Tour qualifizieren sich acht Teams für die Endrunde im Januar.' },
-  regional: { title: 'Hallen-Masters eingestellt', text: 'Das Hallen-Masters gibt es nicht mehr. Im Winter laufen nur noch einzelne regionale Hallenturniere.' },
+  masters: { title: 'Hallenfinale', text: 'Der Verband richtet ein offizielles Hallenfinale aus: Über die Turniere der Tour qualifizieren sich acht Teams für die Endrunde im Januar.' },
+  regional: { title: 'Hallenfinale eingestellt', text: 'Das Hallenfinale gibt es nicht mehr. Im Winter laufen nur noch einzelne regionale Hallenturniere.' },
   none: { title: 'Keine Profi-Hallenturniere mehr', text: 'Die Profis bleiben im Winter draußen: Statt Hallenturnieren gibt es nur noch Trainingslager im Süden.' },
 };
 

@@ -130,7 +130,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
           ))}
         </div>
         <p className="dim mini" style={{ margin: '14px 0 14px' }}>
-          Qualifikation für das Hallen-Masters (1988–2001): wie in der Wirklichkeit nach dem Schnitt (Ø Punkte je Spiel über alle besuchten Turniere) oder nach Platzierungspunkten je Turnier (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1 – wer oft und weit vorne landet, fährt hin; Gleichstand nach Schnitt).
+          Qualifikation für das Hallenfinale (1988–2001): wie in der Wirklichkeit nach dem Schnitt (Ø Punkte je Spiel über alle besuchten Turniere) oder nach Platzierungspunkten je Turnier (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1 – wer oft und weit vorne landet, fährt hin; Gleichstand nach Schnitt).
         </p>
         <div className="seg-group">
           {([['schnitt', 'Schnitt (historisch)'], ['platz', 'Platzierungspunkte']] as const).map(([v, l]) => (
@@ -144,7 +144,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Ehrungen</h3>
         <p className="dim mini" style={{ margin: '0 0 14px' }}>
-          Die Besten der Saison (nach dem letzten Ligaspieltag) und die Gala zum Goldenen Ball (20. Dezember) als Zeremonie zeigen – oder nur als Nachricht. Alle Jahrgänge stehen unter Statistiken › Auszeichnungen.
+          Die Besten der Saison (nach dem letzten Ligaspieltag) und die Gala zum Goldenen Stern (20. Dezember) als Zeremonie zeigen – oder nur als Nachricht. Alle Jahrgänge stehen unter Statistiken › Auszeichnungen.
         </p>
         <div className="seg-group">
           {([['an', 'Zeremonie zeigen'], ['aus', 'Nur Nachricht']] as const).map(([v, l]) => (

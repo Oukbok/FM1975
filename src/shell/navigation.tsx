@@ -109,7 +109,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'table', label: 'Liga', icon: 'stats' },
     { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
     { screen: 'cup', label: 'Pokal', icon: 'trophy' },
-    { screen: 'supercup', label: 'Supercup', icon: 'trophy' },
+    { screen: 'supercup', label: 'Gipfelpokal', icon: 'trophy' },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'nationalteams', label: 'Nationalteams', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },

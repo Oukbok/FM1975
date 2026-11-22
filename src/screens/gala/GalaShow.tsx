@@ -51,7 +51,7 @@ export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () =>
       <header className="gb-top">
         <div className="gb-kicker">Gala live aus {y.venue} · {y.year}</div>
         <h1 className="gb-title">{y.title}</h1>
-        <div className="gb-sub">Der Goldene Ball · {y.rule}</div>
+        <div className="gb-sub">Der Goldene Stern · {y.rule}</div>
       </header>
 
       {step === 0 ? (

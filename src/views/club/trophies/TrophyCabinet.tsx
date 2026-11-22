@@ -19,7 +19,7 @@ const CAT_EMPTY: Record<TrophyCat, string> = {
   pokal: 'Der Landespokal fehlt noch in der Vitrine. Sechs Runden, ein Finale – und die Trophäe steht hier.',
   kontinental: 'Noch kein Europapokal. Landesmeister, Pokalsieger und Europa-Pokal (später Meisterliga, Europa-Liga, Konferenz-Liga) erscheinen hier.',
   jugend: 'Noch keine Jugendtitel. Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, Staffelsiege und die Jugend-Meisterliga zählen hier.',
-  andere: 'Hier stehen Hallen-Masters und Aufstiege, sobald dein Verein einen davon schafft.',
+  andere: 'Hier stehen Hallenfinale und Aufstiege, sobald dein Verein einen davon schafft.',
 };
 
 function Trophy({ shape }: { shape: TrophyShape }) {

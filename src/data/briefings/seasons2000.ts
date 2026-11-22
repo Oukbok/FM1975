@@ -22,12 +22,12 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     season: '2000/01',
     headline: 'Neustart nach dem EM-Debakel',
     football: [
-      { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und Fußballbund Konsequenzen: Ab 2001/02 braucht jeder Erstligist ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Jugend › Akademie).' },
+      { topic: 'taktik', title: 'Lehren aus der EM 2000', text: 'Nach dem Vorrunden-Aus bei der EM in Belgien und den Niederlanden ziehen Liga und Fußballbund Konsequenzen: Ab 2001/02 braucht jeder Verein der 1. Liga ein Nachwuchsleistungszentrum, ab 2002/03 auch jeder Zweitligist.', inGame: 'Plane jetzt: Ab 2001/02 kostet ein fehlendes Leistungszentrum in der 1. Liga jedes Jahr eine Geldstrafe (Jugend › Akademie).' },
       { topic: 'liga', title: 'WM 2006 kommt nach Deutschland', text: 'Am 6. Juli 2000 vergibt der Weltverband die Weltmeisterschaft 2006 an Deutschland. Die Planungen für neue Arenen beginnen.' },
       { topic: 'geld', title: 'Mediengruppe zahlt Milliarden', text: 'Eine Münchner Mediengruppe hat die Liga-Rechte bis 2004 für rund drei Milliarden DM gekauft. Ihr Privatsender zeigt die Zusammenfassungen in einer großen Samstagsshow, ihr Bezahlsender die Live-Spiele.' },
       { topic: 'geld', title: 'Stadionnamen zu verkaufen', text: 'Namensrechte werden zur neuen Einnahmequelle: Im Sommer 2001 trägt das Hamburger Stadion erstmals den Namen eines Internetdienstes.', inGame: 'Ab sofort kannst du die Namensrechte an deinem Stadion verkaufen.' },
       { topic: 'liga', title: 'Regionalliga nur noch zweigleisig', text: 'Die dritte Liga schrumpft von vier auf zwei Regionalliga-Staffeln (Nord und Süd).' },
-      { topic: 'liga', title: 'Letztes Hallen-Masters', text: 'Im Januar 2001 steigt in Dortmund die letzte Endrunde des Hallenpokals.', inGame: 'Letzter Winter mit Hallentour und Masters-Endrunde (Statistiken › Halle).' },
+      { topic: 'liga', title: 'Letztes Hallenfinale', text: 'Im Januar 2001 steigt in Dortmund die letzte Endrunde des Hallenpokals.', inGame: 'Letzter Winter mit Hallentour und Hallenfinale (Statistiken › Halle).' },
     ],
     society: [
       { topic: 'politik', title: 'Der Euro als Buchgeld', text: 'Überwiesen wird schon in Euro, bezahlt noch in D-Mark. Viele Geschäfte zeichnen ihre Preise bereits doppelt aus.' },
@@ -43,9 +43,9 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     headline: 'Das letzte Jahr der D-Mark',
     football: [
       { topic: 'geld', title: 'Euro an der Stadionkasse', text: 'Ab dem 1. Januar 2002 zahlen Fans Eintritt, Bier und Schal in Euro; ein Euro entspricht 1,95583 DM.', inGame: 'Ab Januar 2002 zeigt das Spiel alle Beträge in Euro.' },
-      { topic: 'taktik', title: 'Leistungszentrum ist Lizenzpflicht', text: 'Seit dieser Saison bekommt nur noch eine Erstliga-Lizenz, wer ein Nachwuchsleistungszentrum betreibt.', inGame: 'Erstligisten ohne vollständiges Leistungszentrum zahlen jährlich eine Geldstrafe, der Ruf der Akademie leidet.' },
+      { topic: 'taktik', title: 'Leistungszentrum ist Lizenzpflicht', text: 'Seit dieser Saison bekommt nur noch eine Erstliga-Lizenz, wer ein Nachwuchsleistungszentrum betreibt.', inGame: 'Vereine der 1. Liga ohne vollständiges Leistungszentrum zahlen jährlich eine Geldstrafe, der Ruf der Akademie leidet.' },
       { topic: 'liga', title: 'Der Ligaverband übernimmt', text: 'Seit Sommer 2001 organisiert und vermarktet ein eigener Ligaverband die beiden Profiligen. Der Fußballbund bleibt für Nationalteams, Pokal und Amateure zuständig.' },
-      { topic: 'liga', title: 'Hallen-Masters abgeschafft', text: 'Der Fußballbund stellt den Hallenpokal ein: kürzere Winterpause, Verletzungsangst und Absagen der Topklubs. Nur regionale Hallenturniere laufen noch.', inGame: 'Im Winter gibt es nur noch regionale Hallenturniere ohne Masters.' },
+      { topic: 'liga', title: 'Hallenfinale abgeschafft', text: 'Der Fußballbund stellt den Hallenpokal ein: kürzere Winterpause, Verletzungsangst und Absagen der Topklubs. Nur regionale Hallenturniere laufen noch.', inGame: 'Im Winter gibt es nur noch regionale Hallenturniere ohne Hallenfinale.' },
       { topic: 'geld', title: 'Medienimperium wankt', text: 'Im April 2002 meldet die Mediengruppe der Liga-Rechte Insolvenz an. Die Vereine bangen um vereinbarte Fernsehgelder.' },
       { topic: 'liga', title: 'WM erstmals in Asien', text: 'Die WM 2002 findet im Sommer erstmals in Asien und erstmals mit zwei Gastgebern statt: Japan und Südkorea.' },
     ],
@@ -102,7 +102,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'taktik', title: 'Neuer Bundestrainer', text: 'Ein Weltmeister von 1990 übernimmt im Sommer 2004 die Nationalmannschaft und bringt Fitnesstrainer aus den USA, Psychologen und neue Trainingsmethoden mit.' },
       { topic: 'liga', title: 'Der Wettskandal', text: 'Im Januar 2005 wird bekannt, dass ein Schiedsrichter Spiele für eine Wettmafia manipuliert hat. Betroffen sind Landespokal und 2. Liga.' },
       { topic: 'geld', title: 'Arenen statt Schüsseln', text: 'Für die WM entstehen reine Fußballarenen mit Logen; im Mai 2005 öffnet in München die neue Arena im Norden der Stadt.', inGame: 'Stadionausbau heißt jetzt „Ausbau zur Arena“: teurer pro Platz, dafür mehr Logen.' },
-      { topic: 'liga', title: 'Confed-Cup als Generalprobe', text: 'Im Juni 2005 testet Deutschland mit dem Konföderationen-Pokal Stadien, Verkehr und Sicherheit für die WM.' },
+      { topic: 'liga', title: 'Generalprobe ein Jahr vorher', text: 'Im Juni 2005 testet Deutschland mit dem Turnier der Kontinentalmeister Stadien, Verkehr und Sicherheit für die WM.' },
       { topic: 'liga', title: 'Europa-Pokal mit Gruppen', text: 'Der Europa-Pokal bekommt eine Gruppenphase mit Fünfergruppen.' },
       { topic: 'medien', title: 'Vereine erzählen Geschichte', text: 'Vereinsmuseen entstehen, 2004 etwa bei Hamburg Blau im eigenen Stadion.', inGame: 'Ein Vereinsmuseum ist baubar (Verein › Gelände).' },
     ],
@@ -116,7 +116,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2005/06',
-    headline: 'Countdown zum Sommermärchen',
+    headline: 'Countdown zum WM-Sommer',
     football: [
       { topic: 'liga', title: 'WM im eigenen Land', text: 'Vom 9. Juni bis 9. Juli 2006 ist Deutschland Gastgeber der WM mit 32 Teams in zwölf Stadien.' },
       { topic: 'medien', title: 'Die Ultras prägen die Kurve', text: 'Ultragruppen mit großen Choreografien bestimmen die Stimmung – und protestieren gegen Kommerz und Anstoßzeiten.', inGame: 'Neue Fan-Epoche „Ultra-Kultur“: Die Stimmung schwankt stärker, Ticketpreise werden kritischer gesehen.' },
@@ -134,7 +134,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2006/07',
-    headline: 'Nach dem Sommermärchen',
+    headline: 'Nach dem WM-Sommer',
     football: [
       { topic: 'liga', title: 'Der WM-Effekt', text: 'Nach der Heim-WM strömen mehr Familien und neue Fans in die modernisierten Stadien.', inGame: 'Die Zuschauernachfrage steigt ligaweit spürbar.' },
       { topic: 'taktik', title: 'Der Assistent übernimmt', text: 'Der bisherige Assistent wird im Juli 2006 Bundestrainer und setzt auf schnelles Kurzpassspiel.' },
@@ -156,7 +156,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Wieder Weltmeisterinnen', text: 'Im September 2007 verteidigen die deutschen Frauen in China ihren WM-Titel – ohne ein einziges Gegentor im Turnier.' },
       { topic: 'medien', title: 'Der alte Bezahlsender ist zurück', text: 'Nach dem Fehlstart des Kabelsenders zeigt der alte Bezahlsender die Live-Spiele wieder, per Sublizenz.' },
-      { topic: 'liga', title: 'Letzter Ligapokal', text: 'Im Juli 2007 wird der Ligapokal zum letzten Mal ausgespielt.' },
+      { topic: 'liga', title: 'Letzter Auftaktpokal', text: 'Im Juli 2007 wird der Auftaktpokal zum letzten Mal ausgespielt.' },
       { topic: 'liga', title: 'Kampf um die 3. Liga', text: 'Zur Saison 2008/09 kommt eine eingleisige 3. Liga. Die Regionalligisten spielen um die Startplätze.', inGame: 'In der Regionalliga zählt diese Saison doppelt: Die Besten jeder Staffel qualifizieren sich für die neue 3. Liga.' },
       { topic: 'liga', title: 'EM in den Alpen', text: 'Im Juni 2008 richten Österreich und die Schweiz gemeinsam die EM aus.' },
     ],
@@ -281,7 +281,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Mit dem vierten Stern', text: 'Im Juli 2014 hat Deutschland in Rio den WM-Titel gewonnen. Das Interesse am Fußball ist riesig.' },
       { topic: 'taktik', title: 'Sommerreise nach Amerika', text: 'Spitzenvereine nutzen die Vorbereitung für Marketingreisen in die USA.', inGame: 'Für große Vereine wird eine USA-Reise im Sommer buchbar.' },
-      { topic: 'regeln', title: 'Torlinientechnik beschlossen', text: 'Im Dezember 2014 stimmen die Erstligisten für Torlinientechnik ab 2015/16.' },
+      { topic: 'regeln', title: 'Torlinientechnik beschlossen', text: 'Im Dezember 2014 stimmen die Vereine der 1. Liga für Torlinientechnik ab 2015/16.' },
       { topic: 'geld', title: 'Polizeikosten für Vereine', text: 'Bremen will Vereine an den Polizeikosten von Hochrisikospielen beteiligen; im April 2015 geht ein erster Bescheid von rund 425.000 Euro an den Ligaverband.', inGame: 'Ab 2015 können Polizeigebühren für Hochrisikospiele anfallen.' },
       { topic: 'geld', title: 'Milliarden aus England', text: 'Im Februar 2015 verkauft die englische 1. Liga ihre TV-Rechte ab 2016 für über fünf Milliarden Pfund. Der Druck auf die 1. Liga wächst.' },
       { topic: 'liga', title: 'Frauen-WM in Kanada', text: 'Im Sommer 2015 spielen erstmals 24 Teams um den Titel der Frauen-WM.' },
@@ -465,7 +465,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'regeln', title: 'Nur der Kapitän spricht', text: 'Nach dem Vorbild der EM 2024 soll im deutschen Profifußball nur noch der Kapitän mit dem Schiedsrichter diskutieren.' },
       { topic: 'geld', title: 'TV-Poker mit Schiedsgericht', text: 'Nach einem Streit mit einem Streamingdienst vergibt der Ligaverband im Dezember 2024 die Rechte ab 2025/26 neu – im Schnitt rund 1,12 Milliarden Euro pro Saison.' },
       { topic: 'geld', title: 'Polizeikosten bestätigt', text: 'Im Januar 2025 bestätigt das Bundesverfassungsgericht, dass Bremen die Liga an Polizeikosten für Hochrisikospiele beteiligen darf.', inGame: 'Polizeigebühren für Hochrisikospiele steigen ab 2025.' },
-      { topic: 'liga', title: 'Klub-WM in den USA', text: 'Im Sommer 2025 spielen erstmals 32 Vereine bei der neuen Klub-WM in den USA.' },
+      { topic: 'liga', title: 'Klub-Weltturnier in den USA', text: 'Im Sommer 2025 spielen erstmals 32 Vereine beim neuen Klub-Weltturnier in den USA.' },
     ],
     society: [
       { topic: 'politik', title: 'Ampel-Aus', text: 'Im November 2024 zerbricht die Regierungskoalition; am 23. Februar 2025 wird vorgezogen gewählt.' },
@@ -519,7 +519,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
       { topic: 'regeln', title: 'VAR-Zentrale in Frankfurt', text: 'Ab Sommer 2027 sollen die Video-Assistenten vom Verbandscampus in Frankfurt aus arbeiten.' },
       { topic: 'regeln', title: 'Abseits noch schneller', text: 'Spielwelt-Ausblick: Kameras und Sensoren sollen Abseitsentscheidungen weiter beschleunigen. Die Diskussionen verlagern sich zum Handspiel.', inGame: 'Die Chronik meldet in dieser Saison das „Halbautomatische Abseits“.' },
       { topic: 'liga', title: 'EM 2028 auf den Britischen Inseln', text: 'Im Sommer 2028 richten England, Schottland, Wales und Irland gemeinsam die EM aus.' },
-      { topic: 'taktik', title: 'Belastung im Blick', text: 'Spielwelt-Ausblick: Mit Klub-WM, großer Ligaphase und Länderspielen streiten Vereine und Verbände weiter über die Zahl der Spiele.' },
+      { topic: 'taktik', title: 'Belastung im Blick', text: 'Spielwelt-Ausblick: Mit dem großen Klub-Weltturnier, der Ligaphase und den Länderspielen streiten Vereine und Verbände weiter über die Zahl der Spiele.' },
     ],
     society: [
       { topic: 'alltag', title: 'Babyboomer gehen in Rente', text: 'Die geburtenstarken Jahrgänge verlassen nach und nach das Berufsleben; Fachkräfte fehlen in vielen Branchen, auch im Ehrenamt der Vereine.' },

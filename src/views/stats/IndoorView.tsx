@@ -24,9 +24,9 @@ import { fmtDM, fmtDay } from '../../ui/format';
 // Spielablauf: game/indoorGame.ts · Historie: data/indoorHistory.ts
 // =============================================================================
 const PHASE_TEXT: Record<string, string> = {
-  invitational: 'Einladungsturniere ohne Endrunde – Budenzauber mit Erstligisten in vollen Hallen.',
-  masters: 'Hallenpokal: Qualifikationsturniere, Wertung nach Durchschnittspunkten, die Besten spielen das Masters.',
-  regional: 'Nach dem Aus der Masters laufen nur noch ein paar regionale Turniere aus.',
+  invitational: 'Einladungsturniere ohne Endrunde – Budenzauber mit den Profis der 1. Liga in vollen Hallen.',
+  masters: 'Hallenpokal: Qualifikationsturniere, Wertung nach Durchschnittspunkten, die Besten spielen das Hallenfinale.',
+  regional: 'Nach dem Aus des Hallenfinales laufen nur noch ein paar regionale Turniere aus.',
   none: 'Keine Hallenturniere mit Profis.',
 };
 
@@ -62,7 +62,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
       ? (abroadN ? 'Hallenturniere in deinem Heimatland und bei den Nachbarn: Einladungsturniere ohne Endrunde (Statistiken › Halle, Turniere im Ausland).' : 'In diesem Winter gibt es keine Hallenturniere mit Profis.')
       : wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr in Deutschland${abroadN ? ' – im Ausland laufen noch einzelne Turniere' : ''}` : 'Noch keine Hallensaison')
     : phase === 'masters' && mastersScoring() === 'place'
-      ? 'Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Masters.'
+      ? 'Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Hallenfinale.'
       : PHASE_TEXT[phase];
 
   return (
@@ -109,7 +109,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
             <KV k="Fernsehen" v={mastersTv(wy)} />
           </>
         )}
-        <KV k="Masters-Titel (dein Verein)" v={String(title(mid))} />
+        <KV k="Hallenfinal-Titel (dein Verein)" v={String(title(mid))} />
         <KV k="Turniersiege (dein Verein)" v={String(st.wins[mid] ?? 0)} />
         {/* Verständlicher (Wunsch Pascal): wer Einladungen absagt, verärgert die Veranstalter und wird seltener eingeladen. */}
         <Meter label="Verärgerte Veranstalter (durch deine Absagen)" value={Math.min(100, st.snub * 33)} color="var(--red)" text={st.snub >= 2 ? 'du wirst seltener eingeladen' : st.snub > 0 ? 'leicht verärgert – noch folgenlos' : 'alle zufrieden'} />

@@ -84,7 +84,7 @@ function titleName(kind: TitleKind, season: string): string {
   const y = seasonStartYear(season);
   if (kind === 'meister') return 'Deutsche Meisterschaft';
   if (kind === 'ddr') return 'DDR-Meisterschaft';
-  if (kind === 'halle') return 'Hallen-Masters';
+  if (kind === 'halle') return 'Hallenfinale';
   if (kind === 'ec' || kind === 'cwc' || kind === 'uefa') return euroCompName(kind as EuroCompId, y);
   return TITLE_DE[kind];
 }

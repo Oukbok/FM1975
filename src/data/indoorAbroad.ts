@@ -103,7 +103,7 @@ export const ABROAD_TOURNAMENTS: AbroadDef[] = [
     german: 0, guestFrom: [], guests: 0, series: 'sui', stage: 'f', fee: 1.6, src: 'A4',
   },
   {
-    id: 'eng-five', country: 'England', name: 'Londoner Five-a-Side', venues: [{ from: 0, city: 'London', hall: 'Wembley Arena' }],
+    id: 'eng-five', country: 'England', name: 'Londoner Five-a-Side', venues: [{ from: 0, city: 'London', hall: 'Arena im Londoner Nordwesten' }],
     from: 1976, until: 1987, window: ['11-08', '11-30'], days: 1, teams: 8, hostCities: ['London'], hosts: 2,
     german: 0, guestFrom: ['Schottland'], guests: 0.4, fee: 0.8, src: 'A5',
   },

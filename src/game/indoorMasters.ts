@@ -109,10 +109,10 @@ export function mastersEligible(id: string): boolean {
 }
 
 export function mastersHintOff(wy: number): string {
-  if (wy < INDOOR_FIRST_WINTER) return `Hallenturniere mit Profis gibt es ab dem Winter ${INDOOR_FIRST_WINTER - 1}/${String(INDOOR_FIRST_WINTER % 100).padStart(2, '0')}, das Hallen-Masters von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}.`;
-  if (wy > INDOOR_LAST_WINTER) return `Seit ${INDOOR_LAST_WINTER + 1} gibt es keine Hallenturniere mit Profis mehr; das Hallen-Masters lief von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}.`;
-  if (wy < MASTERS_FIRST_WINTER) return `Ein Hallen-Masters gibt es erst ab Januar ${MASTERS_FIRST_WINTER} (Winter ${MASTERS_FIRST_WINTER - 1}/${String(MASTERS_FIRST_WINTER % 100).padStart(2, '0')}). Bis dahin zählt hier die Wertung der Einladungsturniere: Turniersiege, dann Punkte.`;
-  return `Das Hallen-Masters lief von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}. Jetzt gibt es nur noch regionale Turniere – Wertung nach Turniersiegen, dann Punkten.`;
+  if (wy < INDOOR_FIRST_WINTER) return `Hallenturniere mit Profis gibt es ab dem Winter ${INDOOR_FIRST_WINTER - 1}/${String(INDOOR_FIRST_WINTER % 100).padStart(2, '0')}, das Hallenfinale von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}.`;
+  if (wy > INDOOR_LAST_WINTER) return `Seit ${INDOOR_LAST_WINTER + 1} gibt es keine Hallenturniere mit Profis mehr; das Hallenfinale lief von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}.`;
+  if (wy < MASTERS_FIRST_WINTER) return `Ein Hallenfinale gibt es erst ab Januar ${MASTERS_FIRST_WINTER} (Winter ${MASTERS_FIRST_WINTER - 1}/${String(MASTERS_FIRST_WINTER % 100).padStart(2, '0')}). Bis dahin zählt hier die Wertung der Einladungsturniere: Turniersiege, dann Punkte.`;
+  return `Das Hallenfinale lief von ${MASTERS_FIRST_WINTER} bis ${MASTERS_LAST_WINTER}. Jetzt gibt es nur noch regionale Turniere – Wertung nach Turniersiegen, dann Punkten.`;
 }
 
 const blank = (id: string): MastersRow => ({ id, t: 0, sp: 0, pts: 0, gf: 0, ga: 0, wins: 0 });
@@ -137,7 +137,7 @@ export function mastersBoard(g: Game, cur: IndoorWinter | undefined, wy: number,
     const ph = indoorPhase(wy);
     if (ph === 'none') return { mode: 'none', year: wy, rows: [], cut: 0, hint: mastersHintOff(wy), stage: 'before', scoring };
     const pre = 'Die Hallensaison beginnt mit den Einladungen Anfang November.';
-    return { mode: ph === 'masters' ? 'masters' : 'season', year: wy, rows: [], cut: 0, stage: 'before', scoring, hint: ph === 'masters' ? `${pre} ${scoring === 'place' ? 'Danach bringt jedes Qualifikationsturnier Platzierungspunkte für das Masters.' : 'Danach zählt jedes Spiel der Qualifikationsturniere für das Masters.'}` : `${pre} ${mastersHintOff(wy)}` };
+    return { mode: ph === 'masters' ? 'masters' : 'season', year: wy, rows: [], cut: 0, stage: 'before', scoring, hint: ph === 'masters' ? `${pre} ${scoring === 'place' ? 'Danach bringt jedes Qualifikationsturnier Platzierungspunkte für das Hallenfinale.' : 'Danach zählt jedes Spiel der Qualifikationsturniere für das Hallenfinale.'}` : `${pre} ${mastersHintOff(wy)}` };
   }
   if (cur.phase === 'none') return { mode: 'none', year: wy, rows: [], cut: 0, hint: mastersHintOff(wy), stage: 'before', scoring };
   const wins = winsOf(cur);
@@ -175,10 +175,10 @@ export function mastersBoard(g: Game, cur: IndoorWinter | undefined, wy: number,
     ? `nach Platzierungspunkten (Sieger ${PLACE_POINTS[0]}, Zweiter ${PLACE_POINTS[1]}, Dritter ${PLACE_POINTS[2]}, Vierter ${PLACE_POINTS[3]}, dahinter ${PLACE_POINTS[4]}–${PLACE_POINTS[7]}; Gleichstand: Ø Punkte je Spiel)`
     : 'nach Ø Punkten je Spiel (Gleichstand: Tordifferenz je Spiel, dann Tore)';
   const hint = stage === 'before'
-    ? `Noch kein Qualifikationsturnier gespielt – alle gemeldeten Teams stehen bei 0 Punkten. Die ${MASTERS_TEAMS} Besten ${crit} fahren zum Masters.`
-    : stage === 'tour' ? `Stand der Qualifikation: Die ${MASTERS_TEAMS} Besten ${crit} fahren zum Masters.`
-    : stage === 'field' ? 'Das Teilnehmerfeld steht. Wer verzichtet oder an den Masters-Tagen noch ein Pflichtspiel hat, macht Platz für Nachrücker.'
-    : 'Endwertung der Qualifikation mit dem Abschneiden beim Masters.';
+    ? `Noch kein Qualifikationsturnier gespielt – alle gemeldeten Teams stehen bei 0 Punkten. Die ${MASTERS_TEAMS} Besten ${crit} fahren zum Hallenfinale.`
+    : stage === 'tour' ? `Stand der Qualifikation: Die ${MASTERS_TEAMS} Besten ${crit} fahren zum Hallenfinale.`
+    : stage === 'field' ? 'Das Teilnehmerfeld steht. Wer verzichtet oder an den Hallenfinal-Tagen noch ein Pflichtspiel hat, macht Platz für Nachrücker.'
+    : 'Endwertung der Qualifikation mit dem Abschneiden beim Hallenfinale.';
   return { mode: 'masters', year: wy, rows: [...elig, ...guests], cut: Math.min(MASTERS_TEAMS, elig.length), hint, stage, scoring };
 }
 
@@ -201,6 +201,6 @@ export function unpackBoard(a: BoardArchive, year: number): MastersBoard {
   return {
     mode: a.mode, year, cut: a.cut, stage: 'done', scoring: sc,
     rows: a.rows.map(([id, t, sp, pts, gf, ga, wins, st, place, pp]) => ({ id, t, sp, pts, gf, ga, wins, status: (st || undefined) as MastersStatus | undefined, place: place || undefined, pp })),
-    hint: a.mode === 'masters' ? `Endwertung der Qualifikation ${year - 1}/${String(year % 100).padStart(2, '0')} ${sc === 'place' ? 'nach Platzierungspunkten' : 'nach Ø Punkten je Spiel'} mit dem Abschneiden beim Masters.` : mastersHintOff(year),
+    hint: a.mode === 'masters' ? `Endwertung der Qualifikation ${year - 1}/${String(year % 100).padStart(2, '0')} ${sc === 'place' ? 'nach Platzierungspunkten' : 'nach Ø Punkten je Spiel'} mit dem Abschneiden beim Hallenfinale.` : mastersHintOff(year),
   };
 }

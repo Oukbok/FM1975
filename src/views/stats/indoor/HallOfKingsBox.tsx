@@ -28,13 +28,13 @@ export function HallOfKingsBox({ g, st }: { g: Game; st: IndoorState }) {
   const setGroup = (v: string) => { lastGroup = v; setGroupState(v); };
   const right = (
     <Select size="s" width={212} value={view} onChange={(v) => setView(v as View)} title="Ansicht" aria-label="Ansicht">
-      <option value="masters">Masters-Sieger</option>
+      <option value="masters">Hallenfinal-Sieger</option>
       <option value="kings">Hallenkönige</option>
       <option value="abroad">Turniere im Ausland</option>
     </Select>
   );
   return (
-    <DashBox title={view === 'masters' ? 'Masters-Siegerliste' : view === 'kings' ? 'Hallenkönige' : 'Turniere im Ausland'} info={view === 'masters' ? 'hallenMasters' : view === 'kings' ? 'hallenkoenige' : 'hallenAusland'} right={right} flush className="hk-box">
+    <DashBox title={view === 'masters' ? 'Hallenfinal-Siegerliste' : view === 'kings' ? 'Hallenkönige' : 'Turniere im Ausland'} info={view === 'masters' ? 'hallenMasters' : view === 'kings' ? 'hallenkoenige' : 'hallenAusland'} right={right} flush className="hk-box">
       {view === 'masters' ? <MastersList g={g} st={st} /> : view === 'kings' ? <Kings g={g} by={by} setBy={setBy} /> : <AbroadList g={g} st={st} group={group} onGroup={setGroup} />}
     </DashBox>
   );
@@ -52,7 +52,7 @@ function MastersList({ g, st }: { g: Game; st: IndoorState }) {
           <span className="meta">{h.city}</span>
         </div>
       ))}
-      {!list.length && <div className="dnote">Noch keine Endrunde in deinem Spiel – das Hallen-Masters gibt es von {MASTERS_FIRST_WINTER} bis {MASTERS_LAST_WINTER}.</div>}
+      {!list.length && <div className="dnote">Noch keine Endrunde in deinem Spiel – das Hallenfinale gibt es von {MASTERS_FIRST_WINTER} bis {MASTERS_LAST_WINTER}.</div>}
     </div>
   );
 }
@@ -72,9 +72,9 @@ function Kings({ g, by, setBy }: { g: Game; by: HallKingSort; setBy: (b: HallKin
           <th className="rl-rank">#</th><th>Spieler</th><th>Verein</th>
           {th('g', 'Tore', 'Hallentore (alle Turniere)')}
           <th className="num" title="Turniere">T</th>
-          {th('w', 'Siege', 'Turniersiege (inkl. Masters)')}
-          <th className="num" title="Masters-Siege">M</th>
-          {th('ruf', 'Ruf', `Hallenruf: Tore + 3 je Turniersieg + 5 je Masters-Sieg; Hallenspezialist ${hallSpecialistNote(g)}`)}
+          {th('w', 'Siege', 'Turniersiege (inkl. Hallenfinale)')}
+          <th className="num" title="Hallenfinal-Siege">M</th>
+          {th('ruf', 'Ruf', `Hallenruf: Tore + 3 je Turniersieg + 5 je Hallenfinal-Sieg; Hallenspezialist ${hallSpecialistNote(g)}`)}
         </tr></thead>
         <tbody>
           {list.map((k, i) => {
