@@ -1,6 +1,6 @@
 // Screenshots der Presse (Zentrale › Presse): Zeitungsseite, Artikel, Spielerprofil
 // aus einem Gesicht, ältere Ausgabe – mit Prüfung auf Seiten-Scroll/Überlauf.
-//   npm run build && SAVE=public/saves/test-3-jahre.txt node tests/presse-shots.mjs [ordner] [präfix]
+//   npm run build && SAVE=public/saves/test-3-jahre.txt node tests/press-shots.mjs [ordner] [präfix]
 //   später Spielstand: HUMAN=1 DUMP=… UNTIL=2005-11-07 node scripts/sim.mjs 30
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';

@@ -18,7 +18,7 @@ import { seasonsOf, titlesOf } from '../src/game/clubRecords';
 import { compStatsOf } from '../src/engine/compStats';
 import { buildSnapshot, competitionOptions, seasonOptions } from '../src/game/competitionView';
 import { countryOptions, countrySeasons, countrySnapshot, statsCountries } from '../src/game/competitionCountry';
-import { regioChecks } from './regio-checks';
+import { regioChecks } from './regional-league-checks';
 
 const seasons = Number(process.argv[2] ?? 10);
 let seed = 1977;

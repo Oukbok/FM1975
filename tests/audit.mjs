@@ -1,11 +1,11 @@
 // Seiten-Check (Wunsch Pascal: „jede Seite ansehen und auf alle Fehler prüfen“, Prüfliste
-// docs/pruefliste.md, Punkte A). Öffnet in mehreren Spielständen jede Seite aus MENU_STRUCTURE
+// docs/checklist.md, Punkte A). Öffnet in mehreren Spielständen jede Seite aus MENU_STRUCTURE
 // samt drittem Menü und die wichtigsten Fenster bei 1920×1080, 1366×768 und 1280×800
 // (Steam Deck), prüft sie automatisch (tests/audit-checks.mjs), legt Screenshots nach
-// test-output/audit/<auflösung>/<stand>/ und schreibt den Bericht docs/research/audit-bericht.md.
+// test-output/audit/<auflösung>/<stand>/ und schreibt den Bericht docs/research/audit-report.md.
 //   npm run test:audit
 //   SAVES=neu,liga1-2025 VIEWS=1366x768 ONLY=Kader SHOTS=0 POPUPS=0 node tests/audit.mjs
-//   REPORT=pfad.md (Standard docs/research/audit-bericht.md, REPORT=0 = keiner)
+//   REPORT=pfad.md (Standard docs/research/audit-report.md, REPORT=0 = keiner)
 // Stände: neu = neues Spiel 1975; Dateinamen aus public/saves/ (ohne .txt); sim20 = 20 Saisons
 // (`DUMP=… node scripts/sim.mjs 20`, wird bei Bedarf erzeugt). Schwere Funde → Exit 1.
 import { mkdir, writeFile, access } from 'node:fs/promises';
@@ -216,7 +216,7 @@ server.close();
 
 await mkdir(OUT, { recursive: true });
 await writeFile(`${OUT}/findings.json`, JSON.stringify({ stats, findings, colors }, null, 1));
-const reportPath = process.env.REPORT ?? 'docs/research/audit-bericht.md';
+const reportPath = process.env.REPORT ?? 'docs/research/audit-report.md';
 // BEFORE=findings.json eines früheren Laufs (z. B. DIST=alter Build) → Tabelle vorher/nachher im Bericht.
 let before;
 if (process.env.BEFORE) {

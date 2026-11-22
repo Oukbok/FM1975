@@ -1,4 +1,4 @@
-// Prüfungen für den Seiten-Check (tests/audit.mjs, Prüfliste docs/pruefliste.md).
+// Prüfungen für den Seiten-Check (tests/audit.mjs, Prüfliste docs/checklist.md).
 // `pageChecks` läuft im Browser (page.evaluate) und liefert Funde { k: Art, d: Beschreibung }.
 // `scanColors` liest die CSS-Dateien und meldet feste Farben außerhalb der Token-Dateien.
 import { readdir, readFile } from 'node:fs/promises';

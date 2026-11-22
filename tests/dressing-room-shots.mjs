@@ -1,6 +1,6 @@
 // Screenshots der Kabine (Kader › Kabine): Kreis, Spieler im Fokus, Gespräch,
 // Vorfälle, Verlauf – mit Prüfung auf Überlauf/Seiten-Scroll.
-//   npm run build && SAVE=… node tests/kabine-shots.mjs [ausgabeordner] [präfix]
+//   npm run build && SAVE=… node tests/dressing-room-shots.mjs [ausgabeordner] [präfix]
 //   Spielstand z. B. HUMAN=1 DUMP=save.txt UNTIL=1990-03-01 node scripts/sim.mjs 15
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';

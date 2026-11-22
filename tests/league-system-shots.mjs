@@ -1,5 +1,5 @@
 // Screenshots Statistiken › Ligensystem (Pyramide + „Ligen der Welt“) und Länderwahl.
-//   npm run build && SAVE=public/saves/test-3-jahre.txt node tests/ligsys-shots.mjs [ordner] [präfix]
+//   npm run build && SAVE=public/saves/test-3-jahre.txt node tests/league-system-shots.mjs [ordner] [präfix]
 //   LAND=England,Spanien,Italien,Frankreich,DDR – zusätzlich gewählte Länder; VIEW=1366x768.
 // Prüft: Länderliste alphabetisch ohne Gruppen, Heimatland vorgewählt, Seite scrollt nicht.
 import { createServer } from 'node:http';

@@ -1,7 +1,7 @@
 // =============================================================================
 // Stützwerte der Weltrangliste (data/eloAnchors.ts) aus echten Länderspiel-
 // ergebnissen nachrechnen – Verfahren wie die World Football Elo Ratings
-// (Quellen und Formel: docs/research/weltrangliste.md).
+// (Quellen und Formel: docs/research/world-ranking.md).
 // Aufruf: node scripts/elo-anchors.mjs <pfad/zu/results.csv>
 //   (CSV = öffentlicher Ergebnisdatensatz „international_results“, Spalten
 //    date,home_team,away_team,home_score,away_score,tournament,city,country,neutral)

@@ -89,4 +89,4 @@ Spielstände liegen außerhalb des Programmordners und bleiben bei Updates und N
   (sonst SmartScreen-Warnung beim Installer außerhalb von Steam).
 - Rechte: Bilder (Wappen, Hintergründe, Gesichter) frei verwendbar, keine echten Namen (siehe CLAUDE.md).
 - Speichern großer Stände: `JSON.stringify` in einen Worker verlegen, falls es bei 50+ Jahren spürbar hakt
-  (Messwerte `docs/research/leistung.md`).
+  (Messwerte `docs/research/performance.md`).

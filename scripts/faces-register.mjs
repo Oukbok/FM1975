@@ -6,10 +6,10 @@
 //   FACES_DIR=… node scripts/faces-register.mjs (anderer Bildordner, z. B. für Tests)
 //
 // Erwartet: images/faces/<ordner>/<epoche>/<nr>[-<alter>].webp
-//   + optional <nr>[-<alter>]-maske.webp (Trikotfläche, nur Alpha zählt)
+//   + optional <nr>[-<alter>]-mask.webp (Trikotfläche, nur Alpha zählt)
 // <ordner> = englischer Ordner der Gesichtsgruppe (src/data/faceDirs.json, z. B.
 // central-europe = mitteleuropa); im Register steht die Gruppen-ID wie im Spielstand.
-// Anleitung: docs/images/BILDER.md, Abschnitt 2.
+// Anleitung: docs/images/IMAGES.md, Abschnitt 2.
 // =============================================================================
 import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
@@ -50,8 +50,8 @@ for (const abs of walk(ROOT)) {
   if (!rel.toLowerCase().endsWith('.webp')) { problems.push(`${rel}: kein WebP – bitte als .webp speichern (z. B. mit squoosh.app).`); continue; }
   // Schlüssel mit Gruppen-ID statt Ordnername (Register/Spielstand unverändert).
   let key = (rel.includes('/') ? GROUP_OF_DIR[dir] + rel.slice(dir.length) : rel).slice(0, -5);
-  const isMask = key.endsWith('-maske');
-  if (isMask) key = key.slice(0, -6);
+  const isMask = key.endsWith('-mask');
+  if (isMask) key = key.slice(0, -5);
   const m = key.match(/^([a-z_]+)\/(\d{4})\/(\d{1,4})(?:-(\d{2}))?$/);
   if (!m) { problems.push(`${rel}: Name passt nicht zu <ordner>/<epoche>/<nr>[-<alter>].webp`); continue; }
   const [, group, epoch, , age] = m;
@@ -66,7 +66,7 @@ for (const abs of walk(ROOT)) {
   (isMask ? masks : files).push(key);
 }
 
-for (const k of masks) if (!files.includes(k)) problems.push(`${k}-maske.webp: Maske ohne Bild ${k}.webp`);
+for (const k of masks) if (!files.includes(k)) problems.push(`${k}-mask.webp: Maske ohne Bild ${k}.webp`);
 
 const byNum = (a, b) => a.localeCompare(b, undefined, { numeric: true });
 files.sort(byNum);
@@ -83,8 +83,8 @@ for (const g of [...GROUPS, 'staff']) {
   if (!table[g]) continue;
   console.log(`  ${g.padEnd(14)} ${EPOCHS.map((e) => `${e}: ${String(table[g][e]?.size ?? 0).padStart(3)}`).join('  ')}`);
 }
-// Gesichtet? (docs/images/faces-gesichtet.txt – jedes Bild einmal angesehen und seiner Ethnie zugeordnet)
-const REVIEW = process.env.FACES_REVIEW ?? 'docs/images/faces-gesichtet.txt';
+// Gesichtet? (docs/images/faces-reviewed.txt – jedes Bild einmal angesehen und seiner Ethnie zugeordnet)
+const REVIEW = process.env.FACES_REVIEW ?? 'docs/images/faces-reviewed.txt';
 if (existsSync(REVIEW)) {
   const seen = new Set(readFileSync(REVIEW, 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')));
   const fresh = files.filter((k) => !seen.has(k) && !k.startsWith('staff/'));

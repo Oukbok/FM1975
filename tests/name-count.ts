@@ -6,7 +6,7 @@
 // clubs: je Heimatland × Startjahr 1975/1995/2025 ein neues Spiel → Vereine des Heimatlandes mit
 //        Spielern (volle Kader + Weltspieler-Kader, Jugend inbegriffen) und Zahl der einheimischen
 //        Spieler. `ONLY=eng,fra` schränkt die Länder ein.
-// Ergebnis als Tabelle auf der Konsole (Grundlage für docs/research/namen-ziel.md).
+// Ergebnis als Tabelle auf der Konsole (Grundlage für docs/research/names-target.md).
 // =============================================================================
 import { ORIGINS, firstNamesFor } from '../src/data/origins';
 import { WORLD_COUNTRIES } from '../src/data/world/countries';

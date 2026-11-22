@@ -1,6 +1,6 @@
 // Screenshots Chronik im Wiki: Kapitel „Chronik der Epochen“, Suche über Meilensteine, Verweis
 // „Im Wiki:“, Sprung ins große Fenster und zurück; 1920×1080 + 1366×768.
-//   npm run build && node tests/chronik-wiki-shots.mjs [ordner]   (SAVE=…, Standard Vorlage „Test 3 Jahre“)
+//   npm run build && node tests/chronicle-wiki-shots.mjs [ordner]   (SAVE=…, Standard Vorlage „Test 3 Jahre“)
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { serveDist, loadSave } from './popup-probe.mjs';

@@ -1,5 +1,5 @@
 // Screenshots Kalender Dezember/Januar (Winterpause + Hallenturniere), 1920×1080.
-//   npm run build && node tests/winterhalle-shots.mjs [ordner] [präfix]   (SAVE=…, Standard Vorlage „Test 3 Jahre“)
+//   npm run build && node tests/winter-indoor-shots.mjs [ordner] [präfix]   (SAVE=…, Standard Vorlage „Test 3 Jahre“)
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';

@@ -6,7 +6,7 @@
 // Durchsucht alle angezeigten Texte der Datendateien (nur String-Inhalte, Kommentare ausgenommen)
 // nach einer Sperrliste echter Vereinsnamen/Kurzformen/Spitznamen, Stadion-Marken und bekannter
 // Spieler/Trainer/Funktionäre. Im Spiel heißen Vereine nach Stadt (+ Farbe), z. B. „München Rot“,
-// „Mönchengladbach“, „Hamburg Blau“ – Zuordnung in docs/research/weltvereine_*.md.
+// „Mönchengladbach“, „Hamburg Blau“ – Zuordnung in docs/research/world-clubs-*.md.
 // VERBOSE=1 zeigt alle geprüften Dateien.
 // =============================================================================
 import { readFileSync, readdirSync, statSync } from 'node:fs';

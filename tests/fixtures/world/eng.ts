@@ -1,5 +1,5 @@
 // Beispieldaten NUR für Tests (test:world): England mit wenigen Saisons im Format der
-// Weltdaten (docs/specs/WELTDATEN_SPEC.md). Die echten Daten liefert die Recherche
+// Weltdaten (docs/specs/WORLD_DATA_SPEC.md). Die echten Daten liefert die Recherche
 // in src/data/world/clubs|seasons/eng.ts.
 import type { RealClub, SeasonRow } from '../../../src/data/world/types';
 
