@@ -2438,6 +2438,20 @@
 [data-fs] .ycx-lv-foot .muted { font-size: 17.6px; }
 [data-fs] .ycx-state { font-size: 17.6px; }
 
+/* 28-gameover.css */
+[data-fs] .go-eyebrow { font-size: 20px; }
+[data-fs] .go-title { font-size: 84px; }
+[data-fs] .go-lead { font-size: 34px; }
+[data-fs] .go-text { font-size: 24px; }
+[data-fs] .go-date { font-size: 19px; }
+[data-fs] .go-stat-l { font-size: 17.6px; }
+[data-fs] .go-stat-v { font-size: 72px; }
+[data-fs] .go-stat-s { font-size: 18px; }
+[data-fs] .go-chip { font-size: 19px; }
+[data-fs] .go-none { font-size: 22px; }
+[data-fs] .go-hint { font-size: 19px; }
+[data-fs] .go-btn { font-size: 28px; }
+
 /* 28-lazy.css */
 [data-fs] .lazy-note { font-size: 17.6px; }
 
