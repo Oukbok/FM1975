@@ -11,7 +11,7 @@
 // =============================================================================
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC } from './realPeopleList';
+import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC, ORGS } from './realPeopleList';
 
 let fails = 0;
 const ok = (c: boolean, msg: string) => { if (!c || process.env.VERBOSE) console.log(`${c ? 'OK  ' : 'FEHL'} ${msg}`); if (!c) fails++; };
@@ -182,6 +182,36 @@ for (const f of files) {
   }
   ok(!hits.length, `${f}${hits.length ? `: ${hits.length} Treffer\n${hits.join('\n')}` : ''}`);
 }
+// --- Verbände/Wettbewerbe: alle Quelltexte unter src/ ------------------------------------------
+// Ausgenommen: die Regeln selbst (data/neutralNames.ts), Recherche-Belege der Ligastruktur
+// (data/leagueTiers.ts, nicht angezeigt), Quellen mit Adresse (Zeile mit „url:“) und reine
+// interne Schlüssel ('UEFA' als Kontinent, 'DFL' als Kürzel eines schottischen Vereins).
+const ORG_RULES = listRules('Verband/Wettbewerb', ORGS, false);
+const ORG_SKIP = new Set(['src/data/neutralNames.ts', 'src/data/leagueTiers.ts']);
+const ORG_KEYS = /^(?:UEFA|FIFA|CONMEBOL|CONCACAF|CAF|AFC|OFC|DFB|DFL)$/;
+const orgHit = (s: string) => ORG_RULES.find(([, r]) => r.test(s));
+const orgMust = ['die UEFA', 'Champions League', 'DFB-Pokal', 'Bundesligist', '2. Bundesliga', 'Serie A', 'FIFA-Regel', 'NOFV-Oberliga', 'Fridays for Future'];
+const orgFree = ['Meisterliga', 'Europa-Liga', 'Konferenz-Liga', 'Weltverband', 'Europaverband', 'Fußballbund', 'Ligaverband', 'Landespokal',
+  '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Goldener Ball', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
+  'Bosman-Urteil', 'Orkan Kyrill', 'Stuttgart 21', 'Bundesanstalt für Arbeit', 'Bundestrainer', 'Café am Markt', 'Weltpokal', 'Klub-WM'];
+const orgMissed = orgMust.filter((s) => !orgHit(s)), orgWrong = orgFree.filter((s) => orgHit(s));
+ok(!orgMissed.length, `Verbände/Wettbewerbe: Beispiele erkannt${orgMissed.length ? ' – verfehlt: ' + orgMissed.join(', ') : ''}`);
+ok(!orgWrong.length, `Verbände/Wettbewerbe: neutrale Namen frei${orgWrong.length ? ' – fälschlich: ' + orgWrong.join(', ') : ''}`);
+const allSrc = walk('src').filter((f) => !ORG_SKIP.has(f.replace(/\\/g, '/')));
+let orgStrings = 0;
+for (const f of allSrc) {
+  const src = readFileSync(f, 'utf8');
+  const lines = src.split('\n');
+  const hits: string[] = [];
+  for (const { line, text } of literals(src)) {
+    orgStrings++;
+    if (ORG_KEYS.test(text) || /\burl:/.test(lines[line - 1] ?? '')) continue;
+    const h = orgHit(text);
+    if (h) { const m = text.match(h[1])!; hits.push(`  ${f}:${line} „${m[0]}“ in: ${text.length > 120 ? text.slice(Math.max(0, (m.index ?? 0) - 50), (m.index ?? 0) + 70) : text}`); }
+  }
+  if (hits.length) ok(false, `${f} (Verband/Wettbewerb): ${hits.length} Treffer\n${hits.join('\n')}`);
+}
+console.log(`Verbände/Wettbewerbe: ${allSrc.length} Quelltexte, ${orgStrings} Texte gegen ${ORG_RULES.length} Muster.`);
 console.log(`Geprüft: ${files.length} Dateien, ${strings} Texte gegen ${RULES.length} Muster.`);
 console.log(fails ? `\n${fails} Fehler` : '\nKeine echten Namen in den angezeigten Texten.');
 process.exit(fails ? 1 : 0);

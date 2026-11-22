@@ -46,7 +46,7 @@ ok(near(eloDelta(630, 500, 3, 1, 20, 0), 9.63, 0.02), `3:1 im Freundschaftsspiel
 ok(goalMul(1) === 1 && goalMul(2) === 1.5 && goalMul(3) === 1.75 && goalMul(10) === 2.625, 'Tordifferenz-Zuschlag 1 / 1,5 / 1,75 / 2,625');
 ok(near(eloDelta(1500, 1500, 0, 0, 20, 1), 20 * (0.5 - expected(100))), `Heimvorteil +100: Remis kostet den Gastgeber ${eloDelta(1500, 1500, 0, 0, 20, 1).toFixed(2)}`);
 ok(near(eloDelta(1600, 1500, 2, 2, 60, 0, true), 60 * (0.5 - expected(100))), 'Elfmeterschießen = Remis ohne Tordifferenz-Zuschlag');
-ok(eloK('WM') === 60 && eloK('EM') === 50 && eloK('WM-Qualifikation') === 40 && eloK('EM-Qualifikation') === 40 && eloK('Nations League') === 40 && eloK('Freundschaftsspiel') === 20, 'K-Faktor je Spielart 60/50/40/40/40/20');
+ok(eloK('WM') === 60 && eloK('EM') === 50 && eloK('WM-Qualifikation') === 40 && eloK('EM-Qualifikation') === 40 && eloK('Nationenliga') === 40 && eloK('Nations League') === 40 && eloK('Freundschaftsspiel') === 20, 'K-Faktor je Spielart 60/50/40/40/40/20');
 
 // -----------------------------------------------------------------------------
 // 2. Startreihenfolge
