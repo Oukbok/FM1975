@@ -24,6 +24,9 @@ export interface Finding { cat: string; src: Src; year: number; text: string; hi
 export const HARD = new Set(['Grammatik', 'Genus', 'Platzhalter', 'undefined/NaN', 'leerer Slot', 'Mehrzahl', 'Artikel vor Vereinsname', 'doppeltes Wort',
   'Leerzeichen', 'Satzzeichen', 'Umlaut als ae/oe/ue', 'Epoche', 'Inhalt', 'Währung']);
 
+/** Echte Verbands-/Wettbewerbsnamen (Liste wie tests/realPeopleList.ts ORGS, Kurzform). */
+const REAL_ORG = /(?<![\p{L}\p{N}])(?:FIFA|UEFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|Bundesligi?\p{L}*|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der (?:Landesmeister|Pokalsieger)|Intertoto|UI-Cup|Premier League|Serie [A-D]|LaLiga|Ligue 1|Eredivisie)(?![\p{L}\p{N}])/u;
+
 // --------------------------------------------------------------- Epochen
 interface EraRule { re: RegExp; from?: number; to?: number; only?: Src[]; skip?: Src[]; label: string }
 
@@ -35,10 +38,10 @@ export const ERA_RULES: EraRule[] = [
   { re: /Videobeweis|Video-Assistent|Videoschiedsrichter|\bVAR\b|Kölner Keller|Videoraum|kalibrierte Linie|Ansicht der Bilder/i, from: 2016, skip: ['brief'], label: 'Videobeweis' },
   { re: /Torlinientechnik/, from: 2015, skip: ['brief'], label: 'Torlinientechnik' },
   { re: /Freistoßspray/, from: 2014, skip: ['brief'], label: 'Freistoßspray' },
-  { re: /Champions League|Königsklasse/, from: 1992, skip: ['brief'], label: 'Champions League' },
-  { re: /Europa League/, from: 2009, skip: ['brief'], label: 'Europa League' },
-  { re: /Conference League/, from: 2021, skip: ['brief'], label: 'Conference League' },
-  { re: /UEFA-Cup|UEFA-Pokal/, to: 2009, skip: ['brief'], label: 'UEFA-Cup' },
+  { re: /Meisterliga|Königsklasse/, from: 1992, skip: ['brief'], label: 'Meisterliga' },
+  { re: /Europa-Liga/, from: 2009, skip: ['brief'], label: 'Europa-Liga' },
+  { re: /Konferenz-Liga/, from: 2021, skip: ['brief'], label: 'Konferenz-Liga' },
+  { re: /Europa-Pokal(?!-Platz)/, to: 2009, skip: ['brief'], label: 'Europa-Pokal' },
   { re: /\bLibero/, to: 2001, skip: ['brief'], label: 'Libero' },
   { re: /Manndeck/, to: 2005, skip: ['brief'], label: 'Manndeckung' },
   { re: /Viererkette/, from: 1990, skip: ['brief'], label: 'Viererkette' },
@@ -165,7 +168,8 @@ function checkLine(ch: Checker, s: Sample, t: string): void {
   if (s.ctx.tier === 1 && s.src !== 'brief' && (m = /Aufstieg in die (1\.|erste) Liga|Aufstiegsrennen|Wer schafft den Aufstieg|Anwärter auf den Aufstieg/.exec(t))) add(ch, s, 'Inhalt', `Ebene 1: „${m[0]}“`);
   // Grammatik-Muster, die beim Durchsehen aufgefallen sind (dürfen nicht wiederkommen)
   if ((m = /\bgastierte \S+(?: \S+)? gegen |verlässt Ausland|kehrt Ausland|\b(?:Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag|Sonntag), (?:Mo|Di|Mi|Do|Fr|Sa|So),|\bdes (?:Pokal|Europa-Pokal|Achtelfinale|Viertelfinale|Halbfinale)\b|\bder (?:Achtelfinale|Viertelfinale|Halbfinale)\b|\d\. (?:Empfängt|Den|Dem)\b|\bmit einen\b|\bmit \d+ Tage\b/.exec(t))) add(ch, s, 'Grammatik', m[0]);
-  if (s.src === 'press' && (s.ctx.tier > 1 || s.ctx.home !== 'ger') && (m = /\bBundesliga\b/.exec(t))) add(ch, s, 'Inhalt', `${s.ctx.home}/Ebene ${s.ctx.tier}: „${m[0]}“`);
+  // Verbände/Wettbewerbe neutral (Wunsch Pascal, data/neutralNames.ts): echte Namen sind immer ein harter Fehler.
+  if ((m = REAL_ORG.exec(t))) add(ch, s, 'Inhalt', `echter Verbands-/Wettbewerbsname: „${m[0]}“`);
   // Zeilenende im Ticker/Artikeltext
   if ((s.src === 'ticker' || (s.src === 'press' && s.field === 'body')) && !/[.!?…“")»:]$/.test(t.trim()) && !/→|^[+−•-]|^\d+\. /.test(t)) add(ch, s, 'Satzende fehlt', t.slice(-30));
   if (/^[a-zäöü]/.test(t) && (s.field === 'headline' || s.field === 'subject' || s.src === 'ticker')) add(ch, s, 'Kleinschreibung am Anfang', t.slice(0, 30));

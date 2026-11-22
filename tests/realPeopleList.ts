@@ -122,3 +122,21 @@ export const HISTORIC: string[] = [
   'Thomas Mann', 'Brecht', 'Nietzsche', 'Hegel', 'Leibniz', 'Krupp', 'Thyssen', 'Zeiss', 'Otto Lilienthal', 'Till Eulenspiegel', 'Störtebeker',
   'Münchhausen', 'Kolumbus', 'Gaudí', 'Picasso', 'Shakespeare', 'Rembrandt', 'Rubens', 'Chopin', 'Verdi', 'Garibaldi', 'Michelangelo', 'da Vinci',
 ];
+
+/**
+ * Verbände und Wettbewerbe (Wunsch Pascal: „Verbände und Wettbewerbe müssen neutral heißen“) –
+ * im Text das Schema aus data/neutralNames.ts (Tabelle in CLAUDE.md): Weltverband, Europaverband,
+ * Fußballbund, Ligaverband, Regelgremium, Meisterliga, Europa-Liga, Konferenz-Liga, Europa-Pokal,
+ * Landespokal, 1. Liga/2. Liga, Nationenliga, Goldener Ball. Geprüft in ALLEN Quelltexten
+ * (String-Inhalte); reine interne Schlüssel ('UEFA' als Kontinent) sind ausgenommen.
+ */
+export const ORGS: string[] = [
+  'FIFA', 'UEFA', 'DFB', 'DFL', 'IFAB', 'NOFV', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC', 'OFC', 'ÖFB', 'KNVB', 'RFEF', 'FIGC',
+  'Bundesliga\\p{L}*', 'Bundesligi\\p{L}*', 'Bundesligen', 'Champions[- ]League', 'Europa[- ]League', 'Conference[- ]League',
+  'Nations[- ]League', 'Youth[- ]League', 'Europapokals? der (?:Landesmeister|Pokalsieger)', 'Intertoto', 'UI-Cup',
+  'Messestädte-Pokal', 'Copa (?:Libertadores|América|Sudamericana)', 'Ballon d.Or', 'Premier League', 'Premiership',
+  'Serie [A-D]', 'LaLiga', 'La Liga', 'Ligue [12]', 'Eredivisie', 'Allsvenskan', 'Superliga', 'Süper Lig', 'Ekstraklasa',
+  'FA[- ]Cup', 'League Cup', 'Coppa Italia', 'Copa del Rey', 'Coupe de France',
+  // Kampagnen-/Aktionsnamen (Wunsch Pascal: geschützte Namen umschreiben, Ereignisbegriffe wie Bosman-Urteil bleiben)
+  'Fridays for Future', 'Ice Bucket', 'One ?Love',
+];
