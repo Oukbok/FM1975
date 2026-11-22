@@ -12,8 +12,8 @@ export const BUDGET_ERAS: BudgetEra[] = [
   // Quellen: docs/research/FINANZEN_Recherche_1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
   // TV-Rechte 1975/76 insgesamt 4,8 Mio. DM – Spiegel „TV-Gelder von 1965 bis heute“; Eintritt wichtigste Säule).
   { from: 1975, to: 1977, lines: [
-    'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen die öffentlich-rechtlichen Sender 1975/76 der ganzen Bundesliga zusammen nur 4,8 Mio. DM.',
-    'Das Geld kommt über die Kassenhäuschen. Fernsehgeld ist ein kleiner Zuschuss – die Sender zahlen der ganzen Bundesliga 1975/76 gerade 4,8 Mio. DM –, und Trikotwerbung gibt es erst seit 1973.',
+    'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen die öffentlich-rechtlichen Sender 1975/76 der ganzen 1. Liga zusammen nur 4,8 Mio. DM.',
+    'Das Geld kommt über die Kassenhäuschen. Fernsehgeld ist ein kleiner Zuschuss – die Sender zahlen der ganzen 1. Liga 1975/76 gerade 4,8 Mio. DM –, und Trikotwerbung gibt es erst seit 1973.',
   ] },
   // Quelle: docs/research/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
   { from: 1978, to: 1983, lines: [
@@ -23,12 +23,12 @@ export const BUDGET_ERAS: BudgetEra[] = [
   // Quellen: engine/economy.ts ATTENDANCE_DEMAND (Zuschauertal Mitte der 1980er, Schnitt rund 19.000);
   // engine/tvMoney.ts (TV-Topf 1984/85 rund 10 Mio. DM für die Bundesliga, basicthinking.de).
   { from: 1984, to: 1987, lines: [
-    'Mitte der Achtziger kommen weniger Leute ins Stadion als ein Jahrzehnt zuvor – der Bundesliga-Schnitt fällt unter 20.000. Wer seine Ausgaben nach den Zuschauerzahlen der Siebziger plant, plant zu hoch.',
+    'Mitte der Achtziger kommen weniger Leute ins Stadion als ein Jahrzehnt zuvor – der Erstliga-Schnitt fällt unter 20.000. Wer seine Ausgaben nach den Zuschauerzahlen der Siebziger plant, plant zu hoch.',
     'Die Ränge werden leerer, die Ligen-Schnitte sind so niedrig wie lange nicht. Das Fernsehen zahlt mehr als früher, aber noch keine Summen, die einen Verein tragen.',
   ] },
   // Quelle: engine/tvMoney.ts / FINANZEN_SPEC §10.4 (Rechte 1988/89 rund 40 Mio. DM statt zuvor rund 18 Mio.; Privatfernsehen).
   { from: 1988, to: 1991, lines: [
-    'Mit dem Privatfernsehen steigt der Preis für die Bundesliga-Rechte sprunghaft: 1988/89 sind es rund 40 Mio. DM für die Liga. Das Fernsehgeld wird zum planbaren Posten.',
+    'Mit dem Privatfernsehen steigt der Preis für die Liga-Rechte sprunghaft: 1988/89 sind es rund 40 Mio. DM für die Liga. Das Fernsehgeld wird zum planbaren Posten.',
     'Das Fernsehen entdeckt den Fußball: Der neue Rechtevertrag 1988/89 bringt der Liga rund 40 Mio. DM – mehr als das Doppelte des alten. Damit können wir erstmals fest planen.',
   ] },
   // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (Sat.1 „ran“).
@@ -44,7 +44,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quelle: engine/tvMoney.ts (Kirch-Vertrag 2000/01: 355 Mio. € für die Bundesliga).
   { from: 2000, to: 2001, lines: [
-    'Der Vertrag mit der Mediengruppe bringt der Bundesliga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht alles fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
+    'Der Vertrag mit der Mediengruppe bringt der 1. Liga ab 2000/01 rund 355 Mio. € im Jahr – so viel Fernsehgeld gab es noch nie. Plane trotzdem nicht alles fest ein: Solche Verträge hängen an einem einzigen Geldgeber.',
     'Fernsehgeld in Rekordhöhe: Die Mediengruppe zahlt der Liga rund 355 Mio. € pro Saison. Das Fernsehen ist jetzt unsere größte planbare Einnahme.',
   ] },
   // Quellen: engine/economy.ts (Euro ab 2002); data/history.ts tvMarketFactor + engine/tvMoney.ts (Kirch-Pleite 2002, TV-Delle).
@@ -60,7 +60,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
   ] },
   // Quelle: engine/tvMoney.ts (2013/14 rund 628 Mio. € für die Bundesliga).
   { from: 2013, to: 2016, lines: [
-    'Der Fernsehvertrag ab 2013/14 bringt der Bundesliga rund 628 Mio. € pro Saison. Das hebt alle Etats – auch die der Konkurrenz, die damit Gehälter treibt.',
+    'Der Fernsehvertrag ab 2013/14 bringt der 1. Liga rund 628 Mio. € pro Saison. Das hebt alle Etats – auch die der Konkurrenz, die damit Gehälter treibt.',
     'TV-Geld steigt kräftig: Seit 2013/14 sind es rund 628 Mio. € für die Liga. Mehr Geld heißt aber auch höhere Gehaltsforderungen.',
   ] },
   // Quellen: engine/tvMoney.ts (2017/18: 1,16 Mrd. € + Auslandsvermarktung; Verteilung nach vier Säulen);
@@ -78,7 +78,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
   // Quellen: FINANZEN_Recherche_Entwicklung_1980_heute.md (DFL 2023/24: 4,80 Mrd. € Umsatz, Medien 31,95 %,
   // Spielbetrieb 10,91 %; nationaler Zyklus 2025/26–2028/29 Ø 1,121 Mrd. € je Saison).
   { from: 2023, to: 2100, lines: [
-    'Die Bundesliga setzt inzwischen fast fünf Milliarden Euro um; Medien sind mit rund einem Drittel der größte Posten, der Spieltag bringt nur noch gut ein Zehntel. Der nationale Rechtezyklus ab 2025/26 bringt im Schnitt 1,121 Mrd. € pro Saison.',
+    'Die 1. Liga setzt inzwischen fast fünf Milliarden Euro um; Medien sind mit rund einem Drittel der größte Posten, der Spieltag bringt nur noch gut ein Zehntel. Der nationale Rechtezyklus ab 2025/26 bringt im Schnitt 1,121 Mrd. € pro Saison.',
     'Heute sind Medien mit rund einem Drittel des Liga-Umsatzes die wichtigste Säule; Ticketing liegt bei gut zehn Prozent. Wer planen will, plant vom TV-Geld aus.',
   ] },
 ];

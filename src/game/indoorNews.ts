@@ -31,16 +31,16 @@ export function sendInvite(g: Game, t: IndoorTournament, today: string): void {
   const deadline = CalendarEngine.addDays(t.date, -2) > today ? CalendarEngine.addDays(t.date, -2) : today;
   const masters = t.kind === 'masters';
   const msg = makeMessage({
-    date: today, category: 'cup', from: masters ? 'DFB-Spielausschuss' : `Veranstalter ${t.city}`,
+    date: today, category: 'cup', from: masters ? 'Spielausschuss des Fußballbunds' : `Veranstalter ${t.city}`,
     subject: masters ? `Qualifiziert für das ${t.name}` : `Einladung: ${t.name} (${fmtDay(t.date)})`,
     shortText: masters ? `Endrunde in der ${t.hall}, ${t.city}. Teilnehmen?` : `${t.hall}, ${t.city}. Antrittsgeld ${fmtDM(fee)}.`,
     bodyText: (masters
-      ? `Glückwunsch: Über die Hallentour habt ihr euch für die Endrunde des DFB-Hallenpokals qualifiziert – ${t.days} Tage in der ${t.hall} (${t.city}) ab ${fmtDay(t.date)}.\n\n`
+      ? `Glückwunsch: Über die Hallentour habt ihr euch für die Endrunde des Hallenpokals qualifiziert – ${t.days} Tage in der ${t.hall} (${t.city}) ab ${fmtDay(t.date)}.\n\n`
       : `Wir laden euch zum ${t.name} in die ${t.hall} ein (${fmtDay(t.date)}${t.days > 1 ? `, ${t.days} Tage` : ''}).${abroadNote(g, t)}\n\nBisher zugesagt: ${others.join(', ') || 'noch offen'}.\n\n`)
       + `Antrittsgeld: ${fee > 0 ? fmtDM(fee) : 'keines'}${masters ? ' – dazu Prämien nach Platzierung' : ' – der Turniersieger bekommt eine Prämie'}.\n\n`
       + `Fünf Feldspieler plus Torwart, Rundumbande, kurze Spielzeiten. Gut für Spielpraxis von Reservisten und für die Fans – `
       + `aber der Hallenboden ist hart: Prellungen und Bänderverletzungen sind keine Seltenheit, und die Winterpause wird kürzer.\n\n`
-      + `Den Hallenkader stellst du am Turniertag zusammen. Eine Absage verärgert ${masters ? 'den DFB und die Fans' : 'den Veranstalter und die Fans'}.`,
+      + `Den Hallenkader stellst du am Turniertag zusammen. Eine Absage verärgert ${masters ? 'den Fußballbund und die Fans' : 'den Veranstalter und die Fans'}.`,
     actionRequired: true,
   });
   msg.choices = [
@@ -66,7 +66,7 @@ export function declinePenalty(g: Game, t: IndoorTournament, today: string): voi
   st.snub += t.kind === 'masters' ? 1.5 : 1;
   pushMessage(g.messages, makeMessage({
     date: today, category: 'media', from: 'Pressestelle',
-    subject: t.kind === 'masters' ? 'DFB verärgert über Absage für die Endrunde' : `Absage verärgert ${t.city}`,
+    subject: t.kind === 'masters' ? 'Fußballbund verärgert über Absage für die Endrunde' : `Absage verärgert ${t.city}`,
     shortText: home ? 'Die eigenen Fans hatten sich auf das Heimturnier gefreut.' : 'Der Veranstalter ist enttäuscht.',
     bodyText: `Unsere Absage für das ${t.name} sorgt für Unmut. ${home ? 'Gerade in der eigenen Stadt nehmen uns das viele Fans übel. ' : ''}`
       + `Veranstalter reden miteinander: Wer häufig absagt, wird seltener eingeladen.\n\nFan-Stimmung −${loss.toLocaleString('de-DE')}.`,
@@ -103,7 +103,7 @@ export function mastersNews(g: Game, cur: IndoorWinter, t: IndoorTournament, tod
     date: today, category: 'cup', from: 'Sportpresse',
     subject: `${indoorName(g, w)} gewinnt das Hallen-Masters ${cur.winterYear}`,
     shortText: `Finale in ${t.city}: ${indoorShort(g, fin.a)} – ${indoorShort(g, fin.b)} ${fin.ga}:${fin.gb}${fin.pa != null ? ` (${fin.pa}:${fin.pb} n. N.)` : ''}.`,
-    bodyText: `Die Endrunde des DFB-Hallenpokals in der ${t.hall} ist entschieden: ${indoorName(g, w)} holt den Titel.`
+    bodyText: `Die Endrunde des Hallenpokals in der ${t.hall} ist entschieden: ${indoorName(g, w)} holt den Titel.`
       + (cur.mastersDeclined?.length ? `\n\nNicht angetreten trotz Qualifikation: ${cur.mastersDeclined.map((id) => indoorShort(g, id)).join(', ')}.` : ''),
   }));
 }

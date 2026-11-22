@@ -179,7 +179,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'schwarzwald', name: 'Schwarzwald', geo: [47.9, 8.1], place: 'Hinterzarten / Schluchsee / Feldberg', country: 'Deutschland', region: 'mittelgebirge',
     seasons: both, access: from(1975), climate: 'mittelgebirge', altitude: 900, transport: 'bus', travelH: 5, tz: 0, travel: 1600,
     opp: 'regional', testIncome: 3000, marketing: 0.01, buzz: 0.15,
-    note: 'Brasilien bereitete sich 1974 im Leistungszentrum Herzogenhorn auf rund 1.350 m vor, der DFB 1982 am Schluchsee – mit bekannten „Vorkommnissen“ [C14].',
+    note: 'Brasilien bereitete sich 1974 im Leistungszentrum Herzogenhorn auf rund 1.350 m vor, der Fußballbund 1982 am Schluchsee – mit bekannten „Vorkommnissen“ [C14].',
   },
   {
     id: 'sauerland', name: 'Sauerland', geo: [51.19, 8.53], place: 'Winterberg / Schmallenberg', country: 'Deutschland', region: 'mittelgebirge',
@@ -205,7 +205,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'zillertal', name: 'Zillertal', geo: [47.23, 11.88], place: 'Zell am Ziller / Gerlos', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), climate: 'alpen', altitude: 600, transport: 'bus', travelH: 8, tz: 0, travel: 2600,
     opp: 'regional', testIncome: 4500, marketing: 0.03, buzz: 0.3,
-    note: 'Tal mit Tradition: Ein Bundesligist aus dem Norden kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
+    note: 'Tal mit Tradition: Ein Erstligist aus dem Norden kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
   },
   {
     id: 'salzburgerland', name: 'Salzburger Land', geo: [47.43, 12.85], place: 'Saalfelden / Maria Alm / Leogang', country: 'Österreich', region: 'alpen',
@@ -246,7 +246,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: S, access: from(1980), // Annahme
     climate: 'alpen', altitude: 600, transport: 'bus', travelH: 9, tz: 0, travel: 2800,
     opp: 'regional', testIncome: 4000, marketing: 0.03, buzz: 0.25,
-    note: 'Gute Küche, Wein, Klima: der DFB 1990 in Kaltern, 2010/2018 in Eppan, 2014 im Passeiertal [C19]; 2023 Leipzig und Bochum in Bruneck [C15].',
+    note: 'Gute Küche, Wein, Klima: der Fußballbund 1990 in Kaltern, 2010/2018 in Eppan, 2014 im Passeiertal [C19]; 2023 Leipzig und Bochum in Bruneck [C15].',
   },
   // --- Süden (Winter) ---------------------------------------------------------------------
   {
@@ -260,7 +260,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: from(1982), // Annahme analog zu den Kanaren [C2]; 2020 Marbella/Jerez [C7]
     climate: 'mittelmeer', altitude: 50, transport: 'flug', travelH: 3, tz: 0, travel: 7500,
     opp: 'international', testIncome: 4000, marketing: 0.04, buzz: 0.35,
-    note: 'Seit den 80ern im Kommen, heute das häufigste Winterziel der Bundesliga (2020: elf Vereine in Spanien [C7]). Marbella glänzt, Jerez ist ruhiger.',
+    note: 'Seit den 80ern im Kommen, heute das häufigste Winterziel der 1. Liga (2020: elf Vereine in Spanien [C7]). Marbella glänzt, Jerez ist ruhiger.',
   },
   {
     id: 'mallorca', name: 'Mallorca', geo: [39.57, 2.65], place: 'Palma / Inselinneres', country: 'Spanien', region: 'sueden',
@@ -310,7 +310,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: [{ from: 1992, minRep: 72 }, { from: 2010, minRep: 60 }], closed: [2021, 2022],
     climate: 'florida', altitude: 30, transport: 'flug', travelH: 10, tz: -6, travel: 24000,
     opp: 'international', testIncome: 7000, marketing: 0.25, buzz: 0.35,
-    note: 'Leverkusen fuhr im Januar 1992 als erster Bundesligist nach Orlando [C2]; 2020 u. a. Frankfurt Rot und Berlin Blau [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
+    note: 'Leverkusen fuhr im Januar 1992 als erster Erstligist nach Orlando [C2]; 2020 u. a. Frankfurt Rot und Berlin Blau [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
   },
   {
     id: 'dubai', name: 'Vereinigte Arabische Emirate', geo: [25.2, 55.27], place: 'Dubai / Abu Dhabi', country: 'VAE', region: 'fern',
@@ -329,7 +329,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
       { from: 2014, fan: 1.5, text: 'Menschenrechtsorganisationen kritisieren das Lager in Katar.' },
       { from: 2020, fan: 4, text: 'Mitglieder und Kurve protestieren massiv gegen Katar (vgl. Mitgliederversammlung 2021).' },
     ],
-    note: 'Seit 2011 Winterquartier von München Rot – als einziger Bundesligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
+    note: 'Seit 2011 Winterquartier von München Rot – als einziger Erstligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
   },
   {
     id: 'suedafrika', name: 'Südafrika', geo: [-33.92, 18.42], place: 'Kapstadt / Johannesburg', country: 'Südafrika', region: 'fern',

@@ -63,7 +63,7 @@ export const SEASONS_IRL: Record<number, SeasonRow> = {
     cup: 'irl-dublin-gruen',
     cupFinalist: 'irl-galway',
     euro: { ec: ['irl-dublin-gruen'], cwc: ['irl-dublin-universitaet'], uefa: ['irl-dublin-rot-schwarz'] },
-    note: "Ab 1985/86 Premier Division mit 12 Vereinen.",
+    note: "Ab 1985/86 1. Liga mit 12 Vereinen.",
   },
   1985: {
     t1: ['irl-dublin-gruen', 'irl-galway', 'irl-dundalk', 'irl-dublin-rot-schwarz', 'irl-athlone', 'irl-dublin-inchicore', 'irl-waterford', 'irl-limerick', 'irl-drogheda', 'irl-sligo', 'irl-dublin-universitaet', 'irl-cork'],
@@ -197,7 +197,7 @@ export const SEASONS_IRL: Record<number, SeasonRow> = {
     cup: 'irl-derry',
     cupFinalist: 'irl-dublin-inchicore',
     euro: { cl: ['irl-cork'], uefa: ['irl-drogheda', 'irl-derry'] },
-    note: "Meister aus Dublin (Shelbourne) wegen Finanzproblemen zwangsweise in die zweite Liga versetzt; Champions-League-Platz 2007/08 an Derry.",
+    note: "Meister aus Dublin (Shelbourne) wegen Finanzproblemen zwangsweise in die zweite Liga versetzt; Meisterliga-Platz 2007/08 an Derry.",
   },
   2007: {
     t1: ['irl-drogheda', 'irl-dublin-inchicore', 'irl-dublin-rot-schwarz', 'irl-cork', 'irl-sligo', 'irl-derry', 'irl-dublin-gruen', 'irl-bray', 'irl-galway', 'irl-dublin-universitaet', 'irl-longford', 'irl-waterford'],

@@ -66,7 +66,7 @@ export const ERA_TIPS: EraTipSet[] = [
         text: 'Gewonnen wird über Laufbereitschaft und Zweikampfstärke; das Pressing von Hamburg Blau unter seinem österreichischen Trainer macht Schule.',
         inGame: 'Leg in der Vorbereitung Wert auf Ausdauer – ein Trainingslager im Sommer zahlt sich bis in den Herbst aus.' },
       { topic: 'medien', title: 'Die Zuschauer bleiben weg', where: 'Verein › Fans',
-        text: 'Mitte der Achtziger sinkt der Schnitt der Bundesliga auf unter 20 000 – Gewalt in den Kurven schreckt Familien ab.',
+        text: 'Mitte der Achtziger sinkt der Schnitt der 1. Liga auf unter 20 000 – Gewalt in den Kurven schreckt Familien ab.',
         inGame: 'Stimmung und Sicherheit im Umfeld werden wichtiger; achte auf die Fans und das Stadionumfeld.' },
       { topic: 'taktik', title: 'Der Stab wächst', where: 'Training › Trainerteam',
         text: 'Co-Trainer, Masseur und Scout werden in den Profivereinen zur Regel.',
@@ -80,7 +80,7 @@ export const ERA_TIPS: EraTipSet[] = [
     from: 1987, to: 1991, label: 'Das Fernsehen entdeckt die Liga', motif: 'video',
     tips: [
       { topic: 'geld', title: 'Fernsehgeld wird ernst', where: 'Finanzen › Bilanz',
-        text: 'Mit dem Privatfernsehen steigen ab 1988 die Rechtekosten sprunghaft, die Bundesliga wird zur Show.',
+        text: 'Mit dem Privatfernsehen steigen ab 1988 die Rechtekosten sprunghaft, die 1. Liga wird zur Show.',
         inGame: 'Die Fernseheinnahmen wachsen Jahr für Jahr – plane sie ein, aber verlass dich noch nicht allein darauf.', from: 1988 },
       { topic: 'liga', title: 'Hallenmasters im Winter', where: 'Statistiken › Halle',
         text: 'Die Hallentour mit Endrunde füllt die Winterpause, die Profis spielen mit.',
@@ -97,7 +97,7 @@ export const ERA_TIPS: EraTipSet[] = [
     ],
   },
   {
-    from: 1992, to: 1994, label: 'Rückpassregel und Champions League', motif: 'video',
+    from: 1992, to: 1994, label: 'Rückpassregel und Meisterliga', motif: 'video',
     tips: [
       { topic: 'regeln', title: 'Der Torwart muss mitspielen', where: 'Kader › Übersicht',
         text: 'Seit 1992 darf der Torwart einen absichtlichen Rückpass nicht mehr in die Hand nehmen.',
@@ -165,7 +165,7 @@ export const ERA_TIPS: EraTipSet[] = [
     from: 2011, to: 2019, label: 'Gegenpressing und Fernsehmilliarden', motif: 'grid',
     tips: [
       { topic: 'geld', title: 'Finanzielles Fairplay', where: 'Finanzen › Bilanz',
-        text: 'Die UEFA prüft, ob Vereine nicht mehr ausgeben, als sie einnehmen.',
+        text: 'Der Europaverband prüft, ob Vereine nicht mehr ausgeben, als sie einnehmen.',
         inGame: 'Im Europapokal zählt eine ausgeglichene Bilanz – Verluste können Auflagen nach sich ziehen.' },
       { topic: 'taktik', title: 'Gegenpressing', where: 'Aufstellung › Taktik',
         text: 'Ballverlust heißt sofort angreifen: Dortmund und später viele andere spielen mit extremer Laufintensität.',

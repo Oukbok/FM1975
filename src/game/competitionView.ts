@@ -389,7 +389,7 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
         zones: table.map((_, i) => (i === 0 ? 'zone-cl' : i >= table.length - 3 && a.tier < 100 ? 'zone-rel' : '')),
         caption: `${a.md} von ${a.total} Spieltagen`,
         note: 'Höchste Amateurliga unterhalb der simulierten Ligen: nur die Tabelle wird gerechnet (schlankes Ergebnis-Modell wie bei den Auslandsligen), Einzelergebnisse und -statistiken gibt es nicht. '
-          + 'Zweite Mannschaften dürfen nie in die Liga ihrer ersten Mannschaft oder höher und nie in die 2. Bundesliga aufsteigen – dann rückt der Nächste nach. Der Meister hat beim Aufstieg den Vorrang.',
+          + 'Zweite Mannschaften dürfen nie in die Liga ihrer ersten Mannschaft oder höher und nie in die 2. Liga aufsteigen – dann rückt der Nächste nach. Der Meister hat beim Aufstieg den Vorrang.',
       };
     }
     const d = g.leagues.otherDivisions.find((x) => x.id === key)!;

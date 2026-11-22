@@ -148,7 +148,7 @@ export function ddrReunifyHome(g: Game, ownTierName: string): void {
     date: g.calendar.currentDate, category: 'milestone', from: 'Fußball-Chronik',
     subject: 'Wiedervereinigung: Willkommen im gesamtdeutschen Fußball',
     shortText: `${name} spielt ab sofort im gesamtdeutschen Ligasystem (${ownTierName}).`,
-    bodyText: `Mit der Saison 1991/92 ist das Ligasystem der DDR Geschichte. Nach dem Endstand der Oberliga 1990/91 spielen Meister und Vizemeister in der 1. Liga, die Plätze 3 bis 8 in der 2. Liga, alle übrigen in der NOFV-Oberliga (dritte Ebene).\n\n${name} tritt in der ${ownTierName} an. Ab jetzt gelten die Regeln des gesamtdeutschen Fußballs: D-Mark, DFB-Pokal, freier Transfermarkt.`,
+    bodyText: `Mit der Saison 1991/92 ist das Ligasystem der DDR Geschichte. Nach dem Endstand der Oberliga 1990/91 spielen Meister und Vizemeister in der 1. Liga, die Plätze 3 bis 8 in der 2. Liga, alle übrigen in der Oberliga Nordost (dritte Ebene).\n\n${name} tritt in der ${ownTierName} an. Ab jetzt gelten die Regeln des gesamtdeutschen Fußballs: D-Mark, Landespokal, freier Transfermarkt.`,
   }));
 }
 

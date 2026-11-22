@@ -29,8 +29,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'liga',
-        title: 'Bundesliga und zweigeteilte 2. Liga',
-        text: 'Oben spielen 18 Vereine, darunter die 2. Bundesliga seit 1974 in den Staffeln Nord und Süd mit je 20 Klubs. Drei steigen ab, die Staffelmeister steigen auf, die beiden Zweiten spielen den dritten Aufsteiger in Hin- und Rückspiel aus.',
+        title: '1. Liga und zweigeteilte 2. Liga',
+        text: 'Oben spielen 18 Vereine, darunter die 2. Liga seit 1974 in den Staffeln Nord und Süd mit je 20 Klubs. Drei steigen ab, die Staffelmeister steigen auf, die beiden Zweiten spielen den dritten Aufsteiger in Hin- und Rückspiel aus.',
         inGame: '1. Liga + 2. Liga Nord/Süd, Playoff der Staffel-Zweiten',
       },
       {
@@ -48,7 +48,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Zusammenfassung statt Live-Bilder',
-        text: 'Live im Fernsehen läuft die Bundesliga praktisch nie. Am Samstag hörst du die Konferenz im Radio, abends zeigen die Sportsendungen der Öffentlich-Rechtlichen Zusammenfassungen.',
+        text: 'Live im Fernsehen läuft die 1. Liga praktisch nie. Am Samstag hörst du die Konferenz im Radio, abends zeigen die Sportsendungen der Öffentlich-Rechtlichen Zusammenfassungen.',
       },
       {
         topic: 'taktik',
@@ -125,7 +125,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'alltag',
         title: 'Hits vom Kassettenrekorder',
-        text: 'Mit dem Kassettenrekorder schneidet man Lieder aus dem Radio mit – und manchmal auch die Bundesliga-Konferenz.',
+        text: 'Mit dem Kassettenrekorder schneidet man Lieder aus dem Radio mit – und manchmal auch die Liga-Konferenz.',
       },
       {
         topic: 'kultur',
@@ -152,7 +152,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Drei Europapokale',
-        text: 'Meister spielen im Landesmeister-Pokal, Pokalsieger im Pokal der Pokalsieger, die nächstbesten im UEFA-Pokal. Alle drei laufen im K.-o.-System mit Hin- und Rückspiel, Auswärtstore zählen bei Gleichstand doppelt.',
+        text: 'Meister spielen im Landesmeister-Pokal, Pokalsieger im Pokal der Pokalsieger, die nächstbesten im Europa-Pokal. Alle drei laufen im K.-o.-System mit Hin- und Rückspiel, Auswärtstore zählen bei Gleichstand doppelt.',
         inGame: 'Landesmeister, Pokalsieger und Europa-Pokal',
       },
       {
@@ -236,7 +236,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'regeln',
         title: 'Sperre nach Gelben Karten',
-        text: 'Ab 1979/80 wird in der Bundesliga gesperrt, wer im Lauf der Saison eine bestimmte Zahl Gelber Karten sammelt. Wiederholte Fouls haben nun Folgen über das Spiel hinaus.',
+        text: 'Ab 1979/80 wird in der 1. Liga gesperrt, wer im Lauf der Saison eine bestimmte Zahl Gelber Karten sammelt. Wiederholte Fouls haben nun Folgen über das Spiel hinaus.',
       },
       {
         topic: 'liga',
@@ -285,7 +285,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Letzte Saison im Norden und Süden',
-        text: 'Ab 1981/82 wird die 2. Bundesliga eingleisig. Wer sich in dieser Saison nicht für die neue Liga qualifiziert, fällt in den Amateurbereich.',
+        text: 'Ab 1981/82 wird die 2. Liga eingleisig. Wer sich in dieser Saison nicht für die neue Liga qualifiziert, fällt in den Amateurbereich.',
         inGame: 'Je Staffel qualifizieren sich die besten 10 (ohne Aufsteiger)',
       },
       {
@@ -329,14 +329,14 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     football: [
       {
         topic: 'liga',
-        title: 'Eingleisige 2. Bundesliga',
-        text: 'Nord und Süd werden zu einer 2. Bundesliga mit 20 Vereinen und 38 Spieltagen zusammengelegt. Auswärtsfahrten werden länger und teurer.',
+        title: 'Eingleisige 2. Liga',
+        text: 'Nord und Süd werden zu einer 2. Liga mit 20 Vereinen und 38 Spieltagen zusammengelegt. Auswärtsfahrten werden länger und teurer.',
         inGame: 'Eine 2. Liga mit 20 Vereinen',
       },
       {
         topic: 'liga',
         title: 'Relegation um den letzten Platz',
-        text: 'Erster und Zweiter der 2. Liga steigen direkt auf, der Dritte spielt in Hin- und Rückspiel gegen den 16. der Bundesliga. Diese Relegation gibt es bis 1990/91.',
+        text: 'Erster und Zweiter der 2. Liga steigen direkt auf, der Dritte spielt in Hin- und Rückspiel gegen den 16. der 1. Liga. Diese Relegation gibt es bis 1990/91.',
       },
       {
         topic: 'liga',
@@ -390,7 +390,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Frauen-Nationalmannschaft',
-        text: 'Im November 1982 bestreitet die erste offizielle Frauen-Nationalmannschaft des DFB ihr erstes Länderspiel: 5:1 gegen die Schweiz in Koblenz.',
+        text: 'Im November 1982 bestreitet die erste offizielle Frauen-Nationalmannschaft des Fußballbunds ihr erstes Länderspiel: 5:1 gegen die Schweiz in Koblenz.',
       },
     ],
     society: [
@@ -430,7 +430,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Neue Sender, alte Rechte',
-        text: 'Ab Januar 1984 senden die ersten Privatsender. Die Bundesliga-Bilder bleiben aber vorerst bei den Öffentlich-Rechtlichen.',
+        text: 'Ab Januar 1984 senden die ersten Privatsender. Die Liga-Bilder bleiben aber vorerst bei den Öffentlich-Rechtlichen.',
       },
       {
         topic: 'liga',
@@ -474,12 +474,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Live im ganzen Land',
-        text: 'Am 11. Dezember 1984 überträgt das öffentlich-rechtliche Fernsehen erstmals ein Bundesligaspiel bundesweit live: das Nachholspiel Mönchengladbach gegen München Rot.',
+        text: 'Am 11. Dezember 1984 überträgt das öffentlich-rechtliche Fernsehen erstmals ein Erstligaspiel bundesweit live: das Nachholspiel Mönchengladbach gegen München Rot.',
       },
       {
         topic: 'geld',
         title: 'Italien lockt die Stars',
-        text: 'Die italienische Serie A zahlt die höchsten Gehälter Europas. Mehrere deutsche Nationalspieler wechseln für Millionenablösen über die Alpen.',
+        text: 'Die italienische 1. Liga zahlt die höchsten Gehälter Europas. Mehrere deutsche Nationalspieler wechseln für Millionenablösen über die Alpen.',
       },
     ],
     society: [
@@ -514,7 +514,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Halbleere Ränge',
-        text: 'Die Bundesliga steckt im Zuschauertief: Im Schnitt kommen weniger als 20.000 Fans pro Spiel. Erst 1990/91 wird diese Marke wieder überschritten.',
+        text: 'Die 1. Liga steckt im Zuschauertief: Im Schnitt kommen weniger als 20.000 Fans pro Spiel. Erst 1990/91 wird diese Marke wieder überschritten.',
         inGame: 'Zuschauernachfrage auf dem Tiefpunkt',
       },
       {
@@ -559,7 +559,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Elf Wochen Winterpause',
-        text: 'Ab 1986/87 ruht die Bundesliga rund elf Wochen. Hallenturniere und Trainingslager füllen die Lücke.',
+        text: 'Ab 1986/87 ruht die 1. Liga rund elf Wochen. Hallenturniere und Trainingslager füllen die Lücke.',
         inGame: 'Hallenturniere und Winterlager unter Statistiken › Halle bzw. Training › Trainingslager',
       },
       {
@@ -598,7 +598,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     football: [
       {
         topic: 'liga',
-        title: 'DFB-Hallenpokal',
+        title: 'Hallenpokal',
         text: 'Die Lizenzvereine beschließen eine offizielle Hallenrunde. Die erste Endrunde steigt im Januar 1988 in der Frankfurter Festhalle.',
         inGame: 'Hallentour mit Masters-Endrunde',
       },
@@ -644,7 +644,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Privatfernsehen kauft die Liga',
-        text: 'Für rund 40 Millionen DM pro Saison sichert sich eine Rechteagentur für einen Privatsender die Bundesliga-Rechte – etwa das Sechzigfache von 1965. Statt der öffentlich-rechtlichen Samstags-Sportsendung zeigt eine neue Privatsender-Sendung die Tore.',
+        text: 'Für rund 40 Millionen DM pro Saison sichert sich eine Rechteagentur für einen Privatsender die Liga-Rechte – etwa das Sechzigfache von 1965. Statt der öffentlich-rechtlichen Samstags-Sportsendung zeigt eine neue Privatsender-Sendung die Tore.',
         inGame: 'TV-Erlöse steigen deutlich',
       },
       {
@@ -689,12 +689,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Frauen werden Europameister',
-        text: 'Im Juli 1989 gewinnen die DFB-Frauen in Osnabrück das EM-Finale 4:1 gegen Norwegen. Das Turnier läuft live im Fernsehen.',
+        text: 'Im Juli 1989 gewinnen die Nationalspielerinnen in Osnabrück das EM-Finale 4:1 gegen Norwegen. Das Turnier läuft live im Fernsehen.',
       },
       {
         topic: 'geld',
         title: 'Von Ost nach West',
-        text: 'Nach dem Mauerfall wechselt im Dezember 1989 ein Ost-Berliner Stürmer als erster Oberliga-Spieler offiziell in die Bundesliga. Viele DDR-Talente folgen.',
+        text: 'Nach dem Mauerfall wechselt im Dezember 1989 ein Ost-Berliner Stürmer als erster Oberliga-Spieler offiziell in die 1. Liga. Viele DDR-Talente folgen.',
       },
       {
         topic: 'liga',
@@ -738,7 +738,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Die letzte Oberliga',
-        text: 'Im November 1990 tritt der DDR-Verband dem DFB bei. Die letzte Oberliga-Saison entscheidet, wer 1991/92 in Bundesliga und 2. Bundesliga spielt.',
+        text: 'Im November 1990 tritt der DDR-Verband dem Fußballbund bei. Die letzte Oberliga-Saison entscheidet, wer 1991/92 in 1. Liga und 2. Liga spielt.',
         inGame: 'Endstand der Oberliga bestimmt die Plätze ab 1991/92',
       },
       {
@@ -749,7 +749,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Bezahlfernsehen live',
-        text: 'Am 2. März 1991 zeigt ein Abosender erstmals ein Bundesligaspiel live – der Beginn des Pay-TV-Fußballs.',
+        text: 'Am 2. März 1991 zeigt ein Abosender erstmals ein Erstligaspiel live – der Beginn des Pay-TV-Fußballs.',
       },
       {
         topic: 'taktik',
@@ -784,24 +784,24 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '1991/92',
-    headline: 'Gesamtdeutsche Bundesliga mit 20 Vereinen',
+    headline: 'Gesamtdeutsche 1. Liga mit 20 Vereinen',
     football: [
       {
         topic: 'liga',
-        title: 'Zwei Ostklubs in der Bundesliga',
-        text: 'Rostock und Dresden kommen hinzu, die Bundesliga spielt einmalig mit 20 Vereinen und 38 Spieltagen.',
+        title: 'Zwei Ostklubs in der 1. Liga',
+        text: 'Rostock und Dresden kommen hinzu, die 1. Liga spielt einmalig mit 20 Vereinen und 38 Spieltagen.',
         inGame: '1. Liga mit 20 Vereinen, danach Rückführung auf 18',
       },
       {
         topic: 'liga',
-        title: '2. Bundesliga mit 24 Vereinen',
-        text: 'Sechs ehemalige DDR-Klubs ergänzen die 2. Bundesliga, die in zwei Staffeln Nord und Süd startet. Die Relegation entfällt.',
+        title: '2. Liga mit 24 Vereinen',
+        text: 'Sechs ehemalige DDR-Klubs ergänzen die 2. Liga, die in zwei Staffeln Nord und Süd startet. Die Relegation entfällt.',
       },
       {
         topic: 'liga',
         title: 'Dritte Ebene im Osten',
-        text: 'Die übrigen Ostvereine spielen in der NOFV-Oberliga, der dritten Ebene.',
-        inGame: 'NOFV-Oberliga als 3. Ebene',
+        text: 'Die übrigen Ostvereine spielen in der Oberliga Nordost, der dritten Ebene.',
+        inGame: 'Oberliga Nordost als 3. Ebene',
       },
       {
         topic: 'regeln',
@@ -811,7 +811,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'taktik',
         title: 'Ab in die Wärme',
-        text: 'Im Januar 1992 fliegt Gelsenkirchen als erster Bundesligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
+        text: 'Im Januar 1992 fliegt Gelsenkirchen als erster Erstligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
         inGame: 'Neue Ziele unter Training › Trainingslager',
       },
     ],
@@ -846,7 +846,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '1992/93',
-    headline: 'Rückpass verboten, Champions League',
+    headline: 'Rückpass verboten, Meisterliga',
     football: [
       {
         topic: 'regeln',
@@ -856,14 +856,14 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'liga',
-        title: 'Die Champions League',
-        text: 'Der Landesmeister-Pokal heißt ab 1992/93 Champions League und spielt mit Gruppenphase – mit eigener Hymne und viel mehr Geld.',
+        title: 'Die Meisterliga',
+        text: 'Der Landesmeister-Pokal heißt ab 1992/93 Meisterliga und spielt mit Gruppenphase – mit eigener Hymne und viel mehr Geld.',
         inGame: 'Meisterliga mit Gruppenphase',
       },
       {
         topic: 'medien',
         title: 'Fußball als Samstagsshow',
-        text: 'Eine Münchner Mediengruppe zahlt über ihre Rechteagentur 700 Millionen DM für fünf Jahre. Ihr Privatsender inszeniert die Bundesliga ab August 1992 als große Samstagsshow.',
+        text: 'Eine Münchner Mediengruppe zahlt über ihre Rechteagentur 700 Millionen DM für fünf Jahre. Ihr Privatsender inszeniert die 1. Liga ab August 1992 als große Samstagsshow.',
       },
       {
         topic: 'liga',
@@ -873,12 +873,12 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: '2. Liga mit 24 Vereinen',
-        text: 'Die 2. Bundesliga spielt 1992/93 eingleisig mit 24 Vereinen und 46 Spieltagen.',
+        text: 'Die 2. Liga spielt 1992/93 eingleisig mit 24 Vereinen und 46 Spieltagen.',
       },
       {
         topic: 'medien',
         title: '„Mein Freund ist Ausländer“',
-        text: 'Im Dezember 1992 laufen alle Bundesligisten statt mit Trikotwerbung mit diesem Schriftzug auf – eine Reaktion auf fremdenfeindliche Anschläge.',
+        text: 'Im Dezember 1992 laufen alle Erstligisten statt mit Trikotwerbung mit diesem Schriftzug auf – eine Reaktion auf fremdenfeindliche Anschläge.',
       },
     ],
     society: [
@@ -917,7 +917,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: '2. Liga wieder mit 20',
-        text: 'Nach der Übergangszeit spielt die 2. Bundesliga wieder mit 20 Vereinen.',
+        text: 'Nach der Übergangszeit spielt die 2. Liga wieder mit 20 Vereinen.',
       },
       {
         topic: 'medien',
@@ -961,13 +961,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Die Regionalliga',
-        text: 'Unter der 2. Bundesliga entsteht eine dritte Ebene mit vier Regionalligen. Die vier Meister der ersten Saison steigen direkt auf.',
+        text: 'Unter der 2. Liga entsteht eine dritte Ebene mit vier Regionalligen. Die vier Meister der ersten Saison steigen direkt auf.',
         inGame: 'Regionalliga mit vier Staffeln als 3. Ebene',
       },
       {
         topic: 'liga',
         title: '2. Liga mit 18 Vereinen',
-        text: 'Die 2. Bundesliga schrumpft ab 1994/95 auf 18 Vereine.',
+        text: 'Die 2. Liga schrumpft ab 1994/95 auf 18 Vereine.',
       },
       {
         topic: 'liga',
@@ -1028,8 +1028,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'liga',
-        title: 'UI-Cup als Tür nach Europa',
-        text: 'Seit 1995 führt die UEFA den Intertoto-Cup im Sommer. Wer ihn gewinnt, rückt in den UEFA-Pokal.',
+        title: 'Sommerpokal als Tür nach Europa',
+        text: 'Seit 1995 führt der Europaverband den Sommerpokal im Sommer. Wer ihn gewinnt, rückt in den Europa-Pokal.',
       },
       {
         topic: 'liga',
@@ -1101,8 +1101,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     football: [
       {
         topic: 'liga',
-        title: 'Champions League für Vizemeister',
-        text: 'Ab 1997/98 dürfen die Zweitplatzierten der großen Ligen in der Champions League mitspielen.',
+        title: 'Meisterliga für Vizemeister',
+        text: 'Ab 1997/98 dürfen die Zweitplatzierten der großen Ligen in der Meisterliga mitspielen.',
       },
       {
         topic: 'liga',
@@ -1113,7 +1113,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Ein Ligapokal vor der Saison',
-        text: 'Seit dem Sommer 1997 spielen die besten Bundesligisten vor dem Saisonstart den DFB-Ligapokal aus.',
+        text: 'Seit dem Sommer 1997 spielen die besten Erstligisten vor dem Saisonstart den Ligapokal aus.',
       },
       {
         topic: 'liga',
@@ -1157,7 +1157,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Profifußball als Kapitalgesellschaft',
-        text: 'Im Oktober 1998 erlaubt der DFB, Profiabteilungen in Kapitalgesellschaften auszugliedern. Die Mehrheit der Stimmen muss beim Verein bleiben (50+1).',
+        text: 'Im Oktober 1998 erlaubt der Fußballbund, Profiabteilungen in Kapitalgesellschaften auszugliedern. Die Mehrheit der Stimmen muss beim Verein bleiben (50+1).',
         inGame: 'Ausgliederung und Investor möglich',
       },
       {
@@ -1217,13 +1217,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
     football: [
       {
         topic: 'liga',
-        title: 'Champions League mit 32 Teams',
-        text: 'Ab 1999/2000 spielen 32 Mannschaften in der Champions League – mit zwei Gruppenphasen und vielen Zusatzspielen.',
+        title: 'Meisterliga mit 32 Teams',
+        text: 'Ab 1999/2000 spielen 32 Mannschaften in der Meisterliga – mit zwei Gruppenphasen und vielen Zusatzspielen.',
       },
       {
         topic: 'liga',
-        title: 'Pokalsieger im UEFA-Pokal',
-        text: 'Ohne Pokal der Pokalsieger spielen die nationalen Pokalsieger im UEFA-Pokal, der größer und wichtiger wird.',
+        title: 'Pokalsieger im Europa-Pokal',
+        text: 'Ohne Pokal der Pokalsieger spielen die nationalen Pokalsieger im Europa-Pokal, der größer und wichtiger wird.',
         inGame: 'Pokalsieger spielen im Europa-Pokal',
       },
       {
@@ -1234,7 +1234,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: 'Bewerbung um die WM 2006',
-        text: 'Deutschland bewirbt sich um die WM 2006. Im Juli 2000 entscheidet die FIFA.',
+        text: 'Deutschland bewirbt sich um die WM 2006. Im Juli 2000 entscheidet der Weltverband.',
       },
     ],
     society: [

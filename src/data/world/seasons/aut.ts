@@ -169,7 +169,7 @@ export const SEASONS_AUT: Record<number, SeasonRow> = {
   2007: {
     t1: ['aut-wien-gruen', 'aut-salzburg', 'aut-wien-violett', 'aut-graz-schwarz-weiss', 'aut-mattersburg', 'aut-linz-schwarz-weiss', 'aut-ried', 'aut-altach', 'aut-klagenfurt', 'aut-innsbruck'],
     euro: { uefa: ['aut-wien-gruen', 'aut-salzburg', 'aut-wien-violett', 'aut-mattersburg', 'aut-ried'], cl: ['aut-salzburg'] },
-    note: 'ÖFB-Cup 2007/08 wegen der Europameisterschaft nicht ausgetragen',
+    note: 'Landespokal 2007/08 wegen der Europameisterschaft nicht ausgetragen',
   },
   2008: {
     t1: ['aut-salzburg', 'aut-wien-gruen', 'aut-wien-violett', 'aut-graz-schwarz-weiss', 'aut-ried', 'aut-klagenfurt', 'aut-linz-schwarz-weiss', 'aut-kapfenberg', 'aut-mattersburg', 'aut-altach'],

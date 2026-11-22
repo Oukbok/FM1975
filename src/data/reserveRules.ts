@@ -87,13 +87,13 @@ export interface ReserveEra {
 
 export const RESERVE_ERAS: ReserveEra[] = [
   { from: 1951, local: ['Amateurliga', 'Landesliga', 'Bezirksliga'], over23: null, capPerDivision: 6, capThirdLeague: 6,
-    text: 'Die Amateure der Lizenzvereine spielen höchstens in der Amateurliga (dritte Ebene). Die 2. Bundesliga ist für sie gesperrt; über die Verbandspokale können sie sich für den DFB-Pokal qualifizieren.' },
+    text: 'Die Amateure der Lizenzvereine spielen höchstens in der Amateurliga (dritte Ebene). Die 2. Liga ist für sie gesperrt; über die Verbandspokale können sie sich für den Landespokal qualifizieren.' },
   { from: 1978, local: ['Amateur-Oberliga', 'Verbandsliga', 'Landesliga'], over23: null, capPerDivision: 6, capThirdLeague: 6,
-    text: 'Seit 1978 heißen die dritthöchsten Ligen Amateur-Oberliga. Die Amateure dürfen dort Meister werden, steigen aber nie in die 2. Bundesliga auf – den Platz bekommt der Nächste.' },
+    text: 'Seit 1978 heißen die dritthöchsten Ligen Amateur-Oberliga. Die Amateure dürfen dort Meister werden, steigen aber nie in die 2. Liga auf – den Platz bekommt der Nächste.' },
   { from: 1994, local: ['Oberliga', 'Verbandsliga', 'Landesliga'], over23: null, capPerDivision: 6, capThirdLeague: 6,
-    text: 'Die Regionalliga ist die dritte Ebene. Amateure der Lizenzvereine sind zugelassen, wenn sie sich sportlich qualifizieren; die 2. Bundesliga bleibt gesperrt.' },
+    text: 'Die Regionalliga ist die dritte Ebene. Amateure der Lizenzvereine sind zugelassen, wenn sie sich sportlich qualifizieren; die 2. Liga bleibt gesperrt.' },
   { from: 2008, local: ['Oberliga', 'Verbandsliga', 'Landesliga'], over23: 3, capPerDivision: 7, capThirdLeague: 4,
-    text: 'Zweite Mannschaften dürfen in die neue 3. Liga – im Gegenzug sind sie vom DFB-Pokal ausgeschlossen. Je Regionalliga-Staffel höchstens sieben; je Spiel höchstens drei Spieler über 23.' },
+    text: 'Zweite Mannschaften dürfen in die neue 3. Liga – im Gegenzug sind sie vom Landespokal ausgeschlossen. Je Regionalliga-Staffel höchstens sieben; je Spiel höchstens drei Spieler über 23.' },
   { from: 2014, local: ['Oberliga', 'Verbandsliga', 'Landesliga'], over23: 3, capPerDivision: 7, capThirdLeague: 4,
     text: 'Die U23 ist für Lizenzvereine keine Pflicht mehr; mehrere Vereine melden ihre zweite Mannschaft ab.' },
 ];
@@ -130,9 +130,9 @@ export interface ForeignReserveRule { cc: string; from: number; to?: number; inP
 export const FOREIGN_RESERVE_RULES: ForeignReserveRule[] = [
   { cc: 'eng', from: 1911, inPyramid: false, cup: false, text: 'Reserveteams in eigenen Reserveligen, nicht in der Ligapyramide.' },
   { cc: 'eng', from: 2016, inPyramid: false, cup: true, text: 'U21-Teams der Akademie-Vereine spielen im Pokal der unteren Profiligen mit.' },
-  { cc: 'esp', from: 1951, to: 1990, inPyramid: true, topTier: 2, cup: true, text: '„B“-Teams (filiales) in der Pyramide bis zur Segunda, nie in der Liga der ersten Mannschaft; Pokal offen (eine B-Mannschaft stand 1980 im Finale).' },
-  { cc: 'esp', from: 1990, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams bis zur Segunda, seit 1990/91 nicht mehr im Landespokal.' },
-  { cc: 'ita', from: 2018, inPyramid: true, topTier: 3, cup: false, text: 'U23-Teams der Serie-A-Vereine ab der Serie C, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
+  { cc: 'esp', from: 1951, to: 1990, inPyramid: true, topTier: 2, cup: true, text: '„B“-Teams (filiales) in der Pyramide bis zur 2. Liga, nie in der Liga der ersten Mannschaft; Pokal offen (eine B-Mannschaft stand 1980 im Finale).' },
+  { cc: 'esp', from: 1990, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams bis zur 2. Liga, seit 1990/91 nicht mehr im Landespokal.' },
+  { cc: 'ita', from: 2018, inPyramid: true, topTier: 3, cup: false, text: 'U23-Teams der Erstligisten ab der 3. Ebene, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
   { cc: 'por', from: 1999, to: 2012, inPyramid: true, topTier: 3, cup: false, text: '„B“-Teams 1999–2006 in der dritten Liga, nie in der Liga der ersten Mannschaft, nicht im Landespokal.' },
   { cc: 'por', from: 2012, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams seit 2012/13 in der 2. Liga – kein Aufstieg in die 1. Liga, nicht im Landespokal und Ligapokal.' },
   { cc: 'fra', from: 1970, inPyramid: true, topTier: 4, cup: false, text: 'Reserveteams höchstens auf der vierten Ebene; ein Aufstiegsplatz geht an den Nächsten; nicht im Landespokal.' },

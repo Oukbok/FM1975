@@ -71,7 +71,7 @@ export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) =>
       <DashBox title="Jugendwettbewerbe" icon="trophy" onClick={() => onGoto('jugendwettbewerbe')}>
         {standings.length ? standings.slice(0, 3).map((s) => (
           <div key={s.compKey} className="yc-dash-row">
-            <KV k={s.compKey === 'pokal' ? 'Junioren-Pokal' : s.compKey === 'uyl' ? 'UEFA Youth League' : `${s.cls}-Jugend · ${s.league ?? s.compLabel}`} v={s.pos ? `${s.pos}. von ${s.size}` : s.fest ? 'Spielfeste' : s.ko ?? '–'} />
+            <KV k={s.compKey === 'pokal' ? 'Junioren-Pokal' : s.compKey === 'uyl' ? 'Jugend-Meisterliga' : `${s.cls}-Jugend · ${s.league ?? s.compLabel}`} v={s.pos ? `${s.pos}. von ${s.size}` : s.fest ? 'Spielfeste' : s.ko ?? '–'} />
             {s.pos != null && s.ko && <div className="dnote">{s.compKey === 'uyl' ? 'K.-o.-Runde' : 'Endrunde'}: {s.ko}</div>}
             {s.next && <div className="dnote">{fmtDateShort(s.next.date).dmy} {s.next.home ? 'gegen' : 'bei'} {compClubName(g, s.next.opp, g.season)}</div>}
           </div>

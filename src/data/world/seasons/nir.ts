@@ -124,7 +124,7 @@ export const SEASONS_NIR: Record<number, SeasonRow> = {
     cup: 'nir-belfast-blau',
     cupFinalist: 'nir-carrickfergus',
     euro: { cl: ['nir-belfast-blau'], cwc: ['nir-bangor'], uefa: ['nir-portadown'] },
-    note: "Ab 1995/96 Premier Division mit 8 Vereinen.",
+    note: "Ab 1995/96 1. Liga mit 8 Vereinen.",
   },
   1995: {
     t1: ['nir-portadown', 'nir-belfast-rot-schwarz', 'nir-belfast-gruen-rot', 'nir-lurgan', 'nir-belfast-blau', 'nir-bangor', 'nir-belfast-rot-weiss', 'nir-newtownards'],
@@ -173,7 +173,7 @@ export const SEASONS_NIR: Record<number, SeasonRow> = {
     cup: 'nir-coleraine',
     cupFinalist: 'nir-belfast-gruen-rot',
     euro: { cl: ['nir-portadown'], uefa: ['nir-belfast-blau', 'nir-belfast-gruen-rot'] },
-    note: "Ab 2003/04 Premier League mit 16 Vereinen.",
+    note: "Ab 2003/04 1. Liga mit 16 Vereinen.",
   },
   2003: {
     t1: ['nir-belfast-blau', 'nir-portadown', 'nir-limavady', 'nir-coleraine', 'nir-belfast-gruen-rot', 'nir-dungannon', 'nir-larne', 'nir-belfast-rot-schwarz', 'nir-loughgall', 'nir-lurgan', 'nir-ballymena', 'nir-drumahoe', 'nir-newry', 'nir-belfast-rot-weiss', 'nir-omagh', 'nir-newtownards'],
@@ -204,7 +204,7 @@ export const SEASONS_NIR: Record<number, SeasonRow> = {
     cup: 'nir-belfast-blau',
     cupFinalist: 'nir-coleraine',
     euro: { cl: ['nir-belfast-blau'], uefa: ['nir-belfast-rot-weiss'] },
-    note: "Ab 2008/09 Premiership mit 12 Vereinen.",
+    note: "Ab 2008/09 1. Liga mit 12 Vereinen.",
   },
   2008: {
     t1: ['nir-belfast-gruen-rot', 'nir-belfast-blau', 'nir-belfast-rot-weiss', 'nir-belfast-rot-schwarz', 'nir-dungannon', 'nir-portadown', 'nir-ballymena', 'nir-larne', 'nir-limavady', 'nir-coleraine', 'nir-lisburn', 'nir-lurgan'],

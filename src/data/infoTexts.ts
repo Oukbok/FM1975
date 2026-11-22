@@ -413,7 +413,7 @@ export const INFO_TEXTS = {
   },
   weltrangliste: {
     title: 'Weltrangliste',
-    text: 'Elo-Punkte wie bei der bekannten Elo-Weltrangliste: Start mit historischen Werten, danach zählt nur, was im Spiel gespielt wird. Ein Sieg bringt umso mehr, je stärker der Gegner, je wichtiger das Spiel (WM-Endrunde 60, EM-Endrunde 50, Qualifikation/Nations League 40, Freundschaftsspiel 20) und je höher er ausfällt; der Gastgeber hat 100 Punkte Heimvorteil. Neue Ausgabe am Monatsersten, ± = Plätze seit der Ausgabe davor.',
+    text: 'Elo-Punkte wie bei der bekannten Elo-Weltrangliste: Start mit historischen Werten, danach zählt nur, was im Spiel gespielt wird. Ein Sieg bringt umso mehr, je stärker der Gegner, je wichtiger das Spiel (WM-Endrunde 60, EM-Endrunde 50, Qualifikation/Nationenliga 40, Freundschaftsspiel 20) und je höher er ausfällt; der Gastgeber hat 100 Punkte Heimvorteil. Neue Ausgabe am Monatsersten, ± = Plätze seit der Ausgabe davor.',
     wiki: 'world-ranking',
   },
   abstiegAmtszeit: {
@@ -513,7 +513,7 @@ export const INFO_TEXTS = {
   },
   weltpokal: {
     title: 'Weltpokal & Klub-WM',
-    text: 'Gewinnst du den Europapokal der Landesmeister bzw. die Meisterliga, spielst du in der nächsten Saison gegen die besten Vereine der anderen Kontinente: bis 2004 im Weltpokal gegen den Sieger Südamerikas (bis 1979 Hin- und Rückspiel, danach ein Spiel in Tokio), ab 2005 bei der Klub-WM im Dezember, ab 2024 im Interkontinentalpokal (du steigst im Finale ein) und alle vier Jahre ab 2025 bei der großen Klub-WM mit 32 Teams im Juli. Die anderen Kontinente laufen nur im Hintergrund: Meister und Kontinentalpokale werden je Saison ausgelost, nicht Spiel für Spiel gespielt.',
+    text: 'Gewinnst du den Pokal der Landesmeister bzw. die Meisterliga, spielst du in der nächsten Saison gegen die besten Vereine der anderen Kontinente: bis 2004 im Weltpokal gegen den Sieger Südamerikas (bis 1979 Hin- und Rückspiel, danach ein Spiel in Tokio), ab 2005 bei der Klub-WM im Dezember, ab 2024 im Interkontinentalpokal (du steigst im Finale ein) und alle vier Jahre ab 2025 bei der großen Klub-WM mit 32 Teams im Juli. Die anderen Kontinente laufen nur im Hintergrund: Meister und Kontinentalpokale werden je Saison ausgelost, nicht Spiel für Spiel gespielt.',
     wiki: 'world-club-cups',
   },
   supercup: {
@@ -528,7 +528,7 @@ export const INFO_TEXTS = {
   },
   reserveLiga: {
     title: 'Liga der zweiten Mannschaft',
-    text: 'Zweite Mannschaften dürfen nie in die 2. Liga und nie in die Liga der ersten Mannschaft oder darüber: bis 1994 höchstens Amateur-Oberliga, dann Regionalliga, ab 2008 auch 3. Liga. Steigt die erste Mannschaft in ihre Liga ab, muss die zweite eine Liga tiefer (Zwangsabstieg). Grün = Aufstieg, rot = Abstieg. Die Amateurligen aller Regionen mit den übrigen zweiten Mannschaften stehen unter Statistiken › Liga. Im DFB-Pokal (bis 2007/08) spielt deine zweite Mannschaft mit ihrem Kader – wer dort spielt, ist im Pokal an die Amateure gebunden.',
+    text: 'Zweite Mannschaften dürfen nie in die 2. Liga und nie in die Liga der ersten Mannschaft oder darüber: bis 1994 höchstens Amateur-Oberliga, dann Regionalliga, ab 2008 auch 3. Liga. Steigt die erste Mannschaft in ihre Liga ab, muss die zweite eine Liga tiefer (Zwangsabstieg). Grün = Aufstieg, rot = Abstieg. Die Amateurligen aller Regionen mit den übrigen zweiten Mannschaften stehen unter Statistiken › Liga. Im Landespokal (bis 2007/08) spielt deine zweite Mannschaft mit ihrem Kader – wer dort spielt, ist im Pokal an die Amateure gebunden.',
     wiki: 'reserve-teams',
   },
   spielermeldung: {
@@ -1061,7 +1061,7 @@ export const INFO_TEXTS = {
   },
   leihLaufzeit: {
     title: 'Laufzeit der Leihe',
-    text: 'Halbe Saison (Rückkehr im Winterfenster), bis Saisonende oder – bis 2021/22 – über zwei Spielzeiten. Seit 2022 erlaubt die FIFA höchstens ein Jahr.',
+    text: 'Halbe Saison (Rückkehr im Winterfenster), bis Saisonende oder – bis 2021/22 – über zwei Spielzeiten. Seit 2022 erlaubt der Weltverband höchstens ein Jahr.',
     wiki: 'loans',
   },
   leihGehalt: {
@@ -1091,7 +1091,7 @@ export const INFO_TEXTS = {
   },
   leihgrenze: {
     title: 'Grenzen für Leihspieler',
-    text: 'Seit 2022 begrenzt die FIFA die Zahl der ver- und ausgeliehenen Profis je Verein (8, ab 2023/24 7, ab 2024/25 6) und auf drei zwischen denselben Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. National gilt im Spiel ab 2025/26 dieselbe Grenze von sechs.',
+    text: 'Seit 2022 begrenzt der Weltverband die Zahl der ver- und ausgeliehenen Profis je Verein (8, ab 2023/24 7, ab 2024/25 6) und auf drei zwischen denselben Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. National gilt im Spiel ab 2025/26 dieselbe Grenze von sechs.',
     wiki: 'loans',
   },
   leihangebote: {

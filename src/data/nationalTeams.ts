@@ -17,7 +17,14 @@
 //   meist (das Spiel wählt Wochen ohne eigenes Ligaspiel, sonst den Mittwoch).
 // =============================================================================
 
+/** Kontinentalverband (interner Schlüssel – angezeigt wird nur `confLabel`, nie das Kürzel). */
 export type Conf = 'UEFA' | 'CONMEBOL' | 'CAF' | 'AFC' | 'CONCACAF' | 'OFC';
+
+const CONF_LABEL: Record<Conf, string> = {
+  UEFA: 'Europa', CONMEBOL: 'Südamerika', CAF: 'Afrika', AFC: 'Asien', CONCACAF: 'Nord- und Mittelamerika', OFC: 'Ozeanien',
+};
+/** Anzeigename des Kontinents eines Verbandsschlüssels. */
+export const confLabel = (c: Conf) => CONF_LABEL[c];
 
 export interface NationDef {
   code: string;
@@ -208,7 +215,7 @@ export function intlWindowPlan(y0: number): { month: number; year: number; from:
 /** Bezeichnung eines Länderspiels im Jahr (Qualifikation für das nächste Turnier, ab 2018 Nations League im Herbst). */
 export function intlMatchLabel(date: string, nextKind: TournamentKind | null): string {
   const y = parseInt(date.slice(0, 4), 10), m = parseInt(date.slice(5, 7), 10);
-  if (y >= 2018 && m >= 9 && m <= 11 && y % 2 === 0) return 'Nations League';
+  if (y >= 2018 && m >= 9 && m <= 11 && y % 2 === 0) return 'Nationenliga';
   if (nextKind) return `${nextKind}-Qualifikation`;
   return 'Freundschaftsspiel';
 }

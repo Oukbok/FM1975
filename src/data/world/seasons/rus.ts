@@ -189,28 +189,28 @@ export const SEASONS_RUS: Record<number, SeasonRow> = {
     cup: 'rus-moskau-rot-weiss',
     cupFinalist: 'rus-moskau-blau',
     euro: { cl: ['rus-sankt-petersburg'], el: ['rus-moskau-rot-gruen', 'rus-moskau-rot-weiss'], ecl: ['rus-kasan', 'rus-sotschi'] },
-    note: "Russische Vereine ab Februar 2022 von allen UEFA-Wettbewerben ausgeschlossen.",
+    note: "Russische Vereine ab Februar 2022 von allen Europapokal-Wettbewerben ausgeschlossen.",
   },
   2022: {
     t1: ['rus-sankt-petersburg', 'rus-moskau-rot-blau', 'rus-moskau-rot-weiss', 'rus-rostow', 'rus-grosny', 'rus-krasnodar', 'rus-orenburg', 'rus-moskau-rot-gruen', 'rus-moskau-blau', 'rus-sotschi', 'rus-woronesch', 'rus-jekaterinburg', 'rus-nischni-nowgorod', 'rus-samara', 'rus-chimki', 'rus-moskau-schwarz-weiss'],
     cup: 'rus-moskau-rot-blau',
     cupFinalist: 'rus-krasnodar',
-    note: "Kein Europapokal (UEFA-Ausschluss).",
+    note: "Kein Europapokal (Europapokal-Ausschluss).",
   },
   2023: {
     t1: ['rus-sankt-petersburg', 'rus-krasnodar', 'rus-moskau-blau', 'rus-moskau-rot-gruen', 'rus-moskau-rot-weiss', 'rus-moskau-rot-blau', 'rus-rostow', 'rus-kasan', 'rus-samara', 'rus-grosny', 'rus-jekaterinburg', 'rus-nischni-nowgorod', 'rus-woronesch', 'rus-orenburg', 'rus-kaliningrad', 'rus-sotschi'],
     cup: 'rus-sankt-petersburg',
     cupFinalist: 'rus-kaliningrad',
-    note: "Kein Europapokal (UEFA-Ausschluss).",
+    note: "Kein Europapokal (Europapokal-Ausschluss).",
   },
   2024: {
     t1: ['rus-krasnodar', 'rus-sankt-petersburg', 'rus-moskau-rot-blau', 'rus-moskau-rot-weiss', 'rus-moskau-blau', 'rus-moskau-rot-gruen', 'rus-kasan', 'rus-rostow', 'rus-togliatti-schwarz-blau', 'rus-grosny', 'rus-samara', 'rus-machatschkala-blau', 'rus-nischni-nowgorod', 'rus-orenburg', 'rus-chimki', 'rus-woronesch'],
     cup: 'rus-moskau-rot-blau',
     cupFinalist: 'rus-rostow',
-    note: "Kein Europapokal (UEFA-Ausschluss).",
+    note: "Kein Europapokal (Europapokal-Ausschluss).",
   },
   2025: {
     t1: ['rus-krasnodar', 'rus-sankt-petersburg', 'rus-moskau-rot-blau', 'rus-moskau-rot-weiss', 'rus-moskau-blau', 'rus-moskau-rot-gruen', 'rus-kasan', 'rus-rostow', 'rus-togliatti-schwarz-blau', 'rus-grosny', 'rus-samara', 'rus-machatschkala-blau', 'rus-nischni-nowgorod', 'rus-orenburg', 'rus-kaliningrad', 'rus-sotschi'],
-    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn. Kein Europapokal (UEFA-Ausschluss).",
+    note: "Laufende Saison: Zusammensetzung zu Saisonbeginn. Kein Europapokal (Europapokal-Ausschluss).",
   },
 };

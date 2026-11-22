@@ -37,14 +37,14 @@ export const SEASONS_ITA: Record<number, SeasonRow> = {
     t2: ['ita-como', 'ita-pistoia', 'ita-brescia', 'ita-cesena', 'ita-vicenza', 'ita-monza', 'ita-genua-blau-weiss', 'ita-ferrara', 'ita-bergamo', 'ita-palermo', 'ita-genua-rot-blau', 'ita-bari', 'ita-verona-gelb-blau', 'ita-pisa', 'ita-lecce', 'ita-taranto', 'ita-san-benedetto', 'ita-terni', 'ita-parma', 'ita-matera'],
     cup: 'ita-rom-rot-gelb', cupFinalist: 'ita-turin-granat',
     euro: { ec: ['ita-mailand-rot-schwarz'], cwc: ['ita-turin-schwarz-weiss'], uefa: ['ita-mailand-blau-schwarz', 'ita-turin-granat', 'ita-perugia', 'ita-neapel'] },
-    note: 'Totonero 1980: Mailand Rot-Schwarz (3.) und Rom Himmelblau per Urteil in die Serie B versetzt',
+    note: 'Totonero 1980: Mailand Rot-Schwarz (3.) und Rom Himmelblau per Urteil in die 2. Liga versetzt',
   },
   1980: {
     t1: ['ita-turin-schwarz-weiss', 'ita-rom-rot-gelb', 'ita-neapel', 'ita-mailand-blau-schwarz', 'ita-bologna', 'ita-florenz', 'ita-avellino', 'ita-cagliari', 'ita-catanzaro', 'ita-turin-granat', 'ita-brescia', 'ita-como', 'ita-udine', 'ita-ascoli', 'ita-perugia', 'ita-pistoia'],
     t2: ['ita-mailand-rot-schwarz', 'ita-genua-rot-blau', 'ita-cesena', 'ita-rom-himmelblau', 'ita-genua-blau-weiss', 'ita-pescara', 'ita-pisa', 'ita-bari', 'ita-rimini', 'ita-foggia', 'ita-lecce', 'ita-ferrara', 'ita-catania', 'ita-palermo', 'ita-varese', 'ita-verona-gelb-blau', 'ita-vicenza', 'ita-taranto', 'ita-bergamo', 'ita-monza'],
     cup: 'ita-rom-rot-gelb', cupFinalist: 'ita-turin-granat',
     euro: { ec: ['ita-mailand-blau-schwarz'], cwc: ['ita-rom-rot-gelb'], uefa: ['ita-turin-schwarz-weiss', 'ita-turin-granat'] },
-    note: 'Totonero: Avellino, Bologna und Perugia je 5 Punkte Abzug; Mailand Rot-Schwarz und Rom Himmelblau nach Totonero-Skandal 1980 in die Serie B versetzt; Palermo 5 Punkte Abzug (Totonero)',
+    note: 'Totonero: Avellino, Bologna und Perugia je 5 Punkte Abzug; Mailand Rot-Schwarz und Rom Himmelblau nach Totonero-Skandal 1980 in die 2. Liga versetzt; Palermo 5 Punkte Abzug (Totonero)',
   },
   1981: {
     t1: ['ita-turin-schwarz-weiss', 'ita-florenz', 'ita-rom-rot-gelb', 'ita-neapel', 'ita-mailand-blau-schwarz', 'ita-ascoli', 'ita-catanzaro', 'ita-avellino', 'ita-turin-granat', 'ita-cesena', 'ita-udine', 'ita-cagliari', 'ita-genua-rot-blau', 'ita-mailand-rot-schwarz', 'ita-bologna', 'ita-como'],
@@ -77,7 +77,7 @@ export const SEASONS_ITA: Record<number, SeasonRow> = {
     t2: ['ita-ascoli', 'ita-brescia', 'ita-vicenza', 'ita-empoli', 'ita-triest', 'ita-bologna', 'ita-genua-rot-blau', 'ita-cesena', 'ita-cremona', 'ita-campobasso', 'ita-arezzo', 'ita-rom-himmelblau', 'ita-catania', 'ita-san-benedetto', 'ita-cagliari', 'ita-palermo', 'ita-pescara', 'ita-perugia', 'ita-catanzaro', 'ita-monza'],
     cup: 'ita-rom-rot-gelb', cupFinalist: 'ita-genua-blau-weiss',
     euro: { ec: ['ita-turin-schwarz-weiss', 'ita-verona-gelb-blau'], cwc: ['ita-genua-blau-weiss'], uefa: ['ita-turin-granat', 'ita-mailand-blau-schwarz', 'ita-mailand-rot-schwarz'] },
-    note: 'Totonero 1986: Vicenza (3.) Aufstieg verweigert, Empoli rückt nach; Perugia Zwangsabstieg in die Serie C2; Palermo wegen Konkurs ausgeschlossen, Pescara bleibt; Triest -1 Punkt',
+    note: 'Totonero 1986: Vicenza (3.) Aufstieg verweigert, Empoli rückt nach; Perugia Zwangsabstieg in die 4. Liga; Palermo wegen Konkurs ausgeschlossen, Pescara bleibt; Triest -1 Punkt',
   },
   1986: {
     t1: ['ita-neapel', 'ita-turin-schwarz-weiss', 'ita-mailand-blau-schwarz', 'ita-verona-gelb-blau', 'ita-genua-blau-weiss', 'ita-mailand-rot-schwarz', 'ita-rom-rot-gelb', 'ita-avellino', 'ita-como', 'ita-florenz', 'ita-turin-granat', 'ita-ascoli', 'ita-udine', 'ita-empoli', 'ita-brescia', 'ita-bergamo'],
@@ -203,14 +203,14 @@ export const SEASONS_ITA: Record<number, SeasonRow> = {
     t2: ['ita-empoli', 'ita-turin-granat', 'ita-perugia', 'ita-treviso', 'ita-ascoli', 'ita-verona-gelb-blau', 'ita-modena', 'ita-terni', 'ita-piacenza', 'ita-bari', 'ita-albino', 'ita-catania', 'ita-salerno', 'ita-arezzo', 'ita-cesena', 'ita-crotone', 'ita-vicenza', 'ita-triest', 'ita-pescara', 'ita-venedig', 'ita-catanzaro', 'ita-genua-rot-blau'],
     cup: 'ita-mailand-blau-schwarz', cupFinalist: 'ita-rom-rot-gelb',
     euro: { uefa: ['ita-udine', 'ita-rom-himmelblau', 'ita-parma'], cl: ['ita-turin-schwarz-weiss', 'ita-mailand-rot-schwarz', 'ita-mailand-blau-schwarz', 'ita-rom-rot-gelb'] },
-    note: 'Aufstockung auf 20 Vereine; Titel von Turin Schwarz-Weiß 2006 aberkannt (Calciopoli), nicht vergeben; Genua Rot-Blau (sportlich 1.) wegen Spielmanipulation auf den letzten Platz gesetzt und in die Serie C1 versetzt; Turin Granat und Perugia ohne Aufstieg (Konkurs), Treviso und Ascoli rücken nach; Salerno, Perugia, Venedig aus finanziellen Gründen abgestiegen',
+    note: 'Aufstockung auf 20 Vereine; Titel von Turin Schwarz-Weiß 2006 aberkannt (Calciopoli), nicht vergeben; Genua Rot-Blau (sportlich 1.) wegen Spielmanipulation auf den letzten Platz gesetzt und in die 3. Liga versetzt; Turin Granat und Perugia ohne Aufstieg (Konkurs), Treviso und Ascoli rücken nach; Salerno, Perugia, Venedig aus finanziellen Gründen abgestiegen',
   },
   2005: {
     t1: ['ita-mailand-blau-schwarz', 'ita-rom-rot-gelb', 'ita-mailand-rot-schwarz', 'ita-verona-chievo', 'ita-palermo', 'ita-livorno', 'ita-empoli', 'ita-parma', 'ita-florenz', 'ita-ascoli', 'ita-udine', 'ita-genua-blau-weiss', 'ita-reggio-calabria', 'ita-cagliari', 'ita-siena', 'ita-rom-himmelblau', 'ita-messina', 'ita-lecce', 'ita-treviso', 'ita-turin-schwarz-weiss'],
     t2: ['ita-bergamo', 'ita-catania', 'ita-turin-granat', 'ita-mantua', 'ita-modena', 'ita-cesena', 'ita-arezzo', 'ita-bologna', 'ita-crotone', 'ita-brescia', 'ita-pescara', 'ita-piacenza', 'ita-bari', 'ita-triest', 'ita-verona-gelb-blau', 'ita-vicenza', 'ita-rimini', 'ita-albino', 'ita-avellino', 'ita-terni', 'ita-cremona', 'ita-catanzaro'],
     cup: 'ita-mailand-blau-schwarz', cupFinalist: 'ita-rom-rot-gelb',
     euro: { uefa: ['ita-rom-rot-gelb', 'ita-palermo', 'ita-udine', 'ita-genua-blau-weiss'], cl: ['ita-mailand-blau-schwarz', 'ita-mailand-rot-schwarz', 'ita-udine', 'ita-turin-schwarz-weiss'] },
-    note: 'Calciopoli: Turin Schwarz-Weiß auf den letzten Platz gesetzt und in die Serie B versetzt, Titel an Mailand Blau-Schwarz; Punktabzüge u. a. für Mailand Rot-Schwarz, Florenz, Rom Himmelblau; Turin Granat steigt über die Play-offs auf',
+    note: 'Calciopoli: Turin Schwarz-Weiß auf den letzten Platz gesetzt und in die 2. Liga versetzt, Titel an Mailand Blau-Schwarz; Punktabzüge u. a. für Mailand Rot-Schwarz, Florenz, Rom Himmelblau; Turin Granat steigt über die Play-offs auf',
   },
   2006: {
     t1: ['ita-mailand-blau-schwarz', 'ita-rom-rot-gelb', 'ita-rom-himmelblau', 'ita-mailand-rot-schwarz', 'ita-palermo', 'ita-florenz', 'ita-empoli', 'ita-bergamo', 'ita-genua-blau-weiss', 'ita-udine', 'ita-livorno', 'ita-parma', 'ita-catania', 'ita-reggio-calabria', 'ita-siena', 'ita-turin-granat', 'ita-cagliari', 'ita-verona-chievo', 'ita-ascoli', 'ita-messina'],

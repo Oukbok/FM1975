@@ -24,8 +24,8 @@ import { fmtDM, fmtDay } from '../../ui/format';
 // Spielablauf: game/indoorGame.ts · Historie: data/indoorHistory.ts
 // =============================================================================
 const PHASE_TEXT: Record<string, string> = {
-  invitational: 'Einladungsturniere ohne Endrunde – Budenzauber mit Bundesligisten in vollen Hallen.',
-  masters: 'DFB-Hallenpokal: Qualifikationsturniere, Wertung nach Durchschnittspunkten, die Besten spielen das Masters.',
+  invitational: 'Einladungsturniere ohne Endrunde – Budenzauber mit Erstligisten in vollen Hallen.',
+  masters: 'Hallenpokal: Qualifikationsturniere, Wertung nach Durchschnittspunkten, die Besten spielen das Masters.',
   regional: 'Nach dem Aus der Masters laufen nur noch ein paar regionale Turniere aus.',
   none: 'Keine Hallenturniere mit Profis.',
 };
@@ -62,7 +62,7 @@ export function IndoorView({ g, onChange }: { g: Game; onChange: () => void }) {
       ? (abroadN ? 'Hallenturniere in deinem Heimatland und bei den Nachbarn: Einladungsturniere ohne Endrunde (Statistiken › Halle, Turniere im Ausland).' : 'In diesem Winter gibt es keine Hallenturniere mit Profis.')
       : wy > INDOOR_LAST_WINTER ? `Seit ${INDOOR_LAST_WINTER + 1} keine Hallenturniere mehr in Deutschland${abroadN ? ' – im Ausland laufen noch einzelne Turniere' : ''}` : 'Noch keine Hallensaison')
     : phase === 'masters' && mastersScoring() === 'place'
-      ? 'DFB-Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Masters.'
+      ? 'Hallenpokal: Qualifikationsturniere, Wertung nach Platzierungspunkten (Einstellung), die Besten spielen das Masters.'
       : PHASE_TEXT[phase];
 
   return (

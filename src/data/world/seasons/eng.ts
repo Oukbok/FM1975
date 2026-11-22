@@ -214,7 +214,7 @@ export const SEASONS_ENG: Record<number, SeasonRow> = {
     cup: 'eng-london-rot',
     cupFinalist: 'eng-manchester-rot',
     euro: { cl: ['eng-london-rot', 'eng-london-west', 'eng-manchester-rot', 'eng-liverpool-rot'], uefa: ['eng-newcastle', 'eng-middlesbrough', 'eng-london-bermondsey'] },
-    note: "Zweite Liga unter neuem Namen (Championship).",
+    note: "Zweite Liga unter neuem Namen.",
   },
   2005: {
     t1: ['eng-london-west', 'eng-manchester-rot', 'eng-liverpool-rot', 'eng-london-rot', 'eng-london-nord', 'eng-blackburn', 'eng-newcastle', 'eng-bolton', 'eng-london-ost', 'eng-wigan', 'eng-liverpool-blau', 'eng-london-suedwest', 'eng-london-suedost', 'eng-middlesbrough', 'eng-manchester-blau', 'eng-birmingham-weinrot', 'eng-portsmouth', 'eng-birmingham-blau', 'eng-west-bromwich', 'eng-sunderland'],

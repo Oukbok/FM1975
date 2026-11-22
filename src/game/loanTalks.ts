@@ -159,7 +159,7 @@ function checkTerms(g: Game, t: LoanTalk, terms: LoanTerms): string | null {
   const own = g.clubs[g.managedClubId];
   const p = g.players[t.playerId];
   if (terms.until <= today) return 'Das Leihende liegt in der Vergangenheit.';
-  if (terms.until > seasonEndOf(today) && r.maxSeasons < 2) return r.year >= 2022 ? 'Leihen dauern höchstens ein Jahr (FIFA).' : 'Leihen über zwei Spielzeiten sind in dieser Zeit unüblich.';
+  if (terms.until > seasonEndOf(today) && r.maxSeasons < 2) return r.year >= 2022 ? 'Leihen dauern höchstens ein Jahr (Weltverband).' : 'Leihen über zwei Spielzeiten sind in dieser Zeit unüblich.';
   if (terms.optionFee && !r.clauses.option) return 'Kaufoptionen gibt es erst ab 2000.';
   if (terms.obligation && !r.clauses.obligation) return 'Eine Kaufpflicht ist erst ab 2010 üblich.';
   if (terms.minApps && !r.clauses.minApps) return 'Einsatzgarantien gibt es erst ab 2000.';

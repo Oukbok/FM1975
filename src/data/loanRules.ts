@@ -96,11 +96,11 @@ export function loanRulesFor(year: number, cc = 'ger'): LoanRules {
       : year < 2005 ? 'Leihen werden üblich, vor allem für junge Spieler, die Spielpraxis brauchen.'
         : 'Leihen gehören zum Alltag: Talente sammeln Spielpraxis, Ergänzungsspieler werden geparkt.');
   notes.push('Leihen beginnen nur im Transferfenster (Juli/August, Januar); eine Einigung außerhalb wird zum nächsten Fenster vollzogen.');
-  notes.push(year >= 2022 ? 'Laufzeit höchstens ein Jahr (FIFA), mindestens bis zum nächsten Transferfenster.'
+  notes.push(year >= 2022 ? 'Laufzeit höchstens ein Jahr (Weltverband), mindestens bis zum nächsten Transferfenster.'
     : year >= 1990 ? 'Laufzeit: eine halbe Saison, bis Saisonende oder über zwei Spielzeiten.' : 'Laufzeit: eine halbe Saison oder bis Saisonende.');
   if (maxLoans != null) notes.push(`Höchstens ${maxLoans} ver- bzw. ausgeliehene Profis je Verein, höchstens 3 zwischen denselben Vereinen; Spieler bis 21 und Eigengewächse zählen nicht mit.`);
   else notes.push('Keine Höchstzahl für Leihspieler.');
-  notes.push(year >= 2022 ? 'Weiterverleihen ist verboten (FIFA).' : 'Weiterverleihen ist erlaubt, wenn der Vertrag es nicht ausschließt.');
+  notes.push(year >= 2022 ? 'Weiterverleihen ist verboten (Weltverband).' : 'Weiterverleihen ist erlaubt, wenn der Vertrag es nicht ausschließt.');
   notes.push(parentPlay === 'banned' ? 'Ligaregel: Leihspieler dürfen nicht gegen ihren Stammverein spielen.'
     : 'Leihspieler dürfen gegen ihren Stammverein spielen – ausschließen lässt sich das nur per Absprache.');
   return {
@@ -113,9 +113,9 @@ export function loanRulesFor(year: number, cc = 'ger'): LoanRules {
 
 /** Quellen für Wiki und Regel-Box. */
 export const LOAN_SOURCES: string[] = [
-  'FIFA: Neue Leihgabenregelung (2022) – Höchstzahlen 8/7/6, drei je Vereinspaar, U21 und Eigengewächse ausgenommen, höchstens ein Jahr, keine Weiterverleihung.',
-  'DFL-Mitgliederversammlung (Dezember 2025): nationale Leihbegrenzung von sechs Spielern, U21 mit Local-Player-Status ausgenommen.',
-  'Bundesliga 2023/24 (Fall eines verliehenen Verteidigers gegen seinen Stammverein): keine Ligaregel gegen Einsätze gegen den Stammverein.',
-  'Premier League, Regel M.6: Leihspieler dürfen nicht gegen den Stammverein spielen (Einführungsjahr im Spiel angenommen: 1992/93).',
-  'Wilke (2024), Leihtransfers im Profifußball: 75 Bundesliga-Leihen 2003/04, 228 im Jahr 2023/24; Kaufoption meist zum Marktwert, Kaufpflicht an Einsätze/Klassenerhalt gebunden, Gehalt anteilig.',
+  'Weltverband: Neue Leihgabenregelung (2022) – Höchstzahlen 8/7/6, drei je Vereinspaar, U21 und Eigengewächse ausgenommen, höchstens ein Jahr, keine Weiterverleihung.',
+  'Mitgliederversammlung des Ligaverbands (Dezember 2025): nationale Leihbegrenzung von sechs Spielern, U21 mit Local-Player-Status ausgenommen.',
+  '1. Liga 2023/24 (Fall eines verliehenen Verteidigers gegen seinen Stammverein): keine Ligaregel gegen Einsätze gegen den Stammverein.',
+  '1. Liga Englands, Regel M.6: Leihspieler dürfen nicht gegen den Stammverein spielen (Einführungsjahr im Spiel angenommen: 1992/93).',
+  'Wilke (2024), Leihtransfers im Profifußball: 75 Erstliga-Leihen 2003/04, 228 im Jahr 2023/24; Kaufoption meist zum Marktwert, Kaufpflicht an Einsätze/Klassenerhalt gebunden, Gehalt anteilig.',
 ];

@@ -23,13 +23,13 @@ function modeText(snap: YcSnapshot): string {
       if (y0 < rl) return 'Die Meister der Landesverbände (im Spiel: Verbandsligen) spielen im K.-o.-System mit Hin- und Rückspiel um den Titel, das Endspiel ist ein Spiel.';
       if (y0 < bl) return 'Fünf Regionalligen; Meister und einige Vizemeister bilden die Endrunde der letzten Acht (Hin- und Rückspiel, Endspiel ein Spiel). Je drei Absteiger.';
       if (y0 < 2024) return 'Drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest). Die Meister und der Zweite aus Süd/Südwest spielen das Halbfinale (Hin- und Rückspiel), dann das Endspiel. Je drei Absteiger.';
-      return 'DFB-Nachwuchsliga: Vorrunde in regionalen Gruppen, die besten Drei je Gruppe spielen die Hauptrunde Liga A, die besten Vier je Gruppe das Achtelfinale (ein Spiel).';
+      return 'Nachwuchsliga: Vorrunde in regionalen Gruppen, die besten Drei je Gruppe spielen die Hauptrunde Liga A, die besten Vier je Gruppe das Achtelfinale (ein Spiel).';
     }
     case 'pokal': return y0 < 2017 ? 'Die Pokalsieger der Landesverbände spielen im K.-o.-System (ein Spiel, Verlängerung, Elfmeterschießen). Amateure haben Heimrecht.'
       : 'Landespokalsieger, Titelverteidiger, Meister und die besten Teams der Staffeln; ein Spiel, Amateure haben bis zum Halbfinale Heimrecht.';
     case 'ddr': return 'Die Nachwuchsmannschaften der 14 Oberligisten spielen eine Doppelrunde; ohne Auf- und Abstieg. Der Erste ist DDR-Juniorenmeister.';
-    default: return y0 < 2015 ? 'Die Jugend der Champions-League-Vereine: acht Gruppen, dann K.-o.-Runden; Halbfinale und Endspiel in Nyon.'
-      : y0 < 2024 ? 'Champions-League-Weg (Gruppen) und Meisterweg der Jugendmeister; Gruppenzweite gegen Sieger des Meisterwegs in den Play-offs, Final Four in Nyon.'
+    default: return y0 < 2015 ? 'Die Jugend der Meisterliga-Vereine: acht Gruppen, dann K.-o.-Runden; Halbfinale und Endspiel in Nyon.'
+      : y0 < 2024 ? 'Meisterliga-Weg (Gruppen) und Meisterweg der Jugendmeister; Gruppenzweite gegen Sieger des Meisterwegs in den Play-offs, Final Four in Nyon.'
       : 'Ligaphase mit 36 Teams (sechs Spiele), die besten 22 und die Sieger des Meisterwegs spielen das Sechzehntelfinale; Final Four in Nyon.';
   }
 }

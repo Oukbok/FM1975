@@ -16,7 +16,7 @@ import { CT_BY_KEY } from '../data/world/continents';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY, countryExists, type WorldCountryDef } from '../data/world/countries';
 import { worldSeason, worldYears } from '../data/world/index';
 import { seasonLabelOf } from '../data/world/countries';
-import { NATION_BY_CODE, confOf, nationExists, type Conf, type NationDef } from '../data/nationalTeams';
+import { NATION_BY_CODE, confLabel, confOf, nationExists, type NationDef } from '../data/nationalTeams';
 import { repTargetAt } from '../data/leagueReputation';
 import { accessSlots, euroCompName } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
@@ -46,10 +46,7 @@ export interface CountryRef {
   kind: CountryKind;
 }
 
-const CONF_LABEL: Record<Conf, string> = {
-  UEFA: 'Europa', CONMEBOL: 'Südamerika', CAF: 'Afrika', AFC: 'Asien', CONCACAF: 'Nord- und Mittelamerika', OFC: 'Ozeanien',
-};
-export const confLabel = (c: Conf) => CONF_LABEL[c];
+export { confLabel };
 
 const yearOf = (g: Game) => seasonStartYear(g.season);
 
@@ -95,7 +92,7 @@ export function countryFacts(g: Game, ref: CountryRef): CountryFacts {
         : ref.kind === 'continent' ? 'Hintergrund: Meister und Kontinentalpokal je Saison (nicht spielbar)'
         : 'keine Liga im Spiel – nur Nationalmannschaft';
   return {
-    conf: n ? CONF_LABEL[confOf(n, y)] : d ? 'Europa' : null,
+    conf: n ? confLabel(confOf(n, y)) : d ? 'Europa' : null,
     exists, ligen,
     predecessor: d?.successorOf ? COUNTRY_BY_CC[d.successorOf]?.name : undefined,
     successors: d?.successors?.map((cc) => COUNTRY_BY_CC[cc]?.name ?? cc),

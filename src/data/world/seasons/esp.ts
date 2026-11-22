@@ -24,7 +24,7 @@ export const SEASONS_ESP: Record<number, SeasonRow> = {
     t2: ['esp-saragossa', 'esp-huelva', 'esp-vigo', 'esp-barakaldo', 'esp-murcia', 'esp-sabadell', 'esp-valladolid', 'esp-la-coruna', 'esp-granada', 'esp-pamplona', 'esp-vitoria', 'esp-terrassa', 'esp-malaga', 'esp-castellon', 'esp-jaen', 'esp-getafe-sued', 'esp-oviedo', 'esp-cordoba', 'esp-teneriffa', 'esp-puertollano'],
     cup: 'esp-barcelona', cupFinalist: 'esp-las-palmas',
     euro: { ec: ['esp-madrid-rot-weiss'], cwc: ['esp-sevilla-gruen-weiss'], uefa: ['esp-barcelona', 'esp-bilbao', 'esp-las-palmas'] },
-    note: 'Erste Saison mit Segunda División B als dritter Liga',
+    note: 'Erste Saison mit neuer dritter Liga (zwei Staffeln)',
   },
   1978: {
     t1: ['esp-madrid-weiss', 'esp-gijon', 'esp-madrid-rot-weiss', 'esp-san-sebastian', 'esp-barcelona', 'esp-las-palmas', 'esp-valencia', 'esp-barcelona-blau-weiss', 'esp-bilbao', 'esp-salamanca', 'esp-sevilla-weiss-rot', 'esp-alicante', 'esp-burgos', 'esp-saragossa', 'esp-madrid-vallecas', 'esp-vigo', 'esp-santander', 'esp-huelva'],
@@ -37,7 +37,7 @@ export const SEASONS_ESP: Record<number, SeasonRow> = {
     t2: ['esp-murcia', 'esp-valladolid', 'esp-pamplona', 'esp-elche', 'esp-castellon', 'esp-sabadell', 'esp-madrid-weiss-ii', 'esp-cadiz', 'esp-vitoria', 'esp-valencia-blau-rot', 'esp-oviedo', 'esp-huelva', 'esp-granada', 'esp-getafe-sued', 'esp-palencia', 'esp-santander', 'esp-vigo', 'esp-la-coruna', 'esp-tarragona', 'esp-algeciras'],
     cup: 'esp-madrid-weiss', cupFinalist: 'esp-madrid-weiss-ii',
     euro: { ec: ['esp-madrid-weiss'], cwc: ['esp-valencia', 'esp-barcelona'], uefa: ['esp-san-sebastian', 'esp-gijon', 'esp-madrid-rot-weiss'] },
-    note: 'Madrid Weiß II (Reserve) als Pokalfinalist im Europapokal der Pokalsieger 1980/81',
+    note: 'Madrid Weiß II (Reserve) als Pokalfinalist im Pokal der Pokalsieger 1980/81',
   },
   1980: {
     t1: ['esp-madrid-weiss', 'esp-san-sebastian', 'esp-valencia', 'esp-madrid-rot-weiss', 'esp-barcelona', 'esp-sevilla-gruen-weiss', 'esp-gijon', 'esp-sevilla-weiss-rot', 'esp-bilbao', 'esp-barcelona-blau-weiss', 'esp-pamplona', 'esp-valladolid', 'esp-alicante', 'esp-saragossa', 'esp-las-palmas', 'esp-murcia', 'esp-salamanca', 'esp-almeria-ost'],

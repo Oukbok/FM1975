@@ -54,7 +54,7 @@ export const HONOURS: HonourDef[] = [
     ] },
   { id: 'jugendhoheit', name: 'Jugendhoheit', group: 'Nachwuchs und Kader', what: 'Deine Jugend entwickelt sich schneller.',
     tiers: [
-      { need: '3 Jugendtitel in derselben Saison (Meister A-/B-Jugend, Junioren-Pokal, Youth League, Staffelsieg C-/D-Jugend)', fx: `+${pct(0.04)} Entwicklung der Jugend`, effects: { youthDev: 0.04 } },
+      { need: '3 Jugendtitel in derselben Saison (Meister A-/B-Jugend, Junioren-Pokal, Jugend-Meisterliga, Staffelsieg C-/D-Jugend)', fx: `+${pct(0.04)} Entwicklung der Jugend`, effects: { youthDev: 0.04 } },
       { need: 'Meister in 4 Jugendwettbewerben', fx: `+${pct(0.08)} Entwicklung der Jugend`, effects: { youthDev: 0.08 } },
       { need: 'Meister in 5 Jugendwettbewerben', fx: `+${pct(0.12)} Entwicklung der Jugend`, effects: { youthDev: 0.12 } },
     ] },

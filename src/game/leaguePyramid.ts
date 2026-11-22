@@ -298,7 +298,7 @@ export function pyramidFromGame(g: Game): PyramidData {
     season,
     west: { side: 'west', key: homeCountryOf(g) === 'ger' ? 'west' : COUNTRY_BY_CC[homeCountryOf(g)]?.key ?? 'west', title: COUNTRY_BY_CC[homeCountryOf(g)]?.name ?? 'Deutschland', levels: withHistoricTiers(westLv, homeCountryOf(g), year, false), available: true },
     ddr: ddrOpen
-      ? { side: 'ddr', key: 'ddr', title: 'DDR', levels: ddrLv, available: true, note: g.ddrHome ? 'Dein Land: Die DDR spielt bis 1991 in eigenen Ligen, die Bundesliga läuft im Hintergrund mit.' : 'Die DDR spielt bis 1991 in eigenen Ligen und läuft im Hintergrund mit.' }
+      ? { side: 'ddr', key: 'ddr', title: 'DDR', levels: ddrLv, available: true, note: g.ddrHome ? 'Dein Land: Die DDR spielt bis 1991 in eigenen Ligen, die 1. Liga läuft im Hintergrund mit.' : 'Die DDR spielt bis 1991 in eigenen Ligen und läuft im Hintergrund mit.' }
       : { side: 'ddr', key: 'ddr', title: 'DDR', levels: [], available: false, archive: true, note: 'Seit der Wiedervereinigung 1991/92 spielen die Vereine aus dem Osten in der gesamtdeutschen Pyramide.' },
     abroad: abroadSystems(countries, (g.euroClubs ?? {}) as never, false, year),
     reforms: homeCountryOf(g) === 'ger' ? reformList(season) : [],

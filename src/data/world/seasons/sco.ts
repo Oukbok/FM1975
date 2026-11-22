@@ -7,7 +7,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-glasgow-blau',
     cupFinalist: 'sco-edinburgh-weinrot',
     euro: { ec: ['sco-glasgow-blau'], cwc: ['sco-glasgow-gruen'], uefa: ['sco-edinburgh-gruen', 'sco-dundee'] },
-    note: "Neue zehnköpfige Premier Division als höchste Spielklasse.",
+    note: "Neue zehnköpfige 1. Liga als höchste Spielklasse.",
   },
   1976: {
     t1: ['sco-glasgow-gruen', 'sco-glasgow-blau', 'sco-aberdeen', 'sco-dundee', 'sco-glasgow-rot-gelb', 'sco-edinburgh-gruen', 'sco-motherwell', 'sco-ayr', 'sco-edinburgh-weinrot', 'sco-kilmarnock'],
@@ -74,7 +74,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-paisley',
     cupFinalist: 'sco-dundee',
     euro: { ec: ['sco-glasgow-gruen'], cwc: ['sco-aberdeen'], uefa: ['sco-edinburgh-weinrot', 'sco-glasgow-blau', 'sco-dundee'] },
-    note: "Premier Division auf 12 Vereine erweitert (bis 1987/88).",
+    note: "1. Liga auf 12 Vereine erweitert (bis 1987/88).",
   },
   1987: {
     t1: ['sco-glasgow-gruen', 'sco-edinburgh-weinrot', 'sco-glasgow-blau', 'sco-aberdeen', 'sco-dundee', 'sco-edinburgh-gruen', 'sco-dundee-blau', 'sco-motherwell', 'sco-paisley', 'sco-falkirk', 'sco-dunfermline', 'sco-greenock'],
@@ -87,7 +87,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-glasgow-gruen',
     cupFinalist: 'sco-glasgow-blau',
     euro: { ec: ['sco-glasgow-gruen'], cwc: ['sco-dundee'], uefa: ['sco-edinburgh-weinrot', 'sco-glasgow-blau', 'sco-aberdeen'] },
-    note: "Premier Division wieder 10 Vereine.",
+    note: "1. Liga wieder 10 Vereine.",
   },
   1989: {
     t1: ['sco-glasgow-blau', 'sco-aberdeen', 'sco-edinburgh-weinrot', 'sco-dundee', 'sco-glasgow-gruen', 'sco-motherwell', 'sco-edinburgh-gruen', 'sco-dunfermline', 'sco-paisley', 'sco-dundee-blau'],
@@ -106,7 +106,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-glasgow-blau',
     cupFinalist: 'sco-airdrie',
     euro: { ec: ['sco-glasgow-blau'], cwc: ['sco-motherwell'], uefa: ['sco-aberdeen', 'sco-glasgow-gruen'] },
-    note: "Premier Division auf 12 Vereine erweitert (bis 1993/94).",
+    note: "1. Liga auf 12 Vereine erweitert (bis 1993/94).",
   },
   1992: {
     t1: ['sco-glasgow-blau', 'sco-aberdeen', 'sco-glasgow-gruen', 'sco-dundee', 'sco-edinburgh-weinrot', 'sco-perth', 'sco-edinburgh-gruen', 'sco-glasgow-rot-gelb', 'sco-motherwell', 'sco-dundee-blau', 'sco-falkirk', 'sco-airdrie'],
@@ -125,7 +125,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-glasgow-gruen',
     cupFinalist: 'sco-airdrie',
     euro: { ec: ['sco-glasgow-blau'], cwc: ['sco-dundee'], uefa: ['sco-aberdeen', 'sco-motherwell'] },
-    note: "Premier Division wieder 10 Vereine; erstmals Drei-Punkte-Regel.",
+    note: "1. Liga wieder 10 Vereine; erstmals Drei-Punkte-Regel.",
   },
   1995: {
     t1: ['sco-glasgow-blau', 'sco-glasgow-gruen', 'sco-aberdeen', 'sco-edinburgh-weinrot', 'sco-edinburgh-gruen', 'sco-kirkcaldy', 'sco-kilmarnock', 'sco-motherwell', 'sco-glasgow-rot-gelb', 'sco-falkirk'],
@@ -244,7 +244,7 @@ export const SEASONS_SCO: Record<number, SeasonRow> = {
     cup: 'sco-perth',
     cupFinalist: 'sco-dundee',
     euro: { cl: ['sco-glasgow-gruen'], el: ['sco-motherwell', 'sco-perth', 'sco-edinburgh-gruen'] },
-    note: "Neue Spielklassenstruktur (Premiership); Edinburgh Weinrot mit 15 Punkten Abzug abgestiegen.",
+    note: "Neue Spielklassenstruktur; Edinburgh Weinrot mit 15 Punkten Abzug abgestiegen.",
   },
   2014: {
     t1: ['sco-glasgow-gruen', 'sco-aberdeen', 'sco-inverness', 'sco-perth', 'sco-dundee', 'sco-dundee-blau', 'sco-hamilton', 'sco-glasgow-rot-gelb', 'sco-dingwall', 'sco-kilmarnock', 'sco-motherwell', 'sco-paisley'],

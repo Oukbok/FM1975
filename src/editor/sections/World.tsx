@@ -17,8 +17,8 @@ import { Col, Explain, TableEditor } from '../TableEditor';
 type Entry = NonNullable<Dataset['worldData']>[string];
 const YEARS = Array.from({ length: 51 }, (_, i) => 1975 + i);
 const EURO_KEYS: { k: keyof NonNullable<SeasonRow['euro']>; label: string }[] = [
-  { k: 'ec', label: 'Landesmeister' }, { k: 'cwc', label: 'Pokalsieger' }, { k: 'uefa', label: 'UEFA-Pokal' },
-  { k: 'cl', label: 'Champions League' }, { k: 'el', label: 'Europa League' }, { k: 'ecl', label: 'Conference League' },
+  { k: 'ec', label: 'Landesmeister' }, { k: 'cwc', label: 'Pokalsieger' }, { k: 'uefa', label: 'Europa-Pokal' },
+  { k: 'cl', label: 'Meisterliga' }, { k: 'el', label: 'Europa-Liga' }, { k: 'ecl', label: 'Konferenz-Liga' },
 ];
 
 const CLUB_COLS: Col[] = [

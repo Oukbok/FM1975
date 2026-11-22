@@ -141,7 +141,7 @@ export function takeKid(g: Game, siteId: string, kidId: string): string | null {
   const k = camp?.kids.find((x) => x.id === kidId);
   if (!camp || !site || !k) return 'Talent nicht gefunden.';
   const today = g.calendar.currentDate;
-  if (!kidReady(g, site, k)) return `${k.name} darf erst mit ${joinAge(site, today)} wechseln (FIFA-Regel zum Schutz Minderjähriger).`;
+  if (!kidReady(g, site, k)) return `${k.name} darf erst mit ${joinAge(site, today)} wechseln (Regel des Weltverbands zum Schutz Minderjähriger).`;
   const club = g.clubs[g.managedClubId];
   const p = makeCampPlayer(g, club.id, site, k.id, k.lv || camp.level || 1, Math.min(19, kidAge(k, today)), today);
   Object.assign(p, { firstName: k.first, lastName: k.last, fullName: k.name, face: k.face, youthJoined: today });
@@ -237,7 +237,7 @@ export function youthCampsDaily(g: Game, today: string): void {
       bodyText: `Neu im Camp:\n${fresh.map(line).join('\n')}\n\n`
         + (ready.length ? `Alt genug für unsere Jugend (Jugend › Jugendcamps → Übernehmen):\n${ready.map(line).join('\n')}\n\n` : '')
         + (gone.length ? `Mit 20 zu alt – haben das Camp verlassen:\n${gone.map(line).join('\n')}\n\n` : '')
-        + `Wechsel in unsere Jugend erst ab ${joinAge(site, today)} Jahren${joinAge(site, today) === 18 ? ' (FIFA-Regel zum Schutz Minderjähriger)' : ''}.`,
+        + `Wechsel in unsere Jugend erst ab ${joinAge(site, today)} Jahren${joinAge(site, today) === 18 ? ' (Regel des Weltverbands zum Schutz Minderjähriger)' : ''}.`,
     }));
   }
 }

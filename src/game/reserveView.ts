@@ -58,8 +58,8 @@ export function reserveView(g: Game): ReserveView | null {
   const ct = (g as Game & { reserveCupTie?: CupTieState }).reserveCupTie;
   const tied = ownAmrInCup(g) && ct?.season === g.season ? ct.amateurs.length : 0;
   const cup = reserveCupOpen(year)
-    ? `DFB-Pokal: Amateure können sich über den Verbandspokal qualifizieren (im Spiel: Platz 1–3 der höchsten Amateurliga bzw. Staffel). Sie spielen mit ihrem Kader; wer für sie im Pokal spielt, ist in dieser Saison im Pokal an die Amateure gebunden${tied ? ` (bisher ${tied})` : ''}.`
-    : year >= 2008 ? 'DFB-Pokal: seit 2008/09 sind zweite Mannschaften ausgeschlossen.' : 'DFB-Pokal: noch nicht offen für Amateurmannschaften.';
+    ? `Landespokal: Amateure können sich über den Verbandspokal qualifizieren (im Spiel: Platz 1–3 der höchsten Amateurliga bzw. Staffel). Sie spielen mit ihrem Kader; wer für sie im Pokal spielt, ist in dieser Saison im Pokal an die Amateure gebunden${tied ? ` (bisher ${tied})` : ''}.`
+    : year >= 2008 ? 'Landespokal: seit 2008/09 sind zweite Mannschaften ausgeschlossen.' : 'Landespokal: noch nicht offen für Amateurmannschaften.';
   const div = ownReserveDivision(g);
   const blockText = (tier: number) => (tier <= 2
     ? 'Aufstieg gesperrt: Die 2. Liga ist für zweite Mannschaften gesperrt – der Platz geht an den Nächsten.'
