@@ -7,6 +7,7 @@
 //  - Editor-Änderung an Deutschland (Datensatz worldData) wirkt im neuen Spiel
 //  - Start in einer unteren Liga (NOFV-Oberliga 1991, Regionalliga 1995, 3. Liga 2010): volle Kader, Saison + Wechsel
 // =============================================================================
+import { ownDropInfo } from '../src/game/relegationGame';
 import { createNewGame } from '../src/game/newGame';
 import { processDay, DayUi } from '../src/game/day';
 import { findOwnMatchDue, quickSimOwnMatch } from '../src/game/ownMatch';
@@ -105,7 +106,11 @@ for (const [y, divId, full] of [[1991, 'tier3-nordost', false], [1995, 'tier3-we
   playSeason(g);
   ok(g.fixtures.every((m) => m.status === 'finished'), `${y} unten: alle Ligaspiele gespielt`);
   const lastPos = g.table.rows.find((r) => r.clubId === g.managedClubId)!.position;
+  // Abstiegsplatz in der untersten Liga = Spielende (game/relegationGame.ts, eigener Test test:relegation):
+  // hier soll der Saisonwechsel geprüft werden, also übernimmt wie in Simulationen der Autopilot einen anderen Verein.
+  if (ownDropInfo(g).own) (g as any).simAutoManage = true;
   startNextSeason(g);
+  delete (g as any).simAutoManage;
   const pd2 = g.leagues.playerDivision;
   ok(g.season === `${y + 1}/${String(y + 2).slice(2)}` && g.table.rows.length >= 18, `${y} unten: Saisonwechsel nach Platz ${lastPos} → ${pd2.name} (${g.table.rows.length} Vereine)`);
   const thin = g.table.rows.filter((r) => (g.clubs[r.clubId]?.playerIds.length ?? 0) < 15).map((r) => `${r.clubId}:${g.clubs[r.clubId]?.playerIds.length ?? 'fehlt'}`);

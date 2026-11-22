@@ -406,7 +406,10 @@ for (let s = 0; s < seasons; s++) {
   if (process.env.HALL) hallTrack(g);
   const promSt = promSeasonEnd(g), promSeason = g.season;
   const tS = performance.now();
+  const relegFrom = g.managedClubId; // Abstieg aus der untersten Liga: der Autopilot übernimmt einen anderen Verein der Liga (game/relegationGame.ts)
   startNextSeason(g);
+  if (g.managedClubId !== relegFrom) console.log(`   ABSTIEG ${promSeason}: ${g.simClubs[relegFrom]?.name ?? relegFrom} steigt aus der untersten Liga ab (jetzt Unterbau) – der Autopilot führt ab ${g.season} ${g.clubs[g.managedClubId]?.name}`);
+  if (g.over) { console.log(`   SPIELENDE ${promSeason}: Abstieg aus der untersten Liga ohne Nachfolgeverein – Simulation endet.`); break; }
   { const sp = g.season === '1991/92' ? [] : structureProblems(g); if (sp.length) { structErrors += sp.length; console.log(`   STRUKTUR ${g.season} FEHLER: ${sp.slice(0, 8).join('; ')}`); } else if (seasonStartYear(g.season) >= 1994) console.log(`   STRUKTUR ${g.season} ok: ${structureLine(g)}`); }
   if (process.env.SPEED) speedSeason(g, promSeason, performance.now() - tS);
   if (process.env.HONOURS) honoursTrack(g);
