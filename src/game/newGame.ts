@@ -4,6 +4,7 @@ import { NAT_VERSION, syncNationalities } from './nationSync';
 import { cupField } from '../engine/worldReserves';
 import { bindMarketing } from './marketingGame';
 import { recordSeasonBriefing } from './seasonBriefing';
+import { relegationStartNotice } from './relegationGame';
 import { startPrivateLife } from './private/privateStart';
 import { recordBudgetPlan } from './budgetPlan';
 import { migratePositionSkills } from './positionsGame';
@@ -330,6 +331,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   initSponsorship(g0);
   // Saison-Briefing „So anders ist der Fußball 1975/76“ (game/seasonBriefing.ts).
   cateringSeasonStart(g0); // eigener Verein startet im Catering-Eigenbetrieb, Verträge wählbar bis 31.7.
+  relegationStartNotice(g0); // unterste Liga: Abstieg bedeutet das Ende der Amtszeit (game/relegationGame.ts)
   recordSeasonBriefing(g0, true);
   recordBudgetPlan(g0, { pending: true }); // Saisonbudget (game/budgetPlan.ts)
   migratePositionSkills(g0); // Positionsvertrautheit aller Spieler (game/positionsGame.ts)

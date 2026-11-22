@@ -2,6 +2,7 @@
 // Vereinsumfeld im Spielablauf (monatlich + Saisonwechsel). Siehe engine/environment.ts.
 // =============================================================================
 import { playerLevel } from './state';
+import { relegationWarning } from './relegationGame';
 import { boardSeatSwing } from './corporateGame';
 import { fanStandMood } from '../engine/fanStands';
 import { legendStandMood } from './standNames';
@@ -134,11 +135,13 @@ export function setSeasonGoal(g: Game, date: string): void {
   const rank = ranked.findIndex((c) => c.id === club.id) + 1;
   const tier = playerLevel(g);
   club.boardExpectation = seasonExpectation(Math.max(1, rank - expectationShift(club)), ranked.length, tier);
+  const warn = relegationWarning(g); // unterste Liga: Abstieg = Ende der Amtszeit (game/relegationGame.ts)
   pushMessage(g.messages, makeMessage({
     date, category: 'board', from: 'Vorstand',
     subject: `Saisonziel: ${club.boardExpectation}`,
     shortText: `Unser Kader ist der ${rank}.-stärkste der Liga.`,
     bodyText: `Der Vorstand hat die Saisonziele festgelegt: ${club.boardExpectation}. Grundlage ist die Stärke unseres Kaders (Rang ${rank} von ${ranked.length}). `
-      + `Das Vertrauen des Vorstands liegt bei ${club.boardConfidence ?? 60} von 100.`,
+      + `Das Vertrauen des Vorstands liegt bei ${club.boardConfidence ?? 60} von 100.`
+      + (warn ? `\n\n${warn}` : ''),
   }));
 }

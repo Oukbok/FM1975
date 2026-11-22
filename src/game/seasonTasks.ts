@@ -17,6 +17,7 @@ import { nlzDutyYear, nlzMissing } from '../engine/youthAcademy';
 import type { GameChange } from './briefingChanges';
 import type { BriefingSituation } from './seasonBriefing';
 import { Game } from './state';
+import { relegationWarning } from './relegationGame';
 import { ownBooking, campWindow } from './trainingCampGame';
 import { youthInvestOf } from './youthInvest';
 import { CalendarEngine } from '../engine/calendar';
@@ -139,6 +140,13 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
     add({ id: 'weak-group', level: 'tipp', icon: 'lineup', where: 'Transfers › Beobachtung',
       title: `Baustelle: ${GROUP_LABEL[weakest.gr]}`,
       text: `Deine Stammkräfte im ${GROUP_LABEL[weakest.gr] === 'Abwehr' ? 'Abwehrbereich' : GROUP_LABEL[weakest.gr]} fallen ab. Beobachte günstige Alternativen.` });
+  }
+
+  // --- Unterste Liga: Abstieg = Ende der Amtszeit (game/relegationGame.ts) -----
+  const warn = relegationWarning(g);
+  if (warn) {
+    add({ id: 'abstieg-amtszeit', level: 'wichtig', icon: 'stats', where: 'Statistiken › Liga',
+      title: 'Abstieg bedeutet das Ende deiner Amtszeit', text: warn });
   }
 
   // --- Saisonziel vs. Kaderstärke --------------------------------------------
