@@ -8,6 +8,7 @@
 // oder, mit `sort`/`onSort`, beim Aufrufer (Spielerpool: Seiten über die ganze Liste).
 // `compact` (Beobachtung, schmale Box): ohne Info, Gehalt und Empfehlungstext.
 // =============================================================================
+import Short from '../../ui/Short';
 import { useMemo, useState, type ReactNode } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
 import ClubCrest from '../../components/ClubCrest';
@@ -84,8 +85,9 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
   }, [rows, info, onlyScouted, sort, onSort]);
   const world = useMemo(() => poolRows(g).clubs, [g, g.calendar.currentDate]);
   const ms = useMultiSelect(shown.map((r) => r.id));
-  const th = (k: MarketSortKey, label: ReactNode, cls = '') => (
-    <th className={`mk-sort ${cls} ${sort?.k === k ? 'on' : ''}`} onClick={() => setSort(nextSort(sort, k))}>
+  // Spalten-Wichtigkeit (data-pri, ui/stableTables.ts): höchste Zahl fällt auf kleiner Fläche zuerst weg.
+  const th = (k: MarketSortKey, label: ReactNode, cls = '', pri?: number) => (
+    <th className={`mk-sort ${cls} ${sort?.k === k ? 'on' : ''}`} data-pri={pri} data-flex={k === 'name' ? '' : undefined} onClick={() => setSort(nextSort(sort, k))}>
       {label}{sort?.k === k ? <span className="mk-sort-dir">{sort.dir === -1 ? '▼' : '▲'}</span> : null}
     </th>
   );
@@ -108,18 +110,18 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
         <table className="dtable rl-players mk-table" {...ms.attr}>
           <thead><tr>
             <th className="mk-c-check" />
-            {!compact && <th className="mk-c-info">Info</th>}
+            {!compact && <th className="mk-c-info" data-pri={3}>Info</th>}
             {th('name', 'Spieler')}
-            <th>Nation</th>
+            <th data-pri={3}><Short s="Nat.">Nation</Short></th>
             <th>Verein</th>
-            <th>Position</th>
+            <th><Short s="Pos.">Position</Short></th>
             {th('age', 'Alter', 'num')}
             {th('ability', <>Stärke<InfoTip k="faehigkeitSterne" /></>, 'num')}
-            {th('potential', <>Potenzial<InfoTip k="potenzial" /></>)}
-            {th('value', <>Transferwert<InfoTip k="marktwert" /></>)}
-            {!compact && th('wage', wageHead())}
-            {th('rec', <>Empfehlung<InfoTip k="empfehlung" /></>)}
-            {th('know', 'Kenntnisse', 'ctr mk-c-know')}
+            {th('potential', <><Short s="Pot.">Potenzial</Short><InfoTip k="potenzial" /></>)}
+            {th('value', <><Short s="Wert">Transferwert</Short><InfoTip k="marktwert" /></>)}
+            {!compact && th('wage', wageHead(), '', 2)}
+            {th('rec', <><Short s="Empf.">Empfehlung</Short><InfoTip k="empfehlung" /></>)}
+            {th('know', <Short s="Kenn.">Kenntnisse</Short>, 'ctr mk-c-know', 4)}
             {action && <th />}
           </tr></thead>
           <tbody>

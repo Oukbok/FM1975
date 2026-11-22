@@ -10,6 +10,7 @@ import type { Player, Position } from '../../types';
 import { positionSuitability, suitabilityColor } from '../../engine/positions';
 import { PlayerFitness, PlayerFreshness, PlayerMorale, MORALE_100, playerMorale100, fitness100 } from '../status';
 import { PosTag } from '../PosBadge';
+import Short from '../../ui/Short';
 
 export interface ListRow { p: Player; pos: Position | null; slotId?: string; benchIndex?: number }
 
@@ -39,17 +40,20 @@ function sortVal(r: ListRow, k: SortKey, idx: number): number | string {
 }
 
 // Kopfzeile ohne Info-Symbole (Wunsch Pascal: sie überschnitten sich mit den Spaltennamen); Erklärung per title.
-const COLS: [SortKey, string, string][] = [
+// Kurzform + Wichtigkeit je Spalte für kleine Flächen (ui/stableTables.ts, Regel docs/research/table-rules.md).
+const COLS: [SortKey, string, string, { short?: string; pri?: number }?][] = [
   ['pos', 'Pos', 'Position in der Aufstellung bzw. Stammposition'],
-  ['nr', 'Nr', 'Rückennummer'],
+  ['nr', 'Nr', 'Rückennummer', { pri: 2 }],
   ['name', 'Name', 'Name'],
   ['eig', 'Eig', 'Eignung auf der Position (Reserve: Stammposition)'],
-  ['fr', 'Frische', 'Frische (Zustand)'],
-  ['fit', 'Fitness', 'Fitness (Grundkondition)'],
-  ['moral', 'Moral', 'Moral'],
-  ['note', 'Ø Note', 'Durchschnittsnote der Saison'],
-  ['st', 'Stärke', 'Gesamtstärke'],
+  ['fr', 'Frische', 'Frische (Zustand)', { short: 'Fr.' }],
+  ['fit', 'Fitness', 'Fitness (Grundkondition)', { short: 'Fit.' }],
+  ['moral', 'Moral', 'Moral', { short: 'Mor.' }],
+  ['note', 'Ø Note', 'Durchschnittsnote der Saison', { short: 'Note', pri: 3 }],
+  ['st', 'Stärke', 'Gesamtstärke', { short: 'St.' }],
 ];
+/** Mindestbreite der Namensspalte (CSS-px): darunter schaltet die Tabelle auf Kurzköpfe bzw. lässt Spalten weg. */
+const NAME_MIN = 170;
 
 /** Abschnitt eines Ablageziels: Startelf (Slots/xi), Bank oder Reserve. */
 const drop2kind = (k: string | null) => !k ? null : k.startsWith('slot:') || k === 'xi' ? 'xi' : k.startsWith('bench:') ? 'bench' : k === 'reserve' ? 'reserve' : null;
@@ -127,10 +131,12 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
 
   return (
     <div className="lu-list">
-      <table className="lu-table">
+      <table className="lu-table fit-cols">
         <thead>
-          <tr>{COLS.map(([k, label, title]) => (
-            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} onClick={() => setSort(k)}>{label}</th>
+          <tr>{COLS.map(([k, label, title, o]) => (
+            <th key={k} title={title} className={`${sort === k ? 'on' : ''} lu-h-${k}`} data-pri={o?.pri} data-min={k === 'name' ? NAME_MIN : undefined} onClick={() => setSort(k)}>
+              {o?.short ? <Short s={o.short} title={title}>{label}</Short> : label}
+            </th>
           ))}</tr>
         </thead>
         {section('Startelf', `${xi.length}/11`, 'xi', xi, undefined, xiBody())}

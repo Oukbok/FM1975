@@ -4,6 +4,7 @@
 // Rechnung: engine/dressingRoom.ts · Spielablauf: game/dressingRoomGame.ts ·
 // Vorfälle: game/dressingRoomEvents.ts · Teile: views/squad/dressingRoom/
 // =============================================================================
+import Short from '../../ui/Short';
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { useState } from 'react';
 import { MORALE_LABEL, moraleStepOf, TIER_LABEL } from '../../engine/dressingRoom';
@@ -70,7 +71,7 @@ export function DressingRoomView({ g, onChange }: { g: Game; onChange: () => voi
         <button className={`dchip ${sort === 'moral' ? 'on' : ''}`} onClick={() => setSort('moral')}>Moral</button>
       </span>}>
         <table className="dtable kb-table rl-sm">
-          <thead><tr><th>Pos</th><th>Spieler</th><th>Rolle</th><th className="num">Einfluss</th><th className="num">Moral</th></tr></thead>
+          <thead><tr><th>Pos</th><th data-flex>Spieler</th><th>Rolle</th><th className="num"><Short s="Einfl.">Einfluss</Short></th><th className="num">Moral</th></tr></thead>
           <tbody>
             {list.map((o) => {
               const p = g.players[o.id];

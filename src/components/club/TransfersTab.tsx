@@ -28,8 +28,8 @@ function TransferList({ g, rows, dir, empty }: { g: Game; rows: ClubTransferRow[
   return (
     <table className="dtable rl-sm ctr-table">
       <thead><tr>
-        <th>Spieler</th><th className="ctr">Pos.</th><th className="num">Stärke</th><th className="num">Alter</th>
-        <th>{dir === 'von' ? 'Von' : 'Zu'}</th><th className="num">Datum</th><th className="num">Ablöse</th>
+        <th data-flex>Spieler</th><th className="ctr">Pos.</th><th className="num">Stärke</th><th className="num" data-pri={3}>Alter</th>
+        <th>{dir === 'von' ? 'Von' : 'Zu'}</th><th className="num" data-pri={2}>Datum</th><th className="num">Ablöse</th>
       </tr></thead>
       <tbody>
         {sorted.map((r) => {

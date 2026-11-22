@@ -1,0 +1,83 @@
+/* =============================================================================
+   Tabellen einpassen (Regel: docs/research/table-rules.md, Helfer ui/stableTables.ts)
+   -----------------------------------------------------------------------------
+   Keine Tabelle scrollt waagerecht. Passt eine Tabelle nicht in ihre Box, setzt der Helfer
+   an der Tabelle `data-fit` (enge Zellen, Kurzform der Spaltenköpfe) und blendet danach
+   Spalten nach `data-pri` am Spaltenkopf aus (`data-drop="5 9"` = Spalten 5 und 9).
+   Auf 1920×1080 passen die Tabellen – dort ändert sich nichts.
+   ============================================================================= */
+
+/* ---- Kurzform der Spaltenköpfe (ui/Short.tsx) ---------------------------------- */
+.th-short { display: none; }
+[data-fit] > thead .th-full { display: none; }
+[data-fit] > thead .th-short { display: inline; }
+
+/* ---- Stufe a) enge Zellen ------------------------------------------------------- */
+.dtable[data-fit] thead th,
+.dtable[data-fit] td { padding-left: 4px; padding-right: 4px; }
+.dtable[data-fit] thead th { letter-spacing: 0.2px; }
+.dtable[data-fit] td:first-child, .dtable[data-fit] th:first-child { padding-left: 10px; }
+.dtable[data-fit] td:last-child, .dtable[data-fit] th:last-child { padding-right: 10px; }
+/* Zahlen und Köpfe bleiben einzeilig, Namen enden mit „…“ */
+.dtable[data-fit] td.num, .dtable[data-fit] th { white-space: nowrap; }
+.dtable[data-fit] td.rl-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- Stufe b) Spalten ausblenden ------------------------------------------------ */
+table[data-drop~="1"] > * > tr > :nth-child(1):not([colspan]) { display: none; }
+table[data-drop~="2"] > * > tr > :nth-child(2):not([colspan]) { display: none; }
+table[data-drop~="3"] > * > tr > :nth-child(3):not([colspan]) { display: none; }
+table[data-drop~="4"] > * > tr > :nth-child(4):not([colspan]) { display: none; }
+table[data-drop~="5"] > * > tr > :nth-child(5):not([colspan]) { display: none; }
+table[data-drop~="6"] > * > tr > :nth-child(6):not([colspan]) { display: none; }
+table[data-drop~="7"] > * > tr > :nth-child(7):not([colspan]) { display: none; }
+table[data-drop~="8"] > * > tr > :nth-child(8):not([colspan]) { display: none; }
+table[data-drop~="9"] > * > tr > :nth-child(9):not([colspan]) { display: none; }
+table[data-drop~="10"] > * > tr > :nth-child(10):not([colspan]) { display: none; }
+table[data-drop~="11"] > * > tr > :nth-child(11):not([colspan]) { display: none; }
+table[data-drop~="12"] > * > tr > :nth-child(12):not([colspan]) { display: none; }
+table[data-drop~="13"] > * > tr > :nth-child(13):not([colspan]) { display: none; }
+table[data-drop~="14"] > * > tr > :nth-child(14):not([colspan]) { display: none; }
+table[data-drop~="15"] > * > tr > :nth-child(15):not([colspan]) { display: none; }
+table[data-drop~="16"] > * > tr > :nth-child(16):not([colspan]) { display: none; }
+table[data-drop~="17"] > * > tr > :nth-child(17):not([colspan]) { display: none; }
+table[data-drop~="18"] > * > tr > :nth-child(18):not([colspan]) { display: none; }
+table[data-drop~="19"] > * > tr > :nth-child(19):not([colspan]) { display: none; }
+table[data-drop~="20"] > * > tr > :nth-child(20):not([colspan]) { display: none; }
+table[data-drop~="21"] > * > tr > :nth-child(21):not([colspan]) { display: none; }
+table[data-drop~="22"] > * > tr > :nth-child(22):not([colspan]) { display: none; }
+table[data-drop~="23"] > * > tr > :nth-child(23):not([colspan]) { display: none; }
+table[data-drop~="24"] > * > tr > :nth-child(24):not([colspan]) { display: none; }
+
+/* ---- Aufstellung › Kaderliste (feste Spalten, .lu-table.fit-cols): Kurzköpfe brauchen
+   weniger Platz, der Name bekommt ihn (Mindestbreite data-min am Spaltenkopf) ---------- */
+.lu-table[data-fit] th.lu-h-fr, .lu-table[data-fit] th.lu-h-fit, .lu-table[data-fit] th.lu-h-moral { width: 50px; }
+.lu-table[data-fit] th.lu-h-note { width: 56px; }
+.lu-table[data-fit] th.lu-h-st { width: 54px; padding-right: 12px; }
+.lu-table[data-fit] th.lu-h-pos { width: 54px; padding-left: 10px; }
+.lu-table[data-fit] .lu-row td.lu-c-pos { padding-left: 10px; }
+.lu-table[data-fit] thead th { letter-spacing: 0; }
+
+/* ---- Vereinsprofil › Jugend: feste Spaltenbreiten gelten nur, solange die Tabelle passt */
+.cmx-youth[data-fit]:not([data-fixed]) th { width: auto; }
+
+/* ---- Mitarbeiter-Markt (.sf-table.fit-cols) -------------------------------------- */
+.sf-table[data-fit] thead th, .sf-table[data-fit] td { padding-left: 5px; padding-right: 5px; }
+.sf-table[data-fit] thead th:first-child, .sf-table[data-fit] td:first-child { padding-left: 12px; }
+.sf-table[data-fit] thead th { letter-spacing: 0; }
+
+/* ---- Kurzköpfe in Listen ohne <table> (Kopfzeile mit .fit-short) bei angehobener Schrift */
+[data-fs] .fit-short .th-full { display: none; }
+[data-fs] .fit-short .th-short { display: inline; }
+
+/* ---- Kartenverkauf › Eintrittspreise (.tk-ptab.fit-cols): Untertitel der Tribüne bricht um */
+.tk-ptab[data-fit] th, .tk-ptab[data-fit] td { padding-left: 5px; padding-right: 5px; }
+.tk-ptab[data-fit] th:first-child, .tk-ptab[data-fit] td:first-child { padding-left: 12px; }
+.tk-ptab[data-fit] th:last-child, .tk-ptab[data-fit] td:last-child { padding-right: 12px; }
+.tk-ptab[data-fit] td:first-child .tk-ssub { white-space: normal; }
+.tk-ptab[data-fit] th { letter-spacing: 0; }
+
+/* ---- Länderprofil › Nationalkader (Liste .cnx-prow): Spalten breit genug für die Köpfe */
+[data-fs] .cnx-prow.caps .cnx-num { width: 54px; }
+[data-fs] .cnx-prow .cnx-age { width: 58px; }
+[data-fs] .cnx-prow.caps { gap: 6px; }
+[data-fs] .cnx-prow.head { letter-spacing: 0; }

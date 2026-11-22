@@ -19,6 +19,7 @@ import Icon from '../../components/Icon';
 import { PlayerTalkModal } from './talk/PlayerTalkModal';
 import PosBadge from '../../components/PosBadge';
 import Select from '../../ui/Select';
+import Short from '../../ui/Short';
 import { setShirtNumber } from '../../game/squads';
 
 // =============================================================================
@@ -59,8 +60,8 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const squad = all.filter((p) => grp === 'all' || groupOf(p) === grp).sort(cmp);
   const p = sel ? g.players[sel] : null;
 
-  const Th = ({ k, children, cls }: { k: SquadSort; children: React.ReactNode; cls?: string }) => (
-    <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} onClick={() => setSortBy(k)}>{children}</th>
+  const Th = ({ k, children, cls, pri }: { k: SquadSort; children: React.ReactNode; cls?: string; pri?: number }) => (
+    <th className={`sortable ${cls ?? ''} ${sortBy === k ? 'sorted' : ''}`} data-pri={pri} onClick={() => setSortBy(k)}>{children}</th>
   );
 
   const unavailable = all.filter((x) => x.availability === 'injured' || x.suspensionMatches > 0);
@@ -80,10 +81,10 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
         </span>}>
         <table className="dtable rl-players">
           <thead><tr>
-            <th className="rl-rank sq-shirt-h">#</th><th>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
-            <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial<InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
-            <Th k="fri" cls="ctr">Frische<InfoTip k="frische" /></Th><Th k="fit" cls="ctr">Fitness<InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
-            <Th k="apps" cls="num">Sp.</Th><Th k="goals" cls="num">Tore</Th><th>Status</th><th className="ctr" aria-label="Gespräch" />
+            <th className="rl-rank sq-shirt-h">#</th><th data-flex>Name</th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+            <Th k="ovr" cls="num">Stärke</Th><Th k="pot"><Short s="Pot.">Potenzial</Short><InfoTip k="potenzial" /></Th><Th k="form" cls="ctr">Form</Th>
+            <Th k="fri" cls="ctr"><Short s="Fr.">Frische</Short><InfoTip k="frische" /></Th><Th k="fit" cls="ctr"><Short s="Fit.">Fitness</Short><InfoTip k="fitness" /></Th><Th k="mor" cls="ctr">Moral</Th>
+            <Th k="apps" cls="num" pri={3}>Sp.</Th><Th k="goals" cls="num" pri={3}>Tore</Th><th>Status</th><th className="ctr" aria-label="Gespräch" />
           </tr></thead>
           <tbody>
             {squad.map((pl) => {
