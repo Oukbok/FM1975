@@ -184,6 +184,8 @@ export interface Game {
   shirtsV?: 1;
   /** 1 = Ethnie alter Spieler einmalig an ihren Nachnamen angepasst (game/faceNameMigration.ts); fehlt = noch nicht. Neue Spiele: 1. */
   faceNameV?: number;
+  /** Nationalitäten zum Spieldatum nachgezogen (game/nationSync.ts): 1 = Einheimische der Auslandsvereine einmalig zugeordnet. */
+  natV?: number;
   /** Einzel-Scouting und Berichte (game/scoutingGame.ts). */
   scouting?: import('./scoutingGame').ScoutingState;
   /** Jugendcamps im Ausland + KI-Zähler (game/youthCamps.ts); fehlt = keine. */

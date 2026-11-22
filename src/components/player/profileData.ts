@@ -15,7 +15,7 @@ const NATION_DE: Record<string, string> = {
   NED: 'Niederlande', BEL: 'Belgien', LUX: 'Luxemburg', FRA: 'Frankreich', ESP: 'Spanien', POR: 'Portugal', ITA: 'Italien',
   DEN: 'Dänemark', SWE: 'Schweden', NOR: 'Norwegen', FIN: 'Finnland', ISL: 'Island',
   YUG: 'Jugoslawien', SRB: 'Serbien', CRO: 'Kroatien', BIH: 'Bosnien-Herzegowina', SVN: 'Slowenien', MKD: 'Nordmazedonien',
-  POL: 'Polen', TCH: 'Tschechoslowakei', CZE: 'Tschechien', SVK: 'Slowakei', HUN: 'Ungarn', ROU: 'Rumänien', BUL: 'Bulgarien',
+  ALB: 'Albanien', POL: 'Polen', TCH: 'Tschechoslowakei', CZE: 'Tschechien', SVK: 'Slowakei', HUN: 'Ungarn', ROU: 'Rumänien', BUL: 'Bulgarien',
   GRE: 'Griechenland', TUR: 'Türkei', RUS: 'Russland', URS: 'Sowjetunion', UKR: 'Ukraine',
   BRA: 'Brasilien', ARG: 'Argentinien', URU: 'Uruguay', CHI: 'Chile', COL: 'Kolumbien', PAR: 'Paraguay', PER: 'Peru', MEX: 'Mexiko',
   GHA: 'Ghana', NGA: 'Nigeria', CMR: 'Kamerun', CIV: 'Elfenbeinküste', SEN: 'Senegal', MAR: 'Marokko', TUN: 'Tunesien', ALG: 'Algerien',

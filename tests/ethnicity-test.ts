@@ -4,6 +4,7 @@
 // Namen und ist idempotent, Ethnie aus dem Datensatz (Spielerbilder & Fotos).
 //   npm run test:ethnicity
 import { readFileSync } from 'node:fs';
+import { natAt } from '../src/data/nationEras';
 import { decompressFromUTF16 } from 'lz-string';
 import type { Game } from '../src/game/state';
 import { builtinDataset } from '../src/data/dataset/builtin';
@@ -36,7 +37,8 @@ for (const cc of COUNTRIES) {
     for (let i = 0; i < N; i++) {
       const id = `eth_${cc}_${y}_${i}`;
       const p = createPlayer({ id, clubId: 'x', pos: 'ZM', age: 20, strength: 60, year: y, date: `${y}-07-01`, rng: mulberry32(hashStr(id)), origin: o });
-      ok(p.nationality === o.nationality, `${id}: Nationalität ${p.nationality} statt ${o.nationality}`);
+      // Aufgelöste Staaten nur, solange sie bestehen (data/nationEras.ts): rus 1975 → URS, cze 2025 → CZE/SVK.
+      ok(p.nationality === natAt(o.nationality, y, id), `${id}: Nationalität ${p.nationality} statt ${natAt(o.nationality, y, id)}`);
       if (p.face !== o.face) div++;
       if (!isLocalFace(o, p.face)) {
         dev++;

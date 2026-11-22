@@ -17,6 +17,8 @@
 // `bindGameIds` (newGame, Laden, jeder processDay, Saisonwechsel).
 // =============================================================================
 import type { Game } from './state';
+import { setHomeNationKey } from '../data/origins';
+import { clearNationSync } from './nationSync';
 import { bindIdCounter, resetIdCounter } from '../engine/idSeq';
 import { resetTransferDate } from '../engine/transfers';
 import { resetDevelopmentState } from '../engine/development';
@@ -70,7 +72,7 @@ export function resetModuleState(): void {
   resetClubHonoursState();     // gebundener Spielstand, Spielbeginn
   resetLocalClubs();           // Stadt der Ortsvereine (Jugend)
   setFormationYear(1975);
-  setHomeLabel('Deutschland'); setHomeOrigin(null);
+  setHomeLabel('Deutschland'); setHomeOrigin(null); setHomeNationKey(null); clearNationSync();
   setTransferSink(null);       // Transferprotokoll (hing am vorigen Spielstand)
   clearPreparedMatches();      // vorbereitete eigene Spiele (Schlüssel = Vereine + Datum)
   // --- reine Zwischenspeicher (harmlos, aber Schlüssel kennen den Spielstand nicht) ---

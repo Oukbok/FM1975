@@ -16,6 +16,7 @@
 // `pending` öffnet die Gala (screens/gala/GalaShow.tsx).
 // =============================================================================
 import { ORIGINS } from '../data/origins';
+import { landNation, natAt } from '../data/nationEras';
 import { seasonLabel } from '../engine/calendar';
 import { COUNTRY_ORIGIN, hashKey, phantomRoster } from '../engine/euroLight';
 import { type GBCandidate, type GBTitle, gbEra, gbReason, rankGoldenBall } from '../engine/goldenBall';
@@ -165,7 +166,8 @@ export function goldenBallCandidates(g: Game, year: number): GBCandidate[] {
     const c = euro[id];
     if (!c || g.clubs[id] || g.simClubs?.[id]) continue;
     const roster = phantomRoster(dummy, id, c.country, c.strength, year).sort((a, b) => b.q - a.q).slice(0, 3);
-    const nat = ORIGINS[COUNTRY_ORIGIN[c.country] ?? 'eng']?.nationality ?? 'ENG';
+    const natBase = ORIGINS[COUNTRY_ORIGIN[c.country] ?? 'eng']?.nationality ?? 'ENG';
+    const nat = landNation(c.country, year, natBase) ?? natAt(natBase, year);
     for (const pl of roster) {
       const h = hashKey(pl.id + ':' + year);
       const noise = ((h % 1000) / 1000 - 0.5);

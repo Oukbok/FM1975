@@ -13,11 +13,12 @@
 // Regeln/Quellen: data/registrationRules.ts. Seite: views/squad/RegistrationView.tsx.
 // =============================================================================
 import { bindCupTied } from './reserveCup';
+import { landNation } from '../data/nationEras';
 import type { Game } from './state';
 import { homeCountryOf } from './state';
 import type { Club, Player } from '../types';
 import { domesticRulesFor, euroRulesFor } from '../data/registrationRules';
-import { countryOrigin } from '../data/world/countries';
+import { COUNTRY_BY_CC, countryOrigin } from '../data/world/countries';
 import { ORIGINS } from '../data/origins';
 import { isHomegrown } from './clubHonours';
 import { inEuroCup } from './euroFixture';
@@ -47,7 +48,9 @@ const squadOf = (g: Game, c: Club) => c.playerIds.map((id) => g.players[id]).fil
 export function homeNat(g: Game): string {
   const cc = homeCountryOf(g);
   if (cc === 'ger') return 'GER';
-  return ORIGINS[countryOrigin(cc)]?.nationality ?? 'GER';
+  // Aufgelöste Staaten/Nachfolger: Kürzel zum Spieldatum (Tschechien → CZE, Tschechoslowakei bis 1992 → TCH).
+  const base = ORIGINS[countryOrigin(cc)]?.nationality ?? 'GER';
+  return landNation(COUNTRY_BY_CC[cc]?.key, parseInt(g.calendar.currentDate.slice(0, 4), 10), base) ?? base;
 }
 
 /** Spielt der eigene Verein in dieser Saison einen Europapokal? */

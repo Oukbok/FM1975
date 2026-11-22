@@ -21,6 +21,7 @@
 //   schmaler und genauer. Sortierung und Filter nutzen nur die Schätzung.
 // =============================================================================
 import { playerLevel } from './state';
+import { landNation } from '../data/nationEras';
 import { homeNationality } from '../data/origins';
 import { potentialToStars, type Player, type Position } from '../types';
 import { scoutRange } from '../engine/scouting';
@@ -138,7 +139,7 @@ export interface KnowCtx { g: Game; year: number; scout: number; home: string; l
 export function knowCtx(g: Game): KnowCtx {
   const fx = staffEffectsOf(g);
   return {
-    g, year: Number(g.calendar.currentDate.slice(0, 4)), scout: fx.scouting ?? 0, home: homeNationality(),
+    g, year: Number(g.calendar.currentDate.slice(0, 4)), scout: fx.scouting ?? 0, home: landNation(homeCountryKey(g), Number(g.calendar.currentDate.slice(0, 4)), homeNationality()) ?? homeNationality(),
     leagueIds: new Set((g.table?.rows ?? []).map((r) => r.clubId)), meet: new Map(),
     talks: new Set((g.transferTalks ?? []).filter((t) => t.phase === 'club' || t.phase === 'player' || t.phase === 'agreed').map((t) => t.playerId)),
     soft: softProfile(g), homeKey: homeCountryKey(g), areas: areaMap(g),

@@ -8,6 +8,7 @@
 // game/coachCarousel.ts. Alle Geldwerte sind Preisschilder in 1975-Basis.
 // =============================================================================
 import { Club, ClubCoach, CoachPhilosophy, CoachStyle, LeagueTableRow, Player, Position, Tactics, TacticStyle } from '../types';
+import { originNat } from '../data/origins';
 import { decadeOf, FORMATIONS, getFormation, liberoOut } from '../data/formations';
 import { makeName, ORIGINS, pickOrigin } from '../data/origins';
 import { assignToFormation, buildAutoTactics, suitabilityMemo } from './lineupAI';
@@ -80,9 +81,10 @@ export function makeCoach(year: number, clubRep: number, date: string, rng: () =
     ? { jugend: 20, einkauf: 45, ausgewogen: 35 }
     : { jugend: 35, einkauf: 25, ausgewogen: 40 }, rng());
   const prefs = formationsFor(style, year);
+  const id = `co_${year}_${Math.floor(rng() * 1e9)}`;
   return {
-    id: `co_${year}_${Math.floor(rng() * 1e9)}`,
-    name: `${n.firstName} ${n.lastName}`, age, nationality: origin.nationality,
+    id,
+    name: `${n.firstName} ${n.lastName}`, age, nationality: originNat(origin, year, id),
     style, philosophy,
     reputation: Math.round(clamp(clubRep - 10 + rng() * 16 + (age - 45) * 0.25, 15, 95)),
     since: date,

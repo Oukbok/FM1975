@@ -125,8 +125,8 @@ const LANG: Record<string, string> = {
   ESP: 'Spanisch', ARG: 'Spanisch', BRA: 'Portugiesisch', POR: 'Portugiesisch',
   FRA: 'Französisch', CMR: 'Französisch', MAR: 'Französisch', NED: 'Niederländisch', BEL: 'Niederländisch',
   DEN: 'Skandinavisch', SWE: 'Skandinavisch', NOR: 'Skandinavisch',
-  YUG: 'Serbokroatisch', SRB: 'Serbokroatisch', CRO: 'Serbokroatisch',
-  POL: 'Polnisch', TCH: 'Tschechisch', HUN: 'Ungarisch', ITA: 'Italienisch', GRE: 'Griechisch',
+  YUG: 'Serbokroatisch', SRB: 'Serbokroatisch', CRO: 'Serbokroatisch', BIH: 'Serbokroatisch', SVN: 'Slowenisch', MKD: 'Mazedonisch',
+  POL: 'Polnisch', TCH: 'Tschechisch', CZE: 'Tschechisch', SVK: 'Slowakisch', URS: 'Russisch', UKR: 'Ukrainisch', GDR: 'Deutsch', HUN: 'Ungarisch', ITA: 'Italienisch', GRE: 'Griechisch',
   TUR: 'Türkisch', RUS: 'Russisch', JPN: 'Japanisch', KOR: 'Koreanisch',
 };
 /** Sprachen mit kurzem Weg zum Deutschen. */

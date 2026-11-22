@@ -356,7 +356,7 @@ function buyExternal(ctx: RoundCtx, club: Club, need: GroupNeed, want: { min: nu
   bookTransfer(club, fee, true, p.fullName, today, club.isPlayerControlled);
   recordTransfer(p, from, club.name, Math.round(fee * economyScale(year)), today);
   reportDeal(ctx, lower ? `${club.name} holt ${p.fullName} von ${from} (${fmtPrice(fee)})`
-    : `${club.name} holt ${p.fullName} (${origin.nationality}) aus dem Ausland (${fmtPrice(fee)})`, fee, p.fullName, club, from, need, p.id);
+    : `${club.name} holt ${p.fullName} (${p.nationality}) aus dem Ausland (${fmtPrice(fee)})`, fee, p.fullName, club, from, need, p.id);
   return true;
 }
 

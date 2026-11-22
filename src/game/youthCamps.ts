@@ -21,6 +21,7 @@
 //            Zähler in `ai`. Balance: YOUTH=1 node scripts/sim.mjs 45 vorher/nachher.
 // =============================================================================
 import { CalendarEngine } from '../engine/calendar';
+import { originNat } from '../data/origins';
 import { economyScale, yearOf } from '../engine/economy';
 import { book } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
@@ -130,7 +131,7 @@ function makeCampPlayer(g: Game, clubId: string, site: CampSite, seed: string, l
   const p = generateYouthPlayer(clubId, seed, today, academyLevelOf(club), age, youthOpts(site, lv));
   const o = ORIGINS[site.id];
   const n = nameAndFace(o, mulberry32(hashSeed(`${p.id}|camp`)), yearOf(today) - age, p.id);
-  Object.assign(p, { origin: o.id, nationality: o.nationality, face: n.face, firstName: n.firstName, lastName: n.lastName, fullName: `${n.firstName} ${n.lastName}` });
+  Object.assign(p, { origin: o.id, nationality: originNat(o, yearOf(today), p.id), face: n.face, firstName: n.firstName, lastName: n.lastName, fullName: `${n.firstName} ${n.lastName}` });
   return p;
 }
 

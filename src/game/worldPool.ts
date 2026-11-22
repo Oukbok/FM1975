@@ -23,7 +23,8 @@ import { isForeignId, softClubStrength } from '../engine/world';
 import { POT_CAP, youngTop } from '../engine/talent';
 import { createPlayer } from '../engine/playerFactory';
 import { marketValueFor } from '../engine/clubEconomy';
-import { ORIGINS, pickOrigin, type Origin } from '../data/origins';
+import { ORIGINS, originOfNat, pickOrigin, type Origin } from '../data/origins';
+import { isEraNation, landNation, natAt } from '../data/nationEras';
 import { nameAndFace } from '../data/ethnicity';
 import { COUNTRY_BY_KEY } from '../data/world/countries';
 import type { Player, Position } from '../types';
@@ -118,9 +119,12 @@ export function countryName(key: string): string {
   return key === 'Deutschland' ? 'Deutschland' : COUNTRY_BY_KEY[key]?.name ?? key;
 }
 
+/** Herkunft der Einheimischen eines Landes der Hintergrund-Welt. */
+export const homeOriginOf = (country: string): Origin => ORIGINS[COUNTRY_ORIGIN[country] ?? COUNTRY_BY_KEY[country]?.origin ?? 'eng'] ?? ORIGINS.eng;
+
 function originFor(club: WorldClubInfo, year: number, r: () => number): Origin {
   if (club.country === 'Deutschland') return pickOrigin(year, r, false);
-  const home = ORIGINS[COUNTRY_ORIGIN[club.country] ?? COUNTRY_BY_KEY[club.country]?.origin ?? 'eng'] ?? ORIGINS.eng;
+  const home = homeOriginOf(club.country);
   if (EAST.has(club.country) && year < 1990) return home;
   // Ausländeranteil: 1975 kaum, heute in starken Ligen fast die Hälfte.
   const t = clamp((year - 1975) / 50, 0, 1);
@@ -150,7 +154,10 @@ function makeWP(g: Game, pool: WorldPool, club: WorldClubInfo, pos: Position, ov
   const pot = Math.round(clamp(s + headroom(age, r), s, POT_CAP));
   const foot = r() < 0.72 ? 0 : r() < 0.85 ? 1 : 2;
   const height = pos === 'TW' ? 182 + Math.floor(r() * 14) : 168 + Math.floor(r() * 24);
-  return [id, club.id, firstName, lastName, o.nationality, face, born, pos, s, pot, foot, height, youth ? 1 : 0];
+  const natYear = Math.max(year, Number(g.calendar.currentDate.slice(0, 4))); // Kalenderjahr (Rückrunde: Saisonjahr + 1)
+  // Aufgelöste Staaten nur, solange sie bestehen; Einheimische eines Nachfolgestaates tragen dessen Kürzel (data/nationEras.ts).
+  const nat = !isEraNation(o.nationality) ? o.nationality : (o === homeOriginOf(club.country) ? landNation(club.country, natYear, o.nationality) : null) ?? natAt(o.nationality, natYear, id);
+  return [id, club.id, firstName, lastName, nat, face, born, pos, s, pot, foot, height, youth ? 1 : 0];
 }
 
 function squadFor(g: Game, pool: WorldPool, club: WorldClubInfo, year: number): WP[] {
@@ -376,7 +383,7 @@ export function buildWorldPlayer(g: Game, w: WP): Player {
   const id = w[W.id];
   const date = g.calendar.currentDate;
   const year = Number(date.slice(0, 4));
-  const o = Object.values(ORIGINS).find((x) => x.nationality === w[W.nat]) ?? ORIGINS.eng;
+  const o = originOfNat(w[W.nat]) ?? ORIGINS.eng;
   const age = startYearOf(g) - w[W.born];
   const p = createPlayer({ id, clubId: w[W.club], pos: w[W.pos], age, strength: w[W.ov], year, date, rng: rng(hash(id)), origin: o });
   p.firstName = w[W.first]; p.lastName = w[W.last]; p.fullName = `${w[W.first]} ${w[W.last]}`;

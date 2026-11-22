@@ -15,6 +15,7 @@ import type { Game } from './state';
 import type { Origin } from '../data/origins';
 import { LOCAL_FACES, originsWithLast } from '../data/ethnicity';
 import { WP_FIELD as W } from './worldPool';
+import { nationFamily } from '../data/nationEras';
 
 export const FACE_NAME_VERSION = 1;
 
@@ -23,7 +24,8 @@ export function faceForName(last: string, nationality: string | undefined, face:
   if (!last) return null;
   const all = originsWithLast(last);
   if (!all.length) return null;
-  const nat = all.filter((o) => o.nationality === nationality);
+  const fam = nationFamily(nationality ?? ''); // CZE/SVK → Namenslisten der Herkunft „cze“ (data/nationEras.ts)
+  const nat = all.filter((o) => fam.includes(o.nationality));
   const base: Origin[] = nat.length ? nat : all;
   const allowed = new Set<string>();
   const groups = new Set<string>();

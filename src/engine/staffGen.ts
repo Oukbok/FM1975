@@ -17,6 +17,7 @@
 // Spielablauf (Pool, KI-Einstellungen, Lernen, Ruhestand): game/staffWorld.ts.
 // =============================================================================
 import { makeName, pickOrigin } from '../data/origins';
+import { originNat } from '../data/origins';
 import { nextSeq } from './idSeq';
 import { STAFF_BY_ID, staffAvailable } from '../data/staff';
 import type { AttributeKey, ClubCoach, Player } from '../types';
@@ -189,7 +190,7 @@ export function makeOutsider(year: number, r: () => number, wantRole?: string, y
   const n = makeName(origin, r, year - age);
   const frac = young ? 0.56 + r() * 0.14 : 0.7 + r() * 0.2;
   const m = personBase(newId(year, r), ok ? wantRole! : null, `${n.firstName} ${n.lastName}`, age, year, pot, frac, r);
-  m.nat = origin.nationality;
+  m.nat = originNat(origin, year, m.id);
   m.bg = kind;
   return m;
 }

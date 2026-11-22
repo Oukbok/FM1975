@@ -8,6 +8,7 @@
 // Ablauf/Zeitpunkt/Verein: game/legendsGame.ts.
 // =============================================================================
 import type { AttributeKey, Player, Position } from '../types';
+import { natAt } from '../data/nationEras';
 import { clampStars, potentialToStars } from '../types';
 import { LEGEND_TYPES, COUNTRY_FACE, type LegendDef } from '../data/legends/types';
 import { ORIGINS, type Origin } from '../data/origins';
@@ -123,7 +124,7 @@ function applyIdentity(p: Player, def: LegendDef, date: string): void {
   const origin = originFor(def);
   p.firstName = def.firstName; p.lastName = def.lastName; p.fullName = `${def.firstName} ${def.lastName}`;
   p.dateOfBirth = def.birth; p.age = ageOn(def.birth, date);
-  p.nationality = def.country === 'DDR' ? 'GER' : def.country;
+  p.nationality = def.country === 'DDR' ? 'GER' : natAt(def.country, Number(date.slice(0, 4)), p.id); // Jugoslawien & Co. nur, solange sie bestehen
   p.origin = origin.id;
   p.face = def.face ?? COUNTRY_FACE[def.country] ?? origin.face;
   if (def.height) { p.height = def.height; p.weight = Math.round(def.height - 105 + (def.pos === 'TW' ? 4 : 0)); }

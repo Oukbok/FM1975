@@ -16,7 +16,7 @@ import { DDR_LIGA_ID, DDR_LIGA_SEEDS, DDR_OBERLIGA_ID, DDR_OBERLIGA_SEEDS } from
 import type { EuroCompId } from '../data/europe';
 import { COUNTRY_BY_CC, countryOrigin } from '../data/world/countries';
 import { realClub, realClubName } from '../data/world/index';
-import { setHomeOrigin } from '../data/origins';
+import { setHomeNationKey, setHomeOrigin } from '../data/origins';
 import { setHomeCurrency } from '../engine/economy';
 import { isForeignId } from '../engine/world';
 import type { SimClub } from '../engine/leagues';
@@ -63,6 +63,9 @@ export function applyHomeModules(g: { ddrHome?: true; homeCountry?: string; mana
     // Stadt des eigenen Vereins: Nachfolgestaat nach der Auflösung von ČSSR/UdSSR/Jugoslawien (data/currencySuccessors.ts).
     setHomeCurrency(g.homeCountry, g.managedClubId ? g.clubs?.[g.managedClubId]?.city : undefined);
     setHomeOrigin(g.homeCountry && g.homeCountry !== 'ger' ? countryOrigin(g.homeCountry) : null);
+  }
+  setHomeNationKey(g.ddrHome ? null : COUNTRY_BY_CC[g.homeCountry ?? 'ger']?.key ?? null); // Nachfolgestaaten: Kürzel der Einheimischen (data/nationEras.ts)
+  {
   }
 }
 

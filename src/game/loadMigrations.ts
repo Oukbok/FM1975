@@ -77,6 +77,7 @@ import { migrateTransferLog } from './transferLog';
 import { migrateCareer } from './careerGame';
 import { migrateShirtNumbers } from './shirtMigration';
 import { migrateFaceNames } from './faceNameMigration';
+import { syncNationalities } from './nationSync';
 import { migrateYouthCamps } from './youthCamps';
 import { migrateScoutExtras } from './scoutSoftware';
 import { bindHonours } from './clubHonours';
@@ -417,6 +418,8 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateShirtNumbers(g); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }
   // Ethnie passt zum Namen (game/faceNameMigration.ts): einmalig, nach dem Weltpool, Namen bleiben.
   try { migrateFaceNames(g); } catch (err) { console.error('Ethnie-Abgleich fehlgeschlagen:', err); }
+  // Nationalitäten zum Spieldatum: aufgelöste Staaten → Nachfolger (z. B. „Tschechoslowakei“ 2025 → Tschechien/Slowakei), idempotent.
+  try { syncNationalities(g); } catch (err) { console.error('Nationalitäten-Abgleich fehlgeschlagen:', err); }
   // Auslandsligen (game/worldLeagues.ts): frühere „Spiel für Spiel“-Divisionen ablösen und die laufende
   // Saison aller Länder bis heute nachspielen (ältere Spielstände).
   if (retireFullCountries(g) && g.world) g.world.live = undefined;

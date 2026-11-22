@@ -7,6 +7,7 @@ import { XL_WORLD } from './namePoolsXL3';
 import { XL4_WEST } from './namePoolsXL4West';
 import { XL4_SOUTH } from './namePoolsXL4South';
 import { XL4_WORLD } from './namePoolsXL4World';
+import { isEraNation, landNation, natAt, nationFamily } from './nationEras';
 // =============================================================================
 // Herkünfte: Namenslisten, Nationalität und Gesichtsgruppe (für spätere Porträts).
 // Der Ausländeranteil und die Herkunftsmischung ändern sich je Jahrzehnt.
@@ -214,6 +215,23 @@ export const MIX: Mix[] = [
 let homeOrigin: string | null = null;
 export function setHomeOrigin(id: string | null): void { homeOrigin = id && id !== 'ger' && ORIGINS[id] ? id : null; }
 export function getHomeOrigin(): string | null { return homeOrigin; }
+// Heimatland als Schlüssel der Hintergrund-Welt (z. B. 'Slowakei'): Kürzel der Einheimischen (data/nationEras.ts).
+let homeKey: string | null = null;
+export function setHomeNationKey(key: string | null): void { homeKey = key && key !== 'Deutschland' ? key : null; }
+/**
+ * Nationalität eines neu erzeugten Spielers im Kalenderjahr: aufgelöste Staaten nur, solange sie
+ * bestehen (TCH bis 1992, danach CZE/SVK …). Einheimische des Heimatlandes bekommen dessen Kürzel.
+ */
+export function originNat(o: Origin, year: number, key: string): string {
+  if (!isEraNation(o.nationality)) return o.nationality;
+  return (o.id === homeOrigin ? landNation(homeKey ?? undefined, year, o.nationality) : null) ?? natAt(o.nationality, year, key);
+}
+/** Herkunft zu einem Nationalitätskürzel (auch Nachfolger/Vorgänger: CZE, SVK → cze; URS, UKR → rus). */
+export function originOfNat(code: string): Origin | undefined {
+  const all = Object.values(ORIGINS);
+  for (const c of nationFamily(code)) { const o = all.find((x) => x.nationality === c); if (o) return o; }
+  return undefined;
+}
 /** Nationalitätskürzel der Einheimischen ('GER' bzw. Heimatland). */
 export function homeNationality(): string { return homeOrigin ? ORIGINS[homeOrigin]?.nationality ?? 'GER' : 'GER'; }
 

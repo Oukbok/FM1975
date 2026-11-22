@@ -12,6 +12,7 @@ import type { Game } from '../state';
 import { NATION_BY_CODE, NATIONS, SUCCESSOR, baseStrength, nationExists, squadSizeOf } from '../../data/nationalTeams';
 import { WP_FIELD as W } from '../worldPool';
 import { hashStr } from '../../engine/leagues';
+import { isDdrClub } from '../ddrHome';
 
 export interface Cand { id: string; name: string; nat: string; pos: Position; ov: number; age: number; clubId: string; full: boolean }
 
@@ -43,9 +44,13 @@ export function candidatesByNation(g: Game, date = g.calendar.currentDate): Map<
   // Nation je Kürzel nur einmal nachschlagen (wenige hundert Kürzel, zehntausende Spieler).
   const natMemo = new Map<string, string | null>();
   const nationFor = (code: string, y: number) => { let n = natMemo.get(code); if (n === undefined) { n = nationForCode(code, y); natMemo.set(code, n); } return n; };
+  // Bis zur Wiedervereinigung (3.10.1990) spielen die Deutschen der DDR-Vereine für die DDR, nicht für die Bundesrepublik.
+  const east = date < '1990-10-03' && !!NATION_BY_CODE.GDR;
+  const eastMemo = new Map<string, boolean>();
+  const eastClub = (id: string) => { let v = eastMemo.get(id); if (v === undefined) { v = isDdrClub(g, id); eastMemo.set(id, v); } return v; };
   for (const p of Object.values(g.players)) {
     if (!p.clubId || !g.clubs[p.clubId] || p.age < 17 || p.age > 38) continue;
-    const nat = nationFor(p.nationality, year);
+    const nat = east && p.nationality === 'GER' && (p.origin === 'ger_ost' || eastClub(p.clubId)) ? 'GDR' : nationFor(p.nationality, year);
     if (!nat) continue;
     add({ id: p.id, name: p.fullName, nat, pos: p.naturalPosition, ov: p.overall, age: p.age, clubId: p.clubId, full: true });
   }
@@ -53,7 +58,7 @@ export function candidatesByNation(g: Game, date = g.calendar.currentDate): Map<
     if (w[W.youth]) continue;
     const age = year - w[W.born];
     if (age < 17 || age > 37) continue;
-    const nat = nationFor(w[W.nat], year);
+    const nat = east && w[W.nat] === 'GER' && eastClub(w[W.club]) ? 'GDR' : nationFor(w[W.nat], year);
     if (!nat) continue;
     add({ id: w[W.id], name: `${w[W.first]} ${w[W.last]}`, nat, pos: w[W.pos], ov: w[W.ov], age, clubId: w[W.club], full: false });
   }

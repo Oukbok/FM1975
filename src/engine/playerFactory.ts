@@ -4,6 +4,7 @@
 // (1975) und vom Nachrücken neuer Spieler in späteren Jahren (Regens).
 // =============================================================================
 import { Player, Position, PlayerAttributes, AttributeKey, createEmptyStats, potentialToStars, clampStars } from '../types';
+import { originNat } from '../data/origins';
 import { wageForOverall } from './economy';
 import { marketValueFor } from './clubEconomy';
 import { weightsFor, positionSuitability, footForSide } from './positions';
@@ -134,7 +135,7 @@ export function createPlayer(spec: NewPlayerSpec): Player {
     id: spec.id,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: spec.shirt ?? 0,
-    nationality: origin.nationality,
+    nationality: originNat(origin, year, spec.id), // aufgelöste Staaten nur, solange sie bestehen (data/nationEras.ts)
     origin: origin.id, face,
     dateOfBirth: birthDate(age, year, rng), age,
     height: pos === 'TW' ? 182 + Math.floor(rng() * 14) : 168 + Math.floor(rng() * 24),

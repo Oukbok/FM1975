@@ -46,6 +46,7 @@ import { softwareMonthly } from './scoutSoftware';
 import { abroadDaily } from './scoutAbroad';
 import { youthCampsDaily } from './youthCamps';
 import { ensureWorldPool, worldPoolWinter } from './worldPool';
+import { nationDaily } from './nationSync';
 import { worldLiveDaily } from './worldLeagues';
 import { cohesionDaily } from './cohesionGame';
 import { buyBackDaily, contractClausesDaily } from './playerWishesGame';
@@ -265,6 +266,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   nationalDaily(g, today); // Nationalmannschaften, Länderspiele, WM/EM (game/national/nationalGame.ts)
   privateDaily(g, today); // Privatleben: Wochenplan, Monatsabschluss, Familie, Generationen (game/private/privateGame.ts)
   worldLiveDaily(g, today); // Auslandsligen: fällige Spieltage spielen (game/worldLeagues.ts)
+  nationDaily(g, today); // 1.1.: aufgelöste Staaten → Nachfolge-Nation (game/nationSync.ts)
   worldPoolWinter(g, today); // Winterfenster der Weltspieler am 5.1. (game/worldTransfers.ts)
   cohesionDaily(g, today);  // Eingespieltheit: taktisches Training des eigenen Vereins, KI montags (game/cohesionGame.ts)
   if (g.worldPool && new Date(`${today}T00:00:00Z`).getUTCDay() === 1) ensureWorldPool(g); // montags: Weltspieler mit den Vereinen abgleichen (neue/aufgestiegene Vereine)

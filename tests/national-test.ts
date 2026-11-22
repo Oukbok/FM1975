@@ -1,6 +1,6 @@
 // Nationalmannschaften ohne UI (Wunsch Pascal #36): Turnierformate 4/8/16/24/32/48,
 // Länderspielfenster ohne eigenes Pflichtspiel, Abstellung + Rückkehr, Länderspiele
-// an Player.intl, EM 1976 im Spielablauf, Marktwert-Schub.
+// an Player.intl, EM 1976 im Spielablauf, Marktwert-Schub; aufgelöste Staaten (tests/nation-era-checks.ts).
 //   node scripts/run-ts.mjs tests/national-test.ts [bis-datum]
 import { createNewGame } from '../src/game/newGame';
 import { processDay, type DayUi } from '../src/game/day';
@@ -12,6 +12,7 @@ import { intlValueFactor } from '../src/engine/clubEconomy';
 import { ownFixtures } from '../src/game/trainingWeek';
 import { TOURNAMENTS } from '../src/data/nationalTeams';
 import { runJobChecks } from './national-job-checks';
+import { runNationEraChecks } from './nation-era-checks';
 
 let fails = 0;
 const ok = (c: unknown, l: string) => { console.log(`${c ? 'OK  ' : 'FEHL'} ${l}`); if (!c) fails++; };
@@ -65,5 +66,6 @@ if (until >= '1976-06-21') {
   ok(!Object.values(g.players).some((p) => p.availability === 'international' && !st.away[p.id]), 'alle Abgestellten zurück');
 }
 runJobChecks(ok, until >= '1976-06-21');
+runNationEraChecks(ok); // aufgelöste Staaten (legt eigene Spiele an – zuletzt)
 console.log(fails ? `\n${fails} Fehler.` : '\nNationalmannschaften: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

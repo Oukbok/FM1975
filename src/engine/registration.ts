@@ -9,6 +9,7 @@
 // =============================================================================
 import { EUROPE_NATS, domesticRulesFor, euroRulesFor } from '../data/registrationRules';
 import type { Player } from '../types';
+import { nationRoot } from '../data/nationEras';
 import { isForeignId } from './world';
 
 let homeNat = 'GER';
@@ -31,7 +32,8 @@ export function setCupTied(lists: Record<string, string[]>): void {
 }
 export function cupTiedOf(clubId: string): Set<string> | null { return cupTied[clubId] ?? null; }
 
-const isNative = (nat: string | undefined, year: number) => !!nat && (nat === homeNat || (homeNat === 'GER' && nat === 'GDR' && year >= 1990));
+// Heimatland ist ein aufgelöster Staat (z. B. Tschechoslowakei nach 1992): Spieler der Nachfolgestaaten bleiben Einheimische.
+const isNative = (nat: string | undefined, year: number) => !!nat && (nat === homeNat || (homeNat === 'GER' && nat === 'GDR' && year >= 1990) || nationRoot(nat) === homeNat);
 
 /** Ist der Spieler Einheimischer (auch mit zweiter Staatsangehörigkeit)? */
 export function isNational(p: Player, year: number): boolean {

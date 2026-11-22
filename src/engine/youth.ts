@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { eraPosition } from '../data/formations';
+import { originNat } from '../data/origins';
 import { ensurePositionSkill } from './positionSkill';
 import { footForSide } from './positions';
 import { baseMarketValue, hashSeed, mulberry32 } from './youthShared';
@@ -256,7 +257,7 @@ export function generateYouthPlayer(
     youthJoined: currentDate,
     firstName, lastName, fullName: `${firstName} ${lastName}`,
     shirtNumber: 30 + ri(0, 69),
-    nationality: origin.nationality, origin: origin.id, face,
+    nationality: originNat(origin, currentYear, `${clubId}_y_${uniqueSeed}`), origin: origin.id, face,
     dateOfBirth: birthDate(rand, useAge, currentYear), age: useAge,
     height: ri(168, 192), weight: ri(60, 82),
     preferredFoot: footForSide(pos, rand() < 0.7 ? 'right' : (rand() < 0.7 ? 'left' : 'both'), `${clubId}_y_${uniqueSeed}`),
