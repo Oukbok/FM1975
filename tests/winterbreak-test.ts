@@ -130,10 +130,10 @@ for (const y of [1976, 1984, 1986, 1987, 1990, 1993, 1996, 1997, 1998, 2000, 200
   for (const t of ts) for (const id of t.clubIds) check(bc.fits(id, t.date, t.days), `${g.season}: ${t.name} – ${id} nicht in seiner Winterpause`);
   const m = st.current.masters;
   if (phase === 'masters') {
-    check(!!m && m.date.slice(5, 7) === '01', `${g.season}: Masters nicht im Januar (${m?.date})`);
-    check(st.current.tournaments.every((t) => t.date < m!.date), `${g.season}: Tour-Turnier nach dem Masters`);
+    check(!!m && m.date.slice(5, 7) === '01', `${g.season}: Hallenfinale nicht im Januar (${m?.date})`);
+    check(st.current.tournaments.every((t) => t.date < m!.date), `${g.season}: Tour-Turnier nach dem Hallenfinale`);
   }
-  console.log(`${g.season}: Pause ${wb.last} → ${wb.first} (${(days(wb.last, wb.first) / 7).toFixed(1)} Wo.), Fenster ${win.from}–${win.to}, ${ts.length} Hallenturniere${m ? `, Masters ${m.date}` : ''}, Pokal ${cup.rounds.map((r) => r.date.slice(5)).join(' ')}`);
+  console.log(`${g.season}: Pause ${wb.last} → ${wb.first} (${(days(wb.last, wb.first) / 7).toFixed(1)} Wo.), Fenster ${win.from}–${win.to}, ${ts.length} Hallenturniere${m ? `, Hallenfinale ${m.date}` : ''}, Pokal ${cup.rounds.map((r) => r.date.slice(5)).join(' ')}`);
 }
 
 // 3b) Alter Spielstand (wie Dez. 1978 im Spiel): Pokal 20.12. + Wiederholung 23.12. in der

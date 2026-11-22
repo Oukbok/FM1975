@@ -85,17 +85,17 @@ const lz = (g: Game) => compressToUTF16(JSON.stringify(g)).length;
   // Formate je Epoche im Archiv
   const arc = (y: number, key: string) => ic.archive.filter((a) => a.season.startsWith(`${y}/`) && a.key === key);
   const wp76 = arc(1976, 'wp')[0], wp85 = arc(1985, 'wp')[0];
-  ok(wp76 && wp76.format === 'legs2' && (wp76.winner ? wp76.score.includes(',') : !!wp76.note), `1976 Weltpokal Hin/Rück: ${wp76?.winner ? `${drawClubName(g, wp76.winner)} ${wp76.score}` : wp76?.note}`);
-  ok(wp85?.format === 'tokyo' && !wp85.score.includes(','), `1985 Weltpokal Tokio: ${drawClubName(g, wp85?.winner ?? '')} ${wp85?.score}`);
+  ok(wp76 && wp76.format === 'legs2' && (wp76.winner ? wp76.score.includes(',') : !!wp76.note), `1976 Transatlantik-Pokal Hin/Rück: ${wp76?.winner ? `${drawClubName(g, wp76.winner)} ${wp76.score}` : wp76?.note}`);
+  ok(wp85?.format === 'tokyo' && !wp85.score.includes(','), `1985 Transatlantik-Pokal Tokio: ${drawClubName(g, wp85?.winner ?? '')} ${wp85?.score}`);
   const c99 = arc(1999, 'cwc')[0];
-  ok(c99?.format === 'cwc2000' && arc(1999, 'wp').length === 1, `1999/2000: Weltpokal + Klub-WM 2000 (${c99?.format}), Sieger ${drawClubName(g, c99?.winner ?? '')}`);
-  ok(!arc(2001, 'cwc').length && arc(2001, 'wp').length === 1, '2001: keine Klub-WM, Weltpokal in Tokio');
-  ok(arc(2005, 'cwc')[0]?.format === 'six' && !arc(2005, 'wp').length, '2005: Klub-WM mit 6 Teams, kein Weltpokal mehr');
-  ok(arc(2015, 'cwc')[0]?.format === 'seven', `2015: Klub-WM mit 7 Teams (Gastgeber), Sieger ${drawClubName(g, arc(2015, 'cwc')[0]?.winner ?? '')}`);
-  ok(arc(2024, 'icup')[0]?.m?.length === 5 && !arc(2024, 'cwc').length, '2024: Interkontinentalpokal (5 Spiele), keine alte Klub-WM');
+  ok(c99?.format === 'cwc2000' && arc(1999, 'wp').length === 1, `1999/2000: Transatlantik-Pokal + Klub-Weltturnier 2000 (${c99?.format}), Sieger ${drawClubName(g, c99?.winner ?? '')}`);
+  ok(!arc(2001, 'cwc').length && arc(2001, 'wp').length === 1, '2001: kein Klub-Weltturnier, Transatlantik-Pokal in Tokio');
+  ok(arc(2005, 'cwc')[0]?.format === 'six' && !arc(2005, 'wp').length, '2005: Klub-Weltturnier mit 6 Teams, kein Transatlantik-Pokal mehr');
+  ok(arc(2015, 'cwc')[0]?.format === 'seven', `2015: Klub-Weltturnier mit 7 Teams (Gastgeber), Sieger ${drawClubName(g, arc(2015, 'cwc')[0]?.winner ?? '')}`);
+  ok(arc(2024, 'icup')[0]?.m?.length === 5 && !arc(2024, 'cwc').length, '2024: Kontinentalsieger-Pokal (5 Spiele), kein altes Klub-Weltturnier');
   const big = arc(2025, 'big')[0];
-  ok(big?.m?.length === 63 && big.groups?.length === 8 && arc(2025, 'icup').length === 1, `2025: große Klub-WM 32 Teams (${big?.m?.length} Spiele) + Interkontinentalpokal; Sieger ${drawClubName(g, big?.winner ?? '')}`);
-  ok(arc(2029, 'big').length === 1 && !arc(2027, 'big').length, 'große Klub-WM alle vier Jahre (2029 ja, 2027 nein)');
+  ok(big?.m?.length === 63 && big.groups?.length === 8 && arc(2025, 'icup').length === 1, `2025: großes Klub-Weltturnier 32 Teams (${big?.m?.length} Spiele) + Kontinentalsieger-Pokal; Sieger ${drawClubName(g, big?.winner ?? '')}`);
+  ok(arc(2029, 'big').length === 1 && !arc(2027, 'big').length, 'großes Klub-Weltturnier alle vier Jahre (2029 ja, 2027 nein)');
   // Bilanz Europa je Epoche
   for (const [a, b] of [[1976, 1979], [1980, 2004], [2005, 2023], [2024, 2034]]) {
     const l = ic.archive.filter((x) => x.winner && x.key !== 'big' && +x.season.slice(0, 4) >= a && +x.season.slice(0, 4) <= b);
@@ -103,16 +103,16 @@ const lz = (g: Game) => compressToUTF16(JSON.stringify(g)).length;
     console.log(`     Europa gewinnt ${a}–${b}: ${eu} von ${l.length} (Südamerika ${l.filter((x) => x.winner.includes('_ct_') && CT_COUNTRIES.find((c) => x.winner.includes(`_${c.cc}_`))?.conf[0][1] === 'sa').length})`);
   }
   // Anzeige
-  ok(worldCompSeasons(g, 'cwc').length >= 20 && worldCompSnapshot(g, 'cwc', '2023/24')?.rounds.length === 5, `Statistiken › Welt: Klub-WM mit Saisons und Turnierbaum (2023/24: Play-off bis Finale: ${worldCompSnapshot(g, 'cwc', '2023/24')?.rounds.map((r) => r.name).join(', ')})`);
-  ok(worldCompSnapshot(g, 'wp', '1990/91')?.title.startsWith('Weltpokal'), 'Statistiken › Welt: ältere Saison ohne Einzelspiele (nur Sieger/Finale)');
+  ok(worldCompSeasons(g, 'cwc').length >= 20 && worldCompSnapshot(g, 'cwc', '2023/24')?.rounds.length === 5, `Statistiken › Welt: Klub-Weltturnier mit Saisons und Turnierbaum (2023/24: Play-off bis Finale: ${worldCompSnapshot(g, 'cwc', '2023/24')?.rounds.map((r) => r.name).join(', ')})`);
+  ok(worldCompSnapshot(g, 'wp', '1990/91')?.title.startsWith('Transatlantik-Pokal'), 'Statistiken › Welt: ältere Saison ohne Einzelspiele (nur Sieger/Finale)');
   ok(worldCompSnapshot(g, 'sa', '2030')?.rounds.length === 4, 'Statistiken › Welt: Südamerika-Pokal 2030 mit vier Runden');
-  ok(worldCompSnapshot(g, 'cwc', '2025/26')?.groups?.length === 8, 'Statistiken › Welt: Gruppen der großen Klub-WM');
+  ok(worldCompSnapshot(g, 'cwc', '2025/26')?.groups?.length === 8, 'Statistiken › Welt: Gruppen des großen Klub-Weltturniers');
   ok(worldCompWinners(g, 'sa').some((w) => w.pre) && worldCompWinners(g, 'sa').some((w) => !w.pre), 'Siegerliste Südamerika: echte Sieger vor dem Start + gespielte');
   const prof = continentProfile(g, 'Brasilien');
   ok(prof && prof.seasons.length > 40 && prof.clubs.length >= 8, `Länderprofil Brasilien: ${prof?.seasons.length} Meister, ${prof?.clubs.length} Vereine, ${prof?.cupWins.length} Kontinentaltitel`);
   ok(countryRef(g, 'Brasilien').kind === 'continent' && countryRef(g, 'Japan').kind === 'continent', 'Länderprofil: Art „continent“');
   const bytes = JSON.stringify(st).length + JSON.stringify(ic).length;
-  console.log(`     Speicher nach ${per.length} Saisons: Kontinente ${JSON.stringify(st).length} B, Weltpokal-Archiv ${JSON.stringify(ic).length} B (roh), komprimiert ${compressToUTF16(JSON.stringify({ st, ic })).length * 2} B`);
+  console.log(`     Speicher nach ${per.length} Saisons: Kontinente ${JSON.stringify(st).length} B, Transatlantik-Pokal-Archiv ${JSON.stringify(ic).length} B (roh), komprimiert ${compressToUTF16(JSON.stringify({ st, ic })).length * 2} B`);
   ok(bytes < 120000, `Speicher roh ${bytes} B`);
 }
 
@@ -130,8 +130,8 @@ async function roundTrip(g: Game, slot: string): Promise<Game> {
 }
 let wonOnce = false;
 for (const [year, key, until, label] of [
-  [1977, 'wp', '1977-12-31', 'Weltpokal Hin/Rück'], [1985, 'wp', '1985-12-31', 'Weltpokal Tokio'], [1999, 'cwc', '2000-01-20', 'Klub-WM 2000'],
-  [2010, 'cwc', '2010-12-31', 'Klub-WM 7 Teams'], [2024, 'icup', '2024-12-31', 'Interkontinentalpokal'], [2025, 'big', '2025-08-05', 'Klub-WM 32 Teams'],
+  [1977, 'wp', '1977-12-31', 'Transatlantik-Pokal Hin/Rück'], [1985, 'wp', '1985-12-31', 'Transatlantik-Pokal Tokio'], [1999, 'cwc', '2000-01-20', 'Klub-Weltturnier 2000'],
+  [2010, 'cwc', '2010-12-31', 'Klub-Weltturnier 7 Teams'], [2024, 'icup', '2024-12-31', 'Kontinentalsieger-Pokal'], [2025, 'big', '2025-08-05', 'Klub-Weltturnier 32 Teams'],
 ] as const) {
   let g = make(year);
   const ecRu = Object.values(g.euroClubs!).sort((a, b) => b.strength - a.strength)[0].id;
@@ -150,7 +150,7 @@ for (const [year, key, until, label] of [
     if (processDay(g, ui)) continue;
     const due = findOwnMatchDue(g);
     if (!due) { processDay(g, ui); continue; }
-    if (/Weltpokal|Klub-Welt|Interkontinental/.test(due.label)) {
+    if (/Transatlantik-Pokal|Klub-Welt|Kontinentalsieger/.test(due.label)) {
       own++;
       const pm = buildPrematch(g, due);
       if (pm.opp.name && pm.opp.id) preview++;
@@ -166,7 +166,7 @@ for (const [year, key, until, label] of [
   ok(m?.match && findMatch(g, m.match.id), `${year}: Spielbericht ${drawClubName(g, m!.home)} – ${drawClubName(g, m!.away)} ${m?.hg}:${m?.ag}`);
   const opp = m ? (m.home === 'muc' ? m.away : m.home) : '';
   if (isContinentalId(opp)) ok(g.clubs[opp]?.playerIds.length >= 18 && g.players[g.clubs[opp].playerIds[0]]?.nationality !== 'GER', `${year}: Gegnerkader ${g.clubs[opp]?.name} (${g.players[g.clubs[opp].playerIds[0]]?.nationality}, Stärke ${Math.round(clubStrength(g, opp))})`);
-  const prize = g.clubs.muc.finances.transactions.filter((t) => /^Prämie (Weltpokal|Klub|Interkont)/.test(t.description)).reduce((a, t) => a + t.amount, 0);
+  const prize = g.clubs.muc.finances.transactions.filter((t) => /^Prämie (Transatlantik|Klub|Kontinentalsieger)/.test(t.description)).reduce((a, t) => a + t.amount, 0);
   ok(prize > 0, `${year}: Prämie gebucht (${Math.round(prize).toLocaleString('de-DE')})`);
   g = await roundTrip(g, `ct-${year}b`);
   ok(icStateOf(g)!.archive.some((a) => a.key === key && a.season === g.season), `${year}: Archiv nach Speichern/Laden`);
@@ -183,7 +183,7 @@ if (!wonOnce) {
   setupIntercontinental(g, { ec: 'muc', ecRu: null });
   const { addTitleRecord } = await import('../src/game/clubRecords');
   addTitleRecord(g, 'muc', 'weltpokal', g.season);
-  ok(trophiesOf(g, 'muc').some((x) => x.kind === 'weltpokal' && x.cat === 'kontinental'), 'Vitrine: Weltpokal (eingetragen, kein Sieg in den Läufen)');
+  ok(trophiesOf(g, 'muc').some((x) => x.kind === 'weltpokal' && x.cat === 'kontinental'), 'Vitrine: Transatlantik-Pokal (eingetragen, kein Sieg in den Läufen)');
 }
 
 // ---------------------------------------------------------------------------
@@ -223,10 +223,10 @@ if (!wonOnce) {
   g2.calendar.currentDate = `${Number(g2.season.slice(0, 4)) + 1}-06-30`;
   const t0 = performance.now();
   startNextSeason(g2);
-  ok(icStateOf(g2) && continentsState(g2)!.y === Number(g2.season.slice(0, 4)), `Alter Spielstand: Saisonwechsel nach ${g2.season} rüstet Weltpokal-Zustand nach (${Math.round(performance.now() - t0)} ms Saisonwechsel gesamt)`);
+  ok(icStateOf(g2) && continentsState(g2)!.y === Number(g2.season.slice(0, 4)), `Alter Spielstand: Saisonwechsel nach ${g2.season} rüstet Transatlantik-Pokal-Zustand nach (${Math.round(performance.now() - t0)} ms Saisonwechsel gesamt)`);
   for (let i = 0; i < 20; i++) processDay(g2, ui);
   ok(true, 'Alter Spielstand: 20 Tage weiter ohne Fehler');
 }
 
-console.log(fails ? `\n${fails} Fehler.` : '\nKontinente & Weltpokal: alle Prüfungen bestanden.');
+console.log(fails ? `\n${fails} Fehler.` : '\nKontinente & Transatlantik-Pokal: alle Prüfungen bestanden.');
 process.exit(fails ? 1 : 0);

@@ -62,8 +62,8 @@ expect(has(1981, 'liga', '2. 1. Liga') || has(1981, 'liga', 'Liga'), '1981/82: L
 expect(has(1977, 'training', 'Tirol'), '1977/78: Tirol fehlt');
 expect(gameChangesFor(1980).filter((c) => c.kind === 'training').length <= 3, '1980/81: Trainingslager überfluten das Briefing');
 expect(has(1979, 'training', 'Kanarische'), '1979/80: Kanaren (Winter 1980) fehlen');
-expect(has(1987, 'halle', 'Masters'), '1987/88: Hallen-Masters fehlt');
-expect(has(2001, 'halle', 'eingestellt'), '2001/02: Masters-Ende fehlt');
+expect(has(1987, 'halle', 'Hallenfinale'), '1987/88: Hallenfinale fehlt');
+expect(has(2001, 'halle', 'eingestellt'), '2001/02: Hallenfinal-Ende fehlt');
 expect(has(1985, 'jugend', 'Fußballlehrer'), '1985/86: Nachwuchs-Baustein fehlt');
 expect(has(1993, 'umfeld', 'Kombiticket'), '1993/94: Kombiticket fehlt');
 expect(has(1990, 'einrichtung', 'Reha'), '1990/91: Reha-Zentrum fehlt');

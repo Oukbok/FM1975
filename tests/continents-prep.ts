@@ -21,7 +21,7 @@ const make = (year: number) => {
 };
 const dump = (g: Game, file: string) => {
   delete (g as any).simAutoManage;
-  const meta = { slot: 'sim', name: 'Weltpokal', managerName: 'Test', clubName: g.clubs.muc.name, clubId: 'muc', season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: SAVE_VERSION };
+  const meta = { slot: 'sim', name: 'Transatlantik-Pokal', managerName: 'Test', clubName: g.clubs.muc.name, clubId: 'muc', season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: SAVE_VERSION };
   writeFileSync(`${dir}/${file}`, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
   console.log(`${dir}/${file}: ${g.calendar.currentDate}`);
 };
@@ -41,8 +41,8 @@ function run(g: Game, until: string, stop: (label: string) => boolean): boolean 
 {
   const g = make(1985);
   setupIntercontinental(g, { ec: 'muc', ecRu: null });
-  if (run(g, '1985-12-31', (l) => l.startsWith('Weltpokal'))) dump(g, 'wp-1985.txt');
-  else console.log('Weltpokal-Spieltag nicht erreicht');
+  if (run(g, '1985-12-31', (l) => l.startsWith('Transatlantik-Pokal'))) dump(g, 'wp-1985.txt');
+  else console.log('Transatlantik-Pokal-Spieltag nicht erreicht');
 }
 {
   const g = make(2009);

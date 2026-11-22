@@ -42,11 +42,11 @@ export function abroadChecks(fresh: Fresh, runWinter: RunWinter, expect: (c: boo
     }
     if (cur.masters) guestsMasters += cur.masters.clubIds.filter((id) => isForeignId(id)).length;
   }
-  console.log(`Halle Gäste: ${guests} bis ${GUESTS_LAST_WINTER} (Ostblock vor 1990: ${east}), danach ${guestsLate}, im Masters ${guestsMasters}; Länder ${[...countries].join(', ')}`);
+  console.log(`Halle Gäste: ${guests} bis ${GUESTS_LAST_WINTER} (Ostblock vor 1990: ${east}), danach ${guestsLate}, im Hallenfinale ${guestsMasters}; Länder ${[...countries].join(', ')}`);
   expect(guests >= 8, 'zu wenige Auslandsgäste bis 1997');
   expect(east >= 1, 'keine Ostblock-Gäste vor 1990');
   expect(guestsLate === 0, 'Auslandsgäste nach der Reform 1997/98');
-  expect(guestsMasters === 0, 'Auslandsgast im Masters-Feld');
+  expect(guestsMasters === 0, 'Auslandsgast im Hallenfinal-Feld');
 
   // 2) Auslandsturniere je Epoche
   const g2 = fresh();

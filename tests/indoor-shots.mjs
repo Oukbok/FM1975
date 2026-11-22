@@ -144,7 +144,7 @@ async function run(width, height) {
   await page.locator('.tn-sub-item:has-text("Halle")').first().click();
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${outDir}/${tag}_7_statistik_halle.png` });
-  console.log(`[${tag}] Masters-Hinweis: ${(await page.locator('.mst-hint').innerText().catch(() => '-')).slice(0, 90)}`);
+  console.log(`[${tag}] Hallenfinal-Hinweis: ${(await page.locator('.mst-hint').innerText().catch(() => '-')).slice(0, 90)}`);
   await pickOption(page, page.locator('.hk-box .sel3').first(), 'kings');
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${outDir}/${tag}_8_hallenkoenige.png` });

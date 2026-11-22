@@ -42,7 +42,7 @@ export function checkExtraFormulas(): void {
     expect(r.xi.filter((x) => x.slot === 'TW').every((x) => x.c.pos === 'TW'), `Elf ${y}: Torwart kein Torwart`);
     console.log(`Elf ${y} (${f.label}): ${exact}/11 auf ihrer Stammposition`);
   }
-  console.log('Formeln Goldener Schuh / Trainer / Elf der Saison: OK');
+  console.log('Formeln Torjägerstern / Trainer / Elf der Saison: OK');
 }
 
 export function checkExtraArchive(g: Game, seasons: string[]): void {
@@ -50,7 +50,7 @@ export function checkExtraArchive(g: Game, seasons: string[]): void {
   expect(st, 'Kein Archiv der weiteren Auszeichnungen');
   for (const s of seasons) {
     const shoe = st!.shoe.find((x) => x.s === s);
-    expect(shoe && shoe.top.length === 10, `${s}: Goldener Schuh fehlt / nicht 10 Plätze`);
+    expect(shoe && shoe.top.length === 10, `${s}: Torjägerstern fehlt / nicht 10 Plätze`);
     for (let i = 1; i < shoe!.top.length; i++) expect(shoe!.top[i - 1].pts >= shoe!.top[i].pts, `${s}: Schuh nicht sortiert`);
     expect(shoe!.top.every((e) => e.pts === Math.round(e.gl * e.f * 10) / 10), `${s}: Schuh-Punkte ≠ Tore × Faktor`);
     const coach = st!.coach.find((x) => x.s === s);
@@ -85,5 +85,5 @@ export function checkExtraArchive(g: Game, seasons: string[]): void {
   delete old.extraAwards;
   migrateExtraAwards(old);
   expect(old.extraAwards === undefined, 'Migration legt bei alten Ständen ein Feld an');
-  console.log('OK – Goldener Schuh, Trainer des Jahres, Elf der Saison');
+  console.log('OK – Torjägerstern, Trainer des Jahres, Elf der Saison');
 }
