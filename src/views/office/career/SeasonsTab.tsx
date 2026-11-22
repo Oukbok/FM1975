@@ -15,7 +15,7 @@ export function SeasonsTab({ g, d }: { g: Game; d: CareerData }) {
           <thead>
             <tr>
               <th>Saison</th><th>Liga</th><th className="rl-num">Platz</th><th>Saisonziel</th><th className="rl-num">Liga S-U-N</th>
-              <th>Pokal</th><th>Supercup</th><th>Europapokal</th><th className="rl-num">Ansehen</th>
+              <th>Pokal</th><th>Gipfelpokal</th><th>Europapokal</th><th className="rl-num">Ansehen</th>
             </tr>
           </thead>
           <tbody>

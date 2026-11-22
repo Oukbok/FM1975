@@ -13,17 +13,17 @@ import { TeamName } from '../competition/parts';
 import Select from '../../../ui/Select';
 
 const STATUS: Record<MastersStatus, [string, string]> = {
-  in: ['auf Kurs', 'Stand jetzt auf einem Masters-Platz'],
-  q: ['dabei', 'Für das Masters qualifiziert'],
-  sub: ['Nachrücker', 'Rückt für einen Verzicht oder Verhinderten ins Masters-Feld'],
-  declined: ['verzichtet', 'Hat auf den Masters-Platz verzichtet'],
-  blocked: ['verhindert', 'Hat an den Masters-Tagen noch ein Pflichtspiel'],
+  in: ['auf Kurs', 'Stand jetzt auf einem Hallenfinal-Platz'],
+  q: ['dabei', 'Für das Hallenfinale qualifiziert'],
+  sub: ['Nachrücker', 'Rückt für einen Verzicht oder Verhinderten ins Hallenfinal-Feld'],
+  declined: ['verzichtet', 'Hat auf den Hallenfinal-Platz verzichtet'],
+  blocked: ['verhindert', 'Hat an den Hallenfinal-Tagen noch ein Pflichtspiel'],
   out: ['', ''],
-  guest: ['Gast', 'Gast (Ausland/Amateure) – nicht startberechtigt für das Masters'],
+  guest: ['Gast', 'Gast (Ausland/Amateure) – nicht startberechtigt für das Hallenfinale'],
 };
 
 function statusText(r: MastersRow): [string, string] {
-  if (r.place) return [r.place === 1 ? 'Sieger' : `${r.place}. Masters`, `Masters-Endrunde: Platz ${r.place}${r.status === 'sub' ? ' (als Nachrücker)' : ''}`];
+  if (r.place) return [r.place === 1 ? 'Sieger' : `Platz ${r.place}`, `Hallenfinale: Platz ${r.place}${r.status === 'sub' ? ' (als Nachrücker)' : ''}`];
   return STATUS[r.status ?? 'out'];
 }
 
@@ -52,7 +52,7 @@ export function MastersBox({ g, st, cur, wy }: { g: Game; st: IndoorState; cur: 
   ) : undefined;
 
   return (
-    <DashBox title={masters ? 'Masters-Wertung' : 'Hallen-Wertung'} info="hallenWertung" flush right={right} className="mst-box">
+    <DashBox title={masters ? 'Hallenfinal-Wertung' : 'Hallen-Wertung'} info="hallenWertung" flush right={right} className="mst-box">
       <div className="mst-hint dnote">{masters && <b className="mst-mode">{place ? 'Wertung: Platzierungspunkte' : 'Wertung: Schnitt (historisch)'} · </b>}{board.hint}</div>
       {board.rows.length ? (
         <div className="mst-scroll">

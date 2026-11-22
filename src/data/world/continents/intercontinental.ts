@@ -25,7 +25,7 @@ export type IcKey = 'wp' | 'cwc' | 'icup' | 'big';
 export type IcFormat = 'legs2' | 'tokyo' | 'cwc2000' | 'six' | 'seven' | 'icup' | 'big32';
 
 export const IC_NAMES: Record<IcKey, string> = {
-  wp: 'Weltpokal', cwc: 'Klub-Weltmeisterschaft', icup: 'Interkontinentalpokal', big: 'Klub-Weltmeisterschaft',
+  wp: 'Transatlantik-Pokal', cwc: 'Klub-Weltturnier', icup: 'Kontinentalsieger-Pokal', big: 'Klub-Weltturnier',
 };
 
 export const IC_FORMAT_DE: Record<IcFormat, string> = {

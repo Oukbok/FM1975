@@ -41,34 +41,34 @@ export interface SuperEra {
 /** Schlüssel = Länder-Schlüssel wie in data/world/countries.ts (`key`, ohne Umlaute) bzw. homeCountryKey. */
 export const SUPER_CUPS: Record<string, SuperEra[]> = {
   Deutschland: [
-    { from: 1987, to: 1996, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 },
-    { from: 1997, to: 2007, name: 'Ligapokal', format: 'six', double: 'runnerUp', host: 'neutral', month: 7 },
-    { from: 2010, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'other', month: 8, directPens: true },
+    { from: 1987, to: 1996, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 },
+    { from: 1997, to: 2007, name: 'Auftaktpokal', format: 'six', double: 'runnerUp', host: 'neutral', month: 7 },
+    { from: 2010, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'other', month: 8, directPens: true },
   ],
-  DDR: [{ from: 1989, to: 1989, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 }],
+  DDR: [{ from: 1989, to: 1989, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 }],
   England: [
-    { from: 1975, to: 1992, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, shared: true },
-    { from: 1993, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, directPens: true },
+    { from: 1975, to: 1992, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, shared: true },
+    { from: 1993, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, directPens: true },
   ],
-  Italien: [{ from: 1988, to: 9999, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'champion', month: 8 }],
+  Italien: [{ from: 1988, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'champion', month: 8 }],
   Spanien: [
-    { from: 1982, to: 2018, name: 'Supercup', format: 'legs2', double: 'runnerUp', host: 'champion', month: 8 },
-    { from: 2019, to: 9999, name: 'Supercup', format: 'four', double: 'runnerUp', host: 'neutral', month: 1 },
+    { from: 1982, to: 2018, name: 'Gipfelpokal', format: 'legs2', double: 'runnerUp', host: 'champion', month: 8 },
+    { from: 2019, to: 9999, name: 'Gipfelpokal', format: 'four', double: 'runnerUp', host: 'neutral', month: 1 },
   ],
-  Frankreich: [{ from: 1995, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, directPens: true }],
-  Niederlande: [{ from: 1991, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
+  Frankreich: [{ from: 1995, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8, directPens: true }],
+  Niederlande: [{ from: 1991, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
   Portugal: [
-    { from: 1979, to: 2000, name: 'Supercup', format: 'legs2', double: 'cupFinalist', host: 'champion', month: 8 },
-    { from: 2001, to: 9999, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'neutral', month: 8 },
+    { from: 1979, to: 2000, name: 'Gipfelpokal', format: 'legs2', double: 'cupFinalist', host: 'champion', month: 8 },
+    { from: 2001, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'neutral', month: 8 },
   ],
-  Belgien: [{ from: 1980, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'champion', month: 7 }],
-  Oesterreich: [{ from: 1986, to: 2004, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'champion', month: 7 }],
-  Tuerkei: [{ from: 1975, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
-  Griechenland: [{ from: 1987, to: 2007, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'neutral', month: 8 }],
-  Rumaenien: [{ from: 1994, to: 9999, name: 'Supercup', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 }],
-  Russland: [{ from: 2003, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 7 }],
-  Ukraine: [{ from: 2004, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 7 }],
-  Zypern: [{ from: 1975, to: 9999, name: 'Supercup', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
+  Belgien: [{ from: 1980, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'champion', month: 7 }],
+  Oesterreich: [{ from: 1986, to: 2004, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'champion', month: 7 }],
+  Tuerkei: [{ from: 1975, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
+  Griechenland: [{ from: 1987, to: 2007, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'neutral', month: 8 }],
+  Rumaenien: [{ from: 1994, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'cupFinalist', host: 'neutral', month: 7 }],
+  Russland: [{ from: 2003, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 7 }],
+  Ukraine: [{ from: 2004, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 7 }],
+  Zypern: [{ from: 1975, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
 };
 
 /** Epoche des Supercups eines Landes in der Saison (Startjahr); null = keiner. */
@@ -77,7 +77,7 @@ export function superEra(country: string, startYear: number): SuperEra | null {
 }
 
 /** UEFA-Supercup (vereinfacht: ein Spiel Ende August). */
-export const UEFA_SUPER = { from: 1975, name: 'Europäischer Supercup' };
+export const UEFA_SUPER = { from: 1975, name: 'Europäischer Gipfelpokal' };
 
 /** Prämien (1975-Basis, × economyScale): Teilnahme / Sieg; Ligapokal je Runde. */
 export const SUPER_PRIZE = { start: 15000, win: 25000, ligapokal: 40000, uefa: 60000 };

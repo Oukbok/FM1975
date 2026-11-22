@@ -132,9 +132,9 @@ export const FOREIGN_RESERVE_RULES: ForeignReserveRule[] = [
   { cc: 'eng', from: 2016, inPyramid: false, cup: true, text: 'U21-Teams der Akademie-Vereine spielen im Pokal der unteren Profiligen mit.' },
   { cc: 'esp', from: 1951, to: 1990, inPyramid: true, topTier: 2, cup: true, text: '„B“-Teams (filiales) in der Pyramide bis zur 2. Liga, nie in der Liga der ersten Mannschaft; Pokal offen (eine B-Mannschaft stand 1980 im Finale).' },
   { cc: 'esp', from: 1990, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams bis zur 2. Liga, seit 1990/91 nicht mehr im Landespokal.' },
-  { cc: 'ita', from: 2018, inPyramid: true, topTier: 3, cup: false, text: 'U23-Teams der Erstligisten ab der 3. Ebene, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
+  { cc: 'ita', from: 2018, inPyramid: true, topTier: 3, cup: false, text: 'U23-Teams von Vereinen der 1. Liga ab der 3. Ebene, nie in derselben oder höheren Liga, Zwangsabstieg, höchstens vier Spieler über 23.' },
   { cc: 'por', from: 1999, to: 2012, inPyramid: true, topTier: 3, cup: false, text: '„B“-Teams 1999–2006 in der dritten Liga, nie in der Liga der ersten Mannschaft, nicht im Landespokal.' },
-  { cc: 'por', from: 2012, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams seit 2012/13 in der 2. Liga – kein Aufstieg in die 1. Liga, nicht im Landespokal und Ligapokal.' },
+  { cc: 'por', from: 2012, inPyramid: true, topTier: 2, cup: false, text: '„B“-Teams seit 2012/13 in der 2. Liga – kein Aufstieg in die 1. Liga, nicht im Landespokal und nicht im Pokal der Profiligen.' },
   { cc: 'fra', from: 1970, inPyramid: true, topTier: 4, cup: false, text: 'Reserveteams höchstens auf der vierten Ebene; ein Aufstiegsplatz geht an den Nächsten; nicht im Landespokal.' },
 ];
 

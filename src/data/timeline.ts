@@ -84,7 +84,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1983/84', year: 1983, type: 'reform',
     title: 'Professionalisierung der Vereinsstäbe',
     description:
-      'Anfang der 1980er professionalisieren sich die Erstligisten abseits des '
+      'Anfang der 1980er professionalisieren sich die Vereine der 1. Liga abseits des '
       + 'Rasens: Co-Trainer, Physiotherapeuten und erste hauptamtliche Geschäftsstellen '
       + 'werden zum Standard. Im Bereich „Mitarbeiter" lassen sich nun neue '
       + 'Fachkräfte verpflichten, und die Werbeflächen im Stadion werden systematisch '
@@ -265,7 +265,7 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'homeworldcup-2006',
     season: '2006/07', year: 2006, type: 'competition',
-    title: 'Sommermärchen: Weltmeisterschaft im eigenen Land',
+    title: 'Fußballsommer: Weltmeisterschaft im eigenen Land',
     description:
       'Die Heim-WM 2006 löst eine Fußballbegeisterung aus, wie es sie lange nicht gab. Neue und '
       + 'modernisierte Stadien, volle Ränge, mehr Familien im Publikum – die Zuschauerzahlen '
@@ -307,12 +307,12 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'indoor-masters-1987',
     season: '1987/88', year: 1987, type: 'competition',
-    title: 'Hallenpokal: Hallentour und Hallen-Masters',
+    title: 'Hallenpokal: Hallentour und Hallenfinale',
     description:
       'Die Lizenzvereine beschließen mit 32:2 Stimmen eine offizielle Hallenrunde, um die seit 1986/87 '
       + 'elf Wochen lange Winterpause zu überbrücken. Über 18 Qualifikationsturniere (Wertung nach '
       + 'Durchschnittspunkten) geht es zur Endrunde im Januar 1988 in der Frankfurter Festhalle. '
-      + 'Hallenturniere mit Erstligisten gab es schon seit den 70ern – nun mit Masters. '
+      + 'Hallenturniere mit Vereinen der 1. Liga gab es schon seit den 70ern – nun mit Hallenfinale. '
       + 'Einladungen und Ergebnisse unter „Statistiken › Halle“.',
   },
   {
@@ -326,7 +326,7 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'indoor-end-2001',
     season: '2001/02', year: 2001, type: 'competition',
-    title: 'Hallen-Masters abgeschafft',
+    title: 'Hallenfinale abgeschafft',
     description:
       'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: Unterhaching) stellt der Fußballbund den '
       + 'Hallenpokal ein: kürzere Winterpause, Verletzungsangst, Absagen der Topklubs und sinkendes '
@@ -338,7 +338,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1991/92', year: 1992, type: 'reform',
     title: 'Winterlager in der Ferne: Türkei und Florida',
     description:
-      'Im Januar 1992 fährt Gelsenkirchen als erster Erstligist an die türkische Riviera, Leverkusen '
+      'Im Januar 1992 fährt Gelsenkirchen als erster Verein der 1. Liga an die türkische Riviera, Leverkusen '
       + 'fliegt nach Orlando. Bis dahin ging es im Winter auf die Kanaren oder nach Spanien – oder '
       + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Training › Trainingslager“.',
   },

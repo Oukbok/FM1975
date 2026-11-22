@@ -18,9 +18,9 @@ export type WorldCompKey = 'wp' | 'cwc' | 'icup' | ContinentKey;
 export interface WorldCompOption { key: WorldCompKey; label: string; section: string }
 
 export const WORLD_COMP_OPTIONS: WorldCompOption[] = [
-  { key: 'wp', label: 'Weltpokal', section: 'Welt' },
-  { key: 'cwc', label: 'Klub-Weltmeisterschaft', section: 'Welt' },
-  { key: 'icup', label: 'Interkontinentalpokal', section: 'Welt' },
+  { key: 'wp', label: 'Transatlantik-Pokal', section: 'Welt' },
+  { key: 'cwc', label: 'Klub-Weltturnier', section: 'Welt' },
+  { key: 'icup', label: 'Kontinentalsieger-Pokal', section: 'Welt' },
   ...CONTINENT_KEYS.map((k) => ({ key: k, label: CONTINENTS[k].name, section: 'Kontinente' })),
 ];
 const isIc = (k: WorldCompKey): k is 'wp' | 'cwc' | 'icup' => k === 'wp' || k === 'cwc' || k === 'icup';
@@ -144,9 +144,9 @@ export function worldCompWinners(g: Game, key: WorldCompKey): WorldWinnerRow[] {
 }
 
 const ABOUT: Record<'wp' | 'cwc' | 'icup', string> = {
-  wp: 'Der Weltpokal wurde von 1960 bis 2004 ausgespielt (danach Klub-WM).',
-  cwc: 'Die Klub-WM gibt es im Januar 2000, von 2005 bis 2023 jeden Dezember und ab 2025 alle vier Jahre mit 32 Teams.',
-  icup: 'Den Interkontinentalpokal gibt es ab Dezember 2024.',
+  wp: 'Der Transatlantik-Pokal wurde von 1960 bis 2004 ausgespielt (danach Klub-Weltturnier).',
+  cwc: 'Das Klub-Weltturnier gibt es im Januar 2000, von 2005 bis 2023 jeden Dezember und ab 2025 alle vier Jahre mit 32 Teams.',
+  icup: 'Den Kontinentalsieger-Pokal gibt es ab Dezember 2024.',
 };
 /** Hinweis für einen Wettbewerb ohne Daten seit deinem Start. */
 export function worldCompAbout(key: WorldCompKey): string {

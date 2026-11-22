@@ -180,7 +180,7 @@ export function CeremonyStage({ g, t, res, out, onClose }: { g: Game; t: IndoorT
             <div><span className="ix-k">Platz</span><b>{out.place + 1}.</b></div>
             <div><span className="ix-k">Einnahmen</span><b>{fmtDM(out.money)}</b><span className="ix-dim">Antrittsgeld{out.place === 0 ? ' + Siegprämie' : ''}</span></div>
             <div><span className="ix-k">Fan-Stimmung</span><b className={fan > 0 ? 'pos' : fan < 0 ? 'neg' : ''}>{fan > 0 ? '+' : ''}{fan.toLocaleString('de-DE')}</b>
-              <span className="ix-dim">{t.kind === 'masters' && won ? 'Masters-Titel' : fan > 0 ? 'Heimturnier' : 'unverändert'}</span></div>
+              <span className="ix-dim">{t.kind === 'masters' && won ? 'Hallenfinal-Titel' : fan > 0 ? 'Heimturnier' : 'unverändert'}</span></div>
             <div><span className="ix-k">Frische</span><b>{Math.round(out.frische[0])} → {Math.round(out.frische[1])}</b><span className="ix-dim">Ø der {out.players} Hallenspieler</span></div>
             <div className="ix-cer-inj">
               <span className="ix-k">Verletzungen</span>

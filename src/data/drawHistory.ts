@@ -71,7 +71,7 @@ export function drawVenue(comp: DrawComp, roundIndex: number, startYear: number)
     if (startYear >= 1990) return { venue: 'Fernsehstudio', stage: 'studio90', show: 'Samstagabend, Sportmagazin' };
     return { venue: 'Fernsehstudio', stage: 'studio70', show: 'Samstagabend, Sportmagazin' };
   }
-  if (startYear >= 1998 && roundIndex === 0) return { venue: 'Monaco', stage: 'uefaGala', show: 'Gala-Auslosung zum Supercup' };
+  if (startYear >= 1998 && roundIndex === 0) return { venue: 'Monaco', stage: 'uefaGala', show: 'Gala-Auslosung zum Gipfelpokal' };
   if (startYear >= 1995) return { venue: 'Nyon', stage: 'uefa90', show: 'Verbandssitz des Europa-Verbands' };
   if (startYear >= 1990) return { venue: 'Genf', stage: 'uefa90', show: 'Auslosung des Europa-Verbands' };
   return { venue: 'Zürich', stage: 'uefa70', show: 'Auslosung des Europa-Verbands' };

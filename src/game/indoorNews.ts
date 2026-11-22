@@ -101,7 +101,7 @@ export function mastersNews(g: Game, cur: IndoorWinter, t: IndoorTournament, tod
   if (w === g.managedClubId) return;
   pushMessage(g.messages, makeMessage({
     date: today, category: 'cup', from: 'Sportpresse',
-    subject: `${indoorName(g, w)} gewinnt das Hallen-Masters ${cur.winterYear}`,
+    subject: `${indoorName(g, w)} gewinnt das Hallenfinale ${cur.winterYear}`,
     shortText: `Finale in ${t.city}: ${indoorShort(g, fin.a)} – ${indoorShort(g, fin.b)} ${fin.ga}:${fin.gb}${fin.pa != null ? ` (${fin.pa}:${fin.pb} n. N.)` : ''}.`,
     bodyText: `Die Endrunde des Hallenpokals in der ${t.hall} ist entschieden: ${indoorName(g, w)} holt den Titel.`
       + (cur.mastersDeclined?.length ? `\n\nNicht angetreten trotz Qualifikation: ${cur.mastersDeclined.map((id) => indoorShort(g, id)).join(', ')}.` : ''),

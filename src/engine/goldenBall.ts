@@ -46,9 +46,9 @@ export interface GBEra { title: string; short: string; rule: string; venue: stri
 /** Bezeichnung, Teilnahmeregel und Gala-Ort eines Jahres. */
 export function gbEra(year: number): GBEra {
   const venue = year >= 2010 && year <= 2015 ? 'Zürich' : 'Paris';
-  if (year < 1995) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Ball', rule: 'Nur Europäer bei europäischen Vereinen', venue };
-  if (year < 2007) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Ball', rule: 'Alle Spieler europäischer Vereine', venue };
-  return { title: 'Weltfußballer des Jahres', short: 'Goldener Ball', rule: 'Spieler aller Ligen weltweit', venue };
+  if (year < 1995) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Stern', rule: 'Nur Europäer bei europäischen Vereinen', venue };
+  if (year < 2007) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Stern', rule: 'Alle Spieler europäischer Vereine', venue };
+  return { title: 'Weltfußballer des Jahres', short: 'Goldener Stern', rule: 'Spieler aller Ligen weltweit', venue };
 }
 
 /** Darf der Spieler in diesem Jahr gewählt werden? (Alle simulierten Vereine sind europäisch.) */

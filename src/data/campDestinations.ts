@@ -205,7 +205,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     id: 'zillertal', name: 'Zillertal', geo: [47.23, 11.88], place: 'Zell am Ziller / Gerlos', country: 'Österreich', region: 'alpen',
     seasons: S, access: from(1977), climate: 'alpen', altitude: 600, transport: 'bus', travelH: 8, tz: 0, travel: 2600,
     opp: 'regional', testIncome: 4500, marketing: 0.03, buzz: 0.3,
-    note: 'Tal mit Tradition: Ein Erstligist aus dem Norden kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
+    note: 'Tal mit Tradition: Ein Verein der 1. Liga aus dem Norden kommt seit rund 15 Jahren nach Zell-Gerlos [C16]. Gasthöfe im Talschluss oder Sporthotels im Ort.',
   },
   {
     id: 'salzburgerland', name: 'Salzburger Land', geo: [47.43, 12.85], place: 'Saalfelden / Maria Alm / Leogang', country: 'Österreich', region: 'alpen',
@@ -232,7 +232,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: S, access: from(1980), // Annahme
     climate: 'alpen', altitude: 1500, transport: 'bus', travelH: 8, tz: 0, travel: 3000,
     opp: 'international', testIncome: 5000, marketing: 0.05, buzz: 0.2,
-    note: 'Teurer als Österreich, dafür ruhiger; WM-Teams 2010 in Crans-Montana und Bad Ragaz [C17]. Testspiele gegen Schweizer Erstligisten.',
+    note: 'Teurer als Österreich, dafür ruhiger; WM-Teams 2010 in Crans-Montana und Bad Ragaz [C17]. Testspiele gegen Schweizer Oberhaus-Klubs.',
   },
   {
     id: 'engadin', name: 'Höhentraining Engadin/Wallis', geo: [46.5, 9.84], place: 'St. Moritz / Saas-Fee', country: 'Schweiz', region: 'alpen',
@@ -310,7 +310,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
     seasons: W, access: [{ from: 1992, minRep: 72 }, { from: 2010, minRep: 60 }], closed: [2021, 2022],
     climate: 'florida', altitude: 30, transport: 'flug', travelH: 10, tz: -6, travel: 24000,
     opp: 'international', testIncome: 7000, marketing: 0.25, buzz: 0.35,
-    note: 'Leverkusen fuhr im Januar 1992 als erster Erstligist nach Orlando [C2]; 2020 u. a. Frankfurt Rot und Berlin Blau [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
+    note: 'Leverkusen fuhr im Januar 1992 als erster Verein der 1. Liga nach Orlando [C2]; 2020 u. a. Frankfurt Rot und Berlin Blau [C7]. Lange Anreise, sechs Stunden Zeitverschiebung.',
   },
   {
     id: 'dubai', name: 'Vereinigte Arabische Emirate', geo: [25.2, 55.27], place: 'Dubai / Abu Dhabi', country: 'VAE', region: 'fern',
@@ -329,7 +329,7 @@ export const CAMP_DESTINATIONS: CampDestination[] = [
       { from: 2014, fan: 1.5, text: 'Menschenrechtsorganisationen kritisieren das Lager in Katar.' },
       { from: 2020, fan: 4, text: 'Mitglieder und Kurve protestieren massiv gegen Katar (vgl. Mitgliederversammlung 2021).' },
     ],
-    note: 'Seit 2011 Winterquartier von München Rot – als einziger Erstligist [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
+    note: 'Seit 2011 Winterquartier von München Rot – als einziger Verein der 1. Liga [C3][C4]. Beste Bedingungen, gute Kontakte zu Sponsoren – und wachsende Kritik.',
   },
   {
     id: 'suedafrika', name: 'Südafrika', geo: [-33.92, 18.42], place: 'Kapstadt / Johannesburg', country: 'Südafrika', region: 'fern',

@@ -85,7 +85,7 @@ export function msgLinks(g: Game, m: InboxMessage, faces: Player[]): MsgLink[] {
       return [{ label: 'Presse', screen: 'presse' }];
     }
     case 'cup': {
-      if (/Supercup|Ligapokal/.test(m.subject)) return [{ label: 'Supercup', screen: 'supercup' }];
+      if (/Gipfelpokal|Auftaktpokal/.test(m.subject)) return [{ label: 'Gipfelpokal', screen: 'supercup' }];
       if (/Halle|Hallen/.test(m.subject)) return [{ label: 'Halle', screen: 'halle' }];
       if (!/Landespokal/.test(m.subject) && EURO_RE.test(m.subject)) return [{ label: 'International', screen: 'international' }];
       return [{ label: 'Pokal', screen: 'cup' }];

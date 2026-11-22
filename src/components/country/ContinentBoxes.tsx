@@ -24,7 +24,7 @@ export function CtCupBox({ g, c }: CountryTabProps) {
       <KV k="Wettbewerb" v={p.cupName ?? 'in dieser Saison keiner'} strong />
       <KV k="Titel des Landes" v={p.cupWins.length ? `${p.cupWins.length}×` : 'keine'} />
       {p.cupWins[0] && <KV k={`Zuletzt ${p.cupWins[0].year}`} v={<TeamName g={g} id={p.cupWins[0].id} season={yrSeason(p.cupWins[0].year)} size={16} />} />}
-      <div className="dnote mt8">{c.name} läuft nur im Hintergrund: je Saison werden Meister und Kontinentalpokal ausgelost (Stärke der Epoche + Form + Zufall). Spielbar ist hier nichts – du triffst die Besten im Weltpokal bzw. bei der Klub-WM.</div>
+      <div className="dnote mt8">{c.name} läuft nur im Hintergrund: je Saison werden Meister und Kontinentalpokal ausgelost (Stärke der Epoche + Form + Zufall). Spielbar ist hier nichts – du triffst die Besten im Transatlantik-Pokal bzw. beim Klub-Weltturnier.</div>
     </DashBox>
   );
 }

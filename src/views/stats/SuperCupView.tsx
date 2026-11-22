@@ -74,10 +74,10 @@ export function SuperCupView({ g }: { g: Game }) {
 
   return (
     <DashPage className="sc-page">
-      <DashBox title={home ? `${home.name} ${home.season}` : era ? `${era.name} ${g.season}` : 'Supercup'} info="supercup">
+      <DashBox title={home ? `${home.name} ${home.season}` : era ? `${era.name} ${g.season}` : 'Gipfelpokal'} info="supercup">
         {home ? <EventBox g={g} ev={home} />
           : era ? <Empty icon="trophy">Der {era.name} wird zum Start der nächsten Saison ausgespielt.</Empty>
-            : <Empty icon="trophy">{next ? `In ${cname(homeKey)} gibt es noch keinen nationalen Supercup – der ${next.name} startet ${next.from}.` : `In ${cname(homeKey)} wird zurzeit kein nationaler Supercup ausgespielt.`}</Empty>}
+            : <Empty icon="trophy">{next ? `In ${cname(homeKey)} gibt es noch keinen nationalen Gipfelpokal – der ${next.name} startet ${next.from}.` : `In ${cname(homeKey)} wird zurzeit kein nationaler Gipfelpokal ausgespielt.`}</Empty>}
       </DashBox>
 
       <DashBox title="Regeln dieser Zeit">
@@ -91,10 +91,10 @@ export function SuperCupView({ g }: { g: Game }) {
             <KV k="Unentschieden" v={era.shared ? 'Titel wird geteilt' : era.directPens ? 'direkt Elfmeterschießen' : 'Verlängerung, Elfmeterschießen'} />
             <KV k="Prämie" v={`${fmtPrice(SUPER_PRIZE.start)} Antritt · ${fmtPrice(era.format === 'six' ? SUPER_PRIZE.ligapokal : SUPER_PRIZE.win)} Sieg`} />
           </>
-        ) : <div className="dnote">Kein Supercup in dieser Saison.{next ? ` Ab ${next.from}: ${next.name}.` : ''}</div>}
+        ) : <div className="dnote">Kein Gipfelpokal in dieser Saison.{next ? ` Ab ${next.from}: ${next.name}.` : ''}</div>}
       </DashBox>
 
-      <DashBox title="Europäischer Supercup">
+      <DashBox title="Europäischer Gipfelpokal">
         {uefa ? <EventBox g={g} ev={uefa} /> : <div className="dnote">Landesmeister-Sieger gegen {year <= 1999 ? 'Pokalsieger-Sieger' : 'Europa-Pokal-Sieger'}, ein Spiel Ende August.</div>}
         {euWinners.length > 0 && <div className="dsec">Bisherige Sieger</div>}
         <div className="nt-list">
@@ -110,12 +110,12 @@ export function SuperCupView({ g }: { g: Game }) {
             {winners.map((a) => (
               <div key={a.season + a.name} className={`nt-arow ${a.winner === g.managedClubId || a.runnerUp === g.managedClubId ? 'me' : ''}`}>
                 <span className="nt-date">{a.season}</span>
-                <span className="nt-pname"><ClubLink id={a.winner}>{compClubName(g, a.winner, a.season)}</ClubLink>{a.shared ? ' (geteilt)' : ''}{a.name !== 'Supercup' ? ` · ${a.name}` : ''}</span>
+                <span className="nt-pname"><ClubLink id={a.winner}>{compClubName(g, a.winner, a.season)}</ClubLink>{a.shared ? ' (geteilt)' : ''}{a.name !== 'Gipfelpokal' ? ` · ${a.name}` : ''}</span>
                 <span className="nt-club">{a.score} gegen <ClubLink id={a.runnerUp}>{compClubName(g, a.runnerUp, a.season)}</ClubLink></span>
               </div>
             ))}
           </div>
-        ) : <Empty icon="trophy">Seit deinem Start noch kein Supercup ausgespielt.</Empty>}
+        ) : <Empty icon="trophy">Seit deinem Start noch kein Gipfelpokal ausgespielt.</Empty>}
       </DashBox>
 
       <DashBox title="Andere Länder" span={2} right={others[0]?.season}>
@@ -129,7 +129,7 @@ export function SuperCupView({ g }: { g: Game }) {
               </div>
             ))}
           </div>
-        ) : <Empty icon="international">Die Supercups der übrigen Länder erscheinen ab dem ersten Saisonwechsel.</Empty>}
+        ) : <Empty icon="international">Die Gipfelpokale der übrigen Länder erscheinen ab dem ersten Saisonwechsel.</Empty>}
       </DashBox>
     </DashPage>
   );

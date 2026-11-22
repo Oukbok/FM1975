@@ -17,7 +17,7 @@ export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Spielplan
   wettbewerbeSaison: {
     title: 'Wettbewerbe dieser Saison',
-    text: 'Alle Wettbewerbe, in denen dein Verein in dieser Saison spielt: Liga, Landespokal, Europapokal und Supercup – mit Trophäe, erreichter Runde, letztem Ergebnis und nächstem Gegner. Die Punkte zeigen die Runden: gefüllt = überstanden, umrandet = aktuelle Runde, rot = hier ausgeschieden.',
+    text: 'Alle Wettbewerbe, in denen dein Verein in dieser Saison spielt: Liga, Landespokal, Europapokal und Gipfelpokal – mit Trophäe, erreichter Runde, letztem Ergebnis und nächstem Gegner. Die Punkte zeigen die Runden: gefüllt = überstanden, umrandet = aktuelle Runde, rot = hier ausgeschieden.',
     wiki: 'match-calendar',
   },
   spielplan: {
@@ -227,8 +227,8 @@ export const INFO_TEXTS = {
     wiki: 'indoor-football',
   },
   hallenWertung: {
-    title: 'Masters-Wertung',
-    text: 'Historisch zählt der Schnitt aller Spiele der Qualifikationsturniere (Ø Punkte je Spiel, dann Tordifferenz je Spiel, dann Tore) – ein starkes Turnier kann reichen. In den Einstellungen kannst du stattdessen Platzierungspunkte je Turnier wählen (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1; Gleichstand nach Schnitt). Die besten 8 Vereine der beiden oberen Ligen fahren zum Masters; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Masters (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
+    title: 'Hallenfinal-Wertung',
+    text: 'Historisch zählt der Schnitt aller Spiele der Qualifikationsturniere (Ø Punkte je Spiel, dann Tordifferenz je Spiel, dann Tore) – ein starkes Turnier kann reichen. In den Einstellungen kannst du stattdessen Platzierungspunkte je Turnier wählen (Sieger 10, Zweiter 7, Dritter 5, Vierter 4, dahinter 3/2/1; Gleichstand nach Schnitt). Die besten 8 Vereine der beiden oberen Ligen fahren zum Hallenfinale; wer verzichtet oder noch ein Pflichtspiel hat, macht Platz für Nachrücker. Ohne Hallenfinale (vor 1988, nach 2001) zählen Turniersiege, dann Punkte.',
     wiki: 'indoor-football',
   },
   hallenAusland: {
@@ -238,7 +238,7 @@ export const INFO_TEXTS = {
   },
   hallenkoenige: {
     title: 'Hallenkönige',
-    text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Masters-Sieg (+5 zusätzlich). Hallenspezialist sind die rund 15 besten aktiven Hallenspieler – die Schwelle hängt von der Epoche ab (früh niedriger, in der Masters-Zeit höher) und steht unter der Liste. Das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',
+    text: 'Ewige Bestenliste der Hallenspieler. Der Hallenruf wächst mit jedem Hallentor (+1), jedem Turniersieg (+3) und jedem Hallenfinal-Sieg (+5 zusätzlich). Hallenspezialist sind die rund 15 besten aktiven Hallenspieler – die Schwelle hängt von der Epoche ab (früh niedriger, in der Hallenfinal-Zeit höher) und steht unter der Liste. Das Etikett steht in der Hallenkader-Auswahl und im Spielerprofil.',
     wiki: 'indoor-football',
   },
   ligaLand: {
@@ -247,7 +247,7 @@ export const INFO_TEXTS = {
     wiki: 'world-start',
   },
   hallenMasters: {
-    title: 'Hallen-Masters',
+    title: 'Hallenfinale',
     text: 'Das Finalturnier der Hallensaison (1988–2001) für die besten Mannschaften der Tour. Ein Sieg bringt eine Prämie, für die Liga zählt er nicht.',
     wiki: 'indoor-football',
   },
@@ -512,13 +512,13 @@ export const INFO_TEXTS = {
     wiki: 'team-boost',
   },
   weltpokal: {
-    title: 'Weltpokal & Klub-WM',
-    text: 'Gewinnst du den Pokal der Landesmeister bzw. die Meisterliga, spielst du in der nächsten Saison gegen die besten Vereine der anderen Kontinente: bis 2004 im Weltpokal gegen den Sieger Südamerikas (bis 1979 Hin- und Rückspiel, danach ein Spiel in Tokio), ab 2005 bei der Klub-WM im Dezember, ab 2024 im Interkontinentalpokal (du steigst im Finale ein) und alle vier Jahre ab 2025 bei der großen Klub-WM mit 32 Teams im Juli. Die anderen Kontinente laufen nur im Hintergrund: Meister und Kontinentalpokale werden je Saison ausgelost, nicht Spiel für Spiel gespielt.',
+    title: 'Transatlantik-Pokal & Klub-Weltturnier',
+    text: 'Gewinnst du den Pokal der Landesmeister bzw. die Meisterliga, spielst du in der nächsten Saison gegen die besten Vereine der anderen Kontinente: bis 2004 im Transatlantik-Pokal gegen den Sieger Südamerikas (bis 1979 Hin- und Rückspiel, danach ein Spiel in Tokio), ab 2005 beim Klub-Weltturnier im Dezember, ab 2024 im Kontinentalsieger-Pokal (du steigst im Finale ein) und alle vier Jahre ab 2025 beim großen Klub-Weltturnier mit 32 Teams im Juli. Die anderen Kontinente laufen nur im Hintergrund: Meister und Kontinentalpokale werden je Saison ausgelost, nicht Spiel für Spiel gespielt.',
     wiki: 'world-club-cups',
   },
   supercup: {
-    title: 'Supercup & Ligapokal',
-    text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Supercup – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Ligapokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',
+    title: 'Gipfelpokal & Auftaktpokal',
+    text: 'Vor dem Ligastart spielen Meister und Pokalsieger der Vorsaison um den Gipfelpokal – je nach Land und Zeit in einem Spiel, mit Hin- und Rückspiel oder als kleines Turnier (Auftaktpokal 1997–2007 mit sechs Mannschaften). Wer das Double holte, trifft auf den Pokalfinalisten bzw. den Vizemeister. Es gibt Antrittsgeld und eine Siegprämie, der Titel zählt im Trophäenschrank.',
     wiki: 'supercup',
   },
   zweitemannschaft: {
@@ -1272,12 +1272,12 @@ export const INFO_TEXTS = {
     wiki: 'season-awards',
   },
   goldener_ball: {
-    title: 'Goldener Ball',
+    title: 'Goldener Stern',
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },
   goldener_schuh: {
-    title: 'Goldener Schuh',
+    title: 'Torjägerstern',
     text: 'Bester Torjäger Europas über alle 1. Ligen, vergeben am Saisonende. Gezählt werden nur Ligatore. Ab der Saison 1996/97 zählen Tore in starken Ligen mehr: Rang 1–5 der Fünfjahreswertung Faktor 2, Rang 6–21 Faktor 1,5, sonst 1. Davor zählt die reine Torzahl.',
     wiki: 'season-awards',
   },
@@ -1308,7 +1308,7 @@ export const INFO_TEXTS = {
   },
   erfolge: {
     title: 'Vereinspokale',
-    text: 'Alle Titel deines Vereins nach Wettbewerb: Meisterschaften und Staffelsiege, Landespokal, Europapokale, Jugendtitel, Hallen-Masters und Aufstiege – inklusive der Historie seit 1963/64. Klick auf einen Eintrag zeigt die Trophäe mit Endstand, Finale, Trainer und Torjäger der Saison, soweit gespeichert.',
+    text: 'Alle Titel deines Vereins nach Wettbewerb: Meisterschaften und Staffelsiege, Landespokal, Europapokale, Jugendtitel, Hallenfinale und Aufstiege – inklusive der Historie seit 1963/64. Klick auf einen Eintrag zeigt die Trophäe mit Endstand, Finale, Trainer und Torjäger der Saison, soweit gespeichert.',
     wiki: 'club-trophies',
   },
   budgetBerater: {

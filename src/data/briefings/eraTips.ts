@@ -82,7 +82,7 @@ export const ERA_TIPS: EraTipSet[] = [
       { topic: 'geld', title: 'Fernsehgeld wird ernst', where: 'Finanzen › Bilanz',
         text: 'Mit dem Privatfernsehen steigen ab 1988 die Rechtekosten sprunghaft, die 1. Liga wird zur Show.',
         inGame: 'Die Fernseheinnahmen wachsen Jahr für Jahr – plane sie ein, aber verlass dich noch nicht allein darauf.', from: 1988 },
-      { topic: 'liga', title: 'Hallenmasters im Winter', where: 'Statistiken › Halle',
+      { topic: 'liga', title: 'Hallenfinale im Winter', where: 'Statistiken › Halle',
         text: 'Die Hallentour mit Endrunde füllt die Winterpause, die Profis spielen mit.',
         inGame: 'Hallenturniere bringen Antrittsgeld und Ansehen – aber auch Verletzungsrisiko für deine Stammkräfte.' },
       { topic: 'taktik', title: 'Raumdeckung aus Italien', where: 'Aufstellung › Taktik',
@@ -148,7 +148,7 @@ export const ERA_TIPS: EraTipSet[] = [
     ],
   },
   {
-    from: 2005, to: 2010, label: 'Arenen und Sommermärchen', motif: 'digital',
+    from: 2005, to: 2010, label: 'Arenen und Heim-WM', motif: 'digital',
     tips: [
       { topic: 'geld', title: 'Das Stadion als Geldquelle', where: 'Verein › Stadion',
         text: 'Rund um die WM 2006 entstehen im ganzen Land moderne Arenen mit Logen und Business-Seats.',

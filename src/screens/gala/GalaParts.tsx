@@ -1,5 +1,5 @@
 // =============================================================================
-// GALA GOLDENER BALL — Bausteine: Pokal (SVG), Nationalitäts-Etikett, Preisträger-Karte,
+// GALA GOLDENER STERN — Bausteine: Pokal (SVG), Nationalitäts-Etikett, Preisträger-Karte,
 // Liste der Plätze 4–10. CSS 28-awards.css (.gb-*).
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
@@ -17,7 +17,7 @@ import { awardPerson } from '../../views/stats/awards/AwardParts';
 
 const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 
-/** Der Goldene Ball: Kugel mit Nähten auf schlankem Sockel (eigene Zeichnung, kein Markenlogo). */
+/** Der Goldene Stern: fünfzackiger Stern mit Graten auf schlankem Sockel (eigene Zeichnung, kein Markenlogo). */
 export function GoldenBallTrophy({ size = 180 }: { size?: number }) {
   return (
     <svg className="gb-trophy" width={size} height={size * 1.25} viewBox="0 0 160 200" aria-hidden>
@@ -33,12 +33,9 @@ export function GoldenBallTrophy({ size = 180 }: { size?: number }) {
           <stop offset="100%" stopColor="var(--bg-2)" />
         </linearGradient>
       </defs>
-      <circle cx="80" cy="74" r="62" fill="url(#gbBall)" />
-      <g fill="none" stroke="var(--bg)" strokeOpacity="0.35" strokeWidth="1.6">
-        <path d="M80 50 L101 65 L93 90 L67 90 L59 65 Z" />
-        <path d="M80 50 L80 14 M101 65 L135 52 M93 90 L112 120 M67 90 L48 120 M59 65 L25 52" />
-        <path d="M80 14 Q112 22 135 52 M135 52 Q140 92 112 120 M112 120 Q80 140 48 120 M48 120 Q20 92 25 52 M25 52 Q48 22 80 14" strokeOpacity="0.2" />
-      </g>
+      <path d="M80 12 L96 54 L141 56 L106 84 L118 128 L80 103 L42 128 L54 84 L19 56 L64 54 Z" fill="url(#gbBall)" stroke="var(--gold)" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M80 26 L92 59 L128 61 L100 82 L109 116 L80 97 L51 116 L60 82 L32 61 L68 59 Z" fill="none" stroke="var(--bg)" strokeOpacity="0.3" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M80 76 L80 12 M80 76 L141 56 M80 76 L118 128 M80 76 L42 128 M80 76 L19 56" stroke="var(--bg)" strokeOpacity="0.18" strokeWidth="1.2" />
       <path d="M62 136 L98 136 L92 150 L68 150 Z" fill="url(#gbBase)" />
       <rect x="56" y="150" width="48" height="12" rx="2" fill="url(#gbBase)" />
       <rect x="46" y="162" width="68" height="22" rx="3" fill="url(#gbBase)" stroke="var(--border)" />

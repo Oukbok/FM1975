@@ -104,7 +104,7 @@ function firstLeagueDate(g: Game): string {
 function addEvent(g: Game, m: ScMatch, ev: ScEvent): void {
   g.calendar.events.push({
     id: `scev_${m.id}`, date: m.date, type: 'super_cup', title: `${ev.name}: ${ROUND_DE[m.stage]}`,
-    description: ev.key === 'uefa' ? 'Europäischer Supercup' : `${ev.name} ${ev.season}`, matchId: m.id, processed: false, requiresAction: false,
+    description: ev.key === 'uefa' ? 'Europäischer Gipfelpokal' : `${ev.name} ${ev.season}`, matchId: m.id, processed: false, requiresAction: false,
   });
 }
 
@@ -158,7 +158,7 @@ function homeEvent(g: Game, s: ScSeeds, y: number): ScEvent | null {
 function uefaEvent(g: Game, s: ScSeeds, y: number): ScEvent | null {
   const a = s.ec, b = y <= 1999 ? s.cwc : s.uefa;
   if (!a || !b || a === b) return null;
-  const ev: ScEvent = { key: 'uefa', name: 'Europäischer Supercup', country: 'Europa', season: g.season, format: 'uefa', teams: [a, b], matches: [] };
+  const ev: ScEvent = { key: 'uefa', name: 'Europäischer Gipfelpokal', country: 'Europa', season: g.season, format: 'uefa', teams: [a, b], matches: [] };
   const busy = busyDates(g, ev.teams);
   const date = freeDay(busy, `${y}-08-28`, 1, `${y}-08-20`);
   ev.matches.push({ id: `sc_${g.season.slice(0, 4)}_u`, date, stage: 'F', home: a, away: b });

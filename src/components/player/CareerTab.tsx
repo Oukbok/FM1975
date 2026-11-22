@@ -99,7 +99,7 @@ function honoursOf(g: Game | undefined, p: Player) {
   if (hr && (hr.g > 0 || hr.w > 0)) {
     const ruf = hallRuf(hr), spec = isHallSpecialist(g as Game, p.id); // Schwelle je Epoche
     const what = `${spec ? 'Hallenspezialist' : 'Hallenturniere'} · ${hr.g} Tore in ${hr.t} Turnieren`
-      + (hr.w ? ` · ${hr.w} Turniersieg${hr.w === 1 ? '' : 'e'}` : '') + (hr.m ? `, davon ${hr.m} Masters` : '');
+      + (hr.w ? ` · ${hr.w} Turniersieg${hr.w === 1 ? '' : 'e'}` : '') + (hr.m ? `, davon ${hr.m} im Hallenfinale` : '');
     list.push({ when: `${hr.y - 1}/${String(hr.y % 100).padStart(2, '0')}`, what, where: `Hallenruf ${ruf}`, top: spec });
   }
   return { list: list.sort((a, b) => b.when.localeCompare(a.when)), sds, gb };
@@ -183,7 +183,7 @@ export default function CareerTab({ p, club, season }: { p: Player; club?: Club;
       <Section title="Auszeichnungen" right={hon.list.length ? `${hon.list.length}` : undefined}>
         <div className="pp3-honsum">
           <div><b>{hon.sds}</b><span>Spieler der Saison</span></div>
-          <div><b>{hon.gb}</b><span>Goldener Ball</span></div>
+          <div><b>{hon.gb}</b><span>Goldener Stern</span></div>
           <div><b>{titles.length}</b><span>Titel mit dem Verein</span></div>
         </div>
         {hon.list.length === 0 && titles.length === 0 && <div className="pp-note">Noch keine Ehrung und kein Titel seit Spielbeginn.</div>}

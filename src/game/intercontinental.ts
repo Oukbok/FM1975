@@ -123,9 +123,9 @@ function buildWp(g: Game, s: IcSeeds, y: number, plan: IcPlan): Build {
   // 1970er: Europas Meister verzichtet oft – der Finalist springt ein, sonst fällt der Weltpokal aus.
   if (y >= WP_DECLINE.from && y <= WP_DECLINE.to && eu !== mid && mulberry32(hashStr(`wpd|${y}`))() < WP_DECLINE.chance) {
     const ru = s.ecRu;
-    note = `${drawClubName(g, eu)} verzichtet auf den Weltpokal`;
+    note = `${drawClubName(g, eu)} verzichtet auf den Transatlantik-Pokal`;
     if (ru && (ru === mid || mulberry32(hashStr(`wpd2|${y}`))() >= 0.5)) { eu = ru; note += ` – Finalist ${drawClubName(g, ru)} springt ein`; }
-    else return { teams: [], matches: [], note: `${note}; der Weltpokal ${y} fällt aus` };
+    else return { teams: [], matches: [], note: `${note}; der Transatlantik-Pokal ${y} fällt aus` };
   }
   if (plan.format === 'legs2') return { teams: [eu, sa], note, matches: [mk('L1', D(y, '11-19'), sa, eu), mk('L2', D(y, '12-10'), eu, sa)] };
   const [h, a] = y % 2 === 0 ? [eu, sa] : [sa, eu];
@@ -349,8 +349,8 @@ function finish(g: Game, ev: IcEvent, date: string): void {
     subject: ev.winner === mid ? `${ev.name} gewonnen!` : `${ev.name} ${ev.season}: ${drawClubName(g, ev.winner!)}`,
     shortText: `${drawClubName(g, ev.winner!)} – ${drawClubName(g, ev.runnerUp!)} ${score}`,
     bodyText: ev.winner === mid ? `Dein Verein ist der beste der Welt: ${ev.name} ${ev.season}. Prämie und Ansehen sind dir sicher.`
-      : mine ? `${drawClubName(g, ev.winner!)} gewinnt ${ev.name === 'Weltpokal' || ev.name === 'Interkontinentalpokal' ? 'den' : 'die'} ${ev.name}. Dein Verein scheidet aus – die Reise bleibt eine Erfahrung.`
-        : `${drawClubName(g, ev.winner!)} gewinnt ${ev.name === 'Weltpokal' || ev.name === 'Interkontinentalpokal' ? 'den' : 'die'} ${ev.name} ${ev.season}.`,
+      : mine ? `${drawClubName(g, ev.winner!)} gewinnt ${/Weltturnier/.test(ev.name) ? 'das' : 'den'} ${ev.name}. Dein Verein scheidet aus – die Reise bleibt eine Erfahrung.`
+        : `${drawClubName(g, ev.winner!)} gewinnt ${/Weltturnier/.test(ev.name) ? 'das' : 'den'} ${ev.name} ${ev.season}.`,
   }));
 }
 

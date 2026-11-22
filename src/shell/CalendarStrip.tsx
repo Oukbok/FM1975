@@ -180,7 +180,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
 
   // Quelle C — Winter: eigene Hallenturniere und Trainingslager (game/winterShared.ts).
   for (const [date, t] of ownIndoorDays(g)) {
-    consider({ date, icon: 'trophy', line: t.kind === 'masters' ? 'Hallen-Masters' : `Halle ${t.city}`, accent: 'gold', isMatch: false, prio: 60, screen: 'halle', kind: 'Halle' });
+    consider({ date, icon: 'trophy', line: t.kind === 'masters' ? 'Hallenfinale' : `Halle ${t.city}`, accent: 'gold', isMatch: false, prio: 60, screen: 'halle', kind: 'Halle' });
   }
   for (const [date, b] of ownCampDays(g)) {
     const last = date === b.end;

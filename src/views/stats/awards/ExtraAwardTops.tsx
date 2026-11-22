@@ -41,7 +41,7 @@ export function GoldenShoeTop({ g, y }: { g: Game; y: GSSeason }) {
       </div>
       <div className="gs-body">
         <article className={`aw-card compact gs-hero ${w.c === mine ? 'mine' : ''}`} style={{ '--k': 0 } as CSSProperties}>
-          <div className="aw-cat"><span>Goldener Schuh</span><span className="aw-tag">{landOf(w.k)}</span></div>
+          <div className="aw-cat"><span>Torjägerstern</span><span className="aw-tag">{landOf(w.k)}</span></div>
           <div className="aw-hero">
             <AwardFace g={g} e={w} size={88} />
             <div className="aw-who">

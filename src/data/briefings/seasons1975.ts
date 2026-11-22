@@ -424,7 +424,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'geld',
         title: 'Profis auch neben dem Platz',
-        text: 'Erstligisten stellen Co-Trainer, Physiotherapeuten und hauptamtliche Geschäftsstellen ein. Die Werbeflächen im Stadion werden systematisch vermarktet.',
+        text: 'Die Vereine der 1. Liga stellen Co-Trainer, Physiotherapeuten und hauptamtliche Geschäftsstellen ein. Die Werbeflächen im Stadion werden systematisch vermarktet.',
         inGame: 'Neue Mitarbeiter-Rollen freigeschaltet',
       },
       {
@@ -594,13 +594,13 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '1987/88',
-    headline: 'Hallen-Masters und Heim-EM',
+    headline: 'Hallenfinale und Heim-EM',
     football: [
       {
         topic: 'liga',
         title: 'Hallenpokal',
         text: 'Die Lizenzvereine beschließen eine offizielle Hallenrunde. Die erste Endrunde steigt im Januar 1988 in der Frankfurter Festhalle.',
-        inGame: 'Hallentour mit Masters-Endrunde',
+        inGame: 'Hallentour mit Hallenfinale',
       },
       {
         topic: 'liga',
@@ -811,7 +811,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'taktik',
         title: 'Ab in die Wärme',
-        text: 'Im Januar 1992 fliegt Gelsenkirchen als erster Erstligist ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
+        text: 'Im Januar 1992 fliegt Gelsenkirchen als erster Verein der 1. Liga ins Winterlager an die türkische Riviera, Leverkusen nach Florida. Bisher ging es auf die Kanaren – oder auf gefrorene Plätze daheim.',
         inGame: 'Neue Ziele unter Training › Trainingslager',
       },
     ],
@@ -878,7 +878,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'medien',
         title: '„Mein Freund ist Ausländer“',
-        text: 'Im Dezember 1992 laufen alle Erstligisten statt mit Trikotwerbung mit diesem Schriftzug auf – eine Reaktion auf fremdenfeindliche Anschläge.',
+        text: 'Im Dezember 1992 laufen alle Vereine der 1. Liga statt mit Trikotwerbung mit diesem Schriftzug auf – eine Reaktion auf fremdenfeindliche Anschläge.',
       },
     ],
     society: [
@@ -1063,7 +1063,7 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       {
         topic: 'liga',
         title: 'Europameister 1996',
-        text: 'Am 30. Juni 1996 gewinnt Deutschland in Wembley das EM-Finale gegen Tschechien 2:1 – ein eingewechselter Stürmer erzielt das erste Golden Goal eines großen Finales.',
+        text: 'Am 30. Juni 1996 gewinnt Deutschland in London das EM-Finale gegen Tschechien 2:1 – ein eingewechselter Stürmer erzielt das erste Golden Goal eines großen Finales.',
       },
       {
         topic: 'geld',
@@ -1112,8 +1112,8 @@ export const SEASONS_1975: SeasonBriefingEntry[] = [
       },
       {
         topic: 'liga',
-        title: 'Ein Ligapokal vor der Saison',
-        text: 'Seit dem Sommer 1997 spielen die besten Erstligisten vor dem Saisonstart den Ligapokal aus.',
+        title: 'Ein Auftaktpokal vor der Saison',
+        text: 'Seit dem Sommer 1997 spielen die besten Vereine der 1. Liga vor dem Saisonstart den Auftaktpokal aus.',
       },
       {
         topic: 'liga',

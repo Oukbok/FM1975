@@ -199,10 +199,10 @@ function awardShoe(g: Game, season: string, divs: Record<string, (LeanDiv | null
   const mine = res.top.filter((e) => e.c === g.managedClubId);
   pushMessage(g.messages, makeMessage({
     date, category: 'media', from: 'Sportredaktion',
-    subject: `Goldener Schuh ${season}: ${w.n}`,
+    subject: `Torjägerstern ${season}: ${w.n}`,
     shortText: `Europas bester Torjäger: ${w.n} (${w.cn}) mit ${w.gl} Toren.`,
     bodyText: [
-      `Der Goldene Schuh ${season} für den besten Torjäger Europas geht an ${w.n} (${w.cn}, ${land(w)}) – ${w.gl} Ligatore${w.f !== 1 ? `, Faktor ${String(w.f).replace('.', ',')} = ${String(w.pts).replace('.', ',')} Punkte` : ''}.`,
+      `Der Torjägerstern ${season} für den besten Torjäger Europas geht an ${w.n} (${w.cn}, ${land(w)}) – ${w.gl} Ligatore${w.f !== 1 ? `, Faktor ${String(w.f).replace('.', ',')} = ${String(w.pts).replace('.', ',')} Punkte` : ''}.`,
       '',
       ...res.top.slice(0, 5).map((e, i) => `${i + 1}. ${e.n} (${e.cn}, ${land(e)}) – ${e.gl} Tore${e.f !== 1 ? ` × ${String(e.f).replace('.', ',')}` : ''}`),
       ...(mine.length ? ['', `Aus deinem Kader in den Top 10: ${mine.map((e) => e.n).join(', ')}.`] : []),
