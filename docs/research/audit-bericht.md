@@ -62,11 +62,46 @@ Gemessen mit `VIEWS=1280x800,1366x768 SAVES=neu,liga1-2025,england-1992,ddr-1980
 
 **Nach der Messung behoben (nur Stichprobe nachgemessen):** „Menü passt nicht“ trat mit angehobener Schrift bei 1280×800 mit langen Vereinsnamen auf (404 Ansichten in neu/england/ddr) – Kopfleiste schmaler, Nachprüfung neu 1280×800: 0. Spielerprofil 1366×768 (england-1992) ließ den Rahmen um 6 px wachsen – Fähigkeiten-Raster ausgenommen, Nachprüfung 0. Tabellen-Zellabstand 5 px jetzt auch bei 1366×768 (vorher nur „narrow“).
 
-**Offen aus diesem Durchgang:** Waagerechter Bildlauf ist mit größerer Schrift häufiger (Aufstellung › Kaderliste 15 px, Kader › Übersicht/Kabine, Budget, Beobachtung bei 1366, Vereins-/Länderprofil-Kader, Infokarte) – Inhalte erreichbar, nächster Schritt je Tabelle eine Spalte weniger. Verein › Erfolge: Kategorienleiste der Vitrine 10–16 px zu breit. Verhandlungstisch: Chip „Weitere Verstärkungen“ abgeschnitten.
+**Offen aus diesem Durchgang (erledigt im Durchgang Tabellen, siehe dort):** Waagerechter Bildlauf ist mit größerer Schrift häufiger (Aufstellung › Kaderliste 15 px, Kader › Übersicht/Kabine, Budget, Beobachtung bei 1366, Vereins-/Länderprofil-Kader, Infokarte) – Inhalte erreichbar, nächster Schritt je Tabelle eine Spalte weniger. Verein › Erfolge: Kategorienleiste der Vitrine 10–16 px zu breit. Verhandlungstisch: Chip „Weitere Verstärkungen“ abgeschnitten.
 
 **Gegner-Seite:** Box heißt jetzt „Begegnung“ (nicht mehr doppelt „Nächstes Spiel“).
 
 **Zeitgeist/Briefing im DDR-Spielstand:** nicht umgebaut. Die Gesellschafts-Punkte (`data/briefings/seasons1975.ts`, 43 × Thema `politik` bis 1990) sind durchgehend aus westdeutscher Sicht geschrieben; eine neutrale Variante per Filter ließe das Briefing 1975–1990 fast leer, eine echte DDR-Sicht braucht eigene redaktionelle Texte je Saison (optional `societyDdr` in `SeasonBriefingEntry`, Auswahl in `composeBriefing`/`RightWidgets` über `game.ddrHome`). Vorschlag, Entscheidung bei Pascal; echte Politiker-Namen unverändert.
+
+## Durchgang Tabellen (22.11.2026)
+
+Auftrag Pascal: Tabellen schmaler, kein waagerechter Bildlauf auf kleinen Flächen. Regel (Entwurf, noch nicht in CLAUDE.md): `docs/research/table-rules.md`. Helfer `ui/stableTables.ts` + `styles/33-tables.css`, Kurzköpfe `ui/Short.tsx`.
+
+Gemessen mit `SAVES=neu,liga1-2025,england-1992 VIEWS=1280x800,1366x768` (666 Seiten, 144 Fenster je Lauf), vorher = Build vor dem Durchgang.
+
+| Art | 1280×800 vorher → nachher | 1366×768 vorher → nachher |
+|---|---|---|
+| Waagerechte Bildlaufleiste | 59 → 8 (nur Turnierbäume) | 55 → 6 (nur Turnierbäume) |
+| Inhalt waagerecht abgeschnitten | 10 → 0 | 1 → 0 |
+| Tabelle zusammengeschoben (neu, weich) | – → 5 | – → 4 |
+| 1920×1080 (liga1-2025) | unverändert, keine schweren Funde | |
+
+Ein schwerer Fund im Gesamtlauf („Vereinsprofil Ausland“ 1366×768: Rahmen 1849 > 1843) ließ sich einzeln in keinem Build nachstellen (vorher gleiche Art: Länderprofil 1926 > 1920) – vermutlich ein Zwischenzustand beim Öffnen.
+
+**Was auf kleiner Fläche wegfällt** (alles bleibt über Tooltip, Infokarte oder Profil erreichbar; 1920×1080 zeigt alle Spalten):
+
+| Tabelle | 1280×800 | Kurzköpfe |
+|---|---|---|
+| Aufstellung › Kaderliste | – (Name jetzt 189 statt 95 px) | Fr., Fit., Mor., Note, St. |
+| Kader › Übersicht | – | Pot., Fr., Fit. |
+| Kader › Kabine › Spieler | – (Name kürzer) | Einfl. |
+| Transfers › Beobachtung | Nation | Pos., Pot., Wert, Empf. |
+| Transfers › Transfermarkt | bei Bedarf: Kenntnisse, dann Nation/Info, dann Gehalt | Nat., Pos., Pot., Wert, Empf., Kenn. |
+| Verein › Mitarbeiter-Markt | (Aussicht, Stärken, Alter nur bei Bedarf; bisher fester Wegfall über 33-compact) | – |
+| Verein › Kartenverkauf › Preise | – (Untertitel der Tribüne bricht um) | – |
+| Vereinsprofil › Kader | Rückennummer, Vertrag | Pot., Wert |
+| Vereinsprofil › Jugend | bei Bedarf Nation, Kenntnis, Mannschaft | Nat., Pos., Team, Pot., Kenn. |
+| Vereinsprofil › Transfers | bei Bedarf Alter, dann Datum | – |
+| Länderprofil › Nationalkader | – (Spalten breiter) | St. |
+
+Daneben behoben: Budget (Kurzform unter den Säulen), Kabine „Woher der Einfluss?“, Vitrine-Kategorienleiste, Verhandlungstisch (Vertragspunkte, Chip), Chronik, Ligensystem, Sponsoring-Klausel, Gruppentabellen, Jugend › 2. Mannschaft (i-Symbol ragte 6 px hinaus), Länderprofil-Termine.
+
+Screenshots vorher/nachher: `node tests/table-shots.mjs <ordner>` (mit `DIST=<alter Build>` für vorher), Montage `python3 tests/table-montage.py`.
 
 ## Sichtprüfung (S-Punkte, Stichproben aus den Screenshots)
 
