@@ -31,7 +31,7 @@ function KidRow({ g, k, act }: { g: Game; k: Person; act: (t: string) => void })
       <td>{a >= 6 ? talentWord(k.talent ?? 0) : '–'}</td>
       <td><Bar v={k.fuehrung ?? 0} /></td>
       <td><Bar v={k.bond ?? 0} /></td>
-      <td className="car-cut">{pl ? <><PlayerLink id={pl.id}>{PATH_DE.spieler}</PlayerLink><div className="pv-sub"><ClubLink id={pl.clubId}>{clubName}</ClubLink> · Stärke {pl.overall}</div></> : PATH_DE[k.path ?? 'offen']}</td>
+      <td className="car-cut">{pl ? <><PlayerLink id={pl.id} mark={false}>{PATH_DE.spieler}</PlayerLink><div className="pv-sub"><ClubLink id={pl.clubId}>{clubName}</ClubLink> · Stärke {pl.overall}</div></> : PATH_DE[k.path ?? 'offen']}</td>
       <td className="pv-acts">
         {canYouth && <button type="button" className="btn btn-sm" onClick={() => act(joinYouth(g, st, k))}>In die Jugend</button>}
         <button type="button" className="btn btn-sm btn-ghost" onClick={() => act(gift(g, k.id))}>Geschenk</button>

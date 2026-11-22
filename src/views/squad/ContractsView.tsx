@@ -1,4 +1,5 @@
 import PlayerModal from '../../components/PlayerModal';
+import { LeaderName } from '../../components/player/LeaderMark';
 import { CalendarEngine } from '../../engine/calendar';
 import { Game } from '../../game/state';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
@@ -42,7 +43,7 @@ export function ContractsView({ g, onChange }: { g: Game; onChange?: () => void 
               const m = monthsUntil(today, pl.contract.expiryDate);
               return (
                 <tr key={pl.id} data-pid={pl.id} className="clickable" onClick={() => setSel(pl.id)}>
-                  <td className="nowrap rl-name">{pl.fullName}</td>
+                  <td className="nowrap rl-name"><LeaderName p={pl}>{pl.fullName}</LeaderName></td>
                   <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num" style={{ color: vColor(pl.overall), fontWeight: 800 }}>{pl.overall}</td>

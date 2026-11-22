@@ -1,4 +1,5 @@
 // Reiter „Kader“: Kadertabelle (Klick = Spielerprofil, Verhandeln) | Kaderstruktur | Vertragslage
+import { LeaderName } from '../player/LeaderMark';
 import Short from '../../ui/Short';
 import { useState } from 'react';
 import { activeTalks, talkBlocker } from '../../game/transferTalks';
@@ -68,7 +69,7 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
               return (
                 <tr key={p.id} data-pid={p.id} className="clickable" onClick={() => openPlayer(p.id)}>
                   <td className="ctr muted">{p.shirtNumber || ''}</td>
-                  <td className="nowrap rl-name">{p.fullName}{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
+                  <td className="nowrap rl-name"><LeaderName p={p}>{p.fullName}</LeaderName>{p.transferListed && <span className="cmx-tag">Transferliste</span>}</td>
                   <td className="ctr"><PosBadge p={p} /></td>
                   <td className="num">{p.age}</td>
                   <td className="num"><b style={{ color: vColor(p.overall) }}>{p.overall}</b></td>
@@ -107,14 +108,14 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
         <div className="dsec">Vertrag endet in 12 Monaten ({expiring.length})</div>
         {expiring.length ? expiring.slice(0, 4).map((p) => (
           <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
-            <PosBadge p={p} compact /><span className="grow">{p.fullName}</span>
+            <PosBadge p={p} compact /><span className="grow"><LeaderName p={p}>{p.fullName}</LeaderName></span>
             <span className="val" style={{ color: vColor(p.overall) }}>{p.overall}</span>
           </div>
         )) : <div className="dnote">Niemand.</div>}
         <div className="dsec">Wechselwillig oder auf der Transferliste ({unhappy.length})</div>
         {unhappy.length ? unhappy.slice(0, 4).map((p) => (
           <div key={p.id} data-pid={p.id} className="dlist-row clickable" onClick={() => openPlayer(p.id)}>
-            <PosBadge p={p} compact /><span className="grow">{p.fullName}</span>
+            <PosBadge p={p} compact /><span className="grow"><LeaderName p={p}>{p.fullName}</LeaderName></span>
             <span className="val" style={{ color: vColor(p.overall) }}>{p.overall}</span>
           </div>
         )) : <div className="dnote">Alle Spieler sind zufrieden.</div>}

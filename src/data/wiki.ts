@@ -3099,7 +3099,15 @@ Ganz wenige Spieler mit **überragender Führungsstärke und viel Erfahrung** re
 - **Silber:** +1 %
 - **Gold:** +2 %
 
-Der Bonus wirkt auf Angriff, Spielkontrolle und Abwehr deiner Mannschaft, **solange der Spieler auf dem Platz steht** (wird er ausgewechselt oder fliegt vom Platz, ist er weg). Mehrere Führungsspieler addieren sich, zusammen höchstens **+3 %**. Du siehst ihn im Spielerprofil unter dem Charakter.
+Der Bonus wirkt auf Angriff, Spielkontrolle und Abwehr deiner Mannschaft, **solange der Spieler auf dem Platz steht** (wird er ausgewechselt oder fliegt vom Platz, ist er weg). Mehrere Führungsspieler addieren sich, zusammen höchstens **+3 %**.
+
+## Woran erkennt man ihn?
+Hinter dem **Namen** jedes Führungsspielers steht ein kleines **Wappenschild mit Winkeln** – überall, wo der Name eines Spielers mit vollem Datensatz erscheint (eigene und fremde Spieler): Kaderlisten, Aufstellung (Feld, Bank, Kaderliste), Textmodus und Wechsel-Bildschirm, Spieler-Infokarte, Transfermarkt, Spielerpool und Beobachtung, Kabine, Vereins- und Länderprofil, Gegner-Seite und Vorschau „Nächstes Spiel“.
+- **Bronze**, ein Winkel: +0,5 %
+- **Silber**, zwei Winkel: +1 %
+- **Gold**, drei Winkel: +2 %
+
+Die Zahl der Winkel zeigt die Stufe auch ohne Farbe. Zeigst du auf das Schild (oder tippst darauf), erscheint die Erklärung mit dem Bonus. Wird ein langer Name gekürzt, bleibt das Schild sichtbar. Unter Kader › Übersicht erklärt eine kleine Legende die drei Stufen, wenn dein Kader einen Führungsspieler hat. Im Spielerprofil steht der Teambonus zusätzlich unter dem Charakter. Weltspieler ohne vollen Datensatz (Spielerpool im Ausland) haben nie einen Teambonus.
 
 ## Wie bekommt man ihn?
 Nur in der **Auf- und Abwertungsrunde**: Infrage kommt, wer mindestens 25 ist, als **höchste jemals erreichte Stärke** mindestens 66 hat und bei Führungsstärke und Erfahrung ganz oben steht. Maßgeblich ist immer die Höchststärke der Karriere, nicht die aktuelle Form. Meist geht es mit Bronze oder Silber los; Gold gibt es fast nur über spätere Aufwertungen. Im ganzen Spiel gibt es selten mehr als eine Handvoll bis etwa zwanzig solcher Spieler – Erfahrung sammeln vor allem frühe Stammspieler, Nationalspieler, Europapokal-Spieler und Titelträger – deshalb sind es meist gestandene Leistungsträger.

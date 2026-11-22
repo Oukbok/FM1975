@@ -20,6 +20,9 @@
 //    (`table-layout: fixed`, Markierung `data-fixed`). Solange React dieselbe Tabelle
 //    weiterverwendet, bleiben die Spalten stehen. Tabellen ohne Kopfzeile werden über die
 //    erste Zeile gemessen. CSS in 28-rows.css.
+// 3) Führungsspieler-Zeichen hinter Namen (components/player/LeaderMark.tsx) zählen beim
+//    Messen nicht mit (`data-measure` blendet `.ldm` kurz aus, styles/28-leadermark.css):
+//    das Zeichen verbreitert nie eine Spalte – ist kein Platz, wird der Name gekürzt.
 // =============================================================================
 let installed = false;
 
@@ -92,6 +95,11 @@ function lock(t: HTMLTableElement): void {
   if (t.dataset.fixed || !t.isConnected || t.offsetWidth === 0) return;
   const cells = headCells(t);
   if (cells.length < 2) return;
+  t.dataset.measure = '1';
+  try { measureLock(t, cells); } finally { delete t.dataset.measure; }
+}
+
+function measureLock(t: HTMLTableElement, cells: HTMLTableCellElement[]): void {
   t.dataset.cols = String(cells.length);
   const missing = fit(t);
   const k = Math.max(1e-6, t.getBoundingClientRect().width / t.offsetWidth);
@@ -122,7 +130,8 @@ function fitOnly(t: HTMLTableElement): void {
   if (t.dataset.fitDone || !t.isConnected || t.offsetWidth === 0) return;
   t.dataset.fitDone = '1';
   t.dataset.cols = String(headCells(t).length);
-  fit(t);
+  t.dataset.measure = '1';
+  try { fit(t); } finally { delete t.dataset.measure; }
 }
 
 function scan(root: ParentNode): void {

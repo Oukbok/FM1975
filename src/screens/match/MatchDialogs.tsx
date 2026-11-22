@@ -1,6 +1,7 @@
 // =============================================================================
 // Abschluss des Textmodus im Reiter „Abpfiff“ (Halbzeitansprache: changes/TalkTabs.tsx).
 // =============================================================================
+import { LeaderName } from '../../components/player/LeaderMark';
 import { ClubLink } from '../../components/club/ClubLink';
 import Icon from '../../components/Icon';
 import type { MatchSim } from '../../engine/match/sim';
@@ -39,7 +40,7 @@ export function EndTab({ g, sim, side, outcome }: { g: Game; sim: MatchSim; side
           return (
             <div key={e.id} className="ms-gr">
               <span className="ms-pos">{e.pos}</span>
-              <span className="ms-name">{nm(p)}{e.goals ? ` · ${e.goals} Tor${e.goals > 1 ? 'e' : ''}` : ''}{e.assists ? ` · ${e.assists} Vorl.` : ''}</span>
+              <span className="ms-name"><LeaderName p={p}>{nm(p)}</LeaderName>{e.goals ? ` · ${e.goals} Tor${e.goals > 1 ? 'e' : ''}` : ''}{e.assists ? ` · ${e.assists} Vorl.` : ''}</span>
               <span className="ms-dim">{e.started ? '' : `ab ${e.in}'`}{e.out != null ? ` bis ${e.out}'` : ''}</span>
               <span className={`ms-grade ${e.grade <= 2 ? 'g-top' : e.grade <= 3 ? 'g-good' : e.grade <= 4 ? 'g-mid' : 'g-bad'}`}>{e.grade.toFixed(1).replace('.', ',')}</span>
             </div>

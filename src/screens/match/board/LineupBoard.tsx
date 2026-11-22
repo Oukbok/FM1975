@@ -5,6 +5,7 @@
 // Ablegen (Wunsch Pascal) – Bankspieler auf Feldspieler = Wechsel, Feldspieler
 // auf Feldspieler = Positionstausch; gilt sofort (wie „Bestätigen“).
 // =============================================================================
+import { LeaderName } from '../../../components/player/LeaderMark';
 import Icon from '../../../components/Icon';
 import { FitnessIcon, FreshnessIcon, fitness100 } from '../../../components/status';
 import { grade } from '../../../engine/match/finish';
@@ -78,7 +79,7 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
                 {...(dnd ? { 'data-dnd': b.id, onPointerDown: (e: RPE) => down(e, b.id) } : {})}>
                 <span className="tm-nr">{b.p.shirtNumber || ''}</span>
                 <span className={`tm-pos ${posGroupClass(b.p.naturalPosition)}`}>{b.p.naturalPosition}</span>
-                <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(b.id)}>{nm(b.p)}</button>
+                <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(b.id)}><LeaderName p={b.p}>{nm(b.p)}</LeaderName></button>
                 <span className="tm-dim">–</span>
                 <span style={{ color: vColor(b.p.overall) }}>{b.p.overall}</span>
                 <span><FreshnessIcon kind="kraft" value={Math.round(b.energy)} size={20} /></span>
@@ -124,7 +125,7 @@ function Row({ sim, m, name, early, dim, onPlayer, dnd }: {
       <span className="tm-nr">{m.p.shirtNumber || ''}</span>
       <span className={`tm-pos ${posGroupClass(m.pos)}`}>{m.pos}</span>
       <span className="tm-namecell">
-        <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(m.id)}>{name}{cap ? ' (K)' : ''}</button>
+        <button type="button" className="tm-plink tm-name" onClick={() => onPlayer(m.id)}><LeaderName p={m.p}>{name}{cap ? ' (K)' : ''}</LeaderName></button>
         {m.goals > 0 && <span className="tm-tag"><Icon name="matchball" size={16} />{m.goals > 1 ? m.goals : ''}</span>}
         {!m.started && m.minuteIn > 0 && <span className="tm-tag">{m.minuteIn}.</span>}
         {dim && m.minuteOut != null && <span className="tm-tag">bis {m.minuteOut}.</span>}

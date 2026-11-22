@@ -8,6 +8,7 @@
 // oder, mit `sort`/`onSort`, beim Aufrufer (Spielerpool: Seiten über die ganze Liste).
 // `compact` (Beobachtung, schmale Box): ohne Info, Gehalt und Empfehlungstext.
 // =============================================================================
+import { LeaderName } from '../../components/player/LeaderMark';
 import Short from '../../ui/Short';
 import { useMemo, useState, type ReactNode } from 'react';
 import { ClubLink } from '../../components/club/ClubLink';
@@ -136,7 +137,7 @@ export function MarketTable({ g, rows, onOpen, action, compact = false, extra, f
                     <span className={`mk-box ${sel ? 'on' : ''}`} role="checkbox" aria-checked={sel} aria-label={`${r.name} markieren`} />
                   </td>
                   {!compact && <td className="mk-c-info">{m.tags.slice(0, 1).map((t) => <span key={t} className="mk-tag" title={m.tags.join(' · ')}>{TAG_SHORT[t] ?? t}{m.tags.length > 1 ? '+' : ''}</span>)}</td>}
-                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={r.player ?? { id: r.id, face: r.face, dateOfBirth: `${r.born}-07-01`, age: r.age, fullName: r.name }} club={c} size={26} />{r.player && <PlayerInfoButton p={r.player} />}<span className="mk-pname">{r.name}</span></span></td>
+                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={r.player ?? { id: r.id, face: r.face, dateOfBirth: `${r.born}-07-01`, age: r.age, fullName: r.name }} club={c} size={26} />{r.player && <PlayerInfoButton p={r.player} />}<LeaderName p={r.player} className="mk-pname">{r.name}</LeaderName></span></td>
                   <td className="nowrap"><span className="mk-nat"><NatFlag nat={r.nat} />{!compact && <span>{r.nat}</span>}</span></td>
                   <td className="nowrap">{c ? <ClubLink id={r.clubId}><span className="mk-club"><ClubCrest club={c} size={24} /><span>{compact ? c.shortName || c.name : c.name || c.shortName}</span></span></ClubLink> : <span className="muted">–</span>}</td>
                   <td className="nowrap">{r.player ? <PosBadge p={r.player} /> : <PosBadge pos={r.pos} />}</td>

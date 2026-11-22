@@ -4,6 +4,7 @@
 // Klick wählt einen Spieler, zweiter Klick tauscht (Wechsel oder Positionstausch);
 // Zeilen lassen sich auch ziehen – auf eine andere Zeile, einen Slot oder Bankspieler.
 // =============================================================================
+import { LeaderName } from '../../../components/player/LeaderMark';
 import { FitnessIcon, FormIcon, FreshnessIcon, MoraleIcon, fitness100, form100, playerMorale100 } from '../../../components/status';
 import Icon from '../../../components/Icon';
 import { grade } from '../../../engine/match/finish';
@@ -38,7 +39,7 @@ export function PlayerTable({ sim, side, d, sel, drag, down, onPick, onPlayer }:
         <span className={`tm-pos ${onField ? posGroupClass(pos) : ''}`}>{onField ? pos : 'Bank'}</span>
         <span className={`tm-dim ${posGroupClass(m.p.naturalPosition)}`}>{m.p.naturalPosition}</span>
         <span className="tm-namecell">
-          <button type="button" className="tm-plink tm-name" onClick={(e) => { e.stopPropagation(); onPlayer(m.id); }}>{m.p.firstName?.[0]}. {m.p.lastName}</button>
+          <button type="button" className="tm-plink tm-name" onClick={(e) => { e.stopPropagation(); onPlayer(m.id); }}><LeaderName p={m.p}>{m.p.firstName?.[0]}. {m.p.lastName}</LeaderName></button>
           {tag && <span className={`tm-tag ${tag}`}>{tag}</span>}
           {m.injured && <Icon name="injury" size={18} />}
           {m.yellow > 0 && <i className="ms-card y" />}

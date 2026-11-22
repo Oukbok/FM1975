@@ -11,6 +11,7 @@
 // derselben Scout-Kenntnis wie im Profil, verdeckte Werte gar nicht.
 // Reine Anzeige – geöffnet über PlayerCardFloat.tsx; CSS `styles/28-playercard.css`.
 // =============================================================================
+import { LeaderName } from '../player/LeaderMark';
 import type { Club, Player, Position } from '../../types';
 import { potentialToStars } from '../../types';
 import type { Game } from '../../game/state';
@@ -80,7 +81,7 @@ export default function PlayerInfoCard({ p, g }: { p: Player; g?: Game }) {
           <span className="pc-face"><PlayerAvatar key={p.id} player={p} club={club} size={116} priority /></span>
         </div>
         <div className="pc-id">
-          <h2 className="pc-name">{p.shirtNumber ? <span className="pc-no">{p.shirtNumber}</span> : null}{p.fullName}</h2>
+          <h2 className="pc-name">{p.shirtNumber ? <span className="pc-no">{p.shirtNumber}</span> : null}<LeaderName p={p}>{p.fullName}</LeaderName></h2>
           <div className="pc-posline">
             <PosBadge p={p} />
             <span>{POS_DE[p.naturalPosition] ?? p.naturalPosition}</span>

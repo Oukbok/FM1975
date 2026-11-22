@@ -4,6 +4,7 @@
 // trainingGroups), nichts davon wird gespeichert. Leitung = bester Fachmann im
 // Trainerteam für das, was in der Gruppe zählt.
 // =============================================================================
+import { LeaderName } from '../../../components/player/LeaderMark';
 import { PlayerFitness, PlayerFreshness } from '../../../components/status';
 import { yearOf } from '../../../engine/economy';
 import { SKILL_LABEL } from '../../../engine/staffSkills';
@@ -29,7 +30,7 @@ function GroupBox({ gr, rows = 1 }: { gr: TrainGroup; rows?: 1 | 2 }) {
             {list.map((p) => (
               <tr key={p.id} data-pid={p.id}>
                 <td><PosBadge p={p} /></td>
-                <td className="rl-name">{p.fullName}</td>
+                <td className="rl-name"><LeaderName p={p}>{p.fullName}</LeaderName></td>
                 <td className="r">{Math.round(p.overall)}</td>
                 <td className="c"><PlayerFitness p={p} showValue /></td>
                 <td className="c"><PlayerFreshness p={p} showValue /></td>

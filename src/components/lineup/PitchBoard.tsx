@@ -3,6 +3,7 @@
 // Ziehen läuft über Zeiger-Ereignisse (LineupView); hier nur die Darstellung
 // mit Ablagezielen (data-lu-drop) und der Vorschau beim Verschieben.
 // =============================================================================
+import { LeaderName } from '../player/LeaderMark';
 import FaceThumb from '../FaceThumb';
 import { useLayoutEffect, useRef, useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
@@ -30,7 +31,7 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
         <span className={`lu-card-suit ${famCls}`} title={`Stärke auf dieser Position ${suit} · Vertrautheit ${fam} %`}>{suit}</span>
       </div>
       {!small && <FaceThumb p={p} size={50} className="lu-card-head" />}
-      <div className="lu-card-name">{small && <FaceThumb p={p} size={16} className="lu-card-face" />}{p.lastName}</div>
+      <div className="lu-card-name">{small && <FaceThumb p={p} size={16} className="lu-card-face" />}<LeaderName p={p}>{p.lastName}</LeaderName></div>
     </div>
   );
 }

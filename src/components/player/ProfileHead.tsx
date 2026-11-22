@@ -2,6 +2,7 @@
 // Wappen links oben, freigestellter Kopf schräg rechts unten davor (ohne Kasten), daneben Steckbrief – Stärke, Potenzial (Scout-Spanne), Nation,
 // Tabelle der sechs besten Positionen (Eignung), Fuß, Spielertyp, Charakter (Einschätzung).
 import { BOOST_DE, BOOST_PCT } from '../../engine/teamBoost';
+import { LeaderMark, LeaderShield } from './LeaderMark';
 import { NatFlag, NatLink } from '../competition/CountryFlag';
 import type { Player, Club, Position } from '../../types';
 import PlayerAvatar from '../PlayerAvatar';
@@ -38,7 +39,7 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
   return (
     <div className="pp2-id">
       <div className="pp2-title">
-        <h2 className="pp2-name">{p.shirtNumber ? <span className="pp2-no">{p.shirtNumber}.</span> : null}{p.fullName}</h2>
+        <h2 className="pp2-name">{p.shirtNumber ? <span className="pp2-no">{p.shirtNumber}.</span> : null}{p.fullName}<LeaderMark p={p} /></h2>
         <div className="pp2-club">
           {club ? <ClubLink id={club.id}>{club.name}</ClubLink>
             : p.clubId && g && worldClubInfo(g, p.clubId) ? <ClubLink id={p.clubId}>{worldClubInfo(g, p.clubId)!.name}</ClubLink> : 'Vereinslos'}
@@ -80,7 +81,7 @@ export default function ProfileHead({ p, club, tag, best, sel, onSelect }: {
           <div className="pp2-fl"><span>Charakter<InfoTip k="persoenlichkeit" /></span><b className={known ? '' : 'dim'}>{character}</b></div>
           {p.teamBoost && (
             <div className="pp2-fl"><span>Teambonus<InfoTip k="teambonus" /></span>
-              <b><i className={`tb-medal tb-${p.teamBoost}`} aria-hidden />Führungsspieler {BOOST_DE[p.teamBoost]} · +{String(BOOST_PCT[p.teamBoost] * 100).replace('.', ',')} %</b></div>
+              <b><span className="tb-medal"><LeaderShield tier={p.teamBoost} /></span>Führungsspieler {BOOST_DE[p.teamBoost]} · +{String(BOOST_PCT[p.teamBoost] * 100).replace('.', ',')} %</b></div>
           )}
         </div>
       </div>

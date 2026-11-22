@@ -4,6 +4,7 @@
 // Spielerliste, useDnd): Spieler auf einen anderen Slot = Positionstausch,
 // Bankspieler auf einen Slot = Wechsel. Klick ohne Ziehen wählt aus.
 // =============================================================================
+import { LeaderName } from '../../../components/player/LeaderMark';
 import type { PointerEvent as RPE } from 'react';
 import type { DndState } from '../useDnd';
 import FaceThumb from '../../../components/FaceThumb';
@@ -43,7 +44,7 @@ export function SystemPitch({ sim, side, d, sel, drag, down, onPick, onFormation
           <span className="lu-card-suit" title="Stärke auf dieser Position" style={{ color: vColor(st) }}>{st}</span>
         </div>
         {!small && <FaceThumb p={m.p} size={40} className="lu-card-head" />}
-        <div className="lu-card-name">{small && <FaceThumb p={m.p} size={16} className="lu-card-face" />}{m.p.lastName}</div>
+        <div className="lu-card-name">{small && <FaceThumb p={m.p} size={16} className="lu-card-face" />}<LeaderName p={m.p}>{m.p.lastName}</LeaderName></div>
       </div>
     );
   };

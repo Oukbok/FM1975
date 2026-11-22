@@ -1,0 +1,40 @@
+/* Führungsspieler-Zeichen hinter dem Namen (components/player/LeaderMark.tsx, Wunsch Pascal).
+   Wappenschild mit 1/2/3 Winkeln in Bronze/Silber/Gold, 0,8 em, auf der Grundlinie.
+   Das Zeichen schrumpft nie; bei Platzmangel wird nur der Name gekürzt (.ldm-wrap). */
+.ldm { display: inline-flex; flex: none; align-items: flex-end; margin-left: 0.3em; height: 0.84em; line-height: 0;
+  vertical-align: baseline; cursor: help; border-radius: 2px; text-decoration: none; }
+.ldm:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+.ldm-svg { display: block; width: 0.72em; height: 0.84em; flex: none; overflow: visible; }
+.ldm-shield { stroke-width: 1.3; stroke-linejoin: round; }
+.ldm-chev { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ldm-bronze .ldm-shield { fill: var(--hon-bronze-2); stroke: var(--hon-bronze-3); }
+.ldm-bronze .ldm-chev { stroke: var(--hon-bronze-1); }
+.ldm-silver .ldm-shield { fill: var(--hon-silber-2); stroke: var(--hon-silber-3); }
+.ldm-silver .ldm-chev { stroke: var(--hon-silber-3); }
+.ldm-gold .ldm-shield { fill: var(--hon-gold-2); stroke: var(--hon-gold-3); }
+.ldm-gold .ldm-chev { stroke: var(--hon-gold-1); }
+
+/* Name + Zeichen: Name kürzbar, Zeichen bleibt stehen */
+.ldm-wrap { display: inline-flex; align-items: baseline; max-width: 100%; min-width: 0; vertical-align: bottom; white-space: nowrap; }
+.ldm-wrap > .ldm-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ldm-wrap > .ldm { align-self: center; }
+
+/* Einblendung */
+.st-tip.ldm-tip { max-width: 340px; white-space: normal; }
+.ldm-tip-row { display: flex; align-items: flex-start; gap: 8px; line-height: 1.35; }
+.ldm-tip-row .ldm-svg { width: 14px; height: 16px; margin-top: 1px; }
+
+/* Legende (Kader › Übersicht, Wiki) */
+.ldm-legend { display: inline-flex; align-items: center; gap: 12px; color: var(--text-2); font-weight: 600; white-space: nowrap; }
+.ldm-legend > span { display: inline-flex; align-items: center; gap: 4px; }
+.ldm-legend .ldm-svg { width: 12px; height: 14px; }
+
+/* Feldkarten (Aufstellung, Wechsel-Bildschirm): Name + Zeichen mittig, Name kürzbar */
+.lu-card-name:has(> .ldm-wrap) { display: flex; justify-content: center; align-items: center; }
+.lu-card-name > .ldm-wrap { flex: 0 1 auto; }
+
+/* Große Namen (Profil-Kopf, Infokarte): Zeichen etwas kleiner im Verhältnis */
+.pp2-name .ldm, .pc-name .ldm { font-size: 0.8em; }
+
+/* Tabellen-Einpassung (ui/stableTables.ts): beim Messen zählt das Zeichen nicht mit */
+table[data-measure] .ldm { display: none !important; }

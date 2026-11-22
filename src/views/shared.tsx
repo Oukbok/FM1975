@@ -1,4 +1,5 @@
 // Gemeinsame, rein darstellende Helfer für die Seiten (keine Spiellogik).
+import { LeaderName } from '../components/player/LeaderMark';
 import { PlayerLink } from '../components/playerMenu/PlayerLink';
 import { ClubLink } from '../components/club/ClubLink';
 import FaceThumb from '../components/FaceThumb';
@@ -67,7 +68,7 @@ export function PlayerRow({ p, value, sub, onClick, color, face }: { p: Player; 
       <PosBadge p={p} compact />
       {face && <FaceThumb p={p} size={22} className="dl-face" />}
       {face && <PlayerInfoButton p={p} />}
-      <span className="grow">{onClick ? p.fullName : <PlayerLink id={p.id}>{p.fullName}</PlayerLink>}{sub != null && <span className="muted"> · {sub}</span>}</span>
+      <span className="grow">{onClick ? <LeaderName p={p}>{p.fullName}</LeaderName> : <PlayerLink id={p.id}>{p.fullName}</PlayerLink>}{sub != null && <span className="muted"> · {sub}</span>}</span>
       {value != null && <span className="val" style={{ color: color ?? (typeof value === 'number' ? vColor(value) : undefined) }}>{value}</span>}
     </div>
   );

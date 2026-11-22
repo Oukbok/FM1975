@@ -5,6 +5,7 @@
 // und Förderspieler. Logik: engine/positionSkill.ts (Positionstraining),
 // game/staffGame.ts (Förderspieler) – hier nur Anzeige und Auswahl.
 // =============================================================================
+import { LeaderName } from '../../../components/player/LeaderMark';
 import { useState } from 'react';
 import PlayerModal from '../../../components/PlayerModal';
 import { PlayerFitness, PlayerFreshness } from '../../../components/status';
@@ -76,7 +77,7 @@ export function PlayersTab({ g, refresh }: { g: Game; refresh: () => void }) {
                 return (
                   <tr key={p.id} data-pid={p.id} className={p.injury ? 'tr3-inj' : ''}>
                     <td><PosBadge p={p} /></td>
-                    <td className="rl-name"><button className="tr3-namebtn" onClick={() => setSel(p.id)}>{p.fullName}</button></td>
+                    <td className="rl-name"><button className="tr3-namebtn" onClick={() => setSel(p.id)}><LeaderName p={p}>{p.fullName}</LeaderName></button></td>
                     <td className="r muted">{p.age}</td>
                     <td className="r">{Math.round(p.overall)}</td>
                     <td><ScoutStarBar p={p} /></td>

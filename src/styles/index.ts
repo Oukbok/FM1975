@@ -86,6 +86,7 @@ import './28-career.css';
 import './28-career-binder.css'; // Karriere › Bilanz als Ringmappe
 import './28-linechart.css';
 import './28-honours.css';
+import './28-leadermark.css';
 import './28-negotiation.css'; // Verhandlungstisch: Spieler, Vereine, Mitarbeiter (screens/negotiation/)
 import './28-loans.css'; // Transfers › Leihen
 import './28-scoutx.css'; // Scouting 2.0: Software & Abos, Scouts im Ausland, Jugendcamps

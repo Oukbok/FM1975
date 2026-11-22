@@ -9,6 +9,7 @@
 // Transferfensters. Nur Anzeige – Daten aus transferTalks, Player.loan,
 // Player.contract.preContractClubId.
 // =============================================================================
+import { LeaderName } from '../../components/player/LeaderMark';
 import FaceThumb from '../../components/FaceThumb';
 import { PlayerInfoButton } from '../../components/playerCard/PlayerCardFloat';
 import PosBadge from '../../components/PosBadge';
@@ -36,7 +37,7 @@ export function windowInfo(today: string): { open: boolean; text: string; next: 
 
 export function PlayerCell({ g, p }: { g: Game; p?: Player }) {
   if (!p) return <span className="muted">Spieler</span>;
-  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><PlayerInfoButton p={p} /><span>{p.fullName}</span></span>;
+  return <span className="tm-name"><FaceThumb p={p} club={g.clubs[p.clubId]} size={26} /><PlayerInfoButton p={p} /><span><LeaderName p={p}>{p.fullName}</LeaderName></span></span>;
 }
 
 export function ClubName({ g, id }: { g: Game; id?: string }) {

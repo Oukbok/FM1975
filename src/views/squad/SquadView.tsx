@@ -1,4 +1,6 @@
 import SuspensionCard from '../../components/status/SuspensionCard';
+import { LeaderName, LeaderLegend } from '../../components/player/LeaderMark';
+
 import { autoFillLineup } from '../../engine/lineupAI';
 import { promiseLineupPrefs } from '../../game/seasonPromisesGame';
 import { eraRules } from '../../engine/match/era';
@@ -98,7 +100,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
                         return { value: n, text: String(n), label: who ? `${n} · ${who.lastName} (Tausch)` : String(n) };
                       })} />
                   </td>
-                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={pl} club={club} size={26} /><PlayerInfoButton p={pl} /><span className="mk-pname">{pl.fullName}</span></span></td>
+                  <td className="nowrap rl-name"><span className="tm-name"><FaceThumb p={pl} club={club} size={26} /><PlayerInfoButton p={pl} /><LeaderName p={pl} className="mk-pname">{pl.fullName}</LeaderName></span></td>
                   <td className="ctr"><PosBadge p={pl} /></td>
                   <td className="num">{pl.age}</td>
                   <td className="num mk-num"><b className="mk-ov" style={{ color: vColor(pl.overall) }}>{pl.overall}</b></td>
@@ -131,6 +133,7 @@ export function SquadView({ g, onChange }: { g: Game; onChange?: () => void }) {
           return <KV key={k} k={`${GROUP_DE[k]} (${xs.length})`} v={xs.length ? `Ø ${Math.round(avg(xs.map((x) => x.overall)))}` : '–'} />;
         })}
         <KV k={`Gehälter / ${wageUnit()}`} v={fmtWage(wages, { unit: false })} strong />
+        {all.some((x) => x.teamBoost) && <KV k="Führungsspieler" info="teambonus" v={<LeaderLegend players={all} />} />}
         <Meter label="Unter 23 Jahren" value={all.filter((x) => x.age < 23).length} max={Math.max(1, all.length)} text={`${all.filter((x) => x.age < 23).length}`} />
       </DashBox>
 

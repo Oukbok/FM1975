@@ -7,6 +7,7 @@
 // rechts Statistik bzw. Aufstellungen mit Noten/Einzelwerten.
 // Daten: Match + Bericht aus dem Spielstand, Zeilen aus game/matchTicker.ts.
 // =============================================================================
+import { LeaderMark } from '../../../components/player/LeaderMark';
 import { useMemo, useState } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import FaceThumb from '../../../components/FaceThumb';
@@ -108,9 +109,9 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
               {motm ? (
                 <>
                   <span className="mr2-motm-h">Spieler des Spiels</span>
-                  <PlayerLink id={motm.id} className="mr2-motm-p">
+                  <PlayerLink id={motm.id} className="mr2-motm-p" mark={false}>
                     <FaceThumb p={motm} size={40} />
-                    <b>{motm.firstName} {motm.lastName}</b>
+                    <b>{motm.firstName} {motm.lastName}<LeaderMark p={motm} /></b>
                     {motmGrade != null && <em>Note {motmGrade.toFixed(1).replace('.', ',')}</em>}
                   </PlayerLink>
                 </>

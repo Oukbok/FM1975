@@ -2,6 +2,7 @@
 // Aufstellung: Kaderliste links (Startelf / Ersatzbank / Reserve) mit Spalten
 // und Sortierung je Abschnitt. Zeilen sind Ziehquelle und Ablageziel.
 // =============================================================================
+import { LeaderName } from '../player/LeaderMark';
 import SuspensionCard from '../status/SuspensionCard';
 import FaceThumb from '../FaceThumb';
 import { PlayerInfoButton } from '../playerCard/PlayerCardFloat';
@@ -82,7 +83,7 @@ export default function SquadList({ xi, free = [], slotOrder = [], bench, reserv
         <td className="lu-c-name">
           <FaceThumb p={p} size={24} className="lu-face" />
           <PlayerInfoButton p={p} />
-          <span className="lu-name">{p.fullName}</span>
+          <LeaderName p={p} className="lu-name">{p.fullName}</LeaderName>
           {captainId === p.id && <span className="lu-cap" title="Kapitän">K</span>}
           {p.injury || p.availability === 'injured' ? <span className="lu-flag red">verletzt</span>
             : p.suspensionMatches > 0 ? <SuspensionCard p={p} size={20} /> : null}

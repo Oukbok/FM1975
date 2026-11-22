@@ -223,6 +223,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
     open: (pid, tab = 'general') => { if (playerOf(g, pid) || worldPreviewPlayer(g, pid)) { setMenu(null); setProfile({ pid, tab, z: nextProfileZ() }); } },
     // Auch Weltspieler (Ehrungen, Bestenlisten): Vorschau-Profil wie im Spielerpool.
     canOpen: (pid) => !!pid && known(g, pid),
+    boostOf: (pid) => playerOf(g, pid)?.teamBoost,
   }), [g]);
   const squad = pp ? (g.clubs[pp.clubId]?.playerIds ?? []).map((id) => g.players[id]).filter(Boolean) as Player[] : undefined;
 

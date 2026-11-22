@@ -12,7 +12,7 @@ export function LinkedText({ g, text, people }: { g: Game; text: string | undefi
     <>
       {parts.map((p, i) => typeof p === 'string'
         ? <Fragment key={i}>{p}</Fragment>
-        : p.ref.kind === 'player' ? <PlayerLink key={i} id={p.ref.id} className="txt-link">{p.text}</PlayerLink> : <ClubLink key={i} id={p.ref.id} className="txt-link">{p.text}</ClubLink>)}
+        : p.ref.kind === 'player' ? <PlayerLink key={i} id={p.ref.id} className="txt-link" mark={false}>{p.text}</PlayerLink> : <ClubLink key={i} id={p.ref.id} className="txt-link">{p.text}</ClubLink>)}
     </>
   );
 }

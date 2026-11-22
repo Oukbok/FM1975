@@ -508,7 +508,7 @@ export const INFO_TEXTS = {
   },
   teambonus: {
     title: 'Teambonus (Führungsspieler)',
-    text: 'Sehr seltene Spieler mit überragender Führungsstärke und Erfahrung reißen die Mannschaft mit: Bronze +0,5 %, Silber +1 %, Gold +2 % auf Angriff, Spielkontrolle und Abwehr, solange sie spielen – zusammen höchstens +3 %. Verliehen wird das nur in der Auf- und Abwertungsrunde; maßgeblich ist die höchste jemals erreichte Stärke: Wer 10 % davon verloren hat, kann den Bonus wieder verlieren, ab 15 % sehr wahrscheinlich.',
+    text: 'Sehr seltene Spieler mit überragender Führungsstärke und Erfahrung reißen die Mannschaft mit: Bronze +0,5 %, Silber +1 %, Gold +2 % auf Angriff, Spielkontrolle und Abwehr, solange sie spielen – zusammen höchstens +3 %. Erkennbar am Wappenschild hinter dem Namen (1/2/3 Winkel). Verliehen wird das nur in der Auf- und Abwertungsrunde; maßgeblich ist die höchste jemals erreichte Stärke: Wer 10 % davon verloren hat, kann den Bonus wieder verlieren, ab 15 % sehr wahrscheinlich.',
     wiki: 'team-boost',
   },
   weltpokal: {
