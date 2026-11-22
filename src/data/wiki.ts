@@ -1847,7 +1847,7 @@ Auch bei dir fragen KI-Vereine an, ob sie einen deiner jungen Ergänzungsspieler
     title: 'Deine Managerkarriere: Bilanz, Trainer, Vorstand',
     keywords: ['karriere', 'manager', 'bilanz', 'trainer', 'cheftrainer', 'entlassung', 'ansehen', 'vorstand', 'rückendeckung', 'meilenstein', 'rekord', 'eigengewächs'],
     body: `## Deine Managerkarriere
-Du führst **einen Verein über die Jahrzehnte** – als Manager mit der Gesamtverantwortung. Den Cheftrainer und das übrige Trainerteam stellst du selbst ein (Training › Trainerteam); sie sind Angestellte des Vereins. Jobangebote anderer Vereine, Vereinswechsel und eine Entlassung gibt es nicht – auch nicht im Karriere-Modus (dort wählst du zu Beginn nur einen von drei kleineren Vereinen).
+Du führst **einen Verein über die Jahrzehnte** – als Manager mit der Gesamtverantwortung. Den Cheftrainer und das übrige Trainerteam stellst du selbst ein (Training › Trainerteam); sie sind Angestellte des Vereins. Jobangebote anderer Vereine, Vereinswechsel und eine Entlassung gibt es nicht – auch nicht im Karriere-Modus (dort wählst du zu Beginn nur einen von drei kleineren Vereinen). **Einzige Ausnahme:** der Abstieg aus der untersten Liga – siehe Wiki „Abstieg aus der untersten Liga: Ende der Amtszeit“.
 
 ### Privat › Karriere
 Drei Reiter (früher unter Zentrale; Privat siehe Wiki „Privatleben, Junger Manager und Generationen“), alles aus dem echten Spielverlauf (\`game/managerLog.ts\`, \`game/managerView.ts\`):
@@ -1867,10 +1867,41 @@ Läuft es sportlich klar schlechter als das Ziel, richtet sich der Druck gegen d
 
 Höchstens zwei solche Nachrichten je Saison, mindestens 45 Tage auseinander; ein neuer Trainer hat 60 Tage Schonfrist. Ohne Cheftrainer mahnt der Vorstand einmal je Saison an, die Bank zu besetzen.
 
-**Was dich trifft:** nur das Vertrauen. Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie, und dein nächstes Saisonbudget gibt er nach dem Vertrauen frei (Finanzen › Budget). Entlassen wirst du nie – warum: Du sollst deinen Verein über Jahrzehnte formen; schlechte Phasen kosten Geld und Spielraum, nicht das Spiel.
+**Was dich trifft:** nur das Vertrauen. Unter 40 kürzt der Vorstand die Transfermittel, unter 20 halbiert er sie, und dein nächstes Saisonbudget gibt er nach dem Vertrauen frei (Finanzen › Budget). Entlassen wirst du deshalb nie (nur der Abstieg aus der untersten Liga beendet deine Amtszeit) – warum: Du sollst deinen Verein über Jahrzehnte formen; schlechte Phasen kosten Geld und Spielraum, nicht das Spiel.
 
 ### Alte Spielstände
 Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Versionen werden beim Laden als „hinfällig“ abgelegt und halten „Weiter“ nicht mehr an.`,
+  },
+  {
+    id: 'relegation-end',
+    category: 'leagues',
+    title: 'Abstieg aus der untersten Liga: Ende der Amtszeit',
+    keywords: ['abstieg', 'unterste liga', 'entlassung', 'spielende', 'amtszeit', 'amateurbereich', 'unterbau', 'angebote', 'karriere', 'teammanager', 'abschluss', 'karrierebilanz', 'regionalliga', 'ddr-liga'],
+    body: `## Abstieg aus der untersten Liga
+Unterhalb der untersten gespielten Liga beginnt der **Amateurbereich** (Unterbau). Dorthin kann auch dein Verein absteigen – einen Schutz gibt es nicht mehr. Wer dort landet, wird nicht mehr mit vollem Kader geführt, und der Vorstand trennt sich von dir.
+
+### Welche Liga ist die unterste?
+Immer die tiefste Ebene, die in deinem Land gespielt wird: in Deutschland 1975 die 2. Liga Nord/Süd, ab 1981 die eingleisige 2. Liga, ab 1991 die Oberliga Nordost bzw. ab 1994 die Regionalligen; in der DDR die DDR-Liga; im Ausland je nach Land die 1. bis 4. Ebene. Steigst du aus einer höheren Liga ab, spielst du einfach eine Ebene tiefer weiter.
+
+### Abstiegsplätze
+Es zählen genau die Plätze, die beim Saisonwechsel mit dem Amateurbereich tauschen – dieselbe Rechnung wie der Auf-/Abstieg (\`ownDropInfo\` in \`game/relegationGame.ts\`): in Deutschland bei einer Staffel die letzten drei, bei zwei Staffeln je vier, ab drei Staffeln je zwei; in der DDR-Liga die letzten zwei; im Ausland die historische Zahl des Landes. In **Statistiken › Liga** sind sie rot markiert. Ein Zwangsabstieg wegen Überschuldung zählt als letzter Platz. In der Saison einer Ligareform gibt es keinen Tausch mit dem Amateurbereich – dann steigt niemand ab.
+
+### Vorwarnung
+- Zum Saisonstart nennt der Vorstand die Abstiegsplätze (Nachricht zum Spielbeginn bzw. beim Saisonziel) und im Briefing steht die Aufgabe „Abstieg bedeutet das Ende deiner Amtszeit“.
+- Stehst du am 1. Februar, März, April oder Mai auf einem Abstiegsplatz, mahnt der Vorstand.
+
+### Was passiert beim Abstieg?
+Am Tag nach dem letzten Ligaspiel steht es fest. Dein Ansehen sinkt um 6 Punkte, bis zum 30. Juni führst du die Geschäfte weiter.
+- **Teammanager** (du hast dir einen Verein für immer ausgesucht): Mit dem Saisonende ist das **Spiel zu Ende**. Der Knopf oben rechts heißt dann „Abschluss“ und zeigt deine Karrierebilanz – Saisons, Titel, beste Platzierung, Bilanz aller Pflichtspiele und Ansehen. Von dort geht es ins Hauptmenü oder zum letzten gespeicherten Spielstand. Weiterspielen ist nicht möglich.
+- **Karriere:** Du wirst entlassen und bekommst bis zu drei **Angebote** von Vereinen deiner bisherigen Liga, die nicht absteigen und zu deinem Ansehen passen (Vereinsgröße höchstens Ansehen + 12). Du musst dich entscheiden (ohne Antwort gilt das erste Angebot) und wechselst zum 1. Juli: neues Saisonziel, das Trainerteam des neuen Vereins, dein altes bleibt zurück. Passt kein Verein zu deinem Ansehen, endet das Spiel wie beim Teammanager.
+
+Warum: Schlechte Phasen kosten sonst nur Geld und Vertrauen. Der Abstieg aus der letzten Liga ist die eine Grenze, an der es wirklich um deinen Posten geht.
+
+### Dein alter Verein
+Er spielt als Amateurverein im Unterbau weiter, sein sportlicher Nachrücker steigt auf. Wird er dort stark genug, kann er in späteren Jahren wieder aufsteigen.
+
+### Simulationen
+Im Sim-Lauf (\`node scripts/sim.mjs\`) übernimmt der Autopilot zum Saisonwechsel einen anderen Verein derselben Liga, damit der Lauf weitergeht (Zeile \`ABSTIEG\` im Bericht). Test: \`npm run test:relegation\`.`,
   },
   {
     id: 'league-reputation',
