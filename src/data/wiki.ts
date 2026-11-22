@@ -2073,12 +2073,12 @@ Die Begründung jeder Bewertung nennt diese Ursachen, wenn sie eine Rolle gespie
     body: `## Ein Pool für alle Stellen
 Der Arbeitsmarkt ist **ein großer Pool** für alle Stellen des Vereins: Vereinslose und die Angestellten der anderen Vereine. Wähle oben eine **Stelle** – die Liste ordnet sich nach der Eignung dafür. Bei „Alle Stellen“ steht jede Person mit ihrer besten Stelle.
 
-**Filter:** eine Fähigkeit ab einem Mindestwert (60, 70, 80), Höchstalter (bis 35, bis 45), „nur vereinslos“ und „Ex-Profis“. Die Spalte **Aussicht** sagt, ob jemand noch zulegen kann.
+**Filter:** eine Fähigkeit ab einem Mindestwert (60, 70, 80), Höchstalter (bis 35, bis 45), **Anstellung** (vereinslos | angestellt | alle), **Verein** (deine Liga, weitere Vereine im Land, Ausland) und „Ex-Profis“. Die Spalte **Aussicht** sagt bei Vereinslosen, ob jemand noch zulegen kann; bei Angestellten stehen dort **Vertragsende** und geschätzte **Ablöse**.
 
 Für jede Stelle, die es in der Zeit gibt, stehen immer einige brauchbare Bewerber bereit; jedes Jahr kommen ein Jahrgang Nachwuchskräfte und die Spieler dazu, die ihre Karriere beendet haben. Ältere gehen in den Ruhestand, wer lange keine Stelle findet, wechselt den Beruf.
 
 ## Cheftrainer
-Als Cheftrainer stehen die **freien Trainer der Liga** auf dem Markt (der Trainerpool, aus dem auch die anderen Vereine schöpfen) – mit Spielidee und Ansehen. Ohne „nur vereinslos“ siehst du auch die Trainer der anderen Vereine. Große Namen kommen nicht zu einem deutlich kleineren Verein. Wirbst du einen Trainer ab, holt sich sein Verein einen Nachfolger.
+Als Cheftrainer stehen die **freien Trainer der Liga** auf dem Markt (der Trainerpool, aus dem auch die anderen Vereine schöpfen) – mit Spielidee und Ansehen. Unter „angestellt“ siehst du auch die Trainer der anderen Vereine und die, die im Ausland arbeiten. Große Namen kommen nicht zu einem deutlich kleineren Verein. Wirbst du einen Trainer ab, holt sich sein Verein einen Nachfolger.
 
 ## Verhandlung
 Mit Mitarbeitern verhandelst du am **Verhandlungstisch** (siehe „Der Verhandlungstisch“) – nicht mehr nur über das Gehalt, sondern über ein Paket:
@@ -2092,13 +2092,40 @@ Mit Mitarbeitern verhandelst du am **Verhandlungstisch** (siehe „Der Verhandlu
 | Fortbildung | Du schickst ihn gleich nach der Unterschrift auf einen Lehrgang (du zahlst). |
 - Das **Kräfteverhältnis** links zeigt, wer am längeren Hebel sitzt: Vereinslose und dem Verein Verbundene geben eher nach, begehrte Spitzenkräfte und Angestellte anderer Vereine lassen sich bitten.
 - Höchstens **fünf Runden**. Verliert er die Geduld, ist das Gespräch gescheitert und er redet 30 Tage (nach einem dreisten Angebot 60 Tage) nicht mehr mit dir.
-- **Abwerben** kostet sechs Monatsgehälter Ablöse (bei einem Cheftrainer ein Jahresgehalt) und geht nur bei gleich großen oder kleineren Vereinen.
+- **Abwerben** kostet eine **Ablöse** an den bisherigen Verein (siehe „Abwerben“ unten) und gelingt nur, wenn die Gründe für den Wechsel überwiegen.
 - Hat die Stelle mehrere Plätze (Co-Trainer, Scouts, Jugendtrainer), füllen sie sich der Reihe nach. Erst wenn alle besetzt sind, **ersetzt** der Neue den Schwächsten – der bekommt seine Abfindung.
 - Rechts unter **Auswirkung** siehst du, wen der Neue ersetzt und – bei Trainern – Niveau und Entwicklung vorher und nachher.
 - Auch **Verlängerungen** eigener Mitarbeiter laufen über den Tisch (Profil › „Verlängern“).
 
+## Abwerben
+Angestellte Mitarbeiter anderer Vereine – in deiner Liga, bei Sim-Vereinen und im Ausland – kannst du abwerben.
+**Ablöse** an den Verein: einige Monatsgehälter nach der **Restlaufzeit** (Mitarbeiter knapp die Hälfte der Restmonate, Cheftrainer gut die Hälfte), mehr für **Schlüsselleute** (der Beste seiner Stelle, Cheftrainer) und starke Kräfte, **mitten in der Saison** (August bis April) rund 30 % mehr, und ein großer Verein lässt seine Leute ungern zu einem Kleineren ziehen. Bis in die 80er waren solche Ablösen klein; für Cheftrainer steigen sie seit den 2000ern deutlich. Höchstens 24 Monatsgehälter (Cheftrainer 36).
+**Wechselwunsch:** Profil und Verhandlungstisch zeigen seine Gründe – dafür: größerer Verein, mehr Gehalt, sein früherer Verein, die Chance auf den Cheftrainerposten, bessere Aussichten, Unzufriedenheit, auslaufender Vertrag; dagegen: kleinerer Verein, weniger Gehalt, eine niedrigere Stelle, Vereinstreue, ein gerade erst begonnener Vertrag, Zufriedenheit. Überwiegen die Gründe dagegen oder gilt ein **Abwerbeschutz**, lehnt er Gespräche ab.
+**Die KI wirbt auch bei dir:** Am Saisonende, im Sommer und in der Winterpause kann ein größerer Verein (oder ein Spitzenverein im Ausland) ein Angebot für einen deiner Leute machen. Du kannst ihn **freigeben** (Ablöse), mit **+15 % Gehalt halten** oder **ablehnen** – will er unbedingt weg, ist er dann enttäuscht. Vereinstreue, neu Verpflichtete und Leute mit Abwerbeschutz bleiben unbehelligt.
+
 ## Die anderen Vereine
-Alle Vereine der Liga haben ein Trainerteam. Sie stellen nach ihrem Ruf ein, werben Bessere ab und verlängern Verträge; gute Co-Trainer und erfolgreiche frühere Kapitäne werden Kandidaten für Cheftrainerposten.`,
+Alle Vereine haben einen Stab – siehe „Stäbe der anderen Vereine“.`,
+  },
+  {
+    id: 'staff-ai',
+    category: 'staff',
+    title: 'Stäbe der anderen Vereine',
+    keywords: ['ki', 'andere vereine', 'stab', 'mitarbeiter', 'spitzentrainer', 'ausland', 'spielstärke', 'abwerben', 'trainerkarussell'],
+    body: `## Jeder Verein stellt ein
+„Spitzentrainer kann sich nicht jeder Bundesligist leisten“: Alle Vereine mit vollem Kader stellen für ihre Stellen Leute aus **demselben Arbeitsmarkt** ein wie du – Co-Trainer, Torwarttrainer, Arzt, Physio, Analysten, Verwaltung.
+- **Anspruch** nach Ruf, Kasse und Epoche: Reiche holen Spitzenleute, kleine Vereine nehmen Mittelmaß. Mit den Jahrzehnten wird der Abstand größer; wer Schulden hat, spart.
+- **Neue Berufe** (Reha-Trainer, Videoanalyst, Datenanalyst …) besetzen zuerst die großen Vereine, nach rund zehn Jahren fast alle – kleine Vereine haben bis dahin **Lücken**.
+- **Konkurrenz um die Besten:** Große Vereine wählen zuerst und werben kleineren gelegentlich eine Schlüsselkraft ab (gegen Ablöse, höchstens fünf je Saison).
+- **Verträge** über ein bis drei Jahre, meist verlängert; schwache Leute werden ersetzt. Freie Stellen besetzen die Vereine zum Monatsanfang nach.
+- **Gehälter** zahlen sie monatlich wie du (Finanzen: „Gehälter Mitarbeiterstab“, mit Cheftrainer).
+- **Trainerkarussell:** Wird ein Trainer entlassen, rückt manchmal der Co-Trainer auf; ein neuer Trainer bringt öfter seinen eigenen Co-Trainer mit.
+
+## Gleiche Wirkung für alle
+Der Stab wirkt bei jedem Verein nach **derselben Formel** wie bei dir (siehe „Mitarbeiter“): Fehlende oder schwache Leute kosten bis **4 %** Spielstärke, ein **Spitzenstab** bringt stufenlos bis **+2 %** – 1975 halb so viel, ab 2010 voll. Medizinisches Personal senkt auch bei ihnen das Verletzungsrisiko; das Trainerteam bestimmt ihre Entwicklung.
+Auslandsvereine im Europapokal haben den Stab, den ein Verein ihrer Größe hätte.
+
+## Sim-Vereine und Ausland
+Vereine ohne vollen Kader (2. Ebene, DDR-Oberliga) und die rund 40 stärksten Auslandsvereine besetzen nur **wenige Schlüsselstellen**: Auslandsvereine einen Cheftrainer aus dem Trainerpool und je nach Größe Co- und Torwarttrainer, Sim-Vereine einen Co-Trainer. Wer dort arbeitet, ist vom Markt verschwunden – du siehst ihn unter „angestellt“ und kannst ihn abwerben. Eine Wirkung auf die Spielstärke dieser Vereine hat das nicht.`,
   },
   {
     id: 'training-philosophy',
@@ -4047,7 +4074,7 @@ Was eine Person tatsächlich verdient, hängt von ihrer Eignung für die Stelle 
     title: 'Mitarbeiter — Effekte & Obergrenzen',
     keywords: ['effekt', 'gedeckelt', 'cap', 'verletzung', 'reha', 'regeneration', 'scouting', 'reichweite', 'sieg-bonus'],
     body: `## Stab und Spielstärke
-Jede Stelle bringt für sich nur wenig, zusammen aber spürbar Leistung auf den Platz: Co-Trainer, Torwart-, Athletik- und Konditionstrainer, Ärzte und Physios, Analysten, sportliche Leitung und die guten Geister wie Zeug- und Platzwart. Gezählt werden nur Stellen, die es in der Epoche schon gibt, bewertet nach der Eignung der Person für ihre Stelle und ihrem Methodenstand. Ganz ohne Stab verliert deine Mannschaft bis zu **4 % Spielstärke** (1975 etwa die Hälfte, damals gab es kaum Fachpersonal), ein voller, guter Stab bringt **+0,4 %**. Die Zeile „Spielstärke“ unter Verein › Mitarbeiter zeigt den aktuellen Wert.
+Jede Stelle bringt für sich nur wenig, zusammen aber spürbar Leistung auf den Platz: Co-Trainer, Torwart-, Athletik- und Konditionstrainer, Ärzte und Physios, Analysten, sportliche Leitung und die guten Geister wie Zeug- und Platzwart. Gezählt werden nur Stellen, die es in der Epoche schon gibt, bewertet nach der Eignung der Person für ihre Stelle und ihrem Methodenstand. Ganz ohne Stab verliert deine Mannschaft bis zu **4 % Spielstärke** (1975 etwa die Hälfte, damals gab es kaum Fachpersonal), ein **Spitzenstab** (alle Stellen mit Spitzenkräften, Stärke ab etwa 88) bringt stufenlos bis **+2 %** – auch das 1975 halb so viel, ab 2010 voll. Dieselbe Formel gilt für alle anderen Vereine (siehe „Stäbe der anderen Vereine“). Die Zeile „Spielstärke“ unter Verein › Mitarbeiter zeigt den aktuellen Wert.
 
 ## Gehälter
 Trainer und sportliche Leitung verdienen über die Jahrzehnte fast so viel mehr wie der Fußball insgesamt; Fachpersonal (Medizin, Analyse) deutlich weniger, Verwaltung und Medien etwa wie gute Angestellte.

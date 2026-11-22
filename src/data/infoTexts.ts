@@ -798,8 +798,23 @@ export const INFO_TEXTS = {
   },
   arbeitsmarktStab: {
     title: 'Arbeitsmarkt',
-    text: 'Ein Pool für alle Stellen: Wähle eine Stelle, und die Liste ordnet sich nach der Eignung dafür. Filtern kannst du nach einer Fähigkeit ab einem Mindestwert, nach Alter und Herkunft. Ohne „nur vereinslos“ siehst du auch Angestellte anderer Vereine – abwerben geht gegen Ablöse, aber nur von gleich großen oder kleineren Vereinen.',
+    text: 'Ein Pool für alle Stellen: Wähle eine Stelle, und die Liste ordnet sich nach der Eignung dafür. Filtern kannst du nach einer Fähigkeit ab einem Mindestwert, nach Alter, Herkunft und Anstellung – vereinslos, angestellt (auch bei Sim-Vereinen und im Ausland) oder alle, dazu nach Verein. Angestellte kosten eine Ablöse an ihren Verein und kommen nur, wenn ihre Gründe für den Wechsel überwiegen.',
     wiki: 'staff-market',
+  },
+  staffAbloese: {
+    title: 'Ablöse für Mitarbeiter',
+    text: 'Geht an den bisherigen Verein: einige Monatsgehälter je nach Restlaufzeit, mehr für Schlüsselleute, starke Kräfte und Cheftrainer, mitten in der Saison (August bis April) gut ein Viertel mehr. Große Vereine lassen ihre Leute ungern zu Kleineren ziehen. Bis in die 80er waren solche Ablösen klein, heute sind sie üblich.',
+    wiki: 'staff-market',
+  },
+  staffWechselwunsch: {
+    title: 'Wechselwunsch',
+    text: 'Was für oder gegen einen Wechsel zu dir spricht: Größe der Vereine, Gehalt, früherer Verein, die Chance auf eine höhere Stelle, sportliche Aussichten, Zufriedenheit, ein auslaufender Vertrag – dagegen Vereinstreue und ein gerade erst begonnener Vertrag. Überwiegen die Gründe dagegen oder gilt ein Abwerbeschutz, lehnt die Person Gespräche ab.',
+    wiki: 'staff-market',
+  },
+  staffKiStab: {
+    title: 'Stäbe der anderen Vereine',
+    text: 'Auch die anderen Vereine stellen Mitarbeiter ein – je nach Ruf, Kasse und Epoche: Reiche holen Spitzenleute, kleine haben Lücken oder Mittelmaß, neue Berufe kommen zuerst bei den Großen an. Ihr Stab wirkt nach derselben Formel wie deiner: fehlende Leute bis −4 % Spielstärke, ein Spitzenstab bis +2 % (1975 halb so viel, ab 2010 voll).',
+    wiki: 'staff-ai',
   },
   staffEignung: {
     title: 'Eignung je Stelle',
@@ -1106,7 +1121,7 @@ export const INFO_TEXTS = {
   },
   stabSpielstaerke: {
     title: 'Stab und Spielstärke',
-    text: 'Co-Trainer, Ärzte, Physios, Athletik- und Torwarttrainer, Analysten und die sportliche Leitung bringen einzeln wenig, zusammen aber spürbar Leistung auf den Platz. Ohne Stab verliert deine Mannschaft bis zu 4 % Spielstärke (1975 etwa die Hälfte), ein voller, guter Stab bringt ein kleines Plus. Gezählt werden nur Stellen, die es in der Epoche schon gibt.',
+    text: 'Co-Trainer, Ärzte, Physios, Athletik- und Torwarttrainer, Analysten und die sportliche Leitung bringen einzeln wenig, zusammen aber spürbar Leistung auf den Platz. Ohne Stab verliert deine Mannschaft bis zu 4 % Spielstärke, ein Spitzenstab bringt bis zu 2 % (1975 jeweils die Hälfte, ab 2010 voll). Gezählt werden nur Stellen, die es in der Epoche schon gibt. Für die anderen Vereine gilt dieselbe Formel – der Rang zeigt, wo dein Stab in der Liga steht.',
     wiki: 'staff-effects',
   },
   spielerpool: {
