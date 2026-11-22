@@ -46,7 +46,7 @@ export function PriceTable({ g, club, year, caps, stands, fc, sel, onSel, onChan
 
   return (
     <div className="tk-prices">
-      <table className="tk-ptab">
+      <table className="tk-ptab fit-cols">
         <thead>
           <tr>
             <th>Tribüne<InfoTip k="tribuenen" /></th>

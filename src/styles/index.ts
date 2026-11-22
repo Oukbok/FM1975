@@ -96,4 +96,5 @@ import './30-theme.css'; // Grundlage: Look „Ruhig Flutlicht“ (nur Tokens)
 import './31-akte.css'; // Look „Akte 1975“ (Papier, Dunkelblau, Vereinsfarbe als Akzent)
 import './32-scroll.css'; // Bildlaufleisten außerhalb des Inhalts (scrollbar-gutter + Rand)
 import './33-compact.css'; // kleine Flächen (Steam Deck, 1366×768) über [data-ui] am Spielrahmen
+import './33-tables.css'; // Tabellen einpassen: enge Zellen, Kurzköpfe, Spalten nach data-pri (ui/stableTables.ts)
 import './34-compact-fonts.css'; // zuletzt, erzeugt: node scripts/compact-fonts.mjs (läuft im Build)

@@ -10,6 +10,7 @@
 // „Scouten“ legt einen Auftrag an (game/scoutingGame.ts) → Transfers › Scouting
 // und Spielerpool-Reiter „Gescoutet“.
 // =============================================================================
+import Short from '../../ui/Short';
 import { useMemo, useState } from 'react';
 import FaceThumb from '../FaceThumb';
 import PosBadge from '../PosBadge';
@@ -86,8 +87,8 @@ export default function YouthTab({ g, d, onChange }: ClubTabProps & { onChange: 
   const list = rows.filter(pick).sort(cmp);
   const classes = (['A', 'B', 'C', 'young'] as Cls[]).filter((c) => rows.some((x) => (c === 'young' ? !x.cls || !['A', 'B', 'C'].includes(x.cls) : x.cls === c)));
 
-  const Th = ({ k, cls: c, children }: { k: Sort; cls?: string; children: React.ReactNode }) => (
-    <th className={`mk-sort ${c ?? ''} ${sort === k ? 'on' : ''}`} onClick={() => setSort(k)} aria-sort={sort === k ? (desc ? 'descending' : 'ascending') : undefined}>
+  const Th = ({ k, cls: c, pri, children }: { k: Sort; cls?: string; pri?: number; children: React.ReactNode }) => (
+    <th className={`mk-sort ${c ?? ''} ${sort === k ? 'on' : ''}`} data-pri={pri} data-flex={k === 'name' ? '' : undefined} onClick={() => setSort(k)} aria-sort={sort === k ? (desc ? 'descending' : 'ascending') : undefined}>
       {children}{sort === k ? <span className="mk-sort-dir">{desc ? '▼' : '▲'}</span> : null}
     </th>
   );
@@ -114,8 +115,8 @@ export default function YouthTab({ g, d, onChange }: ClubTabProps & { onChange: 
         </span>}>
         <table className="dtable rl-players mk-table cmx-youth">
           <thead><tr>
-            <Th k="name" cls="cmx-yname">Name</Th><th className="ctr cmx-yw">Nation</th><Th k="pos" cls="ctr cmx-ypos">Position</Th><Th k="age" cls="num cmx-yw">Alter</Th><th className="cmx-yteam">Mannschaft</th>
-            <Th k="ov" cls="num cmx-yw">Stärke</Th><Th k="pot" cls="cmx-ypot">Potenzial</Th>{!own && <Th k="k" cls="ctr cmx-yk">Kenntnis</Th>}{!own && <th className="cmx-yact" />}
+            <Th k="name" cls="cmx-yname">Name</Th><th className="ctr cmx-yw" data-pri={4}><Short s="Nat.">Nation</Short></th><Th k="pos" cls="ctr cmx-ypos"><Short s="Pos.">Position</Short></Th><Th k="age" cls="num cmx-yw">Alter</Th><th className="cmx-yteam" data-pri={2}><Short s="Team">Mannschaft</Short></th>
+            <Th k="ov" cls="num cmx-yw">Stärke</Th><Th k="pot" cls="cmx-ypot"><Short s="Pot.">Potenzial</Short></Th>{!own && <Th k="k" cls="ctr cmx-yk" pri={3}><Short s="Kenn.">Kenntnis</Short></Th>}{!own && <th className="cmx-yact" />}
           </tr></thead>
           <tbody>
             {list.map((x) => {

@@ -57,11 +57,11 @@ export function MarketTable({ g, rows, role, selId, onSelect, onTalk }: {
   if (!rows.length) return <div className="sf-table-wrap"><Empty icon="staff">Niemand passt zu diesen Vorgaben. Lockere den Filter oder such auch bei anderen Vereinen.</Empty></div>;
   return (
     <div className="sf-table-wrap">
-      <table className="sf-table">
+      <table className="sf-table fit-cols">
         <thead>
           <tr>
-            <th>Name</th><th className="c">Alter</th>{role === 'all' && <th>Beste Stelle</th>}
-            <th>Eignung{role !== 'all' ? ` als ${roleName(role)}` : ''}</th><th>Stärken</th><th className="sf-c-grow">Aussicht</th><th>Verein</th><th className="r">Forderung</th><th />
+            <th>Name</th><th className="c" data-pri={2}>Alter</th>{role === 'all' && <th>Beste Stelle</th>}
+            <th>Eignung{role !== 'all' ? ` als ${roleName(role)}` : ''}</th><th data-pri={3}>Stärken</th><th className="sf-c-grow" data-pri={4}>Aussicht</th><th>Verein</th><th className="r">Forderung</th><th />
           </tr>
         </thead>
         <tbody>

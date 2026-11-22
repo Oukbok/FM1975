@@ -1,4 +1,5 @@
 // Reiter „Kader“: Kadertabelle (Klick = Spielerprofil, Verhandeln) | Kaderstruktur | Vertragslage
+import Short from '../../ui/Short';
 import { useState } from 'react';
 import { activeTalks, talkBlocker } from '../../game/transferTalks';
 import { Player } from '../../types';
@@ -41,8 +42,8 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
   };
   const cmp = (a: Player, b: Player) => (desc ? -base(a, b) : base(a, b));
   const list = all.filter((p) => grp === 'all' || groupOf(p) === grp).sort(cmp);
-  const Th = ({ k, cls, children }: { k: Sort; cls?: string; children: React.ReactNode }) => (
-    <th className={`sortable ${cls ?? ''} ${sort === k ? 'sorted' : ''}`} onClick={() => setSort(k)} aria-sort={sort === k ? (desc ? 'descending' : 'ascending') : undefined}>{children}{sort === k ? (desc ? ' ▾' : ' ▴') : ''}</th>
+  const Th = ({ k, cls, pri, children }: { k: Sort; cls?: string; pri?: number; children: React.ReactNode }) => (
+    <th className={`sortable ${cls ?? ''} ${sort === k ? 'sorted' : ''}`} data-pri={pri} data-flex={k === 'name' ? '' : undefined} onClick={() => setSort(k)} aria-sort={sort === k ? (desc ? 'descending' : 'ascending') : undefined}>{children}{sort === k ? (desc ? ' ▾' : ' ▴') : ''}</th>
   );
   const running = new Set(activeTalks(g).map((t) => t.playerId));
   const expiring = all.filter((p) => monthsUntil(today, p.contract.expiryDate) <= 12).sort((a, b) => b.overall - a.overall);
@@ -57,8 +58,8 @@ export default function SquadTab({ g, d, openPlayer, onTalk, talkErr }: ClubTabP
         </span>}>
         <table className="dtable rl-players">
           <thead><tr>
-            <Th k="nr" cls="ctr">#</Th><Th k="name">Name</Th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
-            <Th k="ovr" cls="num">Stärke</Th><Th k="pot">Potenzial</Th><Th k="val" cls="num">Marktwert</Th><Th k="ctr" cls="num">Vertrag</Th>
+            <Th k="nr" cls="ctr" pri={2}>#</Th><Th k="name">Name</Th><Th k="pos" cls="ctr">Pos</Th><Th k="age" cls="num">Alter</Th>
+            <Th k="ovr" cls="num">Stärke</Th><Th k="pot"><Short s="Pot.">Potenzial</Short></Th><Th k="val" cls="num"><Short s="Wert">Marktwert</Short></Th><Th k="ctr" cls="num" pri={3}>Vertrag</Th>
             {!d.isPlayerClub && <th />}
           </tr></thead>
           <tbody>
