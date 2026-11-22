@@ -5,6 +5,7 @@
 // Historie vor Spielbeginn (data/history/). Die Seiten in views/stats/
 // (Liga, Pokal, International) lesen nur diesen Schnappschuss.
 // =============================================================================
+import { ownLeagueZones } from './relegationGame';
 import { ctClub } from '../data/world/continents';
 import { groupOrder } from '../data/regionGeo';
 import { amateurTablesView, sortedAm } from './amateurLeagues';
@@ -374,7 +375,7 @@ export function buildSnapshot(g: Game, season: string, key: string): CompSnapsho
       const table: TableRowLite[] = g.table.rows.map((r) => ({ clubId: r.clubId, pos: r.position, p: r.played, w: r.won, d: r.drawn, l: r.lost, gf: r.goalsFor, ga: r.goalsAgainst, pts: r.points, ded: r.deduction, form: r.form }));
       const ids = table.map((r) => r.clubId);
       return {
-        ...base, tier: pd.tier, group: pd.group, table, stats: liveStats(g, 'L'),
+        ...base, tier: pd.tier, group: pd.group, table, stats: liveStats(g, 'L'), ...ownLeagueZones(g, table.length),
         split: { home: splitTable(ids, g.fixtures, 'home', pts), away: splitTable(ids, g.fixtures, 'away', pts) },
         clubStats: clubStatsFromRows(table, g.fixtures),
       };

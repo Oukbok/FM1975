@@ -40,7 +40,9 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
   const pick = (fn: () => void) => () => { setMenuOpen(false); fn(); };
   // Aktive Hauptkategorie für die Navigation.
   const navMatched = cats.find((c) => c.dash === screen || c.subs.some((s) => s.screen === screen));
-  const hdrBtnLabel = seasonOver ? 'Neue Saison' : running ? 'Pause' : 'Weiter';
+  // Abstieg aus der untersten Liga ohne neuen Verein: der Saisonwechsel führt zum Abschluss-Bildschirm (game/relegationGame.ts).
+  const ends = seasonOver && g.career?.releg?.season === g.season && !g.career.pendingMove && !g.career.offers?.length;
+  const hdrBtnLabel = seasonOver ? (ends ? 'Abschluss' : 'Neue Saison') : running ? 'Pause' : 'Weiter';
 
   return (
     <header className={`hd-bar ${screen === 'dashboard' ? 'hd-bar--zentrale' : ''}`}>
@@ -139,7 +141,7 @@ export function HeaderBar({ g, settings, onSettings, screen, setScreen, saveMsg,
           </button>
         ) : (
           <button className={`hd-continue ${running ? 'running' : ''} ${seasonOver ? 'season' : ''}`} onClick={onContinue}
-            title={seasonOver ? 'Nächste Saison starten' : 'Leertaste'}>
+            title={seasonOver ? (ends ? 'Karrierebilanz ansehen' : 'Nächste Saison starten') : 'Leertaste'}>
             <span className="hd-continue-ico" aria-hidden="true">
               {running ? (
                 <svg viewBox="0 0 24 24" width="38" height="38"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" /></svg>
