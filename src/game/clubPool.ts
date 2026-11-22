@@ -117,6 +117,14 @@ export function absorbPlaceholders(g: Game, res: TransitionResult, season: strin
  * IDs zurück, die in den Pool wechseln (Ebene wird nach dem Kader-Abgleich gesetzt,
  * settlePool). Nicht in Reform-Saisons (die Reform regelt die Besetzung selbst).
  */
+/** Tauschpaare je Staffel der untersten West-Ebene: 2 Staffeln je 4, eingleisig 3, ab 3 Staffeln je 2 (bzw. `swaps`). */
+export const poolSwapCount = (groups: number, swaps?: number) => swaps ?? (groups >= 3 ? 2 : groups === 2 ? 4 : 3);
+
+/** Absteiger einer Staffel der untersten Ebene in den Unterbau: die Letzten der Abschlusstabelle, die noch in der Staffel stehen. */
+export function poolDownIds(ids: string[], orderedIds: string[], k: number, protectedId?: string): string[] {
+  return [...orderedIds].reverse().filter((id) => ids.includes(id) && id !== protectedId).slice(0, k);
+}
+
 export function poolExchange(
   g: Game, membership: Record<string, { ids: string[]; meta: DivisionMeta }>, current: CurrentDivision[], season: string, protectedId: string,
   /** Tauschpaare je Staffel (anderes Heimatland: historische Zahl, game/homeStructure.ts); fehlt = 2/4/3 nach Staffelzahl. */
@@ -126,7 +134,7 @@ export function poolExchange(
   if (!west.length) return [];
   const lowest = Math.max(...west.map((m) => m.meta.tier));
   const divs = west.filter((m) => m.meta.tier === lowest);
-  const k = swaps ?? (divs.length >= 3 ? 2 : divs.length === 2 ? 4 : 3);
+  const k = poolSwapCount(divs.length, swaps);
   if (k <= 0) return [];
   const rnd = mulberry32(hashStr(`pool:${season}`));
   const pool = poolOf(g, false);
@@ -136,7 +144,7 @@ export function poolExchange(
   for (const m of divs) {
     const cur = current.find((c) => c.id === m.meta.id);
     if (!cur) continue;
-    const down = [...cur.orderedIds].reverse().filter((id) => m.ids.includes(id) && id !== protectedId).slice(0, k);
+    const down = poolDownIds(m.ids, cur.orderedIds, k, protectedId);
     const up = pickRegional(g, pool, down.length, m.meta.group, divs.map((d) => d.meta.group), rnd, taken, (x) => poolPickAllowed(g, x, m.meta.tier, m.ids, divs.length === 1), newcomerStrength(g, m.ids), bonus);
     const n = Math.min(down.length, up.length);
     for (let i = 0; i < n; i++) {
@@ -209,6 +217,12 @@ export function poolDrift(g: Game, season: string): void {
 // -----------------------------------------------------------------------------
 // DDR: Auf-/Abstieg Oberliga ↔ DDR-Liga ↔ DDR-Pool (bis 1990/91)
 // -----------------------------------------------------------------------------
+/** DDR-Liga: die zwei Letzten (ohne die Aufsteiger) tauschen mit den Bezirksligen. */
+export function ddrDownIds(ligaOrder: string[], protectedId?: string): string[] {
+  const up = ligaOrder.filter((id) => !isReserveId(id)).slice(0, 2);
+  return ligaOrder.filter((id) => !up.includes(id) && id !== protectedId).slice(-2);
+}
+
 export function ddrExchange(g: Game, orders: { id: string; tier: number; orderedIds: string[] }[], season: string, protectedId?: string): Record<string, string[]> {
   const ober = orders.find((d) => d.tier === 101);
   const liga = orders.find((d) => d.tier === 102);
@@ -221,7 +235,7 @@ export function ddrExchange(g: Game, orders: { id: string; tier: number; ordered
   let newLiga = liga.orderedIds.filter((id) => !up.includes(id)).concat(down);
   const rnd = mulberry32(hashStr(`ddrpool:${season}`));
   // Eigener Verein (DDR-Start, game/ddrHome.ts) steigt nie in den Pool ab – der Nächste davor geht.
-  const toPool = liga.orderedIds.filter((id) => !up.includes(id) && id !== protectedId).slice(-2);
+  const toPool = ddrDownIds(liga.orderedIds, protectedId);
   const fromPool = pickFromPool(poolOf(g, true), toPool.length, 'nordost', rnd, new Set());
   for (let i = 0; i < Math.min(toPool.length, fromPool.length); i++) {
     newLiga = newLiga.map((id) => (id === toPool[i] ? fromPool[i] : id));

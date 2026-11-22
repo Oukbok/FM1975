@@ -23,6 +23,7 @@ import { setTransferDate } from '../engine/transfers';
 import { aiClubsDaily } from './aiClubs';
 import { aiContractsDaily } from './aiContracts';
 import { careerDaily } from './careerGame';
+import { relegationDaily } from './relegationGame';
 import { aiLoansDaily } from './aiLoans';
 import { loanLifeDaily } from './loanLife';
 import { loanMarketDaily } from './loanMarket';
@@ -118,7 +119,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     if (CalendarEngine.isSeasonOver(cal)) { return false; }
     return true;
   }
-  if (CalendarEngine.isSeasonOver(cal)) { return false; }
+  if (CalendarEngine.isSeasonOver(cal) || g.over) { return false; }
 
   const today = cal.currentDate;
   bindTransferLog(g); // Transferprotokoll: jeder Wechsel des Tages landet im Fenster
@@ -242,6 +243,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
+  relegationDaily(g, today); // Abstieg aus der untersten Liga = Ende der Amtszeit (game/relegationGame.ts)
   careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
   // Jugendwettbewerbe gibt es nur in Deutschland (Heimatland, Weltdaten).
   const germanHome = homeCountryOf(g) === 'ger';

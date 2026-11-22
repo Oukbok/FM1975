@@ -44,11 +44,13 @@ export function normalizeToSteady(res: TransitionResult, newSeason: string, give
 }
 
 /**
- * Stellt sicher, dass der Verein des Spielers nie aus der Ligapyramide fällt.
- * Falls eine Reform ihn (z. B. als Absteiger in eine nicht simulierte Amateurliga)
- * entfernen würde, wird er stattdessen in die unterste Ebene aufgenommen und
+ * Sicherheitsnetz für Ligareformen: Würde eine Reform den Verein des Spielers aus der
+ * Pyramide entfernen, wird er stattdessen in die unterste Ebene aufgenommen und
  * verdrängt dort den schwächsten Eintrag (Platzhalter bevorzugt, sonst realer
  * Verein, der dann absteigt). So bleiben alle Staffelgrößen gerade.
+ * Der sportliche Abstieg aus der untersten Liga ist davon NICHT geschützt: Steht der
+ * eigene Verein auf einem Abstiegsplatz, endet die Amtszeit (game/relegationGame.ts) –
+ * `protectedId` ist dann schon der neue Verein bzw. das Spiel ist beendet.
  */
 export function ensureProtected(res: TransitionResult, protectedId?: string): TransitionResult {
   if (!protectedId) return res;
@@ -69,3 +71,47 @@ export function ensureProtected(res: TransitionResult, protectedId?: string): Tr
   return { ...res, dropped, placeholders };
 }
 
+
+/**
+ * Gleicht Ligagrößen an die Sollstruktur an: Überzählige (schwächste) wandern eine
+ * Ebene tiefer, fehlende Plätze werden mit den stärksten Vereinen der Ebene darunter
+ * aufgefüllt. Auf der untersten Ebene werden Überzählige gestrichen.
+ */
+export function balanceDivisions(
+  membership: Record<string, { ids: string[]; meta: DivisionMeta }>,
+  target: { id: string; tier: number; teamCount: number }[],
+  strengthOf: (id: string) => number,
+  protectedId?: string,
+): void {
+  const want: Record<string, number> = {};
+  for (const t of target) want[t.id] = t.teamCount;
+  const keys = Object.keys(membership).filter((k) => want[k] != null);
+  const tiers = [...new Set(keys.map((k) => membership[k].meta.tier))].sort((a, b) => a - b);
+  for (const tier of tiers) {
+    const here = keys.filter((k) => membership[k].meta.tier === tier);
+    const below = keys.filter((k) => membership[k].meta.tier === tier + 1);
+    for (const k of here) {
+      const ids = membership[k].ids;
+      // Zu viele: schwächste nach unten (nie den eigenen Verein).
+      while (ids.length > want[k]) {
+        const sorted = ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(a) - strengthOf(b));
+        const out = sorted[0];
+        if (!out) break;
+        ids.splice(ids.indexOf(out), 1);
+        if (below.length) {
+          const dest = below.sort((a, b) => (membership[a].ids.length - want[a]) - (membership[b].ids.length - want[b]))[0];
+          membership[dest].ids.push(out);
+        }
+      }
+      // Zu wenige: stärkste von unten holen.
+      while (ids.length < want[k] && below.length) {
+        const src = below.sort((a, b) => membership[b].ids.length - membership[a].ids.length)[0];
+        const pool = membership[src].ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(b) - strengthOf(a));
+        const inn = pool[0];
+        if (!inn) break;
+        membership[src].ids.splice(membership[src].ids.indexOf(inn), 1);
+        ids.push(inn);
+      }
+    }
+  }
+}

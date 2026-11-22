@@ -99,6 +99,10 @@ export interface CareerState {
   press?: BoardPressureState;
   /** Managerbilanz über alle Jahrzehnte (game/managerLog.ts). */
   mgr?: import('./managerLog').MgrLog;
+  /** Abstieg aus der untersten Liga besiegelt (game/relegationGame.ts): Saison + Stichtag; Angebote/Wechsel dieser Saison bleiben gültig. */
+  releg?: { season: string; date: string };
+  /** Saison, für die der Stichtag nach dem letzten Ligaspiel schon geprüft ist. */
+  relegChk?: string;
   /** 2 = Jobangebote/Vereinswechsel/Entlassung abgeschaltet, Altlasten bereinigt (careerGame.ts `migrateCareer`). */
   mode?: 2;
 }
