@@ -23,6 +23,7 @@ import type { Club, Player } from '../types';
 import type { Game } from './state';
 import { WP_FIELD as W, buildWorldPlayer, isWorldId, numberWorldPool, takeWorldSquad, type WP } from './worldPool';
 import { assignShirtNumbers } from './squads';
+import { ensureSeating } from '../engine/seating';
 
 type WorldMark = Player & { world?: boolean };
 const startYearOf = (g: Game) => Number((g.season ?? '1975').slice(0, 4)) || Number(g.calendar.currentDate.slice(0, 4));
@@ -59,6 +60,7 @@ export function ensureGuestClub(g: Game, id: string): boolean {
     Object.assign(g.players, tmp);
   }
   club.guest = true;
+  ensureSeating(club, Number(g.calendar.currentDate.slice(0, 4))); // sonst rüstet erst das Laden die Platzkategorien nach
   g.clubs[id] = club;
   return true;
 }
