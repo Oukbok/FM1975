@@ -272,7 +272,7 @@ export function staffStrengthOf(g: Game, clubId = g.managedClubId): { coverage: 
 
 /** Erwarteter Faktor eines Vereins mit diesem Ruf (Stab nach `aiStaffTarget`, alle Stellen besetzt). */
 export function expectedStaffFactor(rep: number, year: number): number {
-  const q = Math.max(4, Math.min(18, 3 + rep * 0.13 + eraWeight(year) * (rep - 70) / 12));
+  const q = Math.max(4, Math.min(18, 3 + rep * 0.13 + eraWeight(year) * (rep - 70) / 24));
   return staffFactorOf(Math.min(1.1, q / 14) * 0.92, year);
 }
 

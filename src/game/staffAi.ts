@@ -73,7 +73,7 @@ export const eraWeight = (year: number): number => 0.5 + 0.5 * clamp((year - 197
  */
 export function aiStaffTarget(c: Club, year: number): number {
   const rep = c.reputation ?? 60;
-  let t = clubStaffTarget(c) + eraWeight(year) * (rep - 70) / 12;
+  let t = clubStaffTarget(c) + eraWeight(year) * (rep - 70) / 24;
   const bal = c.finances?.balance ?? 0;
   if (bal < 0) t -= 1.5;
   return clamp(t, 4, 18);
@@ -88,7 +88,7 @@ export function aiWantsRole(c: Club, role: string, year: number): boolean {
   if (!r || !staffAvailable(r, year)) return false;
   if (r.unlockYear <= 1975) return true;
   const rep = c.reputation ?? 60;
-  const p = clamp(0.1 + (year - r.unlockYear) / 12 + (rep - 68) / 30 - ((c.finances?.balance ?? 0) < 0 ? 0.2 : 0), 0, 1);
+  const p = clamp(0.15 + (year - r.unlockYear) / 12 + (rep - 68) / 40 - ((c.finances?.balance ?? 0) < 0 ? 0.2 : 0), 0, 1);
   return hash01(`${c.id}|${role}|${Math.floor(year / 3)}`) < p;
 }
 
