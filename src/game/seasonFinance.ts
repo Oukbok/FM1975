@@ -20,6 +20,7 @@ import { seasonClubBusiness } from './clubBusiness';
 import { seatingNewSeason } from './seatingGame';
 import { sponsorSeasonClose } from './sponsorGame';
 import { closeBudgetPlan } from './budgetPlan';
+import { aiStaffAnnual } from './staffAi';
 
 /** Leistungswert 0..1 der Vorsaison je Verein (für die TV-Verteilung). */
 export type PerfMap = Record<string, number>;
@@ -116,6 +117,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
   const news = runAiEconomy({
     clubs: g.clubs, players: g.players, managedClubId: g.managedClubId, season: newSeason, date, year,
     rng: Math.random, autoManageMine: !!(g as any).simAutoManage, skipInvest: true, tier,
+    staffAnnual: aiStaffAnnual(g, year), // Stab als fester Posten im Personalrahmen (game/staffAi.ts)
   });
   if (news.length) {
     pushMessage(g.messages, makeMessage({

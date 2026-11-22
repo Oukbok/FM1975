@@ -16,7 +16,7 @@ import { aiStaffSummary } from '../src/game/staffAi';
 import { staffStrengthOf } from '../src/game/staffGame';
 import { leanClubs } from '../src/game/staffLean';
 import { coachCutFor, coachLevelFor } from '../src/engine/development';
-import { teachFactor } from '../src/engine/coaching';
+import { memberLevel, teachFactor } from '../src/engine/coaching';
 import { careerSummary } from './simCareers';
 import { topReport, topSummary, youthReport, youthSummary } from './simReportYouthTop';
 import { processDay, HEADLESS_UI } from '../src/game/day';
@@ -332,6 +332,16 @@ function balanceReport(game: Game, ps: Player[]) {
 
 // YOUTH=1 / TOP=1: Berichte in tests/simReportYouthTop.ts.
 
+/** Top-6 (Ruf) der Liga: Niveau der Trainerteams, Co-Trainer und wie viele Spieler ≥ 80 die Decke bremst. */
+function coachTop6(game: Game, map: Map<string, { level: number }>): string {
+  const year = Number(game.calendar.currentDate.slice(0, 4));
+  const top = [...map.keys()].map((id) => game.clubs[id]).filter(Boolean).sort((a, b) => (b.reputation ?? 0) - (a.reputation ?? 0)).slice(0, 6);
+  const cos = top.map((c) => (game.staffWorld?.people ?? []).find((m) => m.clubId === c.id && m.roleId === 'cotrainer'));
+  const coL = cos.filter(Boolean).map((m) => memberLevel(m!, year));
+  const pl = top.flatMap((c) => c.playerIds.map((id) => game.players[id])).filter((p) => p && !p.isYouth && p.age <= 27 && p.overall >= 78);
+  return `Top6 Ø ${avg(top.map((c) => map.get(c.id)!.level)).toFixed(1)} Co Ø ${avg(coL).toFixed(1)} (ohne Co ${cos.length - coL.length}) Decke ≥78 ${pl.filter((p) => coachCutFor(p) >= 1).length}/${pl.length}`;
+}
+
 /** Trainer-Arbeitsmarkt je Saison (game/staffWorld.ts). */
 function staffReport(game: Game) {
   const w = game.staffWorld;
@@ -348,7 +358,7 @@ function staffReport(game: Game) {
     const pl = Object.values(game.players).filter((p) => !p.isYouth && map.has(p.clubId));
     const cut = pl.map((p) => coachCutFor(p));
     const teach = pl.filter((p) => p.age <= 27).map((p) => teachFactor(coachLevelFor(p) ?? 0, p.overall));
-    console.log(`   COACH Niveau ${lv[0].toFixed(0)}–${lv[lv.length - 1].toFixed(0)} (Ø ${avg(lv).toFixed(1)}) | Decke greift bei ${cut.filter((c) => c >= 1).length}/${pl.length} Spielern (Ø ${avg(cut.filter((c) => c >= 1)).toFixed(1)}, max ${Math.max(0, ...cut).toFixed(1)}) | Lerntempo ≤27 Ø ${avg(teach).toFixed(3)} (${Math.min(...teach).toFixed(2)}–${Math.max(...teach).toFixed(2)})`);
+    console.log(`   COACH Niveau ${lv[0].toFixed(0)}–${lv[lv.length - 1].toFixed(0)} (Ø ${avg(lv).toFixed(1)}) | Decke greift bei ${cut.filter((c) => c >= 1).length}/${pl.length} Spielern (Ø ${avg(cut.filter((c) => c >= 1)).toFixed(1)}, max ${Math.max(0, ...cut).toFixed(1)}) | Lerntempo ≤27 Ø ${avg(teach).toFixed(3)} (${Math.min(...teach).toFixed(2)}–${Math.max(...teach).toFixed(2)}) | ${coachTop6(game, map)}`);
   }
   {
     // KI-Stäbe (game/staffAi.ts): Besetzung, Güte, Kosten, Faktor auf die Spielstärke – große gegen kleine Vereine.

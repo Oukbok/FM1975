@@ -6,7 +6,7 @@ import { Game } from '../src/game/state';
 import { StaffMember } from '../src/engine/staffPeople';
 import { economyScale, yearOf } from '../src/engine/economy';
 import { memberMonthlySalary } from '../src/engine/staffPeople';
-import { aiStaffSeason, aiStaffSummary, AI_STAFF_ROLES, ensureAiStaff, staffedClubs, staffIndex, STAFF_W } from '../src/game/staffAi';
+import { aiStaffAnnual, aiStaffSeason, aiStaffSummary, AI_STAFF_ROLES, ensureAiStaff, staffedClubs, staffIndex, STAFF_W } from '../src/game/staffAi';
 import { staffFactorOf, staffStrengthFor, staffStrengthOf, bindStaffFactor } from '../src/game/staffGame';
 import { staffStrength } from '../src/engine/honourEffects';
 import { isAbroad, leanClubs, leanSeason } from '../src/game/staffLean';
@@ -15,6 +15,7 @@ import { migrateStaffPeople, refillFree, staffMarket } from '../src/game/staffWo
 import { offerContract, demandOf } from '../src/game/trainerTeam';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { STAFF_BY_ID, staffAvailable } from '../src/data/staff';
+import { runAiEconomy } from '../src/engine/clubEconomy';
 
 function fail(msg: string): never { console.error('FEHLER:', msg); process.exit(1); }
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
@@ -237,6 +238,23 @@ export function staffAiChecks(): string[] {
   staffSeasons(gs, 6);
   const rows = aiStaffSummary(gs);
   if (rows.some((r) => r.filled < r.avail * 0.5)) fail('KI-Stäbe veröden über die Jahre');
+  // Haushaltsplanung: Der Stab ist fester Posten im Personalrahmen – Spielergehälter sinken um (höchstens) seine Kosten.
+  {
+    const gh = make(1995);
+    const year = 1995, staff = aiStaffAnnual(gh, year);
+    const wagesAfter = (withStaff: boolean) => {
+      const clubs = structuredClone(gh.clubs), players = structuredClone(gh.players);
+      runAiEconomy({ clubs, players, managedClubId: gh.managedClubId, season: gh.season, date: '1995-07-01', year, rng: () => 0.5, skipInvest: true, tier: 1, staffAnnual: withStaff ? staff : undefined });
+      const id = staffedClubs(gh).sort((a, b) => (b.reputation ?? 0) - (a.reputation ?? 0))[0].id;
+      return { id, w: clubs[id].playerIds.reduce((a, pid) => a + (players[pid]?.contract.weeklyWage ?? 0), 0) * 52 * economyScale(year) };
+    };
+    const a = wagesAfter(false), b = wagesAfter(true);
+    const st = staff[a.id] ?? 0;
+    if (!(st > 0)) fail('Haushalt: keine Stabkosten für den größten KI-Verein');
+    if (b.w >= a.w) fail('Haushalt: Stabkosten mindern die Spielergehälter nicht');
+    if (a.w - b.w > st) fail(`Haushalt: Spielergehälter sinken stärker als die Stabkosten (${Math.round(a.w - b.w)} > ${Math.round(st)})`);
+    out.push(`Haushalt: Stab ${Math.round(st / 1000)} Tsd./Jahr → Spielergehälter −${((1 - b.w / a.w) * 100).toFixed(1)} %`);
+  }
   void memberMonthlySalary;
   return out;
 }

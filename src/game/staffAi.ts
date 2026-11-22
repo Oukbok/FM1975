@@ -44,6 +44,8 @@ export const STAFF_W: Record<string, number> = {
 export const AI_STAFF_ROLES = Object.keys(STAFF_W);
 /** Stellen, um die große Vereine bei kleineren werben. */
 const KEY_ROLES = new Set(['cotrainer', 'torwarttrainer', 'mannschaftsarzt', 'physio_haupt', 'konditionstrainer', 'athletiktrainer', 'spielanalyst', 'sportdirektor']);
+/** Stellen des Trainerteams (engine/coaching.ts `aiCoachLevel`): Nachbesetzung auf Vereinsniveau. */
+const COACH_ROLES = new Set(['cotrainer', 'torwarttrainer']);
 /** Höchstens so viele Abwerbungen unter KI-Vereinen je Saison (maßvoll). */
 const AI_POACH_MAX = 5;
 
@@ -149,10 +151,14 @@ export function aiFillClub(g: Game, w: StaffWorld, c: Club, mine: StaffMember[],
         if (better) { pick = better; o.poach.left--; payPoach(g, c, better.m, date); }
       }
       // Kaum jemand Brauchbares frei: ein neuer Quereinsteiger aus dem Beruf (der Markt wächst mit den Stellen).
-      if (!pick || pick.fit < Math.max(5, target - 4)) {
-        if (cur) continue;
+      // Co-/Torwarttrainer bestimmen das Trainerteam (Decke/Lerntempo der Spieler): Hier nimmt der Verein
+      // keinen deutlich Schwächeren und ersetzt einen zu schwachen, sondern holt jemanden auf seinem Niveau (sonst bremsen Nachbesetzungen
+      // die Entwicklung ligaweit – Abgleich docs/research/balance-staff.md).
+      const coach = COACH_ROLES.has(role);
+      if (!pick || pick.fit < Math.max(5, target - (coach ? 2.5 : 4))) {
+        if (cur && !coach) continue;
         const m = makeOutsider(year, rng, role);
-        tuneTo(m, target - 1 - rng() * 2.5);
+        tuneTo(m, target - (coach ? rng() * 1.5 : 1 + rng() * 2.5));
         w.people.push(m);
         w.cur.outsiders++;
         pick = { m, fit: m.quality };
@@ -224,6 +230,15 @@ export function aiStaffPayroll(g: Game, c: Club, members: StaffMember[] | undefi
     sum += memberMonthlySalary({ ...head, salaryFactor: demandFactor(head, c.reputation ?? 60) }, scale);
   }
   return sum;
+}
+
+/** Jahreskosten der KI-Stäbe je Verein (nominal) für die Haushaltsplanung (engine/clubEconomy.ts `runAiEconomy`). */
+export function aiStaffAnnual(g: Game, year: number): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!g.staffWorld?.ai) return out;
+  const idx = staffIndex(g);
+  for (const c of staffedClubs(g)) out[c.id] = 12 * aiStaffPayroll(g, c, idx.get(c.id), year);
+  return out;
 }
 
 /** Monatsabschluss (game/dayFinance.ts): Gehälter der KI-Stäbe buchen. */

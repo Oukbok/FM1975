@@ -218,6 +218,11 @@ export interface AiEconomyContext {
   skipInvest?: boolean;
   /** Liga-Ebene der voll simulierten Liga (1 = 1. Liga), für Umsatz-Schätzungen. */
   tier?: number;
+  /**
+   * Jahreskosten des echten Mitarbeiterstabs je Verein (nominal, game/staffAi.ts `aiStaffPayroll` × 12).
+   * Fester Posten wie Stadion und Gelände: Der Gehaltsrahmen der Spieler ist, was danach bleibt.
+   */
+  staffAnnual?: Record<string, number>;
 }
 
 /** Exponent der Gehaltsverteilung im KI-Kader: 0,72 bis 1985, 1,0 ab 2000 (Bosman, Star-Gehälter). */
@@ -381,7 +386,11 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     const fixed = last ? last.expenses.stadiumMaintenance + (last.expenses.facilities ?? 0) + last.expenses.trainingFacilities
       + last.expenses.other + (last.expenses.operations ?? 0) : 0;
     const room = last && (rich < 0.3 || low) ? Math.max(0.35 * rev, rev - fixed - 0.03 * rev) : Infinity;
-    const budgetWeekly = Math.min(quota * netRev, room) / scale / 52 / WAGE_OVERHEAD;
+    // Der Personalrahmen (Quote) deckt Spieler UND Mitarbeiterstab: Ein teurer Stab geht vom Spielerkader ab
+    // (wie im echten Verein), höchstens bis auf 80 % des Rahmens – Spitzengehälter bleiben bezahlbar.
+    const frame = Math.min(quota * netRev, room);
+    const staff = Math.min(0.2 * frame, ctx.staffAnnual?.[c.id] ?? 0);
+    const budgetWeekly = (frame - staff) / scale / 52 / WAGE_OVERHEAD;
     const squad = c.playerIds.map((id) => ctx.players[id]).filter(Boolean);
     // Gehaltsgefälle im Kader je Epoche: bis in die 1980er flacher (Stars ≈ 0,3–0,55 Mio. DM,
     // Recherche finances-research-1980-today), nach Bosman steil (Marktgehalt voll).
