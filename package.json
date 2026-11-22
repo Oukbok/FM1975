@@ -33,6 +33,7 @@
     "test:stadium": "node scripts/run-ts.mjs tests/stadium-test.ts",
     "test:ai": "node scripts/run-ts.mjs tests/ai-test.ts",
     "test:career": "node scripts/run-ts.mjs tests/career-test.ts",
+    "test:relegation": "node scripts/run-ts.mjs tests/relegation-test.ts",
     "test:club": "node scripts/build.mjs && node tests/club-profile-shots.mjs",
     "test:winter": "node scripts/run-ts.mjs tests/winter-test.ts",
     "test:winterbreak": "node scripts/run-ts.mjs tests/winterbreak-test.ts",
