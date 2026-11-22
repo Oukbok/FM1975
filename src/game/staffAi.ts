@@ -26,7 +26,7 @@ import { memberMonthlySalary, StaffMember } from '../engine/staffPeople';
 import { demandFactor, roleFit, specialtyOfSkills, syncQuality } from '../engine/staffSkills';
 import { coachAsStaff, coachRepOf, makeOutsider } from '../engine/staffGen';
 import { hash01 } from '../engine/transferMarket';
-import { aiClubs, clubStaffTarget, ensureStaffWorld, freeUp, hireInto, StaffWorld, toClubCoach, tuneTo } from './staffWorld';
+import { aiClubs, clubStaffTarget, ensureStaffWorld, freeUp, hireInto, refillFree, StaffWorld, toClubCoach, tuneTo } from './staffWorld';
 import { poachFee } from './staffPoach';
 import { leanSeason } from './staffLean';
 import type { Game } from './state';
@@ -273,6 +273,8 @@ export function ensureAiStaff(g: Game, rng?: () => number): void {
   }
   w.ai = 1;
   leanSeason(g, w, date, r, true);
+  // Was die schlanken Vereine dem Markt genommen haben, kommt nach (für jede Stelle genug Bewerber).
+  refillFree(g, w, yearOf(date), r, 0);
 }
 
 function seeded(key: string): () => number {
