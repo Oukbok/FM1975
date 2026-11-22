@@ -4,6 +4,7 @@
 // Farben: Budgetposten in Grau-/Schieferstufen (ruhig), Reserve grün/rot nur als
 // echtes Signal (über/unter der Mindestreserve des Vorstands).
 // =============================================================================
+import Short from '../../../ui/Short';
 import { type ReactNode } from 'react';
 import Icon, { type IconName } from '../../../components/Icon';
 import PlayerAvatar from '../../../components/PlayerAvatar';
@@ -15,13 +16,14 @@ import { fmtDM } from '../../../ui/format';
 
 /** Spalten des Budgets: fünf Posten + Reserve (berechnet). */
 export type BudgetCol = BudgetKey | 'reserve';
-export const BUDGET_COLS: { key: BudgetCol; label: string; short: string }[] = [
-  { key: 'wages', label: 'Gehälter', short: 'Gehälter' },
-  { key: 'transfers', label: 'Transfers', short: 'Transfer' },
-  { key: 'infra', label: 'Infrastruktur', short: 'Infrastr.' },
-  { key: 'youth', label: 'Jugend', short: 'Jugend' },
-  { key: 'other', label: 'Betrieb & Sonstiges', short: 'Sonstiges' },
-  { key: 'reserve', label: 'Reserve', short: 'Reserve' },
+/** `tiny` = Kurzform bei angehobener Schrift auf kleinen Flächen (ui/Short.tsx). */
+export const BUDGET_COLS: { key: BudgetCol; label: string; short: string; tiny: string }[] = [
+  { key: 'wages', label: 'Gehälter', short: 'Gehälter', tiny: 'Gehalt' },
+  { key: 'transfers', label: 'Transfers', short: 'Transfer', tiny: 'Transf.' },
+  { key: 'infra', label: 'Infrastruktur', short: 'Infrastr.', tiny: 'Infra' },
+  { key: 'youth', label: 'Jugend', short: 'Jugend', tiny: 'Jugend' },
+  { key: 'other', label: 'Betrieb & Sonstiges', short: 'Sonstiges', tiny: 'Sonst.' },
+  { key: 'reserve', label: 'Reserve', short: 'Reserve', tiny: 'Res.' },
 ];
 
 /** Rundet einen Schritt auf 1/2/5 × 10^n. */
@@ -172,12 +174,12 @@ export function BudgetColumns({ p, s, ist, sel, onSel, onStep, readOnly }: {
           );
         })}
       </div>
-      <div className="bud-cols-foot">
+      <div className="bud-cols-foot fit-short">
         {BUDGET_COLS.map((c) => {
           const fixed = c.key === 'other' || c.key === 'reserve' || readOnly;
           return (
             <div key={c.key} className={`bud-colf ${sel === c.key ? 'sel' : ''}`}>
-              <button type="button" className="bud-colf-name" onClick={() => onSel?.(c.key)}>{c.short}</button>
+              <button type="button" className="bud-colf-name" onClick={() => onSel?.(c.key)}><Short s={c.tiny} title={c.label}>{c.short}</Short></button>
               <span className={`bud-colf-val ${c.key === 'reserve' && v.reserve < p.reserveMin ? 'neg' : ''}`}>{fmtDM(v[c.key])}</span>
               {!readOnly && (
                 <div className="bud-colf-steps">

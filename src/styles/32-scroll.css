@@ -45,6 +45,9 @@
   scrollbar-gutter: stable;
   margin-right: calc(-1 * var(--sb-room, 1) * var(--sb-w));
 }
+/* Gruppentabellen: das innere Raster (.gt-grid) rückt selbst in den Rand – der äußere Bereich
+   bekäme dadurch eine waagerechte Leiste von Leistenbreite. */
+.cmp-scroll.cmp-groups, .cmp-scroll.yc-groups { overflow-x: hidden; }
 /* früher eigener Abstand zur Leiste (Rand −6 px + Innenabstand 6 px) – jetzt wie alle */
 .sf-slotlist, .sf-fx { padding-right: 0; }
 
