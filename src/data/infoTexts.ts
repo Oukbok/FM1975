@@ -416,6 +416,11 @@ export const INFO_TEXTS = {
     text: 'Elo-Punkte wie bei der bekannten Elo-Weltrangliste: Start mit historischen Werten, danach zählt nur, was im Spiel gespielt wird. Ein Sieg bringt umso mehr, je stärker der Gegner, je wichtiger das Spiel (WM-Endrunde 60, EM-Endrunde 50, Qualifikation/Nations League 40, Freundschaftsspiel 20) und je höher er ausfällt; der Gastgeber hat 100 Punkte Heimvorteil. Neue Ausgabe am Monatsersten, ± = Plätze seit der Ausgabe davor.',
     wiki: 'world-ranking',
   },
+  abstiegAmtszeit: {
+    title: 'Abstieg aus der untersten Liga',
+    text: 'Spielt dein Verein in der untersten Liga des Landes und beendet die Saison auf einem Abstiegsplatz (in der Tabelle rot), steigt er in den Amateurbereich ab und der Vorstand trennt sich von dir. Teammanager: Das Spiel ist zu Ende, du siehst deine Karrierebilanz. Karriere: Du wirst entlassen und wählst unter Angeboten, die zu deinem Ansehen passen; gibt es keines, endet auch dort das Spiel.',
+    wiki: 'relegation-end',
+  },
   nationaltrainer: {
     title: 'Zusätzlich Nationaltrainer',
     text: 'Neben deinem Verein betreust du eine Nationalmannschaft: Vor jedem Länderspielfenster und vor WM/EM nominierst du das Aufgebot, der Verband setzt dir je Turnier ein Ziel. Umschalten zwischen Verein und Nationalteam: Klick auf Wappen bzw. Flagge oben in der Kopfleiste.',
