@@ -1,6 +1,6 @@
 # Weltvereine esp – Spanien (Primera / Segunda División)
 
-Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WELTDATEN_SPEC.md`.
+Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WORLD_DATA_SPEC.md`.
 
 ## Quellen (gesamt)
 

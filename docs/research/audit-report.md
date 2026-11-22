@@ -199,7 +199,7 @@ Durchgesehen: alle Seiten im Stand „Deutschland 2025 · 1. Liga“ bei 1920×1
 | Datei | Farbwerte |
 |---|---:|
 | 28-sponsor.css | 26 |
-| 31-akte.css | 19 |
+| 31-dossier.css | 19 |
 | 02-startmenu.css | 6 |
 | 28-opponent.css | 6 |
 | 28-calendar.css | 4 |

@@ -1,6 +1,6 @@
 # Weltvereine alb – Albanien (Kategoria e Parë / Superiore)
 
-Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WELTDATEN_SPEC.md`.
+Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WORLD_DATA_SPEC.md`.
 Erfasst: `t1` je Saison, Landespokal (soweit bekannt), Europapokal-Teilnehmer. Keine 2. Liga.
 
 ## Quellen

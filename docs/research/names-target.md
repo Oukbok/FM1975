@@ -75,7 +75,7 @@ Niederlande/Belgien Weltspieler-Kader bekommt – deshalb liegen sie über Deuts
 
 ## Ziel, vorher, nachher (Schritt 1 + 2)
 
-`node scripts/run-ts.mjs tests/name-count.ts pools` (vorher-Stand: `docs/research/namen-zaehlung-vorher.txt`
+`node scripts/run-ts.mjs tests/name-count.ts pools` (vorher-Stand: `docs/research/names-count-before.txt`
 ist die Zählung vor der fünften Stufe; die Spalte „vorher“ hier ist der Stand nach der fünften Stufe, direkt vor
 dieser Änderung). Vornamen = verschiedene Vornamen, die `firstNamesFor` für Geburtsjahre des Jahrzehnts liefert
 (inkl. der Mischung an Stufengrenzen).
@@ -145,7 +145,7 @@ vor allem
     Rangliste), Rest mit den häufigsten britischen Namen, die in Schottland ebenso verbreitet sind.
 - **Vornamen**: je Land Listen nach Geburtsjahrgängen (Bänder alle Jahrgänge / 1940–1969 / 1960–1989 /
   1980–2019 / 2000–2019, für die großen Länder ausgeschrieben, angelehnt an die Jahrgangsranglisten von INE, ISTAT, INSEE,
-  ONS, IRN, Statbel, Meertens, SCB/SSB/DST, GUS, ČSÚ, KSH – siehe docs/research/namen.md) plus häufige männliche Vornamen der Ranglisten, von
+  ONS, IRN, Statbel, Meertens, SCB/SSB/DST, GUS, ČSÚ, KSH – siehe docs/research/names.md) plus häufige männliche Vornamen der Ranglisten, von
   Hand durchgesehen: Kose-/Kurzformen, Einwanderer-Namen, Tippfehler und modische Namen (nur ab 1980) markiert
   bzw. verworfen. Alle Vornamen sind im Datensatz überwiegend männlich belegt (Ausnahmen wie Andrea, Elia in
   Italien, Pau in Katalonien ausdrücklich erlaubt).

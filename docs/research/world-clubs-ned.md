@@ -1,6 +1,6 @@
 # Weltvereine ned – Niederlande (Eredivisie, Eerste Divisie)
 
-Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WELTDATEN_SPEC.md`.
+Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WORLD_DATA_SPEC.md`.
 Erzeugt mit Skripten im Scratchpad (nicht im Repo): Tabellen aus Spielergebnissen berechnet, Namen über eine Zuordnungsliste.
 
 ## Quellen

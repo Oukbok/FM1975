@@ -47,7 +47,7 @@ Unverändert (schon englisch): `crests`, `icons`, `sound`, `tickets`, `trophies`
 Bild-Slots `briefing`, `camp`, `indoor`, `merch`, `promises`, `sponsor/logos`.
 
 **Gesichtsgruppen:** Die Gruppen-IDs (`mitteleuropa`, `tuerkei` …) stehen in Spielständen (`Player.face`), in
-Datensätzen, im Register `src/data/faceImages.ts` und in der Sichtungsliste `docs/images/faces-gesichtet.txt`.
+Datensätzen, im Register `src/data/faceImages.ts` und in der Sichtungsliste `docs/images/faces-reviewed.txt`.
 Sie bleiben **unverändert** – so bricht kein Spielstand und kein Datensatz. Nur die Ordner auf der Platte heißen
 englisch; die Zuordnung ID → Ordner steht an **einer** Stelle, `src/data/faceDirs.json`, und wird vom Spiel
 (`data/faceGroups.ts` `faceDir` → `components/faces/faceLookup.ts`), von `scripts/faces-register.mjs`,
@@ -68,8 +68,8 @@ Pfaden durchsucht (`bilder/`, `assets/`, `.webp`/`.png`/`.jpg`, `faces/`, `views
 speichern keine Datei- oder Ordnerpfade (nur IDs wie `mitteleuropa` oder Ereignis-Typen wie `kabine_predigt`, die
 bleiben). Eine Migration ist deshalb nicht nötig.
 
-## Noch deutsch (bewusst nicht Teil dieses Schritts)
+## Dateinamen
 
-Dateinamen, keine Ordner – z. B. `images/stadion-hintergrund.jpg`, `images/dossier/kalender.webp`,
-`*-maske.webp`, `src/styles/31-akte.css`, `src/views/matchday/GegnerView.tsx`, Berichte in `docs/research/`.
-Umbenennen wäre ein eigener Schritt (gleiches Vorgehen: `git mv` + Verweise).
+Die deutschen Dateinamen (z. B. `images/stadion-hintergrund.jpg`, `src/styles/31-akte.css`,
+`src/views/matchday/GegnerView.tsx`, Berichte in `docs/research/`) sind im zweiten Schritt umbenannt worden –
+Tabelle alt → neu und Ausnahmen in `docs/research/file-renames.md`.

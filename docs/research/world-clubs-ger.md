@@ -2,7 +2,7 @@
 
 Bundesliga (t1) und 2. Bundesliga (t2; 1975/76–1980/81 und 1991/92 Nord = t2, Süd = t2b) 1975/76–2025/26,
 DFB-Pokal, Europapokal. Echte Namen stehen **nur** hier. Ex-DDR-Vereine (ab 1991/92) behalten ihre DDR-IDs
-(`ddr-*`/`gdr-*`) und sind in `clubs/gdr.ts` definiert (siehe weltvereine_gdr.md) – Prüfungen müssen beide Dateien
+(`ddr-*`/`gdr-*`) und sind in `clubs/gdr.ts` definiert (siehe world-clubs-gdr.md) – Prüfungen müssen beide Dateien
 zusammen betrachten.
 
 ## Quellen und Belegstand je Bereich

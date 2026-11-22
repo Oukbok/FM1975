@@ -1,7 +1,7 @@
 # Testlauf aller Testskripte (21.11.2026, Branch `night/tests`)
 
 Alle 74 `npm run test:*`-Skripte aus `package.json` und `node tests/match-ui.mjs` nacheinander (2 Kerne, parallel lief ein Screenshot-Agent – Laufzeiten daher eher hoch). Grenze je Test 20 min.
-Eingeschränkt: `test:audit` mit `VIEWS=1920x1080 SAVES=neu REPORT=0` (der volle Lauf über 3 Auflösungen × 5 Stände dauert deutlich über 20 min; `REPORT=0`, damit `docs/research/audit-bericht.md` nicht überschrieben wird), `test:walk` mit `MAXMIN=15`.
+Eingeschränkt: `test:audit` mit `VIEWS=1920x1080 SAVES=neu REPORT=0` (der volle Lauf über 3 Auflösungen × 5 Stände dauert deutlich über 20 min; `REPORT=0`, damit `docs/research/audit-report.md` nicht überschrieben wird), `test:walk` mit `MAXMIN=15`.
 Spalte „nach Korrektur“: erneuter Lauf nach allen Änderungen für die roten Tests und alle Tests ohne UI, die vor den Spieländerungen gelaufen waren (Werbepreis, Kabine, direkter Vergleich können sie berühren). Die übrigen Tests liefen schon mit dem geänderten Spiel. Nach dem Rebase auf `origin/main` (Ordner-Umbenennung) liefen `history`, `marketing`, `talent`, `career`, `matchdnd`, `match-ui`, `season`, `savecompat` und `dressing` noch einmal – diese Zeiten stehen in der Spalte.
 
 **Ergebnis:** 1. Lauf 69 grün, 6 rot (`history`, `marketing`, `dressing`, `career`, `talent`, `matchdnd`). Drei echte Fehler im Spiel behoben, drei veraltete Tests angepasst – keine Prüfung abgeschwächt (bei `marketing` und `talent` eher verschärft). `npm run check` 0 Fehler, `npm run build` grün.

@@ -1,6 +1,6 @@
 # Weltvereine isr – Israel (Liga Leumit / Ligat ha’Al)
 
-Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WELTDATEN_SPEC.md`.
+Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WORLD_DATA_SPEC.md`.
 Erfasst: `t1` je Saison, Landespokal (soweit bekannt), Europapokal-Teilnehmer. Keine 2. Liga.
 
 Israel spielt seit 1992/93 in UEFA-Wettbewerben (countries.ts `from: 1992`) – erfasst 1992/93–2025/26.

@@ -1,7 +1,7 @@
 # Zwei Beispiel-Monatsbilanzen 1975 — Frankfurt Rot
 
 Beide Bilanzen sind **mit den Formeln des implementierten Finanzsystems** gerechnet
-(`src/engine/finances.ts`, `src/engine/infrastructure.ts`, `src/engine/economy.ts`, `FINANZEN_SPEC.md`).
+(`src/engine/finances.ts`, `src/engine/infrastructure.ts`, `src/engine/economy.ts`, `FINANCES_SPEC.md`).
 Wirtschafts-Skalierung `scale = economyScale(1975) = 1.0` (reine 1975-DM-Basis), Zuschauer-Nachfrage 1975 = 1,0.
 Ein typischer Monat der Hinrunde enthält **2 Liga-Heimspiele**.
 

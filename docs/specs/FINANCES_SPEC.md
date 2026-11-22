@@ -1,6 +1,6 @@
-# FINANZEN_SPEC — Tiefes Finanzsystem für „1975 – A Football Manager"
+# FINANCES_SPEC — Tiefes Finanzsystem für „1975 – A Football Manager"
 
-> **Finanzniveau (Sammel-Update v11):** Alle Werte unten sind auf das recherchierte Niveau gebracht (`docs/research/FINANZEN_Recherche_1975.md`): Erstligist 1975/76 im Median ≈ **4,5 Mio. DM** Umsatz (Spanne ≈ 2,5–9 Mio.), Marktgehalt `1.400 × 2^((Stärke − 72)/11)` DM/Woche (Stammspieler ≈ 73.000, Star ≈ 230.000 DM/Jahr), TV-Topf 4,2 Mio. DM, Bezugsumsatz `AVG_REVENUE_1975 = 4,5 Mio.` Ablösen/Marktwerte folgen unverändert der Rekordkurve. Zuschauer: Grund-Auslastung × Nachfrage der Epoche (`attendanceDemand`), Preise je Besucher × `matchdayPriceScale = revenueScale('matchday') / attendanceDemand`. Alte Spielstände rechnet `game/financeMigration.ts` einmalig um. Gesamtbild und Kalibrierung: Abschnitt 9.
+> **Finanzniveau (Sammel-Update v11):** Alle Werte unten sind auf das recherchierte Niveau gebracht (`docs/research/finances-research-1975.md`): Erstligist 1975/76 im Median ≈ **4,5 Mio. DM** Umsatz (Spanne ≈ 2,5–9 Mio.), Marktgehalt `1.400 × 2^((Stärke − 72)/11)` DM/Woche (Stammspieler ≈ 73.000, Star ≈ 230.000 DM/Jahr), TV-Topf 4,2 Mio. DM, Bezugsumsatz `AVG_REVENUE_1975 = 4,5 Mio.` Ablösen/Marktwerte folgen unverändert der Rekordkurve. Zuschauer: Grund-Auslastung × Nachfrage der Epoche (`attendanceDemand`), Preise je Besucher × `matchdayPriceScale = revenueScale('matchday') / attendanceDemand`. Alte Spielstände rechnet `game/financeMigration.ts` einmalig um. Gesamtbild und Kalibrierung: Abschnitt 9.
 >
 > **Hinweis (Finanzen 2.0):** Die 1975-Werte dieser Spezifikation gelten weiter. Wie die Erlösarten über die Jahrzehnte wachsen (Erlös-Mix, zentrale TV-Verteilung statt Heimspiel-TV, Vermarktung & Hospitality, Marke, KI-Haushalt, Fairplay) regeln `engine/economy.ts` (`revenueScale`) und `engine/clubEconomy.ts`; Beschreibung im In-Game-Wiki (Artikel `finance-epochs`).
 
@@ -155,7 +155,7 @@ attendance = round(capacity * rate)
 - **FacilitiesView**: Catering-Gebaeude als ausbaubare Einrichtung ergaenzen; je Einrichtung die **monatlichen Fixkosten** (§3.1) einblenden; Catering-Modus-Umschalter. Catering rendert via `<Icon>` (neues Icon `catering`, s.u.), nicht als Emoji.
 - **FansView**: Zusammenhang Zuschauer→Eintritt/Catering/Programm sichtbar machen (Auslastung, Ø Zuschauer, erwartete Spieltagseinnahme). Mitglieder-Zahl-Schaetzung.
 - **FinancesView**: neue Einnahmen-Zeilen (Catering, Trikotsponsoring, Bandenwerbung, Mitgliedsbeitraege, Programmhefte/Spieltag) und Ausgaben-Zeile (Gebaeude-Fixkosten) in INCOME_ROWS/EXPENSE_ROWS; Monatsabschluss-Nachricht (App.tsx ~Z.1760) um die neuen Posten erweitern.
-- **VertraegeView**: bleibt Spielervertraege; nur sicherstellen, dass nichts bricht.
+- **ContractsView**: bleibt Spielervertraege; nur sicherstellen, dass nichts bricht.
 
 ### Icon
 `iconPaths.ts`: neues Icon `catering` hinzufuegen (einfache SVG-Silhouette Imbiss/Becher, im Stil der vorhandenen 1-Farb-Pfade, `stroke=currentColor`). `FacilityDef` bekommt optional `iconName?: IconName`; catering setzt `iconName:'catering'`. In FacilitiesView: `def.iconName ? <Icon name={def.iconName}/> : <span>{def.icon}</span>` (bestehende Emoji-Defs unveraendert, kein neues Emoji).

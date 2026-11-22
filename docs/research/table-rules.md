@@ -68,7 +68,7 @@ Für Tabellen mit `table-layout: fixed` (Aufstellung › Kaderliste) wird die Na
 
 ## Was wo wegfällt (Stand dieses Durchgangs, 1280×800)
 
-Siehe Tabelle im Abschnitt „Durchgang Tabellen“ in `docs/research/audit-bericht.md`.
+Siehe Tabelle im Abschnitt „Durchgang Tabellen“ in `docs/research/audit-report.md`.
 
 ## Werkzeuge
 

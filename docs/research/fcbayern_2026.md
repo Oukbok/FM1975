@@ -56,7 +56,7 @@ entspricht diesen Abschreibungen.
 
 - Bundesliga 2023/24: 4,80 Mrd. € Umsatz für 18 Klubs, Medien 1,53 Mrd., Werbung 1,02 Mrd.,
   Transfers 1,00 Mrd., Spielbetrieb 524 Mio., Merchandising 271 Mio. (DFL-Wirtschaftsreport,
-  siehe `FINANZEN_Recherche_Entwicklung_1980_heute.md`).
+  siehe `finances-research-1980-today.md`).
 - Bayern allein: rund **ein Viertel des Werbe-** und **mehr als die Hälfte des Merchandising-Umsatzes**
   der Liga. Der Median-Erstligist liegt bei rund 150–230 Mio. € (je nach Abgrenzung mit/ohne Transfers),
   Werbung ≈ 30–45 Mio. €, Merchandising ≈ 5–10 Mio. €.
@@ -64,7 +64,7 @@ entspricht diesen Abschreibungen.
   965 Mio. € [7]; mit Auslandsgeldern ≈ 1,17 Mrd. € für die 1. Liga.
 - UEFA 2024/25: PSG (Sieger) 144,4 Mio. €, Bayern 105,9, Dortmund 102,2, Leverkusen 87,1 [6].
 
-## 5. Ziele für das Spiel (Kalibrierung, `docs/specs/FINANZEN_SPEC.md` Abschnitt 10)
+## 5. Ziele für das Spiel (Kalibrierung, `docs/specs/FINANCES_SPEC.md` Abschnitt 10)
 
 | Größe 2024/25 | Real (Bayern) | Ziel im Spiel (dauerhaft erfolgreicher Topklub) |
 |---|---:|---|

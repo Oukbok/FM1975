@@ -1,6 +1,6 @@
 # Weltvereine aut – Österreich (Bundesliga / 1. Division)
 
-Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WELTDATEN_SPEC.md`.
+Echte Vereinsnamen stehen **nur hier**. Datenformat: `docs/specs/WORLD_DATA_SPEC.md`.
 Erfasst: `t1` je Saison 1975/76–2025/26, Landespokal (Sieger/Finalist), Europapokal-Teilnehmer. Keine 2. Liga (kein Top-8-Land).
 
 ## Quellen
