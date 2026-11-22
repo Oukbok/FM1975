@@ -15,6 +15,7 @@ export const KINDS = {
   box: { t: 'Box läuft über / wächst', hard: false },
   clip: { t: 'Inhalt waagerecht abgeschnitten', hard: false },
   hscroll: { t: 'Waagerechte Bildlaufleiste', hard: false },
+  squeeze: { t: 'Tabelle zusammengeschoben (Spalten-Wichtigkeit data-pri ergänzen)', hard: false },
   ellipsis: { t: 'Text mit … gekürzt', hard: false },
   empty: { t: 'Leere Box ohne Leertext', hard: false },
   outside: { t: 'Element außerhalb des Fensters', hard: false },
@@ -146,6 +147,13 @@ export function pageChecks(o) {
       const kid = [...el.querySelectorAll('*')].find((k) => { if (!k.childNodes.length || ![...k.childNodes].some((x) => x.nodeType === 3 && x.textContent.trim())) return false; const kr = k.getBoundingClientRect(); return kr.width > 0 && (kr.right > r.right + 2 || kr.left < r.left - 2); });
       if (kid) add('clip', `${path(el)}: „${kid.textContent.trim().slice(0, 40)}“ (${sw} > ${w})`);
     }
+  }
+
+  // ---- Tabellen, die ui/stableTables.ts nur noch durch Zusammenschieben einpassen konnte
+  for (const t of document.querySelectorAll('table[data-fit="squeeze"]')) {
+    if (!vis(t)) continue;
+    const heads = [...(t.tHead?.rows[0]?.cells ?? [])].filter((c) => c.offsetWidth).map((c) => (c.querySelector('.th-short') ?? c).textContent.trim() || '·').join(' | ');
+    add('squeeze', `${path(t)}: ${heads}`);
   }
 
   // ---- Fenster/Popover außerhalb des Fensters
