@@ -104,7 +104,7 @@ export const YOUTH_BLOCKS: YouthBlockDef[] = [
   { key: 'school', name: 'Schulkooperation', icon: 'wiki', what: 'Mehr Trainingszeit am Vormittag, Eltern vertrauen dem Verein.', levels: [
     { name: 'keine', desc: '', from: 0, build: 0, months: 0, upkeep: 0 },
     { name: 'Partnerschule', desc: 'Freistellungen und Hausaufgabenhilfe.', from: 1985, build: 0, months: 3, upkeep: 5000 },
-    { name: 'Eliteschule des Fußballs', desc: 'DFB-Titel ab 2006: Training im Stundenplan.', from: 2006, build: 0, months: 6, upkeep: 12000, needs: { boarding: 2 } },
+    { name: 'Eliteschule des Fußballs', desc: 'Verbandstitel ab 2006: Training im Stundenplan.', from: 2006, build: 0, months: 6, upkeep: 12000, needs: { boarding: 2 } },
   ] },
   { key: 'science', name: 'Sportwissenschaft', icon: 'training', what: 'Ernährung, Leistungsdiagnostik, Psychologie – kleine Vorteile, erst spät verfügbar.', levels: [
     { name: 'keine', desc: '', from: 0, build: 0, months: 0, upkeep: 0 },

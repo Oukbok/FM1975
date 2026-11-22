@@ -3,6 +3,7 @@ import { NatFlag } from '../../components/competition/CountryFlag';
 import { jobNations } from '../../game/national/jobNations';
 import { countryInfo, countryOfNat } from '../../data/countryFlags';
 import { Toggle } from './StepMode';
+import { confLabel } from '../../data/nationalTeams';
 
 const natLabel = (code: string) => { const k = countryOfNat(code); return k ? countryInfo(k).name : code; };
 
@@ -17,7 +18,7 @@ export function StepNation({ d, set }: { d: NewGameDraft; set: (p: Partial<NewGa
           <button key={n.code} type="button" role="option" aria-selected={d.nationalTeam === n.code}
             className={`ng-natrow ${d.nationalTeam === n.code ? 'on' : ''}`} data-nat={n.code} onClick={() => set({ nationalTeam: n.code })}>
             <NatFlag nat={n.code} height={16} /><b>{natLabel(n.code)}</b>
-            <small>{n.conf}</small><small>Rang {n.rank} · {n.label}</small><em>{n.base}</em>
+            <small>{confLabel(n.conf)}</small><small>Rang {n.rank} · {n.label}</small><em>{n.base}</em>
           </button>
         ))}
       </div>

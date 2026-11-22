@@ -57,7 +57,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 1978, topic: 'regeln',
     title: 'Keine Gelbsperren',
-    then: 'Gesammelte Gelbe Karten führen in der Bundesliga noch nicht zu einer Sperre.',
+    then: 'Gesammelte Gelbe Karten führen in der 1. Liga noch nicht zu einer Sperre.',
     today: 'Nach der fünften Gelben Karte ist ein Spieler gesperrt.',
   },
   {
@@ -94,37 +94,37 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 2014, topic: 'regeln',
     title: 'Keine Torlinientechnik',
     then: 'Ob der Ball hinter der Linie war, entscheidet das Auge von Schiedsrichter und Linienrichter.',
-    today: 'Seit 2015/16 meldet die Torlinientechnik der Bundesliga ein Tor in unter einer Sekunde.',
+    today: 'Seit 2015/16 meldet die Torlinientechnik der 1. Liga ein Tor in unter einer Sekunde.',
   },
   // --- Liga & Wettbewerbe -------------------------------------------------------
   {
     from: 1975, to: 1980, topic: 'liga',
-    title: 'Zweigleisige 2. Bundesliga',
-    then: 'Die 2. Bundesliga spielt in den Staffeln Nord und Süd mit je 20 Vereinen.',
-    today: 'Es gibt eine eingleisige 2. Bundesliga mit 18 Vereinen.',
+    title: 'Zweigleisige 2. Liga',
+    then: 'Die 2. Liga spielt in den Staffeln Nord und Süd mit je 20 Vereinen.',
+    today: 'Es gibt eine eingleisige 2. Liga mit 18 Vereinen.',
   },
   {
     from: 1981, to: 1993, topic: 'liga',
-    title: 'Größere 2. Bundesliga',
-    then: 'Die eingleisige 2. Bundesliga hat 20 Vereine, nach der Einheit kurzzeitig sogar 24.',
-    today: 'Seit 1994/95 spielen 18 Vereine in der 2. Bundesliga.',
+    title: 'Größere 2. Liga',
+    then: 'Die eingleisige 2. Liga hat 20 Vereine, nach der Einheit kurzzeitig sogar 24.',
+    today: 'Seit 1994/95 spielen 18 Vereine in der 2. Liga.',
   },
   {
     from: 1975, to: 1980, topic: 'liga',
     title: 'Keine Relegation (Staffelzeit)',
-    then: 'Drei Bundesligisten steigen direkt ab; die Staffel-Zweiten der 2. Liga spielen den dritten Aufsteiger aus.',
-    today: 'Der 16. der Bundesliga spielt in der Relegation gegen den Dritten der 2. Bundesliga.',
+    then: 'Drei Erstligisten steigen direkt ab; die Staffel-Zweiten der 2. Liga spielen den dritten Aufsteiger aus.',
+    today: 'Der 16. der 1. Liga spielt in der Relegation gegen den Dritten der 2. Liga.',
   },
   {
     from: 1991, to: 2007, topic: 'liga',
     title: 'Keine Relegation',
-    then: 'Die drei Letzten der Bundesliga steigen direkt ab, die ersten drei der 2. Liga direkt auf.',
+    then: 'Die drei Letzten der 1. Liga steigen direkt ab, die ersten drei der 2. Liga direkt auf.',
     today: 'Seit 2008/09 gibt es wieder eine Relegation zwischen dem 16. und dem Zweitliga-Dritten.',
   },
   {
     from: 1975, to: 2007, topic: 'liga',
     title: 'Keine bundesweite 3. Liga',
-    then: 'Unter der 2. Bundesliga spielen regionale Amateurligen, ab 1994 die Regionalligen.',
+    then: 'Unter der 2. Liga spielen regionale Amateurligen, ab 1994 die Regionalligen.',
     today: 'Seit 2008/09 gibt es die eingleisige 3. Liga mit 20 Vereinen.',
   },
   {
@@ -141,15 +141,15 @@ export const DIFFERENCES: DifferenceToToday[] = [
   },
   {
     from: 1975, to: 2000, topic: 'liga',
-    title: 'Der DFB führt die Liga',
-    then: 'Bundesliga und 2. Bundesliga werden direkt vom DFB organisiert und vermarktet.',
-    today: 'Seit 2001 organisiert die DFL die Profiligen und ihre Vermarktung.',
+    title: 'Der Fußballbund führt die Liga',
+    then: '1. Liga und 2. Liga werden direkt vom Fußballbund organisiert und vermarktet.',
+    today: 'Seit 2001 organisiert der Ligaverband die Profiligen und ihre Vermarktung.',
   },
   {
     from: 1975, to: 1996, topic: 'liga',
     title: 'Landesmeister-Pokal nur für Meister',
     then: 'In Europas wichtigstem Wettbewerb spielen nur die Landesmeister (und der Titelverteidiger).',
-    today: 'Aus der Bundesliga spielen vier, manchmal fünf Vereine in der Champions League.',
+    today: 'Aus der 1. Liga spielen vier, manchmal fünf Vereine in der Meisterliga.',
   },
   {
     from: 1975, to: 1990, topic: 'liga',
@@ -161,12 +161,12 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 1998, topic: 'liga',
     title: 'Pokal der Pokalsieger',
     then: 'Die nationalen Pokalsieger spielen einen eigenen Europapokal.',
-    today: 'Den Pokal der Pokalsieger gibt es nicht mehr; Pokalsieger spielen in der Europa League.',
+    today: 'Den Pokal der Pokalsieger gibt es nicht mehr; Pokalsieger spielen in der Europa-Liga.',
   },
   {
     from: 1975, to: 1996, topic: 'liga',
-    title: 'UEFA-Pokal-Finale mit Rückspiel',
-    then: 'Das Finale des UEFA-Pokals wird in Hin- und Rückspiel ausgetragen.',
+    title: 'Europa-Pokal-Finale mit Rückspiel',
+    then: 'Das Finale des Europa-Pokals wird in Hin- und Rückspiel ausgetragen.',
     today: 'Alle Europapokal-Endspiele finden als ein Spiel an einem neutralen Ort statt.',
   },
   {
@@ -177,14 +177,14 @@ export const DIFFERENCES: DifferenceToToday[] = [
   },
   {
     from: 1995, to: 2008, topic: 'liga',
-    title: 'UI-Cup im Sommer',
-    then: 'Über den Intertoto-Cup im Sommer können sich Vereine für den UEFA-Pokal qualifizieren.',
-    today: 'Den UI-Cup gibt es nicht mehr; die Conference League ist der dritte Europapokal.',
+    title: 'Sommerpokal im Sommer',
+    then: 'Über den Sommerpokal im Sommer können sich Vereine für den Europa-Pokal qualifizieren.',
+    today: 'Den Sommerpokal gibt es nicht mehr; die Konferenz-Liga ist der dritte Europapokal.',
   },
   {
     from: 1997, to: 2007, topic: 'liga',
-    title: 'DFB-Ligapokal',
-    then: 'Vor der Saison spielen die besten Bundesligisten den Ligapokal aus.',
+    title: 'Ligapokal',
+    then: 'Vor der Saison spielen die besten Erstligisten den Ligapokal aus.',
     today: 'Stattdessen gibt es den Supercup zwischen Meister und Pokalsieger.',
   },
   {
@@ -197,7 +197,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 2004, topic: 'liga',
     title: 'Weltpokal statt Klub-WM',
     then: 'Der Europapokalsieger der Landesmeister spielt gegen den Sieger Südamerikas um den Weltpokal.',
-    today: 'Die FIFA veranstaltet eine Klub-Weltmeisterschaft mit Teams aller Kontinente.',
+    today: 'Der Weltverband veranstaltet eine Klub-Weltmeisterschaft mit Teams aller Kontinente.',
   },
   {
     from: 1975, to: 2014, topic: 'liga',
@@ -214,26 +214,26 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 2003, topic: 'liga',
     title: 'Profis in der Halle',
-    then: 'In der Winterpause spielen Bundesligisten Hallenturniere mit Bande vor vollen Rängen.',
+    then: 'In der Winterpause spielen Erstligisten Hallenturniere mit Bande vor vollen Rängen.',
     today: 'Hallenfußball mit Profimannschaften gibt es nicht mehr.',
   },
   {
     from: 1987, to: 2000, topic: 'liga',
     title: 'Hallen-Masters',
-    then: 'Der DFB-Hallenpokal mit Qualifikationsturnieren und Endrunde im Januar ist ein offizieller Wettbewerb.',
+    then: 'Der Hallenpokal mit Qualifikationsturnieren und Endrunde im Januar ist ein offizieller Wettbewerb.',
     today: 'Nach der Endrunde 2001 wurde das Hallen-Masters abgeschafft.',
   },
   {
     from: 1975, to: 1981, topic: 'liga',
     title: 'Keine Frauen-Nationalelf',
-    then: 'Eine offizielle Frauen-Nationalmannschaft des DFB gibt es noch nicht.',
-    today: 'Die DFB-Frauen sind mehrfache Europameister und Weltmeister.',
+    then: 'Eine offizielle Frauen-Nationalmannschaft des Fußballbunds gibt es noch nicht.',
+    today: 'Die Nationalspielerinnen sind mehrfache Europameister und Weltmeister.',
   },
   {
     from: 1975, to: 1989, topic: 'liga',
-    title: 'Keine Frauen-Bundesliga',
+    title: 'Keine Frauen-Liga',
     then: 'Frauenfußball findet in regionalen Ligen statt, kaum beachtet.',
-    today: 'Seit 1990/91 gibt es die Frauen-Bundesliga, heute mit Spielen in großen Stadien und im Fernsehen.',
+    today: 'Seit 1990/91 gibt es die Frauen-Liga, heute mit Spielen in großen Stadien und im Fernsehen.',
   },
   // --- Geld ---------------------------------------------------------------------
   {
@@ -258,7 +258,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 1995, topic: 'geld',
     title: 'Bescheidene Gehälter',
     then: 'Ein Stammspieler verdient rund 75.000 DM im Jahr, ein Star um 250.000 DM.',
-    today: 'Bundesliga-Profis verdienen im Schnitt Millionen pro Jahr, Stars ein Vielfaches.',
+    today: 'Erstliga-Profis verdienen im Schnitt Millionen pro Jahr, Stars ein Vielfaches.',
   },
   {
     from: 1975, to: 2001, topic: 'geld',
@@ -270,7 +270,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 1987, topic: 'geld',
     title: 'Fernsehgeld ist Nebensache',
     then: 'Die öffentlich-rechtlichen Sender zahlen der ganzen Liga nur wenige Millionen DM pro Saison. Das Geld kommt von der Kasse am Stadion.',
-    today: 'Die Medienerlöse der Bundesliga liegen bei über einer Milliarde Euro pro Saison.',
+    today: 'Die Medienerlöse der 1. Liga liegen bei über einer Milliarde Euro pro Saison.',
   },
   {
     from: 1975, to: 2016, topic: 'geld',
@@ -282,7 +282,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 2000, topic: 'geld',
     title: 'Stadien ohne Sponsorennamen',
     then: 'Stadien heißen nach Stadt, Verein oder Lage, Namensrechte werden nicht verkauft.',
-    today: 'Die meisten Bundesliga-Arenen tragen den Namen eines Sponsors.',
+    today: 'Die meisten Erstliga-Arenen tragen den Namen eines Sponsors.',
   },
   {
     from: 1975, to: 1997, topic: 'geld',
@@ -336,7 +336,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
   // --- Medien & Fans ------------------------------------------------------------
   {
     from: 1975, to: 1990, topic: 'medien',
-    title: 'Bundesliga fast nie live',
+    title: '1. Liga fast nie live',
     then: 'Im Fernsehen gibt es nur Zusammenfassungen, live hört man die Konferenz im Radio.',
     today: 'Jedes Spiel läuft live, meist im Bezahlfernsehen oder per Stream.',
   },
@@ -361,14 +361,14 @@ export const DIFFERENCES: DifferenceToToday[] = [
   {
     from: 1975, to: 1991, topic: 'medien',
     title: 'Halbvolle Stadien',
-    then: 'Im Schnitt kommen 18.000 bis 25.000 Zuschauer zu einem Bundesligaspiel.',
+    then: 'Im Schnitt kommen 18.000 bis 25.000 Zuschauer zu einem Erstligaspiel.',
     today: 'Der Schnitt liegt bei fast 40.000 Zuschauern.',
   },
   {
     from: 1975, to: 2005, topic: 'medien',
     title: 'Laufbahn, Zaun und offene Kurven',
     then: 'Viele Stadien haben eine Laufbahn, unüberdachte Stehkurven und hohe Zäune vor den Rängen.',
-    today: 'Die meisten Bundesligisten spielen in reinen Fußballstadien mit Dach und ohne Zaun.',
+    today: 'Die meisten Erstligisten spielen in reinen Fußballstadien mit Dach und ohne Zaun.',
   },
   {
     from: 1975, to: 1997, topic: 'medien',

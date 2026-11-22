@@ -56,12 +56,12 @@ function ensureBook(g: Game): ClubRecordBook {
 
 export const TITLE_DE: Record<TitleKind, string> = {
   meister: 'Deutscher Meister', ddr: 'DDR-Meister', pokal: 'Landespokal',
-  ec: 'Europapokal der Landesmeister', cwc: 'Europapokal der Pokalsieger', uefa: 'UEFA-Pokal',
-  halle: 'DFB-Hallenpokal (Masters)',
+  ec: 'Pokal der Landesmeister', cwc: 'Pokal der Pokalsieger', uefa: 'Europa-Pokal',
+  halle: 'Hallenpokal (Masters)',
   super: 'Supercup', ligapokal: 'Ligapokal', uefasuper: 'Europäischer Supercup',
   weltpokal: 'Weltpokal', klubwm: 'Klub-Weltmeisterschaft', intercup: 'Interkontinentalpokal',
-  jugendA: 'Deutscher A-Jugend-Meister', jugendB: 'Deutscher B-Jugend-Meister', jugendPokal: 'DFB-Junioren-Pokal',
-  jugendDdr: 'DDR-Juniorenmeister', uyl: 'UEFA Youth League',
+  jugendA: 'Deutscher A-Jugend-Meister', jugendB: 'Deutscher B-Jugend-Meister', jugendPokal: 'Junioren-Pokal',
+  jugendDdr: 'DDR-Juniorenmeister', uyl: 'Jugend-Meisterliga',
   jugendC: 'Staffelsieg C-Jugend', jugendD: 'Staffelsieg D-Jugend', jugendE: 'Staffelsieg E-Jugend', jugendF: 'Staffelsieg F-Jugend',
   jugendEReg: 'Meister der E-Jugend (Landesverband)', jugendFReg: 'Meister der F-Jugend (Landesverband)',
 };

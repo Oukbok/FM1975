@@ -307,12 +307,12 @@ export const TIMELINE: TimelineEvent[] = [
   {
     id: 'indoor-masters-1987',
     season: '1987/88', year: 1987, type: 'competition',
-    title: 'DFB-Hallenpokal: Hallentour und Hallen-Masters',
+    title: 'Hallenpokal: Hallentour und Hallen-Masters',
     description:
       'Die Lizenzvereine beschließen mit 32:2 Stimmen eine offizielle Hallenrunde, um die seit 1986/87 '
       + 'elf Wochen lange Winterpause zu überbrücken. Über 18 Qualifikationsturniere (Wertung nach '
       + 'Durchschnittspunkten) geht es zur Endrunde im Januar 1988 in der Frankfurter Festhalle. '
-      + 'Hallenturniere mit Bundesligisten gab es schon seit den 70ern – nun mit Masters. '
+      + 'Hallenturniere mit Erstligisten gab es schon seit den 70ern – nun mit Masters. '
       + 'Einladungen und Ergebnisse unter „Statistiken › Halle“.',
   },
   {
@@ -328,7 +328,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '2001/02', year: 2001, type: 'competition',
     title: 'Hallen-Masters abgeschafft',
     description:
-      'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: Unterhaching) stellt der DFB den '
+      'Nach der Endrunde im Januar 2001 in Dortmund (Sieger: Unterhaching) stellt der Fußballbund den '
       + 'Hallenpokal ein: kürzere Winterpause, Verletzungsangst, Absagen der Topklubs und sinkendes '
       + 'TV-Interesse. Regionale Hallenturniere laufen noch wenige Jahre aus, danach ist der '
       + '„Budenzauber“ mit Profis Geschichte.',
@@ -338,7 +338,7 @@ export const TIMELINE: TimelineEvent[] = [
     season: '1991/92', year: 1992, type: 'reform',
     title: 'Winterlager in der Ferne: Türkei und Florida',
     description:
-      'Im Januar 1992 fährt Gelsenkirchen als erster Bundesligist an die türkische Riviera, Leverkusen '
+      'Im Januar 1992 fährt Gelsenkirchen als erster Erstligist an die türkische Riviera, Leverkusen '
       + 'fliegt nach Orlando. Bis dahin ging es im Winter auf die Kanaren oder nach Spanien – oder '
       + 'auf gefrorene Plätze in der Heimat. Neue Ziele unter „Training › Trainingslager“.',
   },

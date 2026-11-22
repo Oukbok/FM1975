@@ -30,7 +30,7 @@ import type { PositionGroup } from '../types';
 
 export type GBTitle = 'ec' | 'cwc' | 'uefa' | 'meister' | 'pokal';
 export const GB_TITLE_LABEL: Record<GBTitle, string> = {
-  ec: 'Europapokal der Landesmeister', cwc: 'Europapokal der Pokalsieger', uefa: 'UEFA-Pokal', meister: 'Meister', pokal: 'Pokalsieger',
+  ec: 'Pokal der Landesmeister', cwc: 'Pokal der Pokalsieger', uefa: 'Europa-Pokal', meister: 'Meister', pokal: 'Pokalsieger',
 };
 const TITLE_PTS: Record<GBTitle, number> = { ec: 2.0, cwc: 1.0, uefa: 0.8, meister: 1.0, pokal: 0.5 };
 
@@ -106,7 +106,7 @@ const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 export function gbReason(c: GBScored): string {
   const bits: string[] = [];
   const big = c.titles.find((t) => t === 'ec' || t === 'cwc' || t === 'uefa');
-  if (big) bits.push(`Gewinner des ${GB_TITLE_LABEL[big].replace('Europapokal', 'Europapokals').replace('UEFA-Pokal', 'UEFA-Pokals')}`);
+  if (big) bits.push(`Gewinner des ${GB_TITLE_LABEL[big].replace(/^(Pokal|Europa-Pokal)(?= |$)/, '$1s')}`);
   if (c.titles.includes('meister')) bits.push(c.titles.includes('pokal') ? 'Double aus Meisterschaft und Pokal' : 'Meister');
   else if (c.titles.includes('pokal')) bits.push('Pokalsieger');
   if (c.group === 'ATT' || (c.group === 'MID' && c.goals >= 10)) bits.push(`${nOf(c.goals, 'Tor', 'Tore')}${c.assists ? ` und ${nOf(c.assists, 'Vorlage', 'Vorlagen')}` : ''} im Kalenderjahr`);

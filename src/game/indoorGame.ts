@@ -81,7 +81,7 @@ function setupGermanWinter(g: Game, cur: IndoorWinter, today: string, ownBusy: S
   const kind: IndoorKind = phase === 'invitational' ? 'invite' : phase === 'masters' ? 'qualifier' : 'regional';
   const n = tournamentCount(winterYear);
   const venues = venuesFor(winterYear);
-  const label = kind === 'invite' ? 'Internationales Hallenturnier' : kind === 'qualifier' ? 'Hallenturnier (DFB-Qualifikation)' : 'Hallen-Cup';
+  const label = kind === 'invite' ? 'Internationales Hallenturnier' : kind === 'qualifier' ? 'Hallenturnier (Verbandsqualifikation)' : 'Hallen-Cup';
   const off = Math.floor(rng() * venues.length);
   for (let i = 0; i < n && days.length; i++) {
     const v = venues[(i + off) % venues.length];

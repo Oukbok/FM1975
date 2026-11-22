@@ -40,7 +40,7 @@ export const CLAUSES: ClauseDef[] = [
   { key: 'wage', label: 'Grundgehalt', from: 1975, short: 'Festes Gehalt, unabhängig von Einsätzen.', source: 'Gehaltsobergrenze des Lizenzspielerstatuts 1972 aufgehoben.', info: 'v2_gehalt' },
   { key: 'years', label: 'Laufzeit', from: 1975, short: 'Ab der nächsten Saison, ein bis fünf Jahre.', source: 'Übliche Laufzeiten 1–5 Jahre.', info: 'v2_laufzeit' },
   { key: 'signing', label: 'Handgeld', from: 1975, short: 'Einmalzahlung bei Unterschrift.', source: 'Handgeld seit den 1960ern üblich, Obergrenze bis 1972.', info: 'v2_handgeld' },
-  { key: 'appearance', label: 'Einsatzprämie', from: 1975, short: 'Je Pflichtspiel-Einsatz.', source: 'Auflauf- und Einsatzprämien seit Gründung der Bundesliga.', info: 'v2_praemien' },
+  { key: 'appearance', label: 'Einsatzprämie', from: 1975, short: 'Je Pflichtspiel-Einsatz.', source: 'Auflauf- und Einsatzprämien seit Gründung der 1. Liga.', info: 'v2_praemien' },
   { key: 'goal', label: 'Torprämie', from: 1975, short: 'Je eigenem Pflichtspieltor.', source: 'Individuelle Torprämien seit den 1970ern belegt.', info: 'v2_praemien' },
   { key: 'cleanSheet', label: 'Zu-null-Prämie', from: 1975, short: 'Je Spiel ohne Gegentor auf dem Platz.', source: 'Prämie für Torhüter und Abwehr, analog zur Torprämie.', info: 'v2_praemien' },
   { key: 'title', label: 'Titelprämie', from: 1975, short: 'Je Meisterschaft/Staffelsieg oder Pokalsieg.', source: 'Meisterprämien seit den 1960ern.', info: 'v2_titel' },
@@ -51,7 +51,7 @@ export const CLAUSES: ClauseDef[] = [
   { key: 'option', label: 'Verlängerungsoption', from: 1990, short: 'Ein weiteres Jahr zu gleichen Bedingungen.', source: 'Vereinsoption ab den 1990ern, Spieleroption ab etwa 2000.', info: 'v2_option' },
   { key: 'relegation', label: 'Abstiegsklausel', from: 1985, short: 'Gehaltskürzung nach einem Abstieg.', source: 'Abstiegsklauseln seit den 1980ern üblich (vereinfacht).', info: 'v2_abstieg' },
   { key: 'promises', label: 'Rolle & Zusagen', from: 1975, short: 'Stammplatz, Kapitänsbinde … – werden am Saisonende geprüft.', source: 'Mündliche Zusagen, gekoppelt an die Versprechen.', info: 'v2_zusagen' },
-  { key: 'agent', label: 'Beraterprovision', from: 1975, short: 'Einmalzahlung an seinen Berater.', source: 'FIFA-Spielervermittler ab 1994, nach Bosman praktisch jeder Profi.', info: 'berater' },
+  { key: 'agent', label: 'Beraterprovision', from: 1975, short: 'Einmalzahlung an seinen Berater.', source: 'Lizenz für Spielervermittler beim Weltverband ab 1994, nach Bosman praktisch jeder Profi.', info: 'berater' },
   { key: 'loyalty', label: 'Treueprämie', from: 1975, short: 'Einmalig zum Vertragsende, wenn er bleibt.', source: 'Treueprämien seit den 1970ern.', info: 'treuepraemie' },
   { key: 'success', label: 'Erfolgsklausel', from: 1975, short: 'Mehr Gehalt bei einem Europapokal-Platz.', source: 'Leistungsbezogene Gehaltsanpassung.', info: 'erfolgsklausel' },
 ];

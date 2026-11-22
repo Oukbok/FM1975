@@ -186,7 +186,7 @@ export function setupSuperCups(g: Game, s: ScSeeds): void {
   for (const ev of mine) {
     const first = ev.matches.find((m) => m.home === g.managedClubId || m.away === g.managedClubId || (m.from && ev.teams.indexOf(g.managedClubId) < 2));
     pushMessage(g.messages, makeMessage({
-      date: g.calendar.currentDate, category: 'cup', from: ev.key === 'uefa' ? 'Europäischer Verband' : 'Verband',
+      date: g.calendar.currentDate, category: 'cup', from: ev.key === 'uefa' ? 'Europaverband' : 'Verband',
       subject: `${ev.name} ${ev.season}: Du bist dabei`,
       shortText: first ? `${ROUND_DE[first.stage]} am ${CalendarEngine.formatDate(first.date)}` : 'Termine im Kalender.',
       bodyText: `Als ${ev.teams[0] === g.managedClubId ? 'Meister' : ev.key === 'uefa' ? 'Europapokalsieger' : 'Pokalsieger'} spielst du den ${ev.name} ${ev.season}. Teilnehmer: ${ev.teams.map((id) => drawClubName(g, id)).join(', ')}.\n\nDie Termine stehen im Kalender – ein Titel zum Saisonauftakt bringt Prämie und Ruhe.`,
@@ -321,7 +321,7 @@ function finish(g: Game, ev: ScEvent, date: string): void {
   const mid = g.managedClubId;
   const mine = ev.teams.includes(mid);
   pushMessage(g.messages, makeMessage({
-    date, category: 'cup', from: ev.key === 'uefa' ? 'Europäischer Verband' : 'Verband', relatedId: f.match?.id,
+    date, category: 'cup', from: ev.key === 'uefa' ? 'Europaverband' : 'Verband', relatedId: f.match?.id,
     subject: shared ? `${ev.name}: ${drawClubName(g, f.home)} und ${drawClubName(g, f.away)} teilen sich den Titel`
       : ev.winner === mid ? `${ev.name} gewonnen!` : `${ev.name} ${ev.season}: ${drawClubName(g, ev.winner!)}`,
     shortText: `${drawClubName(g, f.home)} – ${drawClubName(g, f.away)} ${score}${f.pens ? ` (${f.pens[0]}:${f.pens[1]} i.E.)` : ''}`,

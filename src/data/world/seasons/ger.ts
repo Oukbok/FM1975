@@ -13,7 +13,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'ham',
     cupFinalist: 'kai',
     euro: { ec: ['mgl', 'muc'], cwc: ['fra'], uefa: ['dui', 'kln', 'ber', 'ham'] },
-    note: "2. Bundesliga Nord (t2) und Süd (t2b), je 20 Vereine.",
+    note: "2. Liga Nord (t2) und Süd (t2b), je 20 Vereine.",
   },
   1976: {
     t1: ['mgl', 'gel', 'bra', 'fra', 'kln', 'ham', 'muc', 'n_dor', 'dui', 'ber', 'bre', 'dus', 'kai', 's_saa', 'boc', 'kar', 'n_tebe', 'ess'],
@@ -22,7 +22,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'kln',
     cupFinalist: 'ber',
     euro: { ec: ['mgl', 'muc'], cwc: ['ham'], uefa: ['gel', 'kai', 'bra', 'kln'] },
-    note: "2. Bundesliga Nord (t2) und Süd (t2b).",
+    note: "2. Liga Nord (t2) und Süd (t2b).",
   },
   1977: {
     t1: ['kln', 'mgl', 'ber', 's_vfb', 'dus', 'dui', 'fra', 'kai', 'gel', 'ham', 'n_dor', 'muc', 'bra', 'boc', 'bre', 's_muc', 's_saa', 'n_ham'],
@@ -31,7 +31,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'kln',
     cupFinalist: 'dus',
     euro: { ec: ['mgl'], cwc: ['ham', 'kln'], uefa: ['fra', 'muc', 'gel', 'bra'] },
-    note: "2. Bundesliga Nord (t2) und Süd (t2b).",
+    note: "2. Liga Nord (t2) und Süd (t2b).",
   },
   1978: {
     t1: ['ham', 's_vfb', 'kai', 'muc', 'fra', 'kln', 'dus', 'boc', 'bra', 'mgl', 'bre', 'n_dor', 'dui', 'ber', 'gel', 'n_bie', 's_nue', 's_dar'],
@@ -40,7 +40,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'dus',
     cupFinalist: 'ber',
     euro: { ec: ['kln'], cwc: ['dus'], uefa: ['mgl', 's_vfb', 'dui', 'ber'] },
-    note: "2. Bundesliga Nord (t2) und Süd (t2b).",
+    note: "2. Liga Nord (t2) und Süd (t2b).",
   },
   1979: {
     t1: ['muc', 'ham', 's_vfb', 'kai', 'kln', 'n_dor', 'mgl', 'gel', 'fra', 'boc', 'dus', 'n_lev', 's_muc', 'dui', 'kre', 'ber', 'bre', 'bra'],
@@ -49,7 +49,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'dus',
     cupFinalist: 'kln',
     euro: { ec: ['ham'], cwc: ['dus'], uefa: ['muc', 'mgl', 'fra', 'kai', 's_vfb'] },
-    note: "2. Bundesliga Süd mit 21 Vereinen.",
+    note: "2. Liga Süd mit 21 Vereinen.",
   },
   1980: {
     t1: ['muc', 'ham', 's_vfb', 'kai', 'fra', 'mgl', 'n_dor', 'kln', 'boc', 'kar', 'n_lev', 'dui', 'dus', 's_nue', 'n_bie', 's_muc', 'gel', 'kre'],
@@ -58,7 +58,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'fra',
     cupFinalist: 'kai',
     euro: { ec: ['muc'], cwc: ['dus'], uefa: ['s_vfb', 'kln', 'kai', 'ham', 'fra'] },
-    note: "2. Bundesliga Nord mit 22 Vereinen; letzte Saison der zweigleisigen 2. Liga.",
+    note: "2. Liga Nord mit 22 Vereinen; letzte Saison der zweigleisigen 2. Liga.",
   },
   1981: {
     t1: ['ham', 'kln', 'muc', 'kai', 'bre', 'n_dor', 'mgl', 'fra', 's_vfb', 'boc', 'bra', 'n_bie', 's_nue', 'kar', 'dus', 'n_lev', 's_dar', 'dui'],
@@ -137,14 +137,14 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'han',
     cupFinalist: 'mgl',
     euro: { ec: ['kai', 'ddr-rostock'], cwc: ['bre', 'ddr-eisenh'], uefa: ['s_vfb', 'fra', 'ham', 'muc', 'ddr-erfurt', 'ddr-halle'] },
-    note: "Erste gesamtdeutsche Saison: Bundesliga mit 20 Vereinen (2 aus der DDR), 2. Bundesliga Nord (t2) / Süd (t2b) je 12 Vereine mit Auf- und Abstiegsrunde (je 6). Rostock und Eisenhüttenstadt/Erfurt/Halle im Europapokal aus der NOFV-Saison 1990/91.",
+    note: "Erste gesamtdeutsche Saison: 1. Liga mit 20 Vereinen (2 aus der DDR), 2. Liga Nord (t2) / Süd (t2b) je 12 Vereine mit Auf- und Abstiegsrunde (je 6). Rostock und Eisenhüttenstadt/Erfurt/Halle im Europapokal aus der letzten Oberliga-Saison 1990/91.",
   },
   1992: {
     t1: ['bre', 'muc', 'fra', 'n_dor', 'n_lev', 'kar', 's_vfb', 'kai', 'mgl', 'gel', 'ham', 'kln', 's_nue', 'n_wat', 'ddr-dresden', 'boc', 'kre', 's_saa'],
     t2: ['h_fre', 'dui', 'ddr-leipzig', 's_man', 'ber', 'n_koes', 'ddr-chemnitz', 'ddr-jena', 'han', 'ger-meppen', 'ddr-rostock', 's_mai', 'n_wup', 'h_wob', 's_stk', 's_hom', 'n_ham', 'ger-unterhaching', 'bra', 'n_osn', 'dus', 'h_old', 'ger-remscheid', 's_dar'],
     cup: 'n_lev',
     euro: { ec: ['s_vfb'], cwc: ['bre', 'han'], uefa: ['kai', 'fra', 'kln', 'n_dor'] },
-    note: "2. Bundesliga mit 24 Vereinen.",
+    note: "2. Liga mit 24 Vereinen.",
   },
   1993: {
     t1: ['muc', 'kai', 'n_lev', 'n_dor', 'fra', 'kar', 's_vfb', 'bre', 'dui', 'mgl', 'kln', 'ham', 'ddr-dresden', 'gel', 'h_fre', 's_nue', 'n_wat', 'ddr-leipzig'],
@@ -273,7 +273,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'gel',
     cupFinalist: 'dui',
     euro: { cl: ['muc', 'gel', 'bre'], el: ['n_lev', 'n_dor', 's_vfb'] },
-    note: "2. Bundesliga: München Blau -2, Bielefeld -3 Punkte.",
+    note: "2. Liga: München Blau -2, Bielefeld -3 Punkte.",
   },
   2011: {
     t1: ['n_dor', 'muc', 'gel', 'mgl', 'n_lev', 's_vfb', 'han', 'h_wob', 'bre', 's_nue', 'ger-hoffenheim', 'h_fre', 's_mai', 's_aug', 'ham', 'ber', 'kln', 'kai'],
@@ -302,7 +302,7 @@ export const SEASONS_GER: Record<number, SeasonRow> = {
     cup: 'h_wob',
     cupFinalist: 'n_dor',
     euro: { cl: ['muc', 'n_dor', 'gel', 'n_lev'], el: ['h_wob', 'mgl', 's_mai'] },
-    note: "2. Bundesliga: Aalen -2 Punkte.",
+    note: "2. Liga: Aalen -2 Punkte.",
   },
   2015: {
     t1: ['muc', 'n_dor', 'n_lev', 'mgl', 'gel', 's_mai', 'ber', 'h_wob', 'kln', 'ham', 'h_ing', 's_aug', 'bre', 's_dar', 'ger-hoffenheim', 'fra', 's_vfb', 'han'],

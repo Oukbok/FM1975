@@ -27,7 +27,7 @@ function currencyFact(cc: string, y: number): string {
 function eraNotes(y: number, home: string): string[] {
   const out: string[] = [];
   if (home === 'gdr') {
-    out.push('DDR-Oberliga (14) und DDR-Liga', 'Bundesliga läuft im Hintergrund');
+    out.push('DDR-Oberliga (14) und DDR-Liga', '1. Liga läuft im Hintergrund');
     out.push(y <= 1988 ? 'Keine Wechsel aus dem Westen vor dem Mauerfall' : 'Mauerfall im November 1989');
     out.push('Ab 1991/92 gesamtdeutscher Fußball');
   }
@@ -38,8 +38,8 @@ function eraNotes(y: number, home: string): string[] {
   }
   out.push(countryPointSystem(home, y) === '3-point' ? '3 Punkte je Sieg' : '2 Punkte je Sieg');
   if (y >= 1995) out.push('Bosman: ablösefreie Wechsel nach Vertragsende');
-  out.push(y >= 2024 ? 'Champions League mit Ligaphase' : y >= 1992 ? 'Champions League' : 'Europapokal der Landesmeister');
-  if (y < 1999) out.push('Europapokal der Pokalsieger');
+  out.push(y >= 2024 ? 'Meisterliga mit Ligaphase' : y >= 1992 ? 'Meisterliga' : 'Pokal der Landesmeister');
+  if (y < 1999) out.push('Pokal der Pokalsieger');
   return out;
 }
 

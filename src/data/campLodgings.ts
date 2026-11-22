@@ -101,7 +101,7 @@ export const CAMP_LODGINGS: Record<string, CampLodging[]> = {
   ],
   schwarzwald: [
     L('gasthof', 'Schwarzwaldgasthof', 'pension', 1, 1500, { pitches: 1, pitchQ: 0.65, gym: 0, kitchen: 0, quiet: 0.85, lure: 0.05, runs: 'wald' }, 'Ruhe, Wald und gutes Essen.'),
-    L('seehotel', 'Seehotel am Schluchsee', 'hotel', 3, 3000, { pitches: 2, pitchQ: 0.75, regen: 2, quiet: 0.55, lure: 0.3 }, 'Komfortabel – 1982 beim DFB mit bekannten Folgen für die Disziplin [C14].'),
+    L('seehotel', 'Seehotel am Schluchsee', 'hotel', 3, 3000, { pitches: 2, pitchQ: 0.75, regen: 2, quiet: 0.55, lure: 0.3 }, 'Komfortabel – 1982 beim Fußballbund mit bekannten Folgen für die Disziplin [C14].'),
     L('herzogenhorn', 'Leistungszentrum am Feldberg (1.350 m)', 'zentrum', 1, 1700, { altitude: 1350, pitches: 2, hall: 1975, gym: 2, quiet: 0.95, lure: 0, runs: 'berg' }, 'Hier bereitete sich Brasilien 1974 dreieinhalb Wochen vor [C14]. Leichte Höhenwirkung.'),
   ],
   sauerland: [
@@ -148,7 +148,7 @@ export const CAMP_LODGINGS: Record<string, CampLodging[]> = {
     L('palace', 'Grandhotel St. Moritz', 'resort', 4, 6000, { from: 1990, pitches: 1, pitchQ: 0.85, gym: 2, regen: 3, kitchen: 2, quiet: 0.4, lure: 0.7 }, 'Mondän – Höhenluft mit Glamour.'),
   ],
   suedtirol: [
-    L('gasthof', 'Gasthof im Passeiertal', 'pension', 1, 1500, { pitches: 1, pitchQ: 0.75, gym: 0, kitchen: 1, quiet: 0.85, lure: 0.05, runs: 'berg' }, 'Abgeschieden; das Tal des DFB von 2014 [C19].'),
+    L('gasthof', 'Gasthof im Passeiertal', 'pension', 1, 1500, { pitches: 1, pitchQ: 0.75, gym: 0, kitchen: 1, quiet: 0.85, lure: 0.05, runs: 'berg' }, 'Abgeschieden; das Tal des Fußballbunds von 2014 [C19].'),
     L('weinhotel', 'Hotel in Eppan', 'hotel', 3, 3000, { pitches: 2, pitchQ: 0.85, regen: 2, kitchen: 2, quiet: 0.6, lure: 0.3 }, 'Weinberge, gute Küche, „guter Geist“ [C19].'),
     L('kronplatz', 'Sport- und Wellnessresort bei Bruneck', 'resort', 4, 4500, { from: 2000, altitude: 900, pitches: 3, pitchQ: 0.9, gym: 2, regen: 3, kitchen: 2, quiet: 0.55, lure: 0.3 }, 'Moderne Anlage (vgl. Bruneck 2023 [C15]).'),
   ],

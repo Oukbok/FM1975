@@ -84,7 +84,7 @@ export const SEASONS_SWE: Record<number, SeasonRow> = {
     t1: ['swe-norrkoeping', 'swe-malmoe', 'swe-goeteborg-blau', 'swe-vaexjoe', 'swe-stockholm-schwarz-gelb', 'swe-goeteborg-rot-blau', 'swe-goeteborg-gruen-schwarz', 'swe-stockholm-blau', 'swe-oerebro', 'swe-borlaenge', 'swe-stockholm-gruen', 'swe-goeteborg-froelunda'],
     cup: 'swe-stockholm-blau',
     euro: { ec: ['swe-malmoe'], uefa: ['swe-norrkoeping', 'swe-goeteborg-blau'] },
-    note: "Meister Norrköping über die Endrunde; Europapokal der Landesmeister ging an den Ligasieger aus Malmö.",
+    note: "Meister Norrköping über die Endrunde; Pokal der Landesmeister ging an den Ligasieger aus Malmö.",
   },
   1990: {
     t1: ['swe-goeteborg-blau', 'swe-norrkoeping', 'swe-malmoe', 'swe-vaexjoe', 'swe-stockholm-schwarz-gelb', 'swe-oerebro', 'swe-stockholm-blau', 'swe-goeteborg-rot-blau', 'swe-goeteborg-gruen-schwarz', 'swe-borlaenge', 'swe-halmstad', 'swe-sundsvall'],
@@ -96,7 +96,7 @@ export const SEASONS_SWE: Record<number, SeasonRow> = {
     cup: 'swe-goeteborg-blau',
     cupFinalist: 'swe-stockholm-blau',
     euro: { ec: ['swe-goeteborg-blau'], cwc: ['swe-norrkoeping'], uefa: ['swe-malmoe', 'swe-vaexjoe'] },
-    note: "1991–1992: Allsvenskan mit 10 Vereinen, danach Meisterrunde (Mästerskapsserien); Reihenfolge = Meisterrunde, dann Rest.",
+    note: "1991–1992: 1. Liga mit 10 Vereinen, danach Meisterrunde; Reihenfolge = Meisterrunde, dann Rest.",
   },
   1992: {
     t1: ['swe-stockholm-schwarz-gelb', 'swe-norrkoeping', 'swe-vaexjoe', 'swe-goeteborg-blau', 'swe-malmoe', 'swe-oerebro', 'swe-trelleborg', 'swe-stockholm-blau', 'swe-halmstad', 'swe-goeteborg-gruen-schwarz'],

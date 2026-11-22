@@ -81,7 +81,7 @@ export function LoanTalk({ g, talkId, onClose, onChange }: { g: Game; talkId: st
   const untilOpts = [
     ...(month >= 7 && month <= 11 && rules.year < 2022 ? [{ v: `${today.slice(0, 4)}-12-31`, label: 'Halbe Saison' }] : []),
     { v: end, label: 'Bis Saisonende' },
-    { v: `${Number(end.slice(0, 4)) + 1}-06-30`, label: 'Zwei Spielzeiten', disabled: rules.maxSeasons < 2 || month <= 6, title: rules.maxSeasons < 2 ? (rules.year >= 2022 ? 'höchstens ein Jahr (FIFA)' : 'in dieser Zeit unüblich') : undefined },
+    { v: `${Number(end.slice(0, 4)) + 1}-06-30`, label: 'Zwei Spielzeiten', disabled: rules.maxSeasons < 2 || month <= 6, title: rules.maxSeasons < 2 ? (rules.year >= 2022 ? 'höchstens ein Jahr (Weltverband)' : 'in dieser Zeit unüblich') : undefined },
   ];
   const off = (ok: boolean, from: number) => (ok ? undefined : `erst ab ${from}`); // (Zeilen außerhalb der Epoche fallen unten ganz weg)
   const allRows: TermRow[] = [
@@ -150,9 +150,9 @@ export function LoanTalk({ g, talkId, onClose, onChange }: { g: Game; talkId: st
     },
     {
       key: 'noSublet', label: 'Weiterverleihung', ask: must.noSublet ? 'ausgeschlossen' : '–', status: status(!must.noSublet || !!tm.noSublet, !!must.noSublet), weight: st.weights.noSublet,
-      control: rules.sublet === 'banned' ? <span className="vt-ctl-note">ausgeschlossen (FIFA-Regel)</span>
+      control: rules.sublet === 'banned' ? <span className="vt-ctl-note">ausgeschlossen (Regel des Weltverbands)</span>
         : <Seg<number> size="s" value={tm.noSublet ? 1 : 0} onChange={(v) => set({ noSublet: v === 1 || undefined })} options={[{ v: 0, label: 'offen' }, { v: 1, label: 'ausgeschlossen' }]} aria-label="Weiterverleihung" />,
-      hint: <><b>Weiterverleihung</b> – Darfst du ihn an einen dritten Verein weiterverleihen? Seit 2022 verbietet die FIFA das grundsätzlich.</>,
+      hint: <><b>Weiterverleihung</b> – Darfst du ihn an einen dritten Verein weiterverleihen? Seit 2022 verbietet der Weltverband das grundsätzlich.</>,
     },
   ];
   const rows = allRows.filter((r) => {

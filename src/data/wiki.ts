@@ -204,7 +204,7 @@ Die 3 Absteiger füllen die 2. Liga wieder auf: Sie werden so verteilt, dass **j
 - Du erhältst eine Vorstands-Nachricht zum Auf- bzw. Abstieg; eine Sportredaktions-Meldung fasst alle Auf-/Absteiger zusammen.
 
 ## Amateurligen: Tausch mit dem Vereins-Pool
-Unterhalb der untersten simulierten Liga liegen die **Amateurligen** als Vereins-Pool: frühere Bundesligisten wie **Oberhausen**, **Neunkirchen** oder **Berlin Neukölln** (Tasmania), die Absteiger der 2. Liga 1975 und Amateur-Spitzenvereine (z. B. Kiel, Trier, Freiburg). Jede Saison tauschen die Schlechtesten der untersten Liga mit den stärksten Pool-Vereinen ihrer Region – bei zwei Staffeln **je 4**, eingleisig **3**, ab drei Staffeln **je 2**. Wer in den Pool fällt, kann später zurückkehren; steigt ein Pool-Verein bis in deine Liga auf, bekommt er wie jeder Aufsteiger einen vollen Kader. Ligareformen besetzen neue Plätze zuerst aus dem Pool, erst danach mit fiktiven Platzhaltern.
+Unterhalb der untersten simulierten Liga liegen die **Amateurligen** als Vereins-Pool: frühere Erstligisten wie **Oberhausen**, **Neunkirchen** oder **Berlin Neukölln** (Tasmania), die Absteiger der 2. Liga 1975 und Amateur-Spitzenvereine (z. B. Kiel, Trier, Freiburg). Jede Saison tauschen die Schlechtesten der untersten Liga mit den stärksten Pool-Vereinen ihrer Region – bei zwei Staffeln **je 4**, eingleisig **3**, ab drei Staffeln **je 2**. Wer in den Pool fällt, kann später zurückkehren; steigt ein Pool-Verein bis in deine Liga auf, bekommt er wie jeder Aufsteiger einen vollen Kader. Ligareformen besetzen neue Plätze zuerst aus dem Pool, erst danach mit fiktiven Platzhaltern.
 
 ## Ausblick
 Die historischen Ligareformen (eingleisige 2. Liga **1981/82**, Regionalliga **1994/95**, zweigleisige Regionalliga **2000/01**, 3. Liga **2008/09**, fünf Regionalliga-Staffeln **2012/13**) sind als datengetriebenes **Reformsystem** umgesetzt und greifen automatisch beim jeweiligen Saisonwechsel — Details siehe Artikel „Ligareformen (historischer Umbau)“. Die DDR-Integration 1991/92 dockt als weiterer Reform-Datensatz an.`,
@@ -247,7 +247,7 @@ Die beiden Staffeln **Nord und Süd** der 2. Liga werden zu **einer eingleisigen
 ## Reform 1994/95 – Regionalliga als 3. Ebene
 Unterhalb der 2. Liga entsteht eine neue **dritte Ebene: die Regionalliga mit vier Staffeln** (Nord, Nordost, West, Süd) zu je 18 Vereinen.
 - **Besetzung:** Da die realen Amateur-Oberligen nicht Teil der Simulation sind, werden die vier Staffeln mit **klar fiktiven Platzhaltervereinen** besetzt (geografisch zugeordnet).
-- **2. Liga mit 18 Vereinen:** Zugleich schrumpft die 2. Liga von 20 auf **18 Vereine (34 Spieltage)**. In der Umbau-Saison steigen deshalb **fünf** Zweitligisten in die Regionalliga ab, drei Vereine der dritten Ebene (NOFV-Oberliga) steigen auf.
+- **2. Liga mit 18 Vereinen:** Zugleich schrumpft die 2. Liga von 20 auf **18 Vereine (34 Spieltage)**. In der Umbau-Saison steigen deshalb **fünf** Zweitligisten in die Regionalliga ab, drei Vereine der dritten Ebene (Oberliga Nordost) steigen auf.
 - Ab jetzt ist Auf-/Abstieg zwischen 2. Liga und Regionalliga möglich: bis 1999/2000 steigen die vier Staffelmeister auf und vier Zweitligisten ab.
 - **Ältere Spielstände** mit 20 Zweitligisten nach 1994 verkleinern die 2. Liga beim nächsten Saisonwechsel: Es steigen entsprechend mehr ab.
 
@@ -366,7 +366,7 @@ Zur Saison **1991/92** wird das DDR-System in die gesamtdeutsche Pyramide integr
 - **Platz 1–2 → 1. Liga** (historisch Rostock + Dresden). Die 1. Liga wird dafür **einmalig auf 20 Vereine** (38 Spieltage) vergrößert.
 - **Platz 3–6 → 2. Liga** (direkt: Erfurt, Halle, Chemnitz, Jena).
 - **Platz 7–8 → 2. Liga** über eine Aufstiegsrunde (z. B. Leipzig, Brandenburg).
-- **Restliche DDR-Oberliga + komplette DDR-Liga → NOFV-Oberliga** als **dritte Ebene** (Staffel Nordost). 1991/92 gibt es noch **keine** Regionalliga – diese kommt erst mit der Reform **1994/95**, in die die NOFV-Oberliga dann übergeht.
+- **Restliche DDR-Oberliga + komplette DDR-Liga → Oberliga Nordost** als **dritte Ebene** (Staffel Nordost). 1991/92 gibt es noch **keine** Regionalliga – diese kommt erst mit der Reform **1994/95**, in die die Oberliga Nordost dann übergeht.
 
 Die separat geführte DDR-Struktur wird damit **aufgelöst**; die Ost-Vereine sind ab sofort Teil des gesamtdeutschen Auf-/Abstiegs.
 
@@ -376,12 +376,12 @@ Die einmalig vergrößerte 1. Liga (und die vergrößerte 2. Liga) werden **ab d
 ## Start in der DDR
 Bei einem Startjahr von 1975 bis 1990 kannst du im Assistenten unter **Verein** auch die **DDR** als Land wählen – und dort einen Verein der **DDR-Oberliga** oder der **DDR-Liga**.
 
-- **Deine Liga** bekommt volle Kader, die andere DDR-Liga und die **Bundesliga mit ihrem Unterbau laufen simuliert** im Hintergrund mit (zu sehen unter Statistiken › Liga bzw. Ligensystem, die DDR ist dort vorgewählt).
+- **Deine Liga** bekommt volle Kader, die andere DDR-Liga und die **1. Liga mit ihrem Unterbau laufen simuliert** im Hintergrund mit (zu sehen unter Statistiken › Liga bzw. Ligensystem, die DDR ist dort vorgewählt).
 - **DDR-Liga:** Historisch spielte sie in mehreren Staffeln; das Spiel führt **eine Staffel mit den 16 stärksten Vereinen** der Vorsaison. Die zwei Besten steigen auf, die zwei Letzten der Oberliga ab, die Letzten der DDR-Liga tauschen mit den Bezirksligen – dein Verein steigt nie in die Bezirksliga ab.
 - **Regeln:** 2 Punkte je Sieg, Geld in **Mark der DDR** (ab der Währungsunion am 1. Juli 1990 D-Mark), im Kader nur Spieler aus der DDR. Vor dem **Mauerfall (9. November 1989)** kannst du keine Spieler aus dem Westen oder dem Ausland verpflichten, Auslandsvereine bieten nicht für deine Spieler, und es gibt keine Hallenturniere im Westen. Danach ist der Markt offen.
 - **Pokal:** Du spielst den **FDGB-Pokal** mit den Vereinen deiner Liga und Amateurmannschaften aus der DDR.
-- **Europapokal:** In der ersten Saison die echten DDR-Starter, danach Meister (Landesmeister), Pokalsieger (Pokalsieger-Wettbewerb) und die nächsten zwei der Oberliga (UEFA-Pokal) – zusätzlich zu den Startern aus der Bundesliga.
-- **Wiedervereinigung:** Zur Saison 1991/92 verteilt das Spiel die Vereine wie oben beschrieben nach dem Endstand der Oberliga 1990/91. Dein Verein spielt danach im gesamtdeutschen System weiter (1. Liga, 2. Liga oder NOFV-Oberliga), dein Heimatland ist ab dann Deutschland – mit D-Mark, DFB-Pokal und allen weiteren Ligareformen.
+- **Europapokal:** In der ersten Saison die echten DDR-Starter, danach Meister (Landesmeister), Pokalsieger (Pokalsieger-Wettbewerb) und die nächsten zwei der Oberliga (Europa-Pokal) – zusätzlich zu den Startern aus der 1. Liga.
+- **Wiedervereinigung:** Zur Saison 1991/92 verteilt das Spiel die Vereine wie oben beschrieben nach dem Endstand der Oberliga 1990/91. Dein Verein spielt danach im gesamtdeutschen System weiter (1. Liga, 2. Liga oder Oberliga Nordost), dein Heimatland ist ab dann Deutschland – mit D-Mark, Landespokal und allen weiteren Ligareformen.
 
 Vereinfachungen: Sponsoren, Trainingslager und Jugendwettbewerbe laufen wie im Westen; die Chronik und das Saison-Briefing erzählen den deutschen Fußball insgesamt. Triffst du im Europapokal oder im Supercup auf einen Verein der **Bundesliga**, ist das ein ganz normales eigenes Spiel mit Vorschau, Simulieren und Textmodus: Der Gegner tritt mit genau den Spielern an, die du im Spielerpool unter seinem Namen findest (gleiche Namen, Jahrgänge, Stärken, Gesichter und Rückennummern). Für alles andere läuft die Bundesliga weiter simuliert mit.
 
@@ -424,7 +424,7 @@ Geehrte Spieler aus deinem Kader freuen sich: kleiner Moral-Schub (Sieger mehr a
 Am **20. Dezember** hält der Zeitlauf an: Bei einer **Gala** (bis 2009 und ab 2016 in Paris, 2010–2015 in Zürich) wird der beste Spieler des **Kalenderjahres** geehrt – erst Platz 3, dann Platz 2, dann der Sieger mit dem Goldenen Ball, danach die Plätze 4 bis 10.
 - **Wer ist wählbar?** Bis **1994** nur Spieler mit europäischer Staatsangehörigkeit bei europäischen Vereinen („Europas Fußballer des Jahres“), ab **1995** alle Spieler europäischer Vereine, ab **2007** Spieler aller Ligen weltweit („Weltfußballer des Jahres“) – im Spiel sind die europäischen Ligen simuliert.
 - **Kalenderjahr:** Rückrunde der abgelaufenen Saison (halb gewichtet) plus Hinrunde der laufenden Saison, alle Wettbewerbe. Mindestens 10 Spiele.
-- **Wertung:** 3 × (4,0 − Notenschnitt), Klasse (Stärke über 70), Tore und Vorlagen je Spiel (Sturm am stärksten gewichtet), Spiele zu null für Torwart und Abwehr, dazu **Titel**: Landesmeister-Cup 2 Punkte, Pokalsieger-Cup 1, UEFA-Pokal 0,8, Meisterschaft 1, Pokal 0,5. Unter 20 Spielen gibt es anteilig weniger.
+- **Wertung:** 3 × (4,0 − Notenschnitt), Klasse (Stärke über 70), Tore und Vorlagen je Spiel (Sturm am stärksten gewichtet), Spiele zu null für Torwart und Abwehr, dazu **Titel**: Landesmeister-Cup 2 Punkte, Pokalsieger-Cup 1, Europa-Pokal 0,8, Meisterschaft 1, Pokal 0,5. Unter 20 Spielen gibt es anteilig weniger.
 - **Auslandsstars:** Alle Spieler der 1. Ligen im Ausland sind dabei. Tore, Vorlagen und Spiele zu null stammen aus ihrer Liga (bisherige Spiele, aufs Kalenderjahr hochgerechnet), die Note wird nach dem Maßstab der voll simulierten Spieler geschätzt (mit Formschwankung). Wer in einer schwächeren Liga spielt, wird abgewertet – Tore gegen schwache Abwehrreihen zählen weniger. Europapokal-Tore kommen dazu.
 - **Folgen:** Preisträger aus deinem Kader bekommen einen Moral-Schub (Sieger am meisten), ein Sieger hebt zudem das Ansehen deines Vereins leicht.
 - **Bühne:** Meisterschaft und Pokal zählen nach der Stärke der Liga – ein Titel in einer der stärksten Ligen bringt die vollen Punkte, in einer schwachen Liga deutlich weniger. Die Stärke eines Auslandsspielers wird dabei am Schnitt deiner Liga gemessen, nicht an seiner eigenen Liga: Wer in einer schwachen Liga herausragt, ist deshalb noch kein Weltstar.
@@ -458,7 +458,7 @@ Unter **Statistiken › Liga, Pokal und International** siehst du jeden Wettbewe
 ## Länder wählen
 Ganz links im Kopf wählst du das **Land** (Auswahl merkt sich bis zum Neuladen); Saison-Pfeile und Wettbewerbe richten sich danach. Oben steht dein Heimatland, darunter alle anderen Länder alphabetisch – auch die DDR. Ligen, die es nicht mehr gibt (DDR nach 1991, Sowjetunion, Jugoslawien, Tschechoslowakei nach den Teilungen), tragen den Zusatz **(Archiv)**:
 - **Heimatland:** wie oben – laufende Saison, Archiv, Historie; bei späterem Startjahr zusätzlich die Saisons davor aus den Weltdaten (nur Reihenfolge der Abschlusstabelle).
-- **Alle Ligen nach Ebene:** Die Wettbewerbswahl führt jede Liga, die das Spiel in der Saison simuliert, gruppiert nach **Ebene** – je nach Epoche 1. Liga, 2. Liga (Nord/Süd bzw. eingleisig), NOFV-Oberliga, Regionalligen, 3. Liga. Jede hat Tabelle, Stand nach jedem Spieltag und alle Begegnungen, frühere Saisons aus dem Archiv. In der laufenden Saison zeigen auch die vereinsweise simulierten Ligen **Einzelwertungen**: Tore, Vorlagen und Karten werden wie bei den Auslandsligen auf die Kader aus dem Spielerpool verteilt. Ganz unten steht der **Unterbau** (Amateurligen, DDR: Bezirksligen, Ausland: Unterbau): Vereine ohne Spielbetrieb, nach Stärke – die Stärksten tauschen am Saisonende mit den Letzten der untersten Liga.
+- **Alle Ligen nach Ebene:** Die Wettbewerbswahl führt jede Liga, die das Spiel in der Saison simuliert, gruppiert nach **Ebene** – je nach Epoche 1. Liga, 2. Liga (Nord/Süd bzw. eingleisig), Oberliga Nordost, Regionalligen, 3. Liga. Jede hat Tabelle, Stand nach jedem Spieltag und alle Begegnungen, frühere Saisons aus dem Archiv. In der laufenden Saison zeigen auch die vereinsweise simulierten Ligen **Einzelwertungen**: Tore, Vorlagen und Karten werden wie bei den Auslandsligen auf die Kader aus dem Spielerpool verteilt. Ganz unten steht der **Unterbau** (Amateurligen, DDR: Bezirksligen, Ausland: Unterbau): Vereine ohne Spielbetrieb, nach Stärke – die Stärksten tauschen am Saisonende mit den Letzten der untersten Liga.
 - **DDR** (bis 1990/91): volle Tabelle Spieltag für Spieltag mit Begegnungen, frühere Saisons aus dem Archiv.
 - **Alle anderen Länder:** 1. und 2. Liga laufen **Spieltag für Spieltag** mit. Du siehst die laufende **Tabelle** mit Punkten, Toren und Form, umschaltbar auf Heim / Auswärts / Form, den **Stand nach jedem Spieltag** und rechts die **Begegnungen** (gespielte mit Ergebnis, kommende mit Termin). Die Farbkante am Platz zeigt Meister, Europapokal-Plätze (nach der Fünfjahreswertung des Landes) und Abstieg bzw. in der 2. Liga den Aufstieg. Für die **letzten zehn Saisons** sind Tabellen und alle Begegnungen gespeichert, davor Meister und Pokalsieger. In den stärksten Ländern gibt es auch die **3. und 4. Ebene** mit Tabelle und Begegnungen (letzte drei Saisons; ohne Einzelwertungen, ihre Vereine haben keine Kader). Rechts stehen dieselben Wertungen wie bei deiner Liga: **Torschützen, Vorlagen, Scorer, Gelbe und Rote Karten, Weiße Weste**. Tore, Vorlagen und Karten jedes Vereins werden auf seinen Kader aus dem Spielerpool verteilt – Stürmer, starke Spieler und Stammkräfte treffen öfter, Spielmacher und Außen legen auf, Abräumer und Verteidiger sehen häufiger Gelb; Zu-null-Spiele gehen an den Stammtorwart. Die Listen wachsen mit jedem Spieltag weiter; am Saisonende bleiben die besten zehn je Wertung gespeichert.
 - **Pokale anderer Länder** laufen **Runde für Runde** mit: alle Erst- und Zweitligisten des Landes, jede Runde neu gelost, ein Spiel, bei Gleichstand Verlängerung und Elfmeterschießen. Die erste Runde bringt das Feld auf 32, 16 oder 8 Vereine – wer nicht gezogen wird, hat ein Freilos. Gespielt wird mittwochs zwischen Ende September und Mai, das Endspiel an einem Samstag Ende Mai. Statistiken › Pokal zeigt **Turnierbaum und Rundenliste**, die **Torschützen** des Pokals, Vereinswerte (meiste Tore, wenigste Gegentore, meiste Siege), die Rangliste der **Pokalsiege** und die **Pokalsieger** der letzten Jahre. Der Sieger des Endspiels vertritt sein Land im Europapokal. Saisons, die vor dieser Neuerung gespielt wurden, und Saisons vor Spielbeginn zeigen weiter nur den Sieger (vor Spielbeginn mit Finalgegner aus den Weltdaten).
@@ -470,10 +470,10 @@ Die Match-Engine zählt je Wettbewerb: **Tore, Vorlagen, Scorer** (Tore + Vorlag
 Am Saisonende werden alle Abschlusstabellen, alle Pokalrunden und die **besten 10** (Pokale: 5) jeder Kategorie archiviert. So kannst du jede vergangene Saison wieder aufrufen.
 
 ## Historie vor Spielbeginn (1963/64–1974/75)
-Die echten Abschlusstabellen der Bundesliga seit 1963/64, der 2. Liga Nord/Süd 1974/75 und der DDR-Oberliga, alle Pokal- und Europapokal-Endspiele sowie der Verein des Torschützenkönigs sind hinterlegt – übertragen auf die Spiel-Vereine (Städtenamen). Sie stehen auch in der **Vereins-Historie** (Endplätze, Titel), in der **Ruhmeshalle** (Rekordmeister) und in der **Chronik**. Namen echter Spieler werden nicht verwendet.
+Die echten Abschlusstabellen der 1. Liga seit 1963/64, der 2. Liga Nord/Süd 1974/75 und der DDR-Oberliga, alle Pokal- und Europapokal-Endspiele sowie der Verein des Torschützenkönigs sind hinterlegt – übertragen auf die Spiel-Vereine (Städtenamen). Sie stehen auch in der **Vereins-Historie** (Endplätze, Titel), in der **Ruhmeshalle** (Rekordmeister) und in der **Chronik**. Namen echter Spieler werden nicht verwendet.
 
 ## Vereine unterhalb der Ligen
-Frühere Bundesligisten, die 1975 nur noch in den Amateurligen spielen, existieren als Vereine im **Pool** und können über den Auf-/Abstieg zurückkehren (siehe „Auf- und Abstiegsregeln“).`,
+Frühere Erstligisten, die 1975 nur noch in den Amateurligen spielen, existieren als Vereine im **Pool** und können über den Auf-/Abstieg zurückkehren (siehe „Auf- und Abstiegsregeln“).`,
   },
 
   // ---------------------------------------------------------------------------
@@ -897,7 +897,7 @@ Beim Start erscheint ein Menü mit:
 1. **Manager:** Vor- und Nachname, Geburtsdatum (Alter am 1. Juli 1975), Nationalität (optional eine zweite), ein Gesicht aus dem Gesichtsgenerator („Anderes Gesicht“), Spielstil, Werdegang und Schwierigkeit. **Lieblingsverein** und **„Niemals trainieren würde ich“** sind Profilangaben; der „Niemals“-Verein taucht im Karrieremodus nicht unter den Angeboten auf.
 2. **Spielmodus:** **Teammanager** – du wählst deinen Verein frei. **Karriere** – als unbekannter Trainer bekommst du drei Angebote schwächerer Vereine und nimmst eins an: ein Erstligist aus dem unteren Drittel und zwei Zweitligisten aus der oberen Hälfte – solange die 2. Liga zweigleisig ist (bis 1980), je einer aus Nord und Süd. Hat dein Heimatland im Startjahr keine wählbare 2. Liga, kommen alle drei Angebote von Erstligisten aus dem unteren Drittel. Änderst du Startjahr, Land oder Datensatz, entstehen die Angebote neu – das Land (dein Heimatland) wählst du direkt im Schritt **Verein** links neben den Angeboten, danach stehen sofort drei neue Angebote bereit. Dazu Verletzungen, Saison-Briefing, Auftakt-Animation und Spieltempo.
 3. **Spielwelt:** Startjahr, Datensatz, alle Länder, deren Ligen mitlaufen, und die Optionen **Historische Entwicklung der Vereine** (Frei/Historisch/Streng historisch) und **der Ligen** (Frei/Historisch, siehe Artikel „Historische Entwicklung der Vereine und Ligen“). Deine Liga wird Minute für Minute gerechnet, die übrigen deutschen Ligen, die DDR und alle Auslandsligen Spieltag für Spieltag. Rechenzeit kostet fast nur deine eigene Liga.
-4. **Verein:** zweistufig – links das Land, dann **Schritt 1: Liga wählen** (jede Liga mit Ebene, Favorit und Zahl der Vereine; in Deutschland je nach Epoche auch die NOFV-Oberliga 1991/92–1993/94, die Regionalligen ab 1994 und die 3. Liga ab 2008 – wählst du dort einen Verein, bekommen beim Start alle Vereine dieser Liga volle Kader auf dem Niveau der Ebene: schwächere Spieler, Stadien für einige tausend Zuschauer, wenig Geld; die Liga hat Spielplan, Tabelle, Auf- und Abstieg wie jede Spielerliga, 1. und 2. Liga laufen simuliert. Nur die Amateurligen stehen ausgegraut dabei: der Pool ohne Spielbetrieb), danach **Schritt 2: Verein** dieser Liga, sortierbar nach Stärke, Name oder Region („‹ Ligen“ führt zurück); rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
+4. **Verein:** zweistufig – links das Land, dann **Schritt 1: Liga wählen** (jede Liga mit Ebene, Favorit und Zahl der Vereine; in Deutschland je nach Epoche auch die Oberliga Nordost 1991/92–1993/94, die Regionalligen ab 1994 und die 3. Liga ab 2008 – wählst du dort einen Verein, bekommen beim Start alle Vereine dieser Liga volle Kader auf dem Niveau der Ebene: schwächere Spieler, Stadien für einige tausend Zuschauer, wenig Geld; die Liga hat Spielplan, Tabelle, Auf- und Abstieg wie jede Spielerliga, 1. und 2. Liga laufen simuliert. Nur die Amateurligen stehen ausgegraut dabei: der Pool ohne Spielbetrieb), danach **Schritt 2: Verein** dieser Liga, sortierbar nach Stärke, Name oder Region („‹ Ligen“ führt zurück); rechts die große Vorschau mit Wappen, Trikots, Stadion, Ansehen, Finanzkraft, geschätzter Kaderstärke, Ziel des Vorstands und Rivalen. Kaderstärke und Ziel sind **Einschätzungen** – die echten Kader entstehen beim Start.
 5. **Ligensystem:** die Pyramide der Saison 1975/76 (Deutschland, DDR, Ausland) – siehe Artikel „Übersicht Ligensystem“.
 6. **Willkommen:** Die Spielwelt wird schon erzeugt; du siehst Kader, Stärke der ersten Elf, den besten Spieler, Mediendruck, Vertrauen des Vorstands und Stimmung der Fans. „Karriere starten“ übernimmt genau diese Welt, danach folgt das Saison-Briefing.
 
@@ -1174,7 +1174,7 @@ Für dich heißt das: Ein 85er ist ein echter Unterschiedsspieler – teuer, beg
 Unter **Aufstellung › Aufstellung** stellst du deine Mannschaft – aufgebaut wie in modernen Fußballmanagern:
 
 - **Links – Kaderliste:** drei Abschnitte *Startelf*, *Ersatzbank* und *Reserve* mit Position, Rückennummer, Eignung, Frische, Form, Moral, Durchschnittsnote und Stärke. Ein Klick auf eine Spaltenüberschrift sortiert innerhalb der Abschnitte.
-- **Mitte – Spielfeld:** maßstabsgetreu nach FIFA-Regeln (105 × 68 m) mit Spielerkarten auf den Positionen: Position, Eignung, Name und Frischebalken; der farbige Rand zeigt, wie gut der Spieler auf diese Position passt. Darunter die **Ersatzbank** mit so vielen Plätzen, wie die Epoche erlaubt (bis 1994 fünf, ab 1995 sieben, ab 2020 neun).
+- **Mitte – Spielfeld:** maßstabsgetreu nach Regeln des Weltverbands (105 × 68 m) mit Spielerkarten auf den Positionen: Position, Eignung, Name und Frischebalken; der farbige Rand zeigt, wie gut der Spieler auf diese Position passt. Darunter die **Ersatzbank** mit so vielen Plätzen, wie die Epoche erlaubt (bis 1994 fünf, ab 1995 sieben, ab 2020 neun).
 - **Rechts:** Mentalität und Teamanweisungen im Überblick, Ø Stärke, Ø Eignung und **vertraute Positionen** (wie viele Spieler auf Stamm- oder Nebenposition stehen), darunter Kapitän, Standardschützen und **Hinweise** (Spieler außerhalb seiner Position, Verletzte/Gesperrte, müde Spieler, unausgewogene Formation, fehlender Ersatztorwart).
 
 ### Formationen
@@ -1674,7 +1674,7 @@ Alle diese Wirkungen sind auf typische Ligawerte ausgerichtet: Eine durchschnitt
 Gezählt wird jede Aktion: Schüsse und Schüsse aufs Tor, Pässe (angekommen), Zweikämpfe und Luftduelle (gewonnen), Flanken, Dribblings, Balleroberungen und Torvorlagen je Spieler. Der Spielbericht zeigt sie unter **Einzelwerte**, das Spielerprofil (Reiter Saison) die Quoten der Saison – jeweils nur, was es in der Epoche schon gab.
 
 ## Epochen (Soll-Werte mit Quellen in \`data/matchStats.ts\`)
-- **Torschnitt** (echte Bundesliga-Daten): 3,4 Tore pro Spiel 1975–84, 2,9 von 1985 bis 2014, 3,05 in 2015–23, heute knapp 3,2; 0:0 in 5–8 % der Spiele, gut 55 % der Tore fallen nach der Pause.
+- **Torschnitt** (echte Erstliga-Daten): 3,4 Tore pro Spiel 1975–84, 2,9 von 1985 bis 2014, 3,05 in 2015–23, heute knapp 3,2; 0:0 in 5–8 % der Spiele, gut 55 % der Tore fallen nach der Pause.
 - **Torarten heute:** etwa 16 % Kopfballtore, ein Viertel nach Standards (Ecken ~10 %, Freistöße ~7 %, Elfmeter ~6 %), ~13–15 % nach Kontern, ~12 % aus der Distanz. In den Siebzigern mehr Flanken, Kopfbälle, lange Bälle und Fernschüsse, weniger Pressing und Konter, weniger Pässe (gut 70 % Passquote statt heute über 80 %).
 - **Heimvorteil:** in den Siebzigern deutlich stärker (rund 57 % Heimsiege), 1985–2004 knapp 50 %, heute gut 40 %. Remis: 24 %, 1985–94 sogar 29 % (Zwei-Punkte-Regel – bei Gleichstand gehen beide in der Schlussphase weniger Risiko).
 - **Fouls:** bis etwa 2010 35–40 je Spiel (damalige Zählweise), heute rund 21; Gelb je Foul entsprechend seltener.
@@ -1790,7 +1790,7 @@ Tor, Innenverteidigung, Außenverteidigung, Mittelfeld, Flügel, Sturm. Die Form
 Spitzentransfers meldet die Sportpresse sofort; die übrigen Wechsel stehen in der Nachricht zum Fensterschluss.
 
 ### Mengen
-Höchstens fünf Zugänge im Sommer, zwei im Winter, sieben pro Saison. Im Schnitt sind es drei bis fünf Zugänge je Verein und Saison (Jugend eingerechnet) – wie in der Bundesliga.
+Höchstens fünf Zugänge im Sommer, zwei im Winter, sieben pro Saison. Im Schnitt sind es drei bis fünf Zugänge je Verein und Saison (Jugend eingerechnet) – wie in der 1. Liga.
 
 ### Abgänge
 Überzählige einer Gruppe kommen auf die **Transferliste** (für dich und die Konkurrenz sichtbar). Ist der Kader zu groß, werden die schwächsten oder ältesten abgegeben; im Sommer verabschieden sich Routiniers über 32, die nicht mehr mithalten, zu unterklassigen Vereinen.
@@ -1819,7 +1819,7 @@ Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute
 
 ### Ablösefrei – wie oft?
 - **Bis 1995** gab es in Deutschland auch nach Vertragsende eine Ablöse. Ablösefrei wechselten fast nur Spieler am Karriereende oder in den Amateurbereich: in der ganzen Liga eine Handvoll pro Saison.
-- **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Bundesligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
+- **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Erstligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
 - Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/research/ablösefrei.md\`).
 
 ### Altstars laufen aus
@@ -1925,7 +1925,7 @@ Das Land, in dem du spielst, wird nie verändert: Seine Vereine haben volle Kade
 Unter **Statistiken › Ligensystem** zeigt die Tabelle „Ligen der Welt“ je Land die höchste Liga, den Spieltag (gespielt/gesamt), den Tabellenführer und den Ligaruf mit der Veränderung zur Vorsaison; der Hinweis daneben nennt den historischen Wert der Zeit. Ein Klick auf ein Land öffnet dessen Tabelle unter Statistiken › Liga.
 
 ### Grundlage
-Die historische Kurve ist aus der UEFA-Fünfjahreswertung je Jahrzehnt abgeleitet (z. B. 1975–79 Westdeutschland vor England und Belgien, 1991–95 Italien klar vorn, 1996–2000 Spanien vor Italien, 2004–08 England knapp vor Spanien, 2020–24 England vor Italien und Spanien) – grob übersetzt, keine Messwerte.`,
+Die historische Kurve ist aus der Fünfjahreswertung je Jahrzehnt abgeleitet (z. B. 1975–79 Westdeutschland vor England und Belgien, 1991–95 Italien klar vorn, 1996–2000 Spanien vor Italien, 2004–08 England knapp vor Spanien, 2020–24 England vor Italien und Spanien) – grob übersetzt, keine Messwerte.`,
   },
   {
     id: 'ai-history-mode',
@@ -2362,7 +2362,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 | 2020 | 12 % | 40 % | 38 % |
 
 ## TV-Gelder (zentrale Vermarktung)
-- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (das öffentlich-rechtliche Fernsehen zahlte 4,8 Mio. für die Bundesliga), heute über eine Milliarde Euro.
+- Zu Saisonbeginn wird der TV-Topf der Liga verteilt und **monatlich** ausgezahlt. 1975 umfasst er 4,2 Mio. DM für die 1. Liga (das öffentlich-rechtliche Fernsehen zahlte 4,8 Mio. für die 1. Liga), heute über eine Milliarde Euro.
 - Die Größe des Topfs folgt den echten Rechteverträgen (1. Liga ≈ 80 %): 1984/85 rund 8 Mio. DM, 1988/89 (Privatfernsehen) 32, 1992/93 (Samstagsshow im Privatfernsehen) 116, 1997/98 204, 2000/01 (Mediengruppe) rund 555 Mio. DM; 2006/07 ≈ 330 Mio. €, 2017/18 mit Auslandsrechten über 1,1 Mrd. €, 2024/25 ≈ 1,17 Mrd. €. Die Pleite der Mediengruppe 2002/03 drückt den Topf vorübergehend.
 - Die Verteilung richtet sich nach **Liga** (2. Liga ein Fünftel bis ein Viertel, darunter wenig) und dem **Tabellenplatz der Vorsaison**. Bis 1990 fast gleichmäßig (15 % leistungsabhängig), ab 2000 zu 35 %, ab 2017/18 (vier Säulen) zu 50 % – der Meister bekommt dann gut das Doppelte des Letzten.
 
@@ -2372,7 +2372,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Die Marke bestimmt die **Reichweite** im Sponsoring (siehe **Sponsoring & Werbung**), multipliziert **Fanartikel** und die **Vermarktung** (Lizenzen). International bekannte Vereine verkaufen außerdem **Fanartikel weltweit** (Lizenzen, Versand): eine echte Weltmarke 2024 bis rund 130 Mio. € im Jahr.
 
 ## Europapokal
-- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Champions League kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (München Rot 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im UEFA-Pokal ab der Gruppenphase 2004 und der Europa League 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Meisterliga kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (München Rot 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im Europa-Pokal ab der Gruppenphase 2004 und der Europa-Liga 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
 
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
@@ -2551,7 +2551,7 @@ KI-Vereine haben keine Blöcke, aber Kontingente je Kategorie: Sie bauen ihren P
 ## Größenordnung
 Ein Erstligist nimmt 1975 je Heimspiel rund 150.000 DM Eintritt (≈ 70 % des Umsatzes inkl. Catering und Programm), ein Spitzenverein 2024 mit voller Arena rund 6–8 Mio. € (München Rot 2023: ≈ 121 Mio. € Spieltagserlöse, ≈ 5,2 Mio. € je Heimspiel).
 
-Quellen: Vereinsangaben großer Bundesligisten (Arena 2026: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung; ein WM-Stadion von 1974 mit 17.000 von 54.000 Sitzplätzen; Hospitality: Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), UEFA-Gästekontingent 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
+Quellen: Vereinsangaben großer Erstligisten (Arena 2026: 106 Logen, 2.200 Business-Plätze, 227 Plätze für Menschen mit Behinderung; ein WM-Stadion von 1974 mit 17.000 von 54.000 Sitzplätzen; Hospitality: Loge ab 640 € je Platz und Spiel, Business ab ≈ 360 €), Stehplatz-Dauerkarten 2024/25 (Schnitt 213 €), Gästekontingent im Europapokal 5 %. Annahmen: VIP-Bereiche 1980, Logen 1985, Gästeblock 1984, Premium 1988.`,
   },
   {
     id: 'facilities-grounds',
@@ -2592,12 +2592,12 @@ Der Baustil folgt der Epoche (Backstein und Satteldach in den 70ern und 80ern, P
 Unter **Jugend › Jugendwettbewerbe** laufen die Meisterschaften und Pokale des Nachwuchses – für alle Vereine, nicht nur für dich. Die Seite ist aufgebaut wie Statistiken › Liga: oben Saison und Wettbewerb, links Tabelle, Gruppen oder Endrunde (Turnierbaum oder Runden), rechts die Bestenlisten (Tore, Vorlagen, Scorer, Karten, Weiße Weste) und deine Lage. In der Auswahl stehen nur Wettbewerbe, die es in der gewählten Saison gibt und die schon Teilnehmer haben: Ligen und Spielklassen tauchen erst ab dem Jahr ihrer Einführung auf, eine Endrunde erst nach ihrer Auslosung.
 
 ## Formate nach Epoche
-- **A-Jugend (U19):** bis 1995/96 Verbandsligen der Landesverbände, deren Meister (16 Plätze) spielen die **Endrunde** im K.-o.-System mit Hin- und Rückspiel, Endspiel in einem Spiel. 1996/97–2002/03 fünf **Regionalligen** (Nord, Nordost, West, Südwest, Süd) und eine Endrunde der letzten Acht. Ab 2003/04 **A-Junioren-Bundesliga** mit drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest); die drei Meister und der Zweite aus Süd/Südwest spielen das Halbfinale. Ab 2024/25 **DFB-Nachwuchsliga**: Vorrunde in regionalen Gruppen, Hauptrunde Liga A, Achtelfinale in einem Spiel.
-- **B-Jugend (U17):** ab 1976/77 wie die A-Jugend; Regionalligen ab 2000/01, Bundesliga ab 2007/08, Nachwuchsliga ab 2024/25.
-- **DFB-Junioren-Pokal (U19):** ab 1986/87 mit den Pokalsiegern der Landesverbände, ab 2017/18 mit 32 und ab 2025/26 mit 64 Teams. Ein Spiel, Verlängerung, Elfmeterschießen; Amateure haben Heimrecht.
+- **A-Jugend (U19):** bis 1995/96 Verbandsligen der Landesverbände, deren Meister (16 Plätze) spielen die **Endrunde** im K.-o.-System mit Hin- und Rückspiel, Endspiel in einem Spiel. 1996/97–2002/03 fünf **Regionalligen** (Nord, Nordost, West, Südwest, Süd) und eine Endrunde der letzten Acht. Ab 2003/04 **A-Junioren-Liga** mit drei Staffeln à 14 (Nord/Nordost, West, Süd/Südwest); die drei Meister und der Zweite aus Süd/Südwest spielen das Halbfinale. Ab 2024/25 **Nachwuchsliga**: Vorrunde in regionalen Gruppen, Hauptrunde Liga A, Achtelfinale in einem Spiel.
+- **B-Jugend (U17):** ab 1976/77 wie die A-Jugend; Regionalligen ab 2000/01, 1. Liga ab 2007/08, Nachwuchsliga ab 2024/25.
+- **Junioren-Pokal (U19):** ab 1986/87 mit den Pokalsiegern der Landesverbände, ab 2017/18 mit 32 und ab 2025/26 mit 64 Teams. Ein Spiel, Verlängerung, Elfmeterschießen; Amateure haben Heimrecht.
 - **DDR:** Junioren- bzw. Nachwuchsoberliga der 14 Oberligisten (Doppelrunde, ohne Auf- und Abstieg) bis 1990/91.
-- **UEFA Youth League:** ab 2013/14 die Jugend der Champions-League-Vereine (Gruppen, dann K.-o., Final Four in Nyon); ab 2015/16 zusätzlich der Meisterweg mit dem deutschen A-Jugend-Meister des Vorjahres; ab 2024/25 Ligaphase mit 36 Teams.
-In Regionalliga und Bundesliga steigen je Staffel drei Vereine ab; nachrücken die Vereine der Region mit der stärksten Jugend.
+- **Jugend-Meisterliga:** ab 2013/14 die Jugend der Meisterliga-Vereine (Gruppen, dann K.-o., Final Four in Nyon); ab 2015/16 zusätzlich der Meisterweg mit dem deutschen A-Jugend-Meister des Vorjahres; ab 2024/25 Ligaphase mit 36 Teams.
+In Regionalliga und 1. Liga steigen je Staffel drei Vereine ab; nachrücken die Vereine der Region mit der stärksten Jugend.
 
 ## C- bis G-Jugend: deine Staffel
 Jede deiner Jugendmannschaften hat ihren eigenen Wettbewerb; in der Auswahl sind sie nach Jugend gruppiert (A-Jugend, B-Jugend, C-Jugend …). Simuliert wird nur die **Staffel, in der deine Mannschaft spielt** – Gegner sind Jugendteams von Vereinen aus deiner Region bzw. deinem Landesverband und Ortsvereine aus deinem Kreis.
@@ -2936,12 +2936,12 @@ Beim Leihverein sammelt er **Spielpraxis**: Einsatzminuten treiben seine Entwick
 
 ## Grenzen je Epoche
 - **Bis 2021/22** keine Höchstzahl (KI-Vereine nehmen höchstens zwei Leihspieler).
-- **FIFA ab 2022/23:** höchstens 8 ver- bzw. ausgeliehene Profis je Verein, 2023/24 7, ab 2024/25 6; höchstens drei zwischen denselben zwei Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. Laufzeit höchstens ein Jahr, keine Weiterverleihung.
-- **National (DFL)** im Spiel ab 2025/26 ebenfalls sechs; U21 ausgenommen.
+- **Weltverband ab 2022/23:** höchstens 8 ver- bzw. ausgeliehene Profis je Verein, 2023/24 7, ab 2024/25 6; höchstens drei zwischen denselben zwei Vereinen; Spieler bis 21 und Eigengewächse zählen nicht. Laufzeit höchstens ein Jahr, keine Weiterverleihung.
+- **National (Ligaverband)** im Spiel ab 2025/26 ebenfalls sechs; U21 ausgenommen.
 - Leihen innerhalb derselben Liga sind erlaubt. Die Ausländer- und Melderegeln (Kader › Spielermeldung) gelten auch für Leihspieler.
 
 ## Häufigkeit
-Leihen sind in den 70ern selten, in den 80ern und frühen 90ern gelegentlich, ab Mitte der 90er üblich und ab den 2000ern Alltag (Bundesliga 2003/04 rund 75 Leihen, 2023/24 rund 228).
+Leihen sind in den 70ern selten, in den 80ern und frühen 90ern gelegentlich, ab Mitte der 90er üblich und ab den 2000ern Alltag (1. Liga 2003/04 rund 75 Leihen, 2023/24 rund 228).
 
 ## Quellen
 ${LOAN_SOURCES.map((x) => `- ${x}`).join('\n')}`,
@@ -3022,7 +3022,7 @@ Die Interesse-Ampel: „Will unbedingt zu euch“, „offen“, „zögerlich“
 Grundlage ist das **Marktgehalt** (Stärke, Liga-Niveau), dazu Karrierephase, Geldgier und die Größe des Vereins (große Vereine zahlen mehr). Wer wechselt, will mindestens 6 % mehr als bisher. Reizt ihn der Verein, **verzichtet** er auf bis zu 30 %; reizt er ihn nicht, verlangt er bis zu 35 % **Aufschlag** – Geldgierige verzichten kaum.
 
 - **Bosman (ab 1996):** Ablösefreie Spieler verlangen 10 % mehr Gehalt und ein hohes **Handgeld** (8–25 Wochengehälter) – die gesparte Ablöse landet beim Spieler.
-- **Berater:** In den 70ern verhandeln die meisten selbst. In Deutschland war Arbeitsvermittlung bis 1994 Sache der Bundesanstalt für Arbeit; die FIFA regelt Spielervermittler ab 1994; nach Bosman hat fast jeder Profi einen Berater. Die übliche Provision (5–10 % des Gehalts über die Laufzeit) zahlt der Verein einmalig.
+- **Berater:** In den 70ern verhandeln die meisten selbst. In Deutschland war Arbeitsvermittlung bis 1994 Sache der Bundesanstalt für Arbeit; der Weltverband regelt Spielervermittler ab 1994; nach Bosman hat fast jeder Profi einen Berater. Die übliche Provision (5–10 % des Gehalts über die Laufzeit) zahlt der Verein einmalig.
 
 ## Die KI hält sich an dieselben Regeln
 KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars bei den großen Vereinen: Die angesehensten Vereine holen im Sommer gezielt die Leistungsträger kleinerer Vereine, die Kleinen kassieren Ablöse und kaufen günstiger nach. Spieler ohne Vertrag suchen sich ihren Wunschverein unter den Vereinen, die sie brauchen; ehrgeizige Leistungsträger kleiner Vereine verlängern seltener. Von außen (Ausland, untere Ligen) bekommt ein Verein nur Spieler, die zu seinem Ansehen passen.`,
@@ -3105,7 +3105,7 @@ Gegen Vereine ohne vollen Kader (Amateure im Pokal, Auslandsvereine) gibt es nur
 **Statistiken › International › Welt** zeigt Weltpokal, Klub-Weltmeisterschaft und Interkontinentalpokal (Modus der Epoche, Gruppen, Turnierbaum, Siegerliste) sowie die Kontinentalpokale Südamerikas, Nord- und Mittelamerikas, Afrikas, Asiens und Ozeaniens. Ein Klick auf eine Flagge öffnet das **Länderprofil** – auch für Brasilien, Mexiko, Ägypten oder Japan: Meister je Saison, Vereine mit Stärke, Titel im Kontinentalpokal.
 
 ## Wann spielst du mit?
-Gewinnst du den Europapokal der Landesmeister bzw. die Meisterliga, bist du in der folgenden Saison dabei. Deine Spiele stehen im Kalender und laufen wie ein Pokalspiel: Vorschau „Nächstes Spiel“, Textmodus oder Schnellsimulation, Spielbericht, Prämie, Titel in der Vitrine (Verein › Erfolge).
+Gewinnst du den Pokal der Landesmeister bzw. die Meisterliga, bist du in der folgenden Saison dabei. Deine Spiele stehen im Kalender und laufen wie ein Pokalspiel: Vorschau „Nächstes Spiel“, Textmodus oder Schnellsimulation, Spielbericht, Prämie, Titel in der Vitrine (Verein › Erfolge).
 
 ## Die Formate
 - **Weltpokal 1960–1979:** Hin- und Rückspiel gegen den Sieger Südamerikas (Herbst/Winter). Europas Meister sagten damals oft ab – im Spiel verzichtet ein KI-Meister manchmal, dann springt der Finalist ein oder der Weltpokal fällt aus. Du sagst nie ab.
@@ -3164,7 +3164,7 @@ Die **Stärke** einer Nation ist die Startelf aus ihrem Aufgebot. Spielt der Gro
 
 ## Länderspielpausen
 - **Bis 1995** einzelne Mittwochs-Länderspiele im September, Oktober, November, März und April.
-- **Ab 1996** Doppel-Fenster (Samstag + Mittwoch) im September, Oktober, November und März – die Liga pausiert dann. Ab 2018 heißt der Herbst in geraden Jahren **Nations League**, sonst geht es um die Qualifikation für das nächste Turnier.
+- **Ab 1996** Doppel-Fenster (Samstag + Mittwoch) im September, Oktober, November und März – die Liga pausiert dann. Ab 2018 heißt der Herbst in geraden Jahren **Nationenliga**, sonst geht es um die Qualifikation für das nächste Turnier.
 Das Spiel legt die Termine in Wochen ohne dein eigenes Pflichtspiel. Abgestellte Spieler fehlen dir vom Vortag (Doppel-Fenster: ab Montag) bis zum letzten Spiel, kommen weniger frisch zurück und können sich verletzen (selten).
 
 ## WM und EM
@@ -3189,7 +3189,7 @@ Zusätzlich zum Verein kannst du eine Nationalmannschaft betreuen – siehe „N
 
 ## Wie wird gerechnet?
 Wie bei der bekannten Elo-Weltrangliste des Fußballs: Jede Nation hat Punkte, jedes Länderspiel verschiebt sie. Wer gewinnt, bekommt Punkte vom Verlierer – umso mehr, je stärker der Gegner war, je wichtiger das Spiel und je deutlicher das Ergebnis.
-- **Gewicht:** WM-Endrunde 60, EM-Endrunde 50, Qualifikation und Nations League 40, Freundschaftsspiel 20.
+- **Gewicht:** WM-Endrunde 60, EM-Endrunde 50, Qualifikation und Nationenliga 40, Freundschaftsspiel 20.
 - **Deutlichkeit:** Sieg mit zwei Toren ×1,5, mit drei ×1,75, danach je Tor ein Achtel mehr.
 - **Heimvorteil:** die Heimmannschaft wird mit 100 Punkten mehr gerechnet – ein Heimsieg bringt deshalb weniger als ein Auswärtssieg. Bei WM und EM spielt nur der Gastgeber zu Hause.
 - **Elfmeterschießen** zählt als Unentschieden, ein Sieg nach Verlängerung als Sieg.
@@ -3199,7 +3199,7 @@ Zu Spielbeginn stehen die Nationen so, wie es die Geschichte nahelegt (1975 vorn
 Nachfolgestaaten übernehmen die Punkte: Russland die der Sowjetunion, Serbien die Jugoslawiens, Tschechien die der Tschechoslowakei. Neue Nationen beginnen bei ihrem Richtwert.
 
 ## Ausgaben
-Wie bei der FIFA erscheint die Liste **am Monatsersten**. Das ± vergleicht mit der Ausgabe davor. Die Januar-Ausgabe hält den Platz zum Jahresende fest – daraus entsteht der Verlauf (die letzten 30 Jahre). Ältere Spielstände bekommen die Liste beim Laden aus den Richtwerten; der Verlauf bis dahin und die Ausgabe davor kommen dann ebenfalls aus den historischen Richtwerten, ab dem Laden zählen die Länderspiele im Spiel.
+Wie beim Weltverband erscheint die Liste **am Monatsersten**. Das ± vergleicht mit der Ausgabe davor. Die Januar-Ausgabe hält den Platz zum Jahresende fest – daraus entsteht der Verlauf (die letzten 30 Jahre). Ältere Spielstände bekommen die Liste beim Laden aus den Richtwerten; der Verlauf bis dahin und die Ausgabe davor kommen dann ebenfalls aus den historischen Richtwerten, ab dem Laden zählen die Länderspiele im Spiel.
 
 ## Weltrangliste und Stärke
 Die **Stärke** einer Nation (Startelf aus den Spielern der Spielwelt) entscheidet über Ergebnisse, Qualifikation und die Ziele eines Nationaltrainers. Die **Weltrangliste** misst dagegen, was dabei herauskommt – eine starke Mannschaft mit schwachen Ergebnissen steht hinten, bis sie gewinnt.`,
@@ -3453,7 +3453,7 @@ Unter **Verein → Erfolge → Vereinspokale** steht jeder Titel deines Vereins 
 - **Liga** – Deutsche Meisterschaft (Meisterschale), DDR-Meisterschaft (Deckelpokal) und Staffelsiege in der 2. Liga, Regionalliga, Oberliga oder DDR-Liga (Silberteller).
 - **Pokal** – Landespokal. Einen Ligapokal gibt es im Spiel nicht.
 - **Kontinental** – Pokal der Landesmeister (ab 1992 Meisterliga), Pokal der Pokalsieger (ab 2021 Konferenz-Liga) und Europa-Pokal (ab 2009 Europa-Liga) – jeweils unter dem Namen der Saison.
-- **Jugend** – Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, DDR-Juniorenmeister, UEFA Youth League und Staffelsiege der C- bis F-Jugend.
+- **Jugend** – Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, DDR-Juniorenmeister, Jugend-Meisterliga und Staffelsiege der C- bis F-Jugend.
 - **Andere** – Hallen-Masters und Aufstiege ohne Staffelsieg (Medaille).
 
 ## Was gezeigt wird
@@ -3492,9 +3492,9 @@ Es gibt keine fest geplanten Stars: Die Startkader sind in jedem Spiel gleich, w
 
 ## Typische Kurven
 - **Normalprofi:** Stammspieler mit 22–23, Höhepunkt mit 26–29 um 73, ab 31 spürbarer Abbau.
-- **Bundesliga-Topspieler:** oft früh im Profikader, aber erst mit 26–29 auf der Höhe (um 80–83), manchmal Nationalspieler erst mit 28.
+- **Erstliga-Topspieler:** oft früh im Profikader, aber erst mit 26–29 auf der Höhe (um 80–83), manchmal Nationalspieler erst mit 28.
 - **Weltstar:** Durchbruch mit 20–21, Weltklasse (85+) ab etwa 23, Plateau bis 30 um 88.
-- **Jahrhunderttalent:** mit 17 im Profikader, mit 19–21 schon Weltklasse (um 86–90), danach acht bis zehn Jahre bei 92–95. So etwas gibt es in der ganzen Fußballwelt nur alle 10–20 Jahre – in der Bundesliga noch seltener.
+- **Jahrhunderttalent:** mit 17 im Profikader, mit 19–21 schon Weltklasse (um 86–90), danach acht bis zehn Jahre bei 92–95. So etwas gibt es in der ganzen Fußballwelt nur alle 10–20 Jahre – in der 1. Liga noch seltener.
 
 ## Was die Kurve formt
 - **Potenzial:** Die meisten Talente reichen für die 2. Liga oder einen Platz im Kader eines Erstligisten. Nur etwa 1–2 von 100 Akademie-Talenten haben Weltklasse-Potenzial (85+), und davon wieder nur ein kleiner Teil 90 oder mehr; mehr als 93 ist ohne Ausnahmetalent der Geschichte nicht möglich. Bessere Nachwuchsarbeit erhöht die Chance etwas.
@@ -3764,7 +3764,7 @@ Die zweiten Mannschaften der großen Vereine – bis 2005 „Amateure“, danach
 | Zeit | Höchste Liga für zweite Mannschaften |
 |---|---|
 | bis 1978 | Amateurliga (dritte Ebene) |
-| 1978–1994 | Amateur-Oberliga (dritte Ebene) – die 2. Bundesliga bleibt gesperrt |
+| 1978–1994 | Amateur-Oberliga (dritte Ebene) – die 2. Liga bleibt gesperrt |
 | 1994–2008 | Regionalliga (dritte Ebene; 2000–2008 nur Nord und Süd) |
 | ab 2008 | 3. Liga; je Regionalliga-Staffel höchstens sieben zweite Mannschaften |
 
@@ -3774,16 +3774,16 @@ Immer gilt: **nie in der 2. Liga**, **nie in derselben oder einer höheren Liga 
 Spielt sie unterhalb der simulierten Ligen (bis 1994 immer), tritt sie in der **höchsten Amateurliga deiner Region** an: Vereine aus dem Amateur-Pool, zweite Mannschaften der Region und Amateurvereine. Der **Meister steigt auf**, wenn die Ebene darüber erlaubt ist; die letzten drei steigen in die Verbandsliga ab (Meister dort kommt zurück). In einer simulierten Staffel (Regionalliga, 3. Liga) zählt deren Tabelle. Jugend › 2. Mannschaft zeigt Liga, Zonen und den Hinweis „Aufstieg gesperrt“. Neu angelegt beginnt sie in der höchsten Amateurliga; ältere Spielstände mit Ausbaustufe 2 („U23“) werden beim ersten Einordnen direkt in die unterste simulierte Staffel gesetzt, wenn es sie gibt. Die Ausbaustufe macht die Vertragsamateure stärker, die freie Plätze füllen. Ab 2008 stellt der Trainer höchstens **drei Spieler über 23** auf.
 
 ## Amateurligen: die KI-Amateure spielen mit
-Unterhalb der simulierten Ligen laufen die **höchsten Amateurligen als echte Tabellen** – je Verbandsgruppe eine Staffel: Nord, Berlin (ab 1991 Nordost), Nordrhein, Westfalen, Südwest, Hessen, Baden-Württemberg, Bayern. Bis 1978 heißen sie Amateurliga, 1978–1994 Amateur-Oberliga, danach Oberliga. Jede Staffel hat 18 Mannschaften: die zweiten Mannschaften der Gruppe (höchstens acht), die stärksten Amateurvereine und Ortsvereine. Gespielt wird sonntags (nicht im Juni/Juli) mit dem schlanken Ergebnis-Modell der Auslandsligen – es gibt nur die Tabelle, keine Einzelspiele. Deine zweite Mannschaft spielt in der Staffel ihrer Gruppe. Am Saisonende meldet die Fußball-Chronik die Meister; **Meister haben beim Aufstieg Vorrang** (bis 1994 in die 2. Bundesliga, danach in die Regionalliga). Eine zweite Mannschaft als Meister darf bis 1994 nie aufsteigen – an der Aufstiegsrunde nimmt der Bestplatzierte dahinter teil. Alle Tabellen: Statistiken › Liga (Deutschland, Ebene unter den simulierten Ligen).
+Unterhalb der simulierten Ligen laufen die **höchsten Amateurligen als echte Tabellen** – je Verbandsgruppe eine Staffel: Nord, Berlin (ab 1991 Nordost), Nordrhein, Westfalen, Südwest, Hessen, Baden-Württemberg, Bayern. Bis 1978 heißen sie Amateurliga, 1978–1994 Amateur-Oberliga, danach Oberliga. Jede Staffel hat 18 Mannschaften: die zweiten Mannschaften der Gruppe (höchstens acht), die stärksten Amateurvereine und Ortsvereine. Gespielt wird sonntags (nicht im Juni/Juli) mit dem schlanken Ergebnis-Modell der Auslandsligen – es gibt nur die Tabelle, keine Einzelspiele. Deine zweite Mannschaft spielt in der Staffel ihrer Gruppe. Am Saisonende meldet die Fußball-Chronik die Meister; **Meister haben beim Aufstieg Vorrang** (bis 1994 in die 2. Liga, danach in die Regionalliga). Eine zweite Mannschaft als Meister darf bis 1994 nie aufsteigen – an der Aufstiegsrunde nimmt der Bestplatzierte dahinter teil. Alle Tabellen: Statistiken › Liga (Deutschland, Ebene unter den simulierten Ligen).
 
-## DFB-Pokal
-Von 1974 bis 2007/08 konnten sich Amateurmannschaften über die Verbandspokale für den DFB-Pokal qualifizieren – 1993 stand eine Amateurmannschaft sogar im Finale. Im Spiel bekommen je Saison bis zu drei zweite Mannschaften einen Amateurplatz: deine bei Platz 1–3 der höchsten Amateurliga bzw. ihrer Staffel, die KI nach dem Endplatz in Staffel oder Amateurliga. **Deine Amateure spielen mit ihrem echten Kader**: dieselbe Auswahl wie am Liga-Sonntag (Schwerpunkt, Positions-Trainees, Altersregel, A-Jugend hilft aus), fehlende Plätze und die Bank füllen Vertragsamateure. Spielen die Profis am selben Tag, sind ihre Startelf und Bank gesperrt. **Pokalbindung**: Wer in einer Saison für die Amateure im Pokal gespielt hat, darf in dieser Saison im Pokal nicht mehr für die Profis auflaufen – und umgekehrt (Spielannahme; die DFB-Spielordnung regelt den Einsatz in zweiten Mannschaften bei Pokalspielen eigens, § 12). Nach dem Spiel kommt eine Nachricht vom Trainer der Amateure mit Spielbericht. KI-Amateure spielen mit Vertragsamateuren. Seit 2008/09 sind zweite Mannschaften ausgeschlossen.
+## Landespokal
+Von 1974 bis 2007/08 konnten sich Amateurmannschaften über die Verbandspokale für den Landespokal qualifizieren – 1993 stand eine Amateurmannschaft sogar im Finale. Im Spiel bekommen je Saison bis zu drei zweite Mannschaften einen Amateurplatz: deine bei Platz 1–3 der höchsten Amateurliga bzw. ihrer Staffel, die KI nach dem Endplatz in Staffel oder Amateurliga. **Deine Amateure spielen mit ihrem echten Kader**: dieselbe Auswahl wie am Liga-Sonntag (Schwerpunkt, Positions-Trainees, Altersregel, A-Jugend hilft aus), fehlende Plätze und die Bank füllen Vertragsamateure. Spielen die Profis am selben Tag, sind ihre Startelf und Bank gesperrt. **Pokalbindung**: Wer in einer Saison für die Amateure im Pokal gespielt hat, darf in dieser Saison im Pokal nicht mehr für die Profis auflaufen – und umgekehrt (Spielannahme; die Spielordnung des Fußballbunds regelt den Einsatz in zweiten Mannschaften bei Pokalspielen eigens, § 12). Nach dem Spiel kommt eine Nachricht vom Trainer der Amateure mit Spielbericht. KI-Amateure spielen mit Vertragsamateuren. Seit 2008/09 sind zweite Mannschaften ausgeschlossen.
 
 ## DDR
 Die zweiten Mannschaften der DDR-Oberligisten spielen bis 1976 in der DDR-Liga (ohne Aufstiegsrecht), 1976–1984 alle in der eigenen **Nachwuchsoberliga** (Tabelle unter Statistiken › Liga › DDR), 1984–1990 wieder in der DDR-Liga ohne Aufstiegsrecht, ab 1990/91 gibt es keine mehr. Weil die DDR-Liga im Spiel nur eine Staffel mit zwölf Vereinen hat, spielen dort höchstens vier zweite Mannschaften (etwa der historische Anteil); steigt der Stammverein ab, muss die zweite weichen, eine abgestiegene zweite Mannschaft verschwindet in der Bezirksliga. Nach der Wiedervereinigung bekommen die Vereine aus dem Osten wie alle anderen ihre zweite Mannschaft im gesamtdeutschen System.
 
 ## Ausland
-In den Weltdaten stehen B-Teams als eigene Vereine (Spanien, Portugal). Die Hintergrund-Welt hält sie an die Regeln des Landes: Spanien und Portugal höchstens 2. Liga, nie in oder über der Liga der ersten Mannschaft (gesperrter Aufsteiger → der Nächste; Abstieg der ersten Mannschaft → Zwangsabstieg in den Unterbau), im Landespokal Spanien bis 1989/90, Portugal nie. Englands Reserveteams spielen in eigenen Reserveligen, Italiens U23 (ab 2018, Serie C) und Frankreichs Reserveteams (höchstens vierte Ebene) unterhalb der simulierten Ebenen – sie tauchen in der Hintergrund-Welt nicht auf. Ist dein Heimatland Spanien oder Portugal, gelten dieselben Regeln in deiner Pyramide.
+In den Weltdaten stehen B-Teams als eigene Vereine (Spanien, Portugal). Die Hintergrund-Welt hält sie an die Regeln des Landes: Spanien und Portugal höchstens 2. Liga, nie in oder über der Liga der ersten Mannschaft (gesperrter Aufsteiger → der Nächste; Abstieg der ersten Mannschaft → Zwangsabstieg in den Unterbau), im Landespokal Spanien bis 1989/90, Portugal nie. Englands Reserveteams spielen in eigenen Reserveligen, Italiens U23 (ab 2018, 3. Ebene) und Frankreichs Reserveteams (höchstens vierte Ebene) unterhalb der simulierten Ebenen – sie tauchen in der Hintergrund-Welt nicht auf. Ist dein Heimatland Spanien oder Portugal, gelten dieselben Regeln in deiner Pyramide.
 
 ## Vereinfachungen
 Die Stammspieler-Regel für Profis (nicht, wer in mehr als der Hälfte der Profispiele eingesetzt wurde) ersetzt im Spiel die Regel „wer in der Profi-Startelf steht, spielt nicht mit“. Deine eigene zweite Mannschaft spielt in einem anderen Heimatland in einer Amateurliga ohne Pyramide.`,
@@ -3826,7 +3826,7 @@ Junge Profis, die bei den Profis kaum spielen, verloren früher Jahr für Jahr E
 **Deine zweite Mannschaft** (Jugend › 2. Mannschaft) spielt in der Ligapyramide mit – wo genau, regelt der Artikel „Zweite Mannschaften in der Ligapyramide“. Ihr Trainer stellt nach deinem **Schwerpunkt** auf: *Nachwuchs fördern* (U23 und Eigengewächse zuerst, Spielpraxis +15 %), *Ergebnisse* (die Stärksten, −5 %) oder *Rückkehrer aufbauen* (Profis ohne Einsätze, nach Verletzung oder im Formtief zuerst; über 23 gewinnen sie Form). Profis über 23 spielen nur mit, wenn du es erlaubst. Bei deinem Verein bekommt Spielpraxis nur, wer wirklich aufgestellt wird – dafür auch eingekaufte junge Profis. Unter **Positionen trainieren** legst du bis zu drei Spieler fest, die dort auf einer gewählten Position spielen und sich an sie gewöhnen. Wer in der Profi-Startelf steht, spielt nicht mit. Die KI-Vereine führen ihre zweite Mannschaft automatisch.
 
 ## Leistungszentrum-Pflicht
-Nach dem EM-Aus 2000 wurde ein Leistungszentrum Lizenzbedingung: **ab 2001 für die Bundesliga, ab 2002 für die 2. Liga**. Mindestens: Fußballlehrer als Jugendtrainer, zwei Plätze mit Flutlicht, Gastfamilien, Partnerschule und 8 Jugendtrainer. Fehlt etwas, gibt es jedes Jahr eine **Geldstrafe** und der Ruf leidet. Ein Jahr vorher kommt eine Ankündigung. 2002 startet das **DFB-Talentförderprogramm** (Stützpunkte): Alle Scouting-Netze finden mehr Talente.
+Nach dem EM-Aus 2000 wurde ein Leistungszentrum Lizenzbedingung: **ab 2001 für die 1. Liga, ab 2002 für die 2. Liga**. Mindestens: Fußballlehrer als Jugendtrainer, zwei Plätze mit Flutlicht, Gastfamilien, Partnerschule und 8 Jugendtrainer. Fehlt etwas, gibt es jedes Jahr eine **Geldstrafe** und der Ruf leidet. Ein Jahr vorher kommt eine Ankündigung. 2002 startet das **Talentförderprogramm** (Stützpunkte): Alle Scouting-Netze finden mehr Talente.
 
 ## Was kostet das?
 Alle Preise sind Preisschilder in 1975-Basis und wachsen mit der Epoche. Ein üblicher Erstligist gibt 1975 rund **100 Tsd. DM** im Jahr für den Nachwuchs aus, ein stark investierender 200–300 Tsd. – grob 3–6 % des Umsatzes. Ein volles Leistungszentrum der 2010er/2020er liegt bei mehreren Millionen bis über 20 Mio. €. Die Kosten erscheinen in der Bilanz unter **Nachwuchs**.
@@ -4002,12 +4002,12 @@ Ab Stufe 2 verhandelst du mit der **Stadt**: Sie zahlt mit, entscheidet aber nac
 Buden und Fanshop baust du wie bisher aus (Betriebsform des Caterings unter Marketing). Dazu: **Vereinsheim** (Pacht jeden Monat, etwas Stimmung), **Megastore** (ab 1990 als City-Filiale, ab 1995 am Stadion; braucht Fanshop Stufe 3), **Versand & Onlineshop** (Katalog ab 1985, Onlineshop ab 1998, international ab 2010 – je bekannter der Verein, desto mehr), **Vereinsmuseum** (ab 2004, Vorbild Museum von Hamburg Blau) und **Stadionführungen** (ab 1998). Handelserlöse laufen mit der **Marke** und litten 1997–1999 unter der Fanartikel-Flaute (-30 %).
 
 ## Fanbereich & Sicherheit
-Jedes Heimspiel kann **Ausschreitungen** bringen: Grundrisiko 4 % (bis 1979), **12 % in der Hooligan-Zeit 1980–1992**, 6 % ab 1993, 9 % in der Pyro-Zeit 2005–2014, danach 8 %; **Derbys ×2,2**, schlechte Stimmung ×1,3. Folge: **DFB-Geldstrafe**, in den 80ern bleiben Familien weg, die Stimmung leidet. Dagegen helfen **Ordnungsdienst** (bis −65 %, kostet je Zuschauer), **Fanprojekt** (ab 1981 – erstes deutsches Fanprojekt in Bremen; wirkt nach etwa einem Jahr voll; ab 1993 tragen Stadt, Land und DFB nach dem NKSS den Großteil), **Familienblock** (ab 1990: mehr Zuschauer, weniger Krawall, aber Rabatte; zur Ultra-Zeit murrt die Kurve), **Fanräume & Choreo-Lager** (ab 1998, Stimmung) und die **Fan-Zone** (ab 2006, Erlös vor dem Spiel, laut).
+Jedes Heimspiel kann **Ausschreitungen** bringen: Grundrisiko 4 % (bis 1979), **12 % in der Hooligan-Zeit 1980–1992**, 6 % ab 1993, 9 % in der Pyro-Zeit 2005–2014, danach 8 %; **Derbys ×2,2**, schlechte Stimmung ×1,3. Folge: **Verbandsstrafe**, in den 80ern bleiben Familien weg, die Stimmung leidet. Dagegen helfen **Ordnungsdienst** (bis −65 %, kostet je Zuschauer), **Fanprojekt** (ab 1981 – erstes deutsches Fanprojekt in Bremen; wirkt nach etwa einem Jahr voll; ab 1993 tragen Stadt, Land und Fußballbund nach dem NKSS den Großteil), **Familienblock** (ab 1990: mehr Zuschauer, weniger Krawall, aber Rabatte; zur Ultra-Zeit murrt die Kurve), **Fanräume & Choreo-Lager** (ab 1998, Stimmung) und die **Fan-Zone** (ab 2006, Erlös vor dem Spiel, laut).
 Ab **2015** stellen manche Länder **Polizeikosten** für Hochrisikospiele (Derbys) in Rechnung (Bremen, erster Bescheid ~425.000 € für Bremen – Hamburg Blau), ab **2025** häufiger (Urteil des Bundesverfassungsgerichts). Ein guter Ordnungsdienst senkt die Rechnung.
 
 ## Hospitality & Medien
 **Hospitality** (VIP-Zelt ab 1985, Business-Club ab 1995, Premium ab 2005) liefert Räume, Küche und Service für die Business-Seats und Logen im Stadion: +6/15/25 % Nachfrage und halb so viel mehr Preisbereitschaft. Eigene Plätze hat das Modul nicht mehr – ohne Business-Seats oder Logen im Stadion bringt es nichts. **Presse & TV** (Pressezentrum ab 1988, TV-Compound ab 1992, Medienzentrum ab 2008) und **Flutlicht** (300 lx bis LED 1.600 lx) stärken die nationale Marke bzw. erlauben Abendspiele.
-**Lizenzauflagen** (1. und 2. Liga) prüft der Verband zu jedem Saisonstart: Flutlicht in der 1. Liga ab 1988 TV-tauglich, ab 2000 1.200 lx, ab 2008 1.400 lx, **ab 2019 1.600 lx** (DFL; 2. Liga je eine Stufe weniger), Presse ab 1992 ein TV-Compound. Fehlt etwas, gibt es eine Geldstrafe, die bei Wiederholung steigt, und der Vorstand verliert Vertrauen.
+**Lizenzauflagen** (1. und 2. Liga) prüft der Verband zu jedem Saisonstart: Flutlicht in der 1. Liga ab 1988 TV-tauglich, ab 2000 1.200 lx, ab 2008 1.400 lx, **ab 2019 1.600 lx** (Ligaverband; 2. Liga je eine Stufe weniger), Presse ab 1992 ein TV-Compound. Fehlt etwas, gibt es eine Geldstrafe, die bei Wiederholung steigt, und der Vorstand verliert Vertrauen.
 
 ## Zustand und Modernisierung
 Alles nutzt sich ab. Der **Zustand** bestimmt die Wirkung (100 % → voll, 0 % → 60 %). Nach der **Lebensdauer** (z. B. Onlineshop 10, Flutlicht 25 Jahre) gilt eine Anlage als **veraltet**: Sie wirkt schwächer und verfällt doppelt so schnell. **Sanieren** stellt den Zustand her und modernisiert.
@@ -4203,7 +4203,7 @@ Zugesagte Hallenturniere und gebuchte Lager erscheinen im Kalender als belegte T
     title: 'Winterpause & Spielplan',
     keywords: ['winterpause', 'rückrunde', 'hinrunde', 'spielplan', 'englische woche', 'pause', 'wm', 'katar', 'ddr', 'spieltag'],
     body: `## Historische Winterpause
-Die Pause liegt in jeder Saison dort, wo sie in der Bundesliga wirklich lag (DFB-Datencenter, RSSSF; Jahre ohne Beleg werden innerhalb ihrer Epoche interpoliert):
+Die Pause liegt in jeder Saison dort, wo sie in der 1. Liga wirklich lag (Verbandsstatistik, RSSSF; Jahre ohne Beleg werden innerhalb ihrer Epoche interpoliert):
 
 | Epoche | typische Pause | Wochen | Beispiel |
 |---|---|---|---|
@@ -4225,7 +4225,7 @@ Ab 2027/28 wird die heutige Regel fortgeschrieben (Annahme: WM 2034 wieder im Wi
 - Wochentage, Pokal-/Europapokaltermine, Mindestabstände, Spielabsagen und Nachholspiele: Artikel **„Spielplan & Termine“**.
 
 ## In der Pause
-- Die Pause gilt für **alle Pflichtspiele**: Auch der **Landespokal** spielt nicht zwischen dem letzten Spieltag vor und dem ersten nach der Pause. Fällt eine Runde (z. B. das Viertelfinale) in die Pause, rückt sie in die erste Pokalwoche danach – so wie der DFB-Pokal damals vor der Pause oder ab Februar/März spielte. Europapokalspiele im Dezember gibt es weiterhin; für ihre Teilnehmer beginnt die Pause erst danach.
+- Die Pause gilt für **alle Pflichtspiele**: Auch der **Landespokal** spielt nicht zwischen dem letzten Spieltag vor und dem ersten nach der Pause. Fällt eine Runde (z. B. das Viertelfinale) in die Pause, rückt sie in die erste Pokalwoche danach – so wie der Landespokal damals vor der Pause oder ab Februar/März spielte. Europapokalspiele im Dezember gibt es weiterhin; für ihre Teilnehmer beginnt die Pause erst danach.
 - **Deine Winterpause** beginnt zwei Tage nach deinem letzten Pflichtspiel (Liga, Pokal, Europapokal) und endet drei Tage vor dem ersten danach. Nur in diesem Fenster liegen deine **Hallenturniere**, das **Hallen-Masters** (Mitte Januar) und das **Winter-Trainingslager** (KI-Vereine in den letzten vier Wochen vor dem Rückrundenstart).
 - **Frische und Fitness** erholen sich täglich. Ohne Spielrhythmus driftet die **Form** aller Spieler leicht zur Mitte (0,5 % je Tag): Formstarke verlieren in drei Wochen ≈ 1–2 Punkte, in elf Wochen ≈ 6; Formschwache fangen sich. Training bringt in der Pause Fitness, aber kein Form-Plus.`,
   },
@@ -4251,7 +4251,7 @@ Die 2. Liga: ${CALENDAR_ERAS.map((e) => `${e.label}: ${e.league2}`).join(' · ')
 Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden – rund um englische Wochen sowie am ersten und an den letzten zwei Spieltagen spielen alle am Samstag (bzw. Mittwoch). Simulierte Ligen spielen ihren Spieltag geschlossen am Hauptspieltag.
 
 ## Verlegungen
-- **Europapokal am Donnerstag** (UEFA-Pokal ab 1999, Europa League, Conference League): Der Verein spielt am folgenden Wochenende **sonntags**. Liegt ein Freitags-, Sonntags- oder Montagsspiel zu dicht an einem Pokal- oder Europapokalspiel, rückt es innerhalb des Wochenendes. Das prüft der Spielausschuss rund zwölf Tage im Voraus – nur für Vereine, die noch im Wettbewerb sind. Du bekommst eine Nachricht „Spielverlegung“.
+- **Europapokal am Donnerstag** (Europa-Pokal ab 1999, Europa-Liga, Konferenz-Liga): Der Verein spielt am folgenden Wochenende **sonntags**. Liegt ein Freitags-, Sonntags- oder Montagsspiel zu dicht an einem Pokal- oder Europapokalspiel, rückt es innerhalb des Wochenendes. Das prüft der Spielausschuss rund zwölf Tage im Voraus – nur für Vereine, die noch im Wettbewerb sind. Du bekommst eine Nachricht „Spielverlegung“.
 
 ## Spielabsagen und Nachholspiele
 - Am **Vortag** wird der Platz begangen. Schnee, gefrorener Boden, dichter Nebel oder Dauerregen können ein Ligaspiel absagen. Das Wetter ist dasselbe, das die Vorschau „Nächstes Spiel“ zeigt.
@@ -4403,17 +4403,17 @@ Jugendintegration). Sie zahlen über ihre Finanzen und bekommen rund ein Drittel
     title: 'Hallenfußball & Hallen-Masters',
     keywords: ['halle', 'hallenturnier', 'masters', 'hallenpokal', 'budenzauber', 'bande', 'westfalenhalle', 'olympiahalle', 'winterpause', 'platzierungspunkte', 'hallenruf', 'hallenspezialist', 'hallenkönige', 'hallentraining', 'gäste', 'ausland', 'wien', 'genf', 'paris', 'schweiz', 'five-a-side', 'six-a-side'],
     body: `## Geschichte im Spiel
-- **1976–1987:** Einladungsturniere mit Bundesligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
-- **1988–2001: DFB-Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
+- **1976–1987:** Einladungsturniere mit Erstligisten (Dortmund, Berlin, Stuttgart, München, Frankfurt) – ohne Endrunde.
+- **1988–2001: Hallenpokal.** Qualifikationsturniere (1988: 18, bis 1997: 16, ab 1998: 4), Wertung nach **Durchschnittspunkten je Spiel**
   (ein einziges Turnier kann reichen), die **8 Besten** spielen das **Hallen-Masters** (Frankfurter Festhalle, Westfalenhalle Dortmund, Olympiahalle München – Ort wie in der Wirklichkeit).
-- **Termine:** Hallenturniere gibt es erst, wenn die Bundesliga – und für den einzelnen Verein auch Pokal und Europapokal – in der Winterpause ist: frühestens zwei Tage nach dem letzten Pflichtspiel eines Teilnehmers, spätestens drei Tage vor seinem ersten danach (Artikel „Winterpause & Spielplan“). Wer im Dezember noch Europapokal spielt, wird erst danach eingeladen bzw. ersetzt. Heiligabend, 1. Weihnachtstag, Silvester und Neujahr sind hallenfrei. Die Tour-Turniere laufen bis kurz vor dem
+- **Termine:** Hallenturniere gibt es erst, wenn die 1. Liga – und für den einzelnen Verein auch Pokal und Europapokal – in der Winterpause ist: frühestens zwei Tage nach dem letzten Pflichtspiel eines Teilnehmers, spätestens drei Tage vor seinem ersten danach (Artikel „Winterpause & Spielplan“). Wer im Dezember noch Europapokal spielt, wird erst danach eingeladen bzw. ersetzt. Heiligabend, 1. Weihnachtstag, Silvester und Neujahr sind hallenfrei. Die Tour-Turniere laufen bis kurz vor dem
   **Masters**, das wie historisch **Mitte Januar** stattfindet (Wochenende um den 13.1.); ohne Masters enden die Turniere Ende Januar – der Februar der langen Pausen gehört dem Trainingslager.
 - **2002–2004:** nur noch wenige Regionalturniere. **Danach findet in Deutschland nichts mehr statt** (Chronik: „Hallen-Masters abgeschafft“).
 
 ## Gäste aus dem Ausland
-Wie in der Wirklichkeit spielen in den deutschen Turnieren immer wieder **ausländische Profivereine als Gäste** mit – die Veranstalter füllten damit Hallen und Fernsehzeit, die Teilnahme der Bundesligisten war bis 1997 freiwillig, und viele Nachbarländer hatten selbst Winterpause. Belegt sind etwa Gäste aus Prag, Ostrau, Moskau, Tiflis, St. Petersburg, Brøndby, Malmö, Norrköping, Chorzów und Istanbul. Im Spiel kommen die Gäste aus der **1. Liga der Länder mit Winterpause** (Tschechoslowakei/Tschechien, Dänemark, Sowjetunion/Russland, Schweden, Polen, Türkei, Österreich, Schweiz, Niederlande, Ungarn, Jugoslawien …), auch aus dem **Ostblock vor 1989** – Gastspiele waren erlaubt. Ihre Hallenstärke ist die Stärke des Vereins in der Hintergrund-Welt, der Hallenkader (Namen im Textmodus, Klick auf den Teilnehmer) kommt aus dem Weltpool. In Tabellen, Spielplan und Show steht eine **Flagge** vor ihnen.
+Wie in der Wirklichkeit spielen in den deutschen Turnieren immer wieder **ausländische Profivereine als Gäste** mit – die Veranstalter füllten damit Hallen und Fernsehzeit, die Teilnahme der Erstligisten war bis 1997 freiwillig, und viele Nachbarländer hatten selbst Winterpause. Belegt sind etwa Gäste aus Prag, Ostrau, Moskau, Tiflis, St. Petersburg, Brøndby, Malmö, Norrköping, Chorzów und Istanbul. Im Spiel kommen die Gäste aus der **1. Liga der Länder mit Winterpause** (Tschechoslowakei/Tschechien, Dänemark, Sowjetunion/Russland, Schweden, Polen, Türkei, Österreich, Schweiz, Niederlande, Ungarn, Jugoslawien …), auch aus dem **Ostblock vor 1989** – Gastspiele waren erlaubt. Ihre Hallenstärke ist die Stärke des Vereins in der Hintergrund-Welt, der Hallenkader (Namen im Textmodus, Klick auf den Teilnehmer) kommt aus dem Weltpool. In Tabellen, Spielplan und Show steht eine **Flagge** vor ihnen.
 - **Einladungsturniere 1976–1987:** etwa jedes zweite Turnier hat einen Gast.
-- **DFB-Qualifikation 1988–1997:** etwa jedes dritte Turnier. Für das **Masters können sich Gäste nicht qualifizieren** – sie stehen grau unter der Masters-Wertung.
+- **Verbandsqualifikation 1988–1997:** etwa jedes dritte Turnier. Für das **Masters können sich Gäste nicht qualifizieren** – sie stehen grau unter der Masters-Wertung.
 - **Ab der Reform 1997/98** werden die Profivereine den Turnieren zugeteilt, **ausländische Teams gibt es nicht mehr**; auch die Regionalturniere 2002–2004 bleiben unter sich.
 
 ## Hallenturniere im Ausland
@@ -4423,8 +4423,8 @@ Auch in den Nachbarländern gab es große Hallenturniere. Sie laufen jeden Winte
 |---|---|---|---|
 | Wiener Hallenturnier | Stadthalle, Wien | 1976–2009 (ohne 2006, 2008) | Wiener Vereine + Gäste (München, Ungarn, ČSSR …); ab 1999 Vorrunde des österreichischen Hallencups, nur Österreicher |
 | Grazer Hallen-Cup | Eishalle Liebenau, Graz | 1999–2005 | Grazer und österreichische Vereine (Annahme) |
-| Genfer Hallen-Cup | Patinoire des Vernets, Genf | 1982–1993, 1998–2003, 2006–2009 | Genfer Spitzenverein + Schweizer, Franzosen, Gäste aus Europa – Bundesligisten gewannen mehrfach; ab 2006 nur Westschweizer |
-| Pariser Hallenturnier | Bercy, Paris | 1984–1991 (zwei Abende) | Pariser Spitzenverein, Franzosen, Bundesligisten, Gäste aus Europa |
+| Genfer Hallen-Cup | Patinoire des Vernets, Genf | 1982–1993, 1998–2003, 2006–2009 | Genfer Spitzenverein + Schweizer, Franzosen, Gäste aus Europa – Erstligisten gewannen mehrfach; ab 2006 nur Westschweizer |
+| Pariser Hallenturnier | Bercy, Paris | 1984–1991 (zwei Abende) | Pariser Spitzenverein, Franzosen, Erstligisten, Gäste aus Europa |
 | Schweizer Hallenmeisterschaft | Vorrunden St. Gallen, Zürich, Lausanne · Finale Basel | 1997–1999 | Erstligisten der Schweiz; jeder spielt zwei Vorrunden, die **8 Besten nach Platzierungspunkten** spielen das Finale |
 | Londoner Five-a-Side | Wembley Arena, London | 1976–1987 (November) | englische Ligavereine, gelegentlich Schotten |
 | Englisches Six-a-side-Turnier | Birmingham, ab 1987 Manchester | 1983–1992 (Dezember) | englische Erstligisten |
@@ -4445,7 +4445,7 @@ Unter **Statistiken › Halle** zeigt die Box **Masters-Wertung** alle Teams mit
 **Option Platzierungspunkte** (Einstellungen › Hallenturniere › Qualifikation): Statt des historischen Schnitts bekommt jeder Verein je Qualifikationsturnier Punkte für seine Endplatzierung – **Sieger 10, Zweiter 7, Dritter 5, Vierter 4**, Fünfter 3, Sechster 2, dahinter 1. Die Punkte werden addiert; bei Gleichstand entscheidet der Schnitt. Damit lohnt es sich, viele Turniere zu spielen und weit zu kommen; ein einziges starkes Turnier reicht meist nicht mehr. Die Wahl gilt für die Tabelle **und** für die Auswahl des Masters-Feldes; über der Tabelle steht, welche Wertung gerade gilt (Spalte **PP** = Platzierungspunkte). Archivierte Winter behalten die Wertung, mit der sie gespielt wurden. Standard bleibt der Schnitt wie in der Wirklichkeit.
 
 ## Hallenruf & Hallenkönige
-Jeder Spieler, der mit einem Bundesliga- oder Zweitligakader in der Halle steht, sammelt über die Winter einen **Hallenruf**: **+1 je Hallentor, +3 je Turniersieg, +5 zusätzlich je Masters-Sieg**. Die Torschützen deiner Spiele im Textmodus zählen wie gespielt; alle übrigen Tore werden nach Torgefahr in der Halle (Hallenwert, Schuss, Dribbling) auf die Feldspieler verteilt – auch bei den Turnieren, die im Hintergrund laufen. Wer zu den rund **15 besten aktiven Hallenspielern** gehört und selbst für die Halle taugt (**Hallenwert höchstens 2 unter der Stärke draußen**, Torhüter immer), gilt als **Hallenspezialist** – ein technisch schwacher Verteidiger wird es also nicht allein über die Turniersiege seiner Mannschaft – die Schwelle hängt also von der Epoche ab: In den frühen Wintern bis 1987 (wenige Turniere, kein Masters) reicht ein Ruf von etwa 6 bis 30, in der Masters-Zeit 1988–2001 braucht es meist 35 bis 60, ohne Masters ab 2002 wieder etwas weniger. Nach dem letzten Hallenwinter 2004 bleibt die Schwelle stehen, die Spezialisten werden nach und nach weniger. Die aktuelle Schwelle steht in der Fußnote der Hallenkönige. Hallenspezialisten tragen ein kleines Etikett in der Hallenkader-Auswahl, im Hallenkader der Gegner und im Spielerprofil (Karriere › Auszeichnungen, dort auch Tore, Turniere und Siege). Unter **Statistiken › Halle** schaltest du die Box **Masters-Siegerliste** auf **Hallenkönige** um: die ewige Bestenliste mit Toren, Turnieren, Siegen, Masters-Siegen und Ruf (Klick auf Tore/Siege/Ruf sortiert). Spieler im Ruhestand bleiben grau in der Liste. Ältere Spielstände beginnen mit einer leeren Liste.
+Jeder Spieler, der mit einem Erstliga- oder Zweitligakader in der Halle steht, sammelt über die Winter einen **Hallenruf**: **+1 je Hallentor, +3 je Turniersieg, +5 zusätzlich je Masters-Sieg**. Die Torschützen deiner Spiele im Textmodus zählen wie gespielt; alle übrigen Tore werden nach Torgefahr in der Halle (Hallenwert, Schuss, Dribbling) auf die Feldspieler verteilt – auch bei den Turnieren, die im Hintergrund laufen. Wer zu den rund **15 besten aktiven Hallenspielern** gehört und selbst für die Halle taugt (**Hallenwert höchstens 2 unter der Stärke draußen**, Torhüter immer), gilt als **Hallenspezialist** – ein technisch schwacher Verteidiger wird es also nicht allein über die Turniersiege seiner Mannschaft – die Schwelle hängt also von der Epoche ab: In den frühen Wintern bis 1987 (wenige Turniere, kein Masters) reicht ein Ruf von etwa 6 bis 30, in der Masters-Zeit 1988–2001 braucht es meist 35 bis 60, ohne Masters ab 2002 wieder etwas weniger. Nach dem letzten Hallenwinter 2004 bleibt die Schwelle stehen, die Spezialisten werden nach und nach weniger. Die aktuelle Schwelle steht in der Fußnote der Hallenkönige. Hallenspezialisten tragen ein kleines Etikett in der Hallenkader-Auswahl, im Hallenkader der Gegner und im Spielerprofil (Karriere › Auszeichnungen, dort auch Tore, Turniere und Siege). Unter **Statistiken › Halle** schaltest du die Box **Masters-Siegerliste** auf **Hallenkönige** um: die ewige Bestenliste mit Toren, Turnieren, Siegen, Masters-Siegen und Ruf (Klick auf Tore/Siege/Ruf sortiert). Spieler im Ruhestand bleiben grau in der Liste. Ältere Spielstände beginnen mit einer leeren Liste.
 
 ## Hallentraining
 Von 1976 bis 2004 gibt es im Trainingsplan (Reiter **Technik**) den Baustein **Hallentraining** (mittel, Belastung 3): Fünf gegen fünf mit Bande fördert leicht **Technik, Ballannahme, Ballkontrolle, Dribbling, Wendigkeit und Antritt** – die Werte, die in der Halle zählen, aber schwächer als die Technikschulung. Volle Wirkung nur **November bis Januar**; außerhalb davon wirkt er nur halb. Dazu **Hallenform**: Jede Einheit in den 14 Tagen vor einem Hallenturnier gibt deinem Verein **+0,5 Hallenstärke, höchstens +2** (≈ 5 % mehr Torerwartung, etwa so viel wie die Stammfünf durchspielen zu lassen). Die Startseite der Hallen-Show zeigt den Bonus neben der Hallenstärke. Nach 2004 ersetzt der Trainerstab den Baustein durch die Technikschulung. KI-Vereine trainieren nicht gezielt für die Halle.
@@ -4473,7 +4473,7 @@ Schließt du das Spiel mitten im Turnier, öffnet es sich beim Laden wieder; ist
 
 ## KI-Vereine
 Alle Vereine spielen mit: Teilnahme nach Größe, Epoche und Trainer (offensive und Jugend-Trainer lieber). Spitzenvereine schonen ab Mitte der 90er ihre Stars
-und verzichten öfter auf das Masters – wie 1988, als zehn qualifizierte Bundesligisten absagten.`,
+und verzichten öfter auf das Masters – wie 1988, als zehn qualifizierte Erstligisten absagten.`,
   },
   // ---------------------------------------------------------------------------
   // Verband-POKAL
@@ -4487,7 +4487,7 @@ und verzichten öfter auf das Masters – wie 1988, als zehn qualifizierte Bunde
 Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**. Er hat eine eigene Seite (**Pokal** in der Navigation) mit Turnierbaum, deinem eingefärbten Pokalweg und der Preisgeld-Leiter.
 
 ## Teilnehmerfeld — 32 Mannschaften
-- **18 Bundesligisten** (alle Erstligavereine der Saison)
+- **18 Erstligisten** (alle Erstligavereine der Saison)
 - **14 generierte Amateurvereine** (kleine Reputation 30–55, kleines Stadion, deterministisch erzeugt)
 - Zusammen ergibt das ein volles **32er-Feld** für fünf Runden.
 
@@ -4504,7 +4504,7 @@ Parallel zur 1. Liga läuft der **Landespokal** als reiner **K.-o.-Wettbewerb**.
 - **Bis 1990/91: Wiederholungsspiel.** Steht es auch nach 120 Minuten unentschieden, wird das Spiel **mit getauschtem Heimrecht wiederholt** (eine Woche später, über die Feiertage schon nach drei Tagen). Erst wenn auch die Wiederholung nach Verlängerung unentschieden endet, entscheidet das Elfmeterschießen. Das **Endspiel** wurde zuletzt **1977** wiederholt (Köln Rot – Berlin Blau 1:1 n. V., 1:0) – im Spiel bis 1976/77, danach Elfmeterschießen im Finale.
 - **Ab 1991/92:** nach der Verlängerung direkt **Elfmeterschießen** (Best-of-5, danach „Sudden Death").
 - In der Anzeige stehen **n.V.** bzw. **i.E.** hinter dem Ergebnis; Wiederholungen mit dem Ergebnis des ersten Spiels („Wdh., zuvor 1:1 n. V.“). Im Kalender steht der Wiederholungstermin nur, wenn dein Verein ein Wiederholungsspiel hat.
-- Quelle: DFB-Pokal-Regeln („replayed with the home field right reversed“, Abschaffung der Wiederholungen 1991).
+- Quelle: Landespokal-Regeln („replayed with the home field right reversed“, Abschaffung der Wiederholungen 1991).
 
 ## Auslosung
 - **Jede Runde wird an einem eigenen Termin ausgelost** (die 1. Hauptrunde im Sommer, die Folgerunden am Wochenende nach der Vorrunde) — es gibt keinen festen Turnierpfad. Termine, Regeln und die Ziehungs-Show: *Pokalauslosung*.
@@ -4625,7 +4625,7 @@ Ab 1976/77 werden die deutschen Teilnehmer aus dem Spielstand ermittelt (siehe *
     keywords: ['format', 'gruppenphase', 'ligaphase', 'hinspiel', 'rückspiel', 'auswärtstore', 'auswärtstorregel', 'zwischenrunde', 'play-offs', 'sechzehntelfinale', 'gruppendritte', 'meisterliga', 'konferenz-liga', 'europa-liga'],
     body: `## Hin- und Rückspiel
 - Alle K.-o.-Runden mit **Hin- und Rückspiel**; das **Gesamtergebnis** entscheidet. Das Rückspiel hat der Gegner des Hinspiels daheim.
-- **Auswärtstorregel bis 2020/21:** Bei gleichem Gesamtergebnis kommt weiter, wer mehr Tore auswärts erzielt hat – auch Tore in der Verlängerung des Rückspiels zählen. Seit 2021/22 abgeschafft (UEFA-Beschluss vom 24.06.2021).
+- **Auswärtstorregel bis 2020/21:** Bei gleichem Gesamtergebnis kommt weiter, wer mehr Tore auswärts erzielt hat – auch Tore in der Verlängerung des Rückspiels zählen. Seit 2021/22 abgeschafft (Beschluss des Europaverbands vom 24.06.2021).
 - **Verlängerung und Elfmeterschießen nur im Rückspiel**, das Hinspiel endet nach 90 Minuten.
 - **Endspiele** als ein Spiel (Landesmeister/Meisterliga, Pokalsieger, Konferenz-Liga); das **Europa-Pokal-Finale bis 1996/97 mit Hin- und Rückspiel**, ab 1997/98 ein Spiel.
 - Im Textmodus steht beim Rückspiel unter dem Spielstand **Hinspiel, Gesamtstand** und wer gerade (auch durch Auswärtstore) vorn liegt.
@@ -4655,7 +4655,7 @@ Nach 2026 bleibt das letzte Format bestehen.
 
 ## Vereinfachungen
 - Qualifikations- und frühe Runden werden nicht ausgespielt; das Feld beginnt mit der Runde der Tabelle (z. B. Landesmeister bis 1990/91 im Achtelfinale).
-- Startplätze nach dem Rang Deutschlands in der Fünfjahreswertung des Spiels, nicht nach der echten UEFA-Liste jedes Jahres; kein Extraplatz für den Titelverteidiger.
+- Startplätze nach dem Rang Deutschlands in der Fünfjahreswertung des Spiels, nicht nach der echten Liste des Europaverbands jedes Jahres; kein Extraplatz für den Titelverteidiger.
 - Quellen und Details: \`src/data/euroFormats.ts\`.`,
   },
   {
@@ -4924,7 +4924,7 @@ Der Bau zählt aufs Jugendbudget, der Betrieb kostet ab der Fertigstellung monat
 ## Talente
 Jeden **1. Juli** kommen neue Talente mit 14 bis 16 Jahren ins Camp – mit Namen, Gesicht und Nationalität des Landes. Sie spielen beim Partnerverein, bis sie wechseln dürfen:
 - bis 2000/01 ab **16 Jahren**,
-- seit 2001/02 schützt die FIFA Minderjährige: internationale Wechsel erst ab **18** (Ausnahme: innerhalb der EU ab 16, z. B. Polen ab 2004, Kroatien ab 2013).
+- seit 2001/02 schützt der Weltverband Minderjährige: internationale Wechsel erst ab **18** (Ausnahme: innerhalb der EU ab 16, z. B. Polen ab 2004, Kroatien ab 2013).
 Dann holst du sie mit **Übernehmen** in deine Jugend. Mit 20 verlassen sie das Camp. In der Spielermeldung zählen sie als Ausländer.
 
 ## Andere Vereine

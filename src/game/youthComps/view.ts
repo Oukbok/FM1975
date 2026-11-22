@@ -75,10 +75,10 @@ export function youthCompOptions(g: Game, season: string): CompOption[] {
     if (c.fest) { if (festHasDates(c.fest)) out.push({ key: `${c.key}:fest`, label: `${c.label} (ohne Tabelle)`, kind: 'league', section: c.section }); continue; }
     const stages = [...new Set(c.leagues.filter((l) => l.group && leagueHasTeams(l)).map((l) => l.stage))];
     for (const l of c.leagues.filter((x) => !x.group && leagueHasTeams(x))) out.push({ key: `${c.key}:${l.id}`, label: c.key === 'ddr' ? l.name : l.name, kind: 'league', section: c.section });
-    for (const stg of stages) out.push({ key: `${c.key}:groups${stg}`, label: `${c.key === 'uyl' ? 'UEFA Youth League' : c.label} – ${stageLabel(c, stg)}`, kind: 'league', section: c.section });
+    for (const stg of stages) out.push({ key: `${c.key}:groups${stg}`, label: `${c.key === 'uyl' ? 'Jugend-Meisterliga' : c.label} – ${stageLabel(c, stg)}`, kind: 'league', section: c.section });
     if (koHasTies(c.ko)) {
       const rg = (c as { rg?: { name: string } }).rg?.name ?? (c as { rgName?: string }).rgName; // E-/F-Jugend: Endrunde der Kreismeister
-      const label = rg ?? (c.key === 'pokal' ? c.label : c.key === 'uyl' ? 'UEFA Youth League – K.-o.-Runde' : `${c.label} – Endrunde`);
+      const label = rg ?? (c.key === 'pokal' ? c.label : c.key === 'uyl' ? 'Jugend-Meisterliga – K.-o.-Runde' : `${c.label} – Endrunde`);
       out.push({ key: `${c.key}:ko`, label, kind: 'cup', section: c.section });
     }
   }

@@ -26,8 +26,8 @@ const MILESTONES: { year: number; text: string }[] = [
   { year: 1988, text: 'Erste Jugendinternate – verbreitet in den 90ern' },
   { year: 1994, text: 'Regionalliga: zweite Mannschaft als U23' },
   { year: 1996, text: 'Bosman: internationales Scouting' },
-  { year: 2001, text: 'Leistungszentrum Pflicht (Bundesliga; 2. Liga ab 2002)' },
-  { year: 2002, text: 'DFB-Talentförderprogramm: Stützpunkte sichten flächendeckend' },
+  { year: 2001, text: 'Leistungszentrum Pflicht (1. Liga; 2. Liga ab 2002)' },
+  { year: 2002, text: 'Talentförderprogramm: Stützpunkte sichten flächendeckend' },
   { year: 2006, text: 'Eliteschule des Fußballs' },
   { year: 2012, text: 'Athletik- und Analyse-Teams' },
 ];

@@ -136,10 +136,10 @@ function scanMatches(g: Game, today: string, year: number): void {
       const r = Math.random();
       const sev = r < 0.6 ? 1 : r < 0.9 ? 2 : 3;
       const fine = Math.round((FINE_BASE * sev * scale) / 1000) * 1000;
-      book(home.finances, m.date, -fine, 'other', `DFB-Geldstrafe: Zuschauerausschreitungen${away ? ` gegen ${away.shortName}` : ''}`, mine);
+      book(home.finances, m.date, -fine, 'other', `Verbandsstrafe: Zuschauerausschreitungen${away ? ` gegen ${away.shortName}` : ''}`, mine);
       if (year >= 1980 && year < 1993) home.stadium.averageAttendanceRate = clamp(home.stadium.averageAttendanceRate - 0.004 * sev, 0.3, 0.98);
       const what = year < 1993 ? (sev >= 2 ? 'Schlägereien auf den Rängen und vor dem Stadion' : 'Rangeleien im Block') : year < 2005 ? 'Ausschreitungen im Gästeblock' : (sev >= 2 ? 'Pyrotechnik und Platzsturm-Versuch' : 'gezündete Pyrotechnik');
-      pushLog(gr, { date: m.date, kind: 'incident', amount: fine, text: `${what}${away ? ` beim Spiel gegen ${away.name}` : ''}. Der DFB verhängt ${formatMoney(fine, year)} Geldstrafe.` }, !mine);
+      pushLog(gr, { date: m.date, kind: 'incident', amount: fine, text: `${what}${away ? ` beim Spiel gegen ${away.name}` : ''}. Der Fußballbund verhängt ${formatMoney(fine, year)} Geldstrafe.` }, !mine);
       addGroundsStats(gr, m.date, 0, fine, { fines: fine, incidents: 1 });
     }
     const share = policeFeeShare(year);
@@ -156,7 +156,7 @@ function scanMatches(g: Game, today: string, year: number): void {
 
 function reportLog(g: Game, gr: ClubGrounds, today: string): void {
   const titles = { chaos: 'Anreise-Chaos am Stadion', incident: 'Ausschreitungen beim Heimspiel', police: 'Rechnung für den Polizeieinsatz', license: 'Lizenzauflage', info: 'Vereinsgelände' };
-  const from = { chaos: 'Stadionbetrieb', incident: 'Sicherheitsbeauftragter', police: 'Finanzabteilung', license: 'DFB-Lizenzierung', info: 'Bauleitung' };
+  const from = { chaos: 'Stadionbetrieb', incident: 'Sicherheitsbeauftragter', police: 'Finanzabteilung', license: 'Lizenzierung', info: 'Bauleitung' };
   const fresh = gr.log.filter((e) => !e.shown);
   for (const e of fresh) e.shown = true;
   // Ältere, nie gemeldete Einträge (z. B. aus einem automatisch geführten Abschnitt) nicht nachträglich einzeln melden.

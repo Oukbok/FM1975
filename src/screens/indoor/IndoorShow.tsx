@@ -31,7 +31,7 @@ import { indoorSide, narrate, type TickLine } from './indoorScript';
 
 type Phase = 'intro' | 'board' | 'match' | 'done';
 const KIND_LABEL: Record<IndoorTournament['kind'], string> = {
-  invite: 'Einladungsturnier', qualifier: 'DFB-Hallenpokal · Qualifikation', masters: 'DFB-Hallenpokal · Endrunde', regional: 'Regionalturnier',
+  invite: 'Einladungsturnier', qualifier: 'Hallenpokal · Qualifikation', masters: 'Hallenpokal · Endrunde', regional: 'Regionalturnier',
   abroad: 'Internationales Hallenturnier',
 };
 

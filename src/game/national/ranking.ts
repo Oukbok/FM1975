@@ -69,7 +69,7 @@ const r1 = (x: number) => Math.round(x * 10) / 10;
 export function eloK(kind: string): number {
   if (kind === 'WM') return 60;
   if (kind === 'EM') return 50;
-  if (/Qualifikation|Nations League/.test(kind)) return 40;
+  if (/Qualifikation|Nationenliga|Nations League/.test(kind)) return 40;
   return 20;
 }
 /** Zuschlag nach Tordifferenz. */
@@ -199,7 +199,7 @@ function matchesBetween(st: NationalState, after: string, until: string): Booked
     for (const m of w.matches) {
       if (m.date <= after || m.date > until) continue;
       // EM-Qualifikation/Nations League betreffen nur Europa – andere Verbände spielen in diesen Fenstern Freundschaftsspiele.
-      const europeOnly = /EM-|Nations League/.test(m.stage) && NATION_BY_CODE[m.a] && confOf(NATION_BY_CODE[m.a], yearOf(m.date)) !== 'UEFA';
+      const europeOnly = /EM-|Nationenliga|Nations League/.test(m.stage) && NATION_BY_CODE[m.a] && confOf(NATION_BY_CODE[m.a], yearOf(m.date)) !== 'UEFA';
       out.push({ m, k: europeOnly ? eloK('Freundschaftsspiel') : eloK(m.stage), home: 1 });
     }
   }

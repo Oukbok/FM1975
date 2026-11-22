@@ -254,7 +254,7 @@ export function closeAmateurLeagues(g: Game, ownTable?: { key: string; order: st
     pushMessage(g.messages, makeMessage({
       date: g.calendar.currentDate, category: 'general', from: 'Fußball-Chronik',
       subject: `Amateurligen ${g.season}: die Meister`, shortText: `${lines.length} Staffeln entschieden.`,
-      bodyText: `Die höchsten Amateurligen ${g.season} sind entschieden:\n\n${lines.map((l) => `• ${l}`).join('\n')}\n\nDie Meister haben beim Aufstieg in die ${lowestSimTier(g) <= 2 ? '2. Bundesliga' : 'nächsthöhere Liga'} den Vorrang.`,
+      bodyText: `Die höchsten Amateurligen ${g.season} sind entschieden:\n\n${lines.map((l) => `• ${l}`).join('\n')}\n\nDie Meister haben beim Aufstieg in die ${lowestSimTier(g) <= 2 ? '2. Liga' : 'nächsthöhere Liga'} den Vorrang.`,
     }));
   }
 }

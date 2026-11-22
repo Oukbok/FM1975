@@ -193,7 +193,7 @@ export const GROUNDS_MODULES: GroundsModuleDef[] = [
   },
   {
     key: 'fanProject', name: 'Fanprojekt', category: 'fans', noise: 0.2, wear: 0.3, lifespan: 25,
-    desc: 'Sozialarbeiter begleiten die Fanszene. Wirkt erst nach etwa einem Jahr voll. Ab 1993 (NKSS) tragen Stadt, Land und DFB den Großteil der Kosten.',
+    desc: 'Sozialarbeiter begleiten die Fanszene. Wirkt erst nach etwa einem Jahr voll. Ab 1993 (NKSS) tragen Stadt, Land und Fußballbund den Großteil der Kosten.',
     source: 'Bremen 1981, NKSS 1993 (KOS)',
     levels: [
       L({ name: 'Sozialpädagogisches Fanprojekt', unlock: 1981, cost: 15000, upkeep: 1800, days: 60, risk: 0.2, mood: 1.5, aiRep: 70 }),
@@ -248,7 +248,7 @@ export const GROUNDS_MODULES: GroundsModuleDef[] = [
   {
     key: 'floodlight', name: 'Flutlicht', category: 'medien', noise: 0.8, wear: 0.35, lifespan: 25,
     desc: 'Erlaubt Abendspiele (mehr Zuschauer) und ist TV-Pflicht: Die Lizenz verlangt je Epoche eine Mindest-Beleuchtungsstärke.',
-    source: 'DFL: 1.200 lx (2. Liga), 1.400 lx, ab 2019 1.600 lx (1. Liga)',
+    source: 'Ligaverband: 1.200 lx (2. Liga), 1.400 lx, ab 2019 1.600 lx (1. Liga)',
     levels: [
       L({ name: 'Flutlichtmasten (300 lx)', unlock: 1975, cost: 0, lux: 300, aiRep: 0 }),
       L({ name: 'TV-taugliches Flutlicht (800 lx)', unlock: 1985, cost: 400000, upkeep: 900, days: 120, permit: true, lux: 800, att: 0.005, aiRep: 0 }),

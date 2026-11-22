@@ -44,7 +44,7 @@ export function hasClubProfile(g: Game, id: string | null | undefined): boolean 
   return !!id && (!!g.clubs[id] || !!g.simClubs[id] || !!g.euroClubs?.[id] || !!worldClubInfo(g, id));
 }
 
-const COMP_DE: Record<string, string> = { ec: 'Landesmeister', cwc: 'Pokalsieger', uefa: 'UEFA-Pokal', cl: 'Champions League', el: 'Europa League', ecl: 'Conference League' };
+const COMP_DE: Record<string, string> = { ec: 'Landesmeister', cwc: 'Pokalsieger', uefa: 'Europa-Pokal', cl: 'Meisterliga', el: 'Europa-Liga', ecl: 'Konferenz-Liga' };
 
 /** Angaben zu Auslandsvereinen (Hintergrund-Welt): Land, Titel, Abschlussplätze, Europapokal. */
 export interface ForeignInfo {

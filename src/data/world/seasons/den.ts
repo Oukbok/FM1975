@@ -83,13 +83,13 @@ export const SEASONS_DEN: Record<number, SeasonRow> = {
     t1: ['den-kopenhagen-gelb', 'den-lyngby', 'den-odense', 'den-silkeborg', 'den-vejle', 'den-naestved', 'den-ikast', 'den-aarhus', 'den-aalborg', 'den-gentofte', 'den-kopenhagen-frederiksberg', 'den-kopenhagen-valby', 'den-esbjerg', 'den-hvidovre', 'den-broenshoej', 'den-frederikshavn'],
     cup: 'den-odense',
     euro: { ec: ['den-odense'], cwc: ['den-lyngby'], uefa: ['den-kopenhagen-gelb', 'den-silkeborg'] },
-    note: "Danach Übergangsrunde Frühjahr 1991 (10 Vereine, Meister aus Kopenhagen-Brøndby) – nicht als eigene Saison erfasst; ab 1991/92 Herbst-Frühjahr-Saison (Superliga).",
+    note: "Danach Übergangsrunde Frühjahr 1991 (10 Vereine, Meister aus Kopenhagen-Brøndby) – nicht als eigene Saison erfasst; ab 1991/92 Herbst-Frühjahr-Saison (neue 1. Liga).",
   },
   1991: {
     t1: ['den-lyngby', 'den-kopenhagen-gelb', 'den-aalborg', 'den-silkeborg', 'den-odense', 'den-aarhus', 'den-naestved', 'den-ikast', 'den-vejle', 'den-gentofte'],
     cup: 'den-aarhus',
     euro: { ec: ['den-kopenhagen-gelb'], cwc: ['den-odense'], uefa: ['den-lyngby', 'den-silkeborg'] },
-    note: "Erste Superliga-Saison (10 Vereine, Herbst + Meisterrunde).",
+    note: "Erste Saison der neuen 1. Liga (10 Vereine, Herbst + Meisterrunde).",
   },
   1992: {
     t1: ['den-kopenhagen', 'den-odense', 'den-kopenhagen-gelb', 'den-aalborg', 'den-silkeborg', 'den-lyngby', 'den-naestved', 'den-ikast', 'den-viborg', 'den-herfoelge'],
@@ -109,7 +109,7 @@ export const SEASONS_DEN: Record<number, SeasonRow> = {
     cup: 'den-kopenhagen',
     cupFinalist: 'den-aalborg',
     euro: { cl: ['den-silkeborg'], cwc: ['den-kopenhagen-gelb'], uefa: ['den-kopenhagen', 'den-odense'] },
-    note: "Ab 1995/96 Superliga mit 12 Vereinen.",
+    note: "Ab 1995/96 1. Liga mit 12 Vereinen.",
   },
   1995: {
     t1: ['den-kopenhagen-gelb', 'den-lyngby', 'den-aalborg', 'den-kopenhagen', 'den-aarhus', 'den-silkeborg', 'den-viborg', 'den-odense', 'den-ikast', 'den-herfoelge', 'den-naestved', 'den-gladsaxe'],
@@ -242,7 +242,7 @@ export const SEASONS_DEN: Record<number, SeasonRow> = {
     cup: 'den-kopenhagen',
     cupFinalist: 'den-kopenhagen-gelb',
     euro: { cl: ['den-kopenhagen'], el: ['den-herning', 'den-haderslev'] },
-    note: "Ab 2016/17 Superliga mit 14 Vereinen.",
+    note: "Ab 2016/17 1. Liga mit 14 Vereinen.",
   },
   2017: {
     t1: ['den-herning', 'den-kopenhagen', 'den-kopenhagen-gelb', 'den-farum', 'den-aarhus', 'den-aalborg', 'den-randers', 'den-horsens', 'den-odense', 'den-haderslev', 'den-hobro', 'den-silkeborg', 'den-lyngby', 'den-helsingoer'],

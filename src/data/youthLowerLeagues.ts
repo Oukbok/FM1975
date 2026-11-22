@@ -120,12 +120,12 @@ export function lowFormat(key: YcLowKey, y0: number, region: YcRegion, lv: Lv, l
       // Wunsch Pascal: E- und F-Jugend spielen in allen Epochen eine Meisterschaft (Staffel + Endrunde der Kreismeister).
       if (E_F_CHAMPIONSHIP) return level === 0 ? L('Kreisliga', 'kreis', 10, 7, y0 >= KIFU_REFORM ? '7 gegen 7 (Kleinfeld, Meisterschaft im Spiel – abweichend von der Reform 2024)' : '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)');
       if (y0 >= KIFU_REFORM) return F('5 gegen 5 oder 7 gegen 7 auf Mini- bzw. Kleinfeldtore',
-        `Seit der DFB-Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} spielt die E-Jugend in Spielfesten: kleine Teams, viele Ballkontakte, Wechsel nach jedem Tor. Ergebnisse und Tabellen werden nicht festgehalten – wer gewinnt, rückt auf ein stärkeres Feld.`);
+        `Seit der Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} spielt die E-Jugend in Spielfesten: kleine Teams, viele Ballkontakte, Wechsel nach jedem Tor. Ergebnisse und Tabellen werden nicht festgehalten – wer gewinnt, rückt auf ein stärkeres Feld.`);
       return level === 0 ? L('Kreisliga', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 10, 7, '7 gegen 7 (Kleinfeld)');
     case 'u9':
       if (E_F_CHAMPIONSHIP) return level === 0 ? L('Kreisliga', 'kreis', 8, 7, y0 >= 2010 ? '7 gegen 7, Fair-Play-Liga ohne Schiedsrichter' : '7 gegen 7 (Kleinfeld)') : L('Kreisklasse', 'kreis', 8, 7, '7 gegen 7 (Kleinfeld)');
       if (y0 >= KIFU_REFORM) return F('3 gegen 3 auf vier Minitore (Funino), auch 5 gegen 5',
-        `Seit der DFB-Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} gibt es in der F-Jugend keine Tabelle mehr: Spielfeste mit 3 gegen 3 auf vier Minitore, ohne Schiedsrichter, alle Kinder spielen gleich viel.`);
+        `Seit der Kinderfußball-Reform ${KIFU_REFORM}/${String((KIFU_REFORM + 1) % 100).padStart(2, '0')} gibt es in der F-Jugend keine Tabelle mehr: Spielfeste mit 3 gegen 3 auf vier Minitore, ohne Schiedsrichter, alle Kinder spielen gleich viel.`);
       if (y0 < F_LEAGUE_FROM) return F('Freundschaftsspiele und Turniere auf dem Kleinfeld',
         'In den 1970ern gibt es für die F-Jugend noch keinen geregelten Spielbetrieb: Die Kleinsten spielen Freundschaftsspiele und Turniere ohne Tabelle. Erste Kreismeisterschaften kommen Mitte der 1980er auf.');
       return level === 0 ? L('Kreisliga', 'kreis', 8, 7, y0 >= 2010 ? '7 gegen 7, Fair-Play-Liga ohne Schiedsrichter' : '7 gegen 7 (Kleinfeld)')

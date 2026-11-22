@@ -129,6 +129,6 @@ export const SEASONS_GDR: Record<number, SeasonRow> = {
     cup: 'ddr-rostock',
     cupFinalist: 'ddr-eisenh',
     euro: { ec: ['ddr-dresden'], cwc: ['gdr-schwerin'], uefa: ['ddr-magdeburg', 'ddr-chemnitz'] },
-    note: "NOFV-Oberliga 1990/91 (letzte Saison); NOFV-Liga nicht verfügbar – t2 fehlt. Ab 1991/92 spielen die Vereine in den gesamtdeutschen Ligen (seasons/ger.ts).",
+    note: "Oberliga Nordost 1990/91 (letzte Saison); Liga Nordost nicht verfügbar – t2 fehlt. Ab 1991/92 spielen die Vereine in den gesamtdeutschen Ligen (seasons/ger.ts).",
   },
 };

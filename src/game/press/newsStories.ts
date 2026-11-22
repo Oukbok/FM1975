@@ -5,6 +5,7 @@
 // Pokalrunden, Nachrichten).
 // =============================================================================
 import { EURO_COMP_NAMES } from '../../data/europe';
+import { euroCompName } from '../../data/euroFormats';
 import { economyScale } from '../../engine/economy';
 import { hashStr } from '../../engine/leagues';
 import type { CupState, Match } from '../../types';
@@ -174,7 +175,7 @@ export function cupStories(c: PressCtx): PressStory[] {
   const g = c.g, out: PressStory[] = [];
   const german = (id: string) => !!g.clubs[id] || !!g.simClubs?.[id] || (g.cup?.participantIds ?? []).includes(id);
   const comps: [CupState | null | undefined, string, boolean][] = [[g.cup, 'Landespokal', false]];
-  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<typeof g.euroCups>)[]) comps.push([g.euroCups[k], EURO_COMP_NAMES[k] ?? 'Europapokal', true]);
+  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<typeof g.euroCups>)[]) comps.push([g.euroCups[k], g.euroCups[k] ? euroCompName(k, Number(g.euroCups[k]!.season.slice(0, 4))) : EURO_COMP_NAMES[k] ?? 'Europapokal', true]);
   for (const [cup, comp, euro] of comps) {
     if (!cup) continue;
     const isGer = euro ? (id: string) => !!g.clubs[id] : german;

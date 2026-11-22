@@ -121,13 +121,13 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       + 'integriert. Die zwei besten DDR-Oberliga-Vereine steigen direkt in die 1. Liga '
       + 'auf, die für DIESE EINE Saison auf 20 Vereine (38 Spieltage) vergrößert wird. '
       + 'Vier weitere DDR-Vereine wechseln direkt in die 2. Liga, zwei weitere über eine '
-      + 'Aufstiegsrunde. Die übrigen DDR-Vereine bilden als NOFV-Oberliga die dritte '
+      + 'Aufstiegsrunde. Die übrigen DDR-Vereine bilden als Oberliga Nordost die dritte '
       + 'Ebene (Nordost). Die separat geführte DDR-Struktur wird damit aufgelöst.',
     affectedTiers: [1, 2, 3],
     qualificationRule:
       'DDR-Oberliga-Endstand 1990/91: Platz 1–2 → 1. Liga (auf 20 aufgestockt), '
       + 'Platz 3–6 → 2. Liga (direkt), Platz 7–8 → 2. Liga (Aufstiegsrunde), Rest der '
-      + 'DDR-Oberliga + DDR-Liga → NOFV-Oberliga (Ebene 3, Nordost). '
+      + 'DDR-Oberliga + DDR-Liga → Oberliga Nordost (Ebene 3, Nordost). '
       + 'NORMALISIERUNG: Die einmalig vergrößerte 1. Liga (20) und 2. Liga werden ab der '
       + 'Folgesaison 1992/93 durch den regulären Auf-/Abstieg schrittweise auf die '
       + 'Sollgrößen (18 bzw. 20) zurückgeführt – d. h. in jener Saison steigen '
@@ -138,7 +138,7 @@ export const LEAGUE_REFORMS: LeagueReform[] = [
       // Sollgrößen erfolgt über die Folgesaisons (normalizeToSteady).
       { id: 'tier1', tier: 1, group: null, name: '1. Liga', teamCount: 18 },
       { id: 'tier2', tier: 2, group: null, name: '2. Liga', teamCount: 20 },
-      { id: 'tier3-nordost', tier: 3, group: 'nordost', name: 'NOFV-Oberliga', teamCount: 18 },
+      { id: 'tier3-nordost', tier: 3, group: 'nordost', name: 'Oberliga Nordost', teamCount: 18 },
     ],
   },
   // ---------------------------------------------------------------------------
