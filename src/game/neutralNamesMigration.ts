@@ -5,15 +5,21 @@
 // Historie, Buchungstexte („DFB-Geldstrafe“), Umfeld-/Hallen-Protokolle, Stufen der Länderspiele
 // („Nations League“) – werden einmal beim Laden umgeschrieben. IDs und interne Schlüssel bleiben
 // ('UEFA' als Kontinent, 'uefa' als Wettbewerb: `neutralText` lässt reine Schlüssel stehen).
+// Stufe 2 (namesV 2): Weltpokal → Transatlantik-Pokal, Klub-WM → Klub-Weltturnier, Supercup →
+// Gipfelpokal, Hallen-Masters → Hallenfinale, Goldener Ball → Goldener Stern u. a. (Tabelle CLAUDE.md).
 // Idempotent (kein neuer Name enthält einen alten); Markierung `game.namesV`.
 // =============================================================================
 import { neutralText } from '../data/neutralNames';
 import type { Game } from './state';
 
-export const NEUTRAL_NAMES_V = 1;
+/** 1 = Verbände/Ligen/Europapokale · 2 = Weltpokal, Klub-WM, Supercup, Ligapokal, Hallen-Masters,
+ *  Goldener Ball/Schuh u. a. + „Erstligist“ geglättet (Regeln `RULES_V2` in data/neutralNames.ts). */
+export const NEUTRAL_NAMES_V = 2;
 
 /** Objektschlüssel, unter denen nie Anzeigetexte stehen (Kennungen, Zahlenreihen). */
-const SKIP_KEYS = new Set(['id', 'ids', 'clubId', 'playerId', 'managedClubId', 'relatedId', 'matchId', 'key', 'cc', 'code', 'conf']);
+const SKIP_KEYS = new Set(['id', 'ids', 'clubId', 'playerId', 'managedClubId', 'relatedId', 'matchId', 'key', 'cc', 'code', 'conf',
+  // Personennamen (z. B. englischer Familienname „Masters“) bleiben unangetastet.
+  'firstName', 'lastName', 'fullName']);
 
 /** Ersetzt alle Zeichenketten im Baum; gibt die Zahl der Änderungen zurück. */
 export function neutralizeTree(root: unknown): number {

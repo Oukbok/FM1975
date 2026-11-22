@@ -25,7 +25,7 @@ export const HARD = new Set(['Grammatik', 'Genus', 'Platzhalter', 'undefined/NaN
   'Leerzeichen', 'Satzzeichen', 'Umlaut als ae/oe/ue', 'Epoche', 'Inhalt', 'Währung']);
 
 /** Echte Verbands-/Wettbewerbsnamen (Liste wie tests/realPeopleList.ts ORGS, Kurzform). */
-const REAL_ORG = /(?<![\p{L}\p{N}])(?:FIFA|UEFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|Bundesligi?\p{L}*|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der (?:Landesmeister|Pokalsieger)|Intertoto|UI-Cup|Premier League|Serie [A-D]|LaLiga|Ligue 1|Eredivisie)(?![\p{L}\p{N}])/u;
+const REAL_ORG = /(?<![\p{L}\p{N}])(?:FIFA|UEFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|Bundesligi?\p{L}*|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der (?:Landesmeister|Pokalsieger)|Intertoto|UI-Cup|Premier League|Serie [A-D]|LaLiga|Ligue 1|Eredivisie|Weltpokal\p{L}*|(?:Klub|Club)-W(?:M|eltmeister)\p{L}*|Interkontinental-?[Pp]okal\p{L}*|Super(?:cup|-Cup| Cup)\p{L}*|Ligapokal\p{L}*|Hallen-?[Mm]asters|Masters-\p{L}+|Goldene[nrm]? (?:Ball|Schuh)\p{L}*|Confed-Cup|Sommermärchen|Wembley)(?![\p{L}\p{N}])/u;
 
 // --------------------------------------------------------------- Epochen
 interface EraRule { re: RegExp; from?: number; to?: number; only?: Src[]; skip?: Src[]; label: string }
@@ -64,7 +64,7 @@ export const ERA_RULES: EraRule[] = [
   { re: /Tablet|iPad/, from: 2010, label: 'Tablet' },
   { re: /\bDVD/, from: 1998, label: 'DVD' },
   { re: /Pay-TV|Bezahlfernsehen/, from: 1991, skip: ['brief'], label: 'Pay-TV' },
-  { re: /Klub-WM|Klub-Weltmeisterschaft/, from: 2000, skip: ['brief'], label: 'Klub-WM' },
+  { re: /Klub-Weltturnier/, from: 2000, skip: ['brief'], label: 'Klub-Weltturnier' },
   { re: /Ligaphase/, from: 2024, skip: ['brief'], label: 'Ligaphase' },
   { re: /Wiedervereinigung|Mauerfall/, from: 1989, skip: ['brief'], label: 'Wiedervereinigung' },
 ];
