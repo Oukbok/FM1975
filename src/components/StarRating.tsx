@@ -1,6 +1,6 @@
 // =============================================================================
 // Sterne mit Spanne (Wunsch Pascal): fünf Vektor-Sterne (scharf in jeder Größe),
-// je Stern in Vierteln wie eine Uhr gefüllt (ab 12 Uhr im Uhrzeigersinn). Sicherer Teil (bis `lo`)
+// je Stern in Vierteln gefüllt: links unten, links oben, rechts unten, rechts oben. Sicherer Teil (bis `lo`)
 // gelb, geschätzter Teil (`lo` bis `hi`) weiß, Rest leer. Hover/Fokus/Tippen zeigt
 // die Spanne in Worten (status/StatusTip.tsx `useFloatTip`).
 // =============================================================================
@@ -10,12 +10,18 @@ import { useFloatTip } from './status/StatusTip';
 /** Fünfzackiger Stern im Raster 0..24 (abgerundete Spitzen über stroke-linejoin). */
 const STAR = 'M12 1.6l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.7l-6.4 3.5 1.4-7.1-5.3-5 7.2-.9z';
 
-/** Kreissektor um die Sternmitte von Anteil f0 bis f1 (0 = 12 Uhr, im Uhrzeigersinn); ganzer Stern = Rechteck. */
+/** Reihenfolge der Viertel (Wunsch Pascal): ¼ links unten, ½ = ganze linke Hälfte, ¾ = dazu rechts unten, dann rechts oben. */
+const QUARTERS: [number, number, number, number][] = [[0, 12.4, 12, 11.6], [0, 0, 12, 12.4], [12, 12.4, 12, 11.6], [12, 0, 12, 12.4]];
+
+/** Viertel des Sterns von Anteil f0 bis f1 (Schritte zu 0,25) als Rechtecke; ganzer Stern = Rechteck. */
 function sector(x: number, f0: number, f1: number): string {
   if (f1 - f0 >= 0.999) return `M${x} 0h24v24h-${24}z`;
-  const cx = x + 12, cy = 12.4, r = 18;
-  const pt = (f: number) => `${(cx + r * Math.sin(f * 2 * Math.PI)).toFixed(2)} ${(cy - r * Math.cos(f * 2 * Math.PI)).toFixed(2)}`;
-  return `M${cx} ${cy}L${pt(f0)}A${r} ${r} 0 ${f1 - f0 > 0.5 ? 1 : 0} 1 ${pt(f1)}Z`;
+  let d = '';
+  for (let q = Math.round(f0 * 4); q < Math.round(f1 * 4); q++) {
+    const [qx, qy, w, h] = QUARTERS[q];
+    d += `M${x + qx} ${qy}h${w}v${h}h-${w}z`;
+  }
+  return d;
 }
 
 const fmt = (x: number) => String(Math.round(x * 100) / 100).replace('.', ',');
@@ -53,8 +59,8 @@ export function StarRating({ lo, hi, size = 22, label, note, plain }: {
           {[0, 1, 2, 3, 4].map((i) => {
             const x = i * (24 + gap);
             const sure = Math.max(0, Math.min(1, a - i)), est = Math.max(0, Math.min(1, b - i));
-            // Viertel wie eine Uhr (Wunsch Pascal): von 12 Uhr im Uhrzeigersinn gefüllt, der Rest bleibt leer –
-            // so sind alle Sterne gleich breit und ein Viertelstern ist sofort als Viertel lesbar.
+            // Viertel in fester Reihenfolge (Wunsch Pascal): links unten → links oben → rechts unten → rechts oben,
+            // der Rest bleibt leer – alle Sterne gleich breit, ein halber Stern ist die linke Hälfte.
             return (
               <g key={i}>
                 {est > sure && <path className="mk-star-est" d={sector(x, sure, est)} />}
