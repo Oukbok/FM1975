@@ -109,6 +109,28 @@ await page.locator('.sf-headr button:has-text("Wirkung")').click();
 await page.waitForTimeout(300);
 await shot('11_verein_wirkung');
 
+// ---- Arbeitsmarkt mit angestellten Mitarbeitern (KI-Vereine, Sim-Vereine, Ausland) + Abwerben am Tisch ----
+await page.locator('.hd-nav-item:has-text("Training")').first().click();
+await page.locator('.tn-sub-item:has-text("Trainerteam")').first().click();
+await page.waitForTimeout(500);
+await page.locator('.sf-filters .seg3 button:has-text("angestellt")').first().click();
+await page.waitForTimeout(400);
+if (!(await page.locator('.sf-table tbody tr').count())) errors.push('keine angestellten Mitarbeiter auf dem Markt');
+await shot('12_angestellt'); await noScroll('Arbeitsmarkt angestellt');
+const free = page.locator('.sf-table tbody tr:has(button:has-text("Verhandeln"):not([disabled]))').first();
+const blocked = page.locator('.sf-table tbody tr.no').first();
+if (await blocked.count()) { await blocked.click(); await page.waitForTimeout(300); await shot('13_angestellt_ablehnung'); }
+if (await free.count()) {
+  await free.click(); await page.waitForTimeout(300);
+  await shot('14_angestellt_profil');
+  await free.locator('button:has-text("Verhandeln")').click();
+  await page.waitForTimeout(500);
+  if (!(await page.locator('.vt-root[data-kind="staff"]').count())) errors.push('Verhandlungstisch (Abwerben) öffnet nicht');
+  await shot('15_abwerben_tisch');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+} else errors.push('niemand Angestelltes ist wechselbereit');
+
 console.log(errors.length ? errors.join('\n') : 'Mitarbeiter-Seiten: keine Fehler');
 await browser.close(); server.close();
 process.exit(errors.length ? 1 : 0);

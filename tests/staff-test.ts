@@ -1,4 +1,4 @@
-// Trainerteam & Arbeitsmarkt ohne UI: Fachgebiete, Verhandlung, Entlassung,
+// Trainerteam & Arbeitsmarkt ohne UI: Fachgebiete, Verhandlung, Entlassung, KI-Stäbe/Abwerben,
 // Migration, Trainingsplan-Sperren – und eine Langzeit-Simulation über viele
 // Saisons (Pool nie leer, gesunde Verteilung, Ex-Profis, Erfolg → Trainergüte).
 //   npm run test:staff            (Standard 40 Saisons)
@@ -10,7 +10,7 @@ import { CalendarEngine } from '../src/engine/calendar';
 import { Game } from '../src/game/state';
 import { StaffMember } from '../src/engine/staffPeople';
 import {
-  acceptsOffer, bestRoles, COACH_SKILLS, roleFit, roleQuality, ROLE_SKILLS, rolesAvailable, roleSlots, staffLevel, staffValueOf, AI_TRACKED_ROLES,
+  acceptsOffer, bestRoles, COACH_SKILLS, roleFit, roleQuality, ROLE_SKILLS, rolesAvailable, roleSlots, staffLevel, staffValueOf, AI_TRACKED_ROLES, TEAM_ROLE_IDS,
 } from '../src/engine/staffSkills';
 import { careerSuccess, coachAsStaff, staffFromPlayer } from '../src/engine/staffGen';
 import { assistantsNeeded, coachingTeam, coachPotCut, declineFactor, dragChance, levelNeeded, pushChance, teachFactor } from '../src/engine/coaching';
@@ -26,6 +26,7 @@ import { BLOCKS_BY_ID } from '../src/engine/weeklyTraining';
 import { applyScheduledTemplate, matchingTemplate, seasonWeeks, setWeekTemplate } from '../src/game/trainingSeason';
 import { isLeagueClub } from '../src/engine/clubEconomy';
 import { STAFF_BY_ID, staffAvailable } from '../src/data/staff';
+import { staffAiChecks } from './staff-ai-checks';
 
 const SEASONS = Number(process.argv[2] ?? 40);
 let seed = 1975;
@@ -299,6 +300,11 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
 }
 
 // ---------------------------------------------------------------------------
+// 4b) KI-Stäbe, Ausland, Faktor für alle, Abwerben, KI-Angebote, Laden/Migration (tests/staff-ai-checks.ts)
+// ---------------------------------------------------------------------------
+for (const line of staffAiChecks()) console.log(`KI-Stab: ${line}`);
+
+// ---------------------------------------------------------------------------
 // 5) Langzeit: viele Saisons
 // ---------------------------------------------------------------------------
 const sim = fresh();
@@ -337,20 +343,22 @@ for (let s = 0; s < SEASONS; s++) {
   const coverage = aiNow.filter((c) => staffOfClub(sim, c.id).some((m) => m.roleId === 'cotrainer')).length / Math.max(1, aiNow.length);
   if (coverage < 0.85) fail(`${sim.season}: nur ${Math.round(coverage * 100)} % der KI-Vereine mit Co-Trainer`);
   rows.push({
-    y: year, free: free.length, emp: emp.length, ex: people.filter((m) => m.exPro).length / people.length,
+    y: year, free: free.length, emp: emp.length,
+    // Ex-Profis unter den Trainern (Ärzte, Verwaltung & Co. der KI-Stäbe sind keine Ex-Profis).
+    ex: people.filter((m) => m.exPro && TEAM_ROLE_IDS.has(m.roleId)).length / Math.max(1, people.filter((m) => TEAM_ROLE_IDS.has(m.roleId)).length),
     q: avg(qs), q90: qs[Math.floor(qs.length * 0.9)], qmax: qs[qs.length - 1], roles: new Set(people.map((m) => m.roleId)).size,
     promoted: last?.promoted ?? 0, exIn: last?.exPros ?? 0, out: last?.outsiders ?? 0, pool: sim.coachPool?.length ?? 0,
   });
   const r = rows[rows.length - 1];
-  console.log(`${sim.season}: ${people.length} Personen (${r.free} frei, ${r.emp} angestellt), Ex-Profis ${Math.round(r.ex * 100)} %, Qualität Ø ${r.q.toFixed(1)} / 90 % ${r.q90} / max ${r.qmax}, Rollen ${r.roles}, neu: ${r.exIn} Ex-Profis + ${r.out} Quereinsteiger, Aufstieg zum Cheftrainer ${r.promoted}, Cheftrainer-Pool ${r.pool}`);
-  if (people.length > 700 || free.length > 330) fail('Arbeitsmarkt explodiert');
+  console.log(`${sim.season}: ${people.length} Personen (${r.free} frei, ${r.emp} angestellt), Ex-Profis (Trainer) ${Math.round(r.ex * 100)} %, Qualität Ø ${r.q.toFixed(1)} / 90 % ${r.q90} / max ${r.qmax}, Rollen ${r.roles}, neu: ${r.exIn} Ex-Profis + ${r.out} Quereinsteiger, Aufstieg zum Cheftrainer ${r.promoted}, Cheftrainer-Pool ${r.pool}`);
+  if (people.length > 1300 || free.length > 330) fail('Arbeitsmarkt explodiert');
 }
 console.log(`Simulation: ${SEASONS} Saisons in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 
 if (SEASONS >= 10) {
   const late = rows.slice(5);
   const exShare = avg(late.map((r) => r.ex));
-  console.log(`Ex-Profi-Anteil ab Saison 6: ${Math.round(exShare * 100)} %`);
+  console.log(`Ex-Profi-Anteil unter Trainern ab Saison 6: ${Math.round(exShare * 100)} %`);
   if (exShare < 0.25 || exShare > 0.85) fail(`Anteil Ex-Profis unplausibel (${Math.round(exShare * 100)} %)`);
   for (const [a, b] of [[1975, 1990], [1990, 2005], [2005, 2030]]) {
     const r = rows.filter((x) => x.y >= a && x.y < b);

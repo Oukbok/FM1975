@@ -40,13 +40,13 @@ export function MarketFilters({ g, roles, f, set }: { g: Game; roles: string[]; 
   return (
     <div className="sf-filters">
       <label className="sf-filter"><span>Stelle</span>
-        <Select width={250} value={f.role} onChange={(v) => set({ role: v })} aria-label="Stelle">
+        <Select width={210} value={f.role} onChange={(v) => set({ role: v })} aria-label="Stelle">
           <option value="all">Alle Stellen</option>
           {roles.map((id) => <option key={id} value={id}>{roleName(id)}</option>)}
         </Select>
       </label>
       <label className="sf-filter"><span>Fähigkeit</span>
-        <Select width={210} value={f.skill} onChange={(v) => set({ skill: v as MarketState['skill'], minLvl: v && !f.minLvl ? 70 : f.minLvl })} aria-label="Fähigkeit">
+        <Select width={170} value={f.skill} onChange={(v) => set({ skill: v as MarketState['skill'], minLvl: v && !f.minLvl ? 70 : f.minLvl })} aria-label="Fähigkeit">
           <option value="">egal</option>
           {SKILL_GROUPS.map((grp) => (
             <optgroup key={grp.id} label={grp.label}>
@@ -62,7 +62,7 @@ export function MarketFilters({ g, roles, f, set }: { g: Game; roles: string[]; 
       <span className="sf-filter-gap" />
       <Seg<EmpFilter> size="s" aria-label="Anstellung" value={f.emp} onChange={(v) => set({ emp: v, club: v === 'free' ? '' : f.club })}
         options={[{ v: 'free', label: 'vereinslos' }, { v: 'employed', label: 'angestellt' }, { v: 'all', label: 'alle' }]} />
-      <Select width={200} value={f.emp === 'free' ? '' : f.club} disabled={f.emp === 'free'} onChange={(v) => set({ club: v })} aria-label="Verein">
+      <Select width={170} value={f.emp === 'free' ? '' : f.club} disabled={f.emp === 'free'} onChange={(v) => set({ club: v })} aria-label="Verein">
         <option value="">jeder Verein</option>
         {employerOptions(g).map((grp) => (
           <optgroup key={grp.label} label={grp.label}>

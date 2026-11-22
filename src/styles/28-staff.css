@@ -117,7 +117,7 @@
 .sf-trait b { display: block; font-size: 15.5px; }
 .sf-trait span { color: var(--text-2); }
 /* Gründe für/gegen einen Wechsel (game/staffPoach.ts poachView) */
-.sf-reasons { flex: 0 0 auto; display: flex; flex-direction: column; gap: 2px; margin-top: 6px; font-size: 14px; line-height: 1.25; }
+.sf-reasons { flex: 0 0 auto; display: flex; flex-direction: column; gap: 1px; margin-top: 4px; font-size: 13.5px; line-height: 1.25; }
 .sf-reasons span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-2); }
 .sf-reasons .pro::first-letter { color: var(--pos); }
 .sf-reasons .con::first-letter { color: var(--neg); }

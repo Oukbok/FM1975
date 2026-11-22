@@ -74,13 +74,13 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
         {(own || m.clubId) && <Fact k="Vertrag bis">{m.contractEnd?.slice(0, 4) ?? '–'}</Fact>}
         <Fact k={own ? 'Gehalt' : 'Forderung'} strong>{fmtStaffWage(memberMonthlySalary(own ? m : { ...m, roleId: view, salaryFactor: demandOf(g, m, view) }, scale))}</Fact>
         {!own && m.clubId && <Fact k={<>Ablöse <InfoTip k="staffAbloese" /></>}>{fmtDM(compensationOf(g, m))}</Fact>}
-        {pv && <Fact k={<>Wechsel <InfoTip k="staffWechselwunsch" /></>}>{pv.blocker && !pv.reasons.length ? 'gesperrt' : pv.score >= 2 ? 'will gern wechseln' : pv.score >= 0 ? 'offen für Gespräche' : 'will bleiben'}</Fact>}
+        {pv && <Fact k={<>Wechsel <InfoTip k="staffWechselwunsch" /></>}><span title={pv.reasons.map((r) => `${r.w >= 0 ? '+' : '−'} ${r.text}`).join('\n')}>{pv.blocker && !pv.reasons.length ? 'gesperrt' : pv.score >= 2 ? 'will gern wechseln' : pv.score >= 0 ? 'offen für Gespräche' : 'will bleiben'}</span></Fact>}
         {pv && pv.reasons.length > 0 && (
           <div className="sf-reasons">
-            {pv.reasons.slice(0, 4).map((r) => <span key={r.text} className={r.w >= 0 ? 'pro' : 'con'}>{r.w >= 0 ? '+' : '−'} {r.text}</span>)}
+            {pv.reasons.slice(0, 2).map((r) => <span key={r.text} className={r.w >= 0 ? 'pro' : 'con'}>{r.w >= 0 ? '+' : '−'} {r.text}</span>)}
           </div>
         )}
-        <Fact k="Methodenstand">{m.methodYear}{mf < 0.9 ? ` · veraltet (${Math.round(mf * 100)} %)` : ''}</Fact>
+        {!pv && <Fact k="Methodenstand">{m.methodYear}{mf < 0.9 ? ` · veraltet (${Math.round(mf * 100)} %)` : ''}</Fact>}
         {m.traits?.map((t) => <div key={t} className="sf-trait"><b>{TRAIT_LABEL[t]}</b><span>{TRAIT_INFO[t]}</span></div>)}
         {m.home === g.managedClubId && !own && <div className="sf-trait"><b>Einer von uns</b><span>Früherer Spieler deines Vereins: kommt dir beim Gehalt entgegen und wartet ein Jahr auf dein Angebot.</span></div>}
         <div className="sf-prof-btns">
