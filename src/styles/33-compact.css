@@ -76,3 +76,36 @@
 /* Tabellen bei angehobener Schrift auch auf 1366×768 mit schmalem Zellabstand */
 [data-fs] .dtable thead th,
 [data-fs] .dtable td { padding-left: 5px; padding-right: 5px; }
+
+/* ---- Durchgang Tabellen: kleine Überläufe außerhalb der Tabellen ------------------- */
+/* Budget: Beträge unter den Säulen zweizeilig statt über die Nachbarsäule */
+[data-fs] .bud-colf-val { white-space: normal; text-align: center; line-height: 1.1; }
+/* Vitrine: Kategorienleiste */
+[data-fs] .tro-cab-page .tro-cat { padding-left: 6px; padding-right: 6px; gap: 6px; letter-spacing: 0.6px; }
+/* Verhandlungstisch: Chips der Versprechen */
+[data-fs] .vt-chip { padding: 0 6px; gap: 5px; }
+/* Chronik: Zähler „10/11“ neben dem Balken */
+[data-fs] .chm-side .dmeter { grid-template-columns: 110px minmax(0, 1fr) max-content; }
+/* Ligensystem: fünf Staffeln nebeneinander */
+[data-ui="narrow"] .lp-boxes:has(> .lp-box:nth-child(5)) { gap: 8px; }
+[data-ui="narrow"] .lp-boxes:has(> .lp-box:nth-child(5)) .lp-box { width: 148px; padding-left: 5px; padding-right: 5px; }
+/* Sponsoring: lange Klausel endet mit „…“ statt abgeschnitten */
+.sp-clauses.compact .sp-clause { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+.sp-clauses.compact .sp-clause::before { display: inline-block; margin-right: 6px; vertical-align: middle; }
+/* Verhandlungstisch: Vertragspunkte – „Dein Angebot“ bekommt Platz, Regler und Stand überlappen
+   nicht mehr; Zahlen über der Verhandlungsposition brechen um */
+[data-ui] .vt-thead, [data-ui] .vt-row { grid-template-columns: 210px 154px minmax(0, 1fr) 96px 82px 44px; column-gap: 10px; padding: 0 12px; }
+[data-ui="narrow"] .vt-thead, [data-ui="narrow"] .vt-row { grid-template-columns: 196px 146px minmax(0, 1fr) 84px 82px 44px; column-gap: 8px; padding: 0 10px; }
+[data-fs] .vt-thead { letter-spacing: 0; }
+[data-fs] .vt-pos-num > span { white-space: normal; line-height: 1.1; letter-spacing: 0; }
+[data-fs] .vt-pos-num.gap { padding: 6px 8px; }
+[data-fs] .vt-pos-nums { gap: 8px; }
+/* Budget: Kurzform unter den Säulen (ui/Short.tsx), ohne Sperrung */
+[data-fs] .bud-colf-name { letter-spacing: 0; padding: 1px 0; }
+[data-fs] .bud-cols-foot { gap: 6px; }
+/* Chronik: Werte rechts („1998/99“) bleiben in der Spalte, der Text links bricht um */
+[data-fs] .chm-side .dkv { gap: 8px; }
+[data-fs] .chm-side .dkv > :first-child { min-width: 0; overflow-wrap: anywhere; }
+/* i-Symbol am rechten Rand einer Wertzeile: die vergrößerte Klickfläche ragte 6 px über die Box
+   hinaus und erzeugte dort eine waagerechte Leiste (Jugend › 2. Mannschaft) */
+.dkv-v > .itip:last-child::after { right: 0; }

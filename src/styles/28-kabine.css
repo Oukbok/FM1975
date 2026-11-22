@@ -75,7 +75,7 @@
 .kb-focus-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
 .kb-focus-name { font-family: var(--font-display); font-size: 19px; font-weight: 500; color: var(--text); margin-right: 4px; }
 .kb-pill { font-size: 11.5px; font-weight: 700; color: var(--text-2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-.kb-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-top: 8px; }
+.kb-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 20px; margin-top: 8px; }
 .kb-big { display: flex; align-items: baseline; gap: 8px; }
 .kb-big-val { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--text); line-height: 1; }
 .kb-big-lbl { font-size: 13px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }

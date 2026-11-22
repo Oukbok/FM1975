@@ -6,7 +6,8 @@
 .nt-pname { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nt-club { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
 .nt-next { display: flex; gap: 10px; font-size: 14px; padding: 4px 0; }
-.nt-next span { color: var(--text-3); min-width: 84px; }
+.nt-next span { color: var(--text-3); min-width: 84px; flex: none; }
+.nt-next { flex-wrap: wrap; }
 .nt-mrow { display: grid; grid-template-columns: 48px minmax(0, 1fr) 76px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
 .nt-team { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
 .nt-team.r { justify-content: flex-end; }
