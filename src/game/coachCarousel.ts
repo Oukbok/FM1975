@@ -19,6 +19,7 @@ import { CalendarEngine } from '../engine/calendar';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Game, bumpMorale } from './state';
 import { recordNow } from './coachRecord';
+import { afterCoachChange, internalSuccessor } from './staffAi';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const POOL_MAX = 40;
@@ -129,8 +130,9 @@ export function weeklyCoachPressure(g: Game, today: string, sackedThisSeason: ()
     const k = done < SEASON_SACK_SOFTCAP ? 1 : 0.25;
     if (rng() >= (c.pressure - 66) / 100 * k * 1.3) continue;
     const old = depart(g, club, today, 'entlassen')!;
-    const succ = pickSuccessor(g, club, today, rng);
+    const succ = internalSuccessor(g, club, today, rng) ?? pickSuccessor(g, club, today, rng);
     install(g, club, succ, today, true);
+    afterCoachChange(g, club, today, rng); // Stab: neuer Trainer bringt evtl. seinen Co-Trainer mit (game/staffAi.ts)
     onSack();
     pushMessage(g.messages, makeMessage({
       date: today, category: 'media', from: 'Sportredaktion',
@@ -197,8 +199,9 @@ export function coachSeasonReview(g: Game, date: string, rng: () => number = Mat
       vacant.push(target.club);
       continue;
     }
-    const succ = pickSuccessor(g, club, date, rng);
+    const succ = internalSuccessor(g, club, date, rng) ?? pickSuccessor(g, club, date, rng);
     install(g, club, succ, date, false);
+    afterCoachChange(g, club, date, rng);
     lines.push(`${club.name}: neuer Trainer ${succ.name}`);
   }
   if (lines.length) {

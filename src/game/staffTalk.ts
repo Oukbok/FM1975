@@ -27,6 +27,8 @@ import { staffAccuracy } from './contractCtx';
 import { goalOf } from './dressingRoomGame';
 import { ensureStaff } from './staffGame';
 import { findPerson } from './staffWorld';
+import { poachView } from './staffPoach';
+import { anyClubName } from './staffLean';
 import { Game } from './state';
 import {
   canCourse, canExtend, compensationOf, demandOf, EXTEND_MAX_YEARS, moveBlocker, offerContract, replacedBy, sendToCourse, severanceOf,
@@ -98,7 +100,11 @@ export function staffLevers(g: Game, m: StaffMember, role: string, own: boolean)
   const club = g.clubs[g.managedClubId];
   const out: Lever[] = [];
   if (own) out.push({ text: 'Arbeitet schon für dich', side: 1, w: 1 });
-  else if (m.clubId) out.push({ text: `Steht bei ${g.clubs[m.clubId]?.shortName ?? 'einem anderen Verein'} unter Vertrag`, side: -1, w: 2 });
+  else if (m.clubId) {
+    // Angestellt: Vertrag + seine Gründe für/gegen den Wechsel (game/staffPoach.ts).
+    out.push({ text: `Steht bei ${anyClubName(g, m.clubId, true)} unter Vertrag`, side: -1, w: 2 });
+    for (const r of poachView(g, m, role).reasons) out.push({ text: r.text, side: r.w >= 0 ? 1 : -1, w: Math.max(1, Math.min(3, Math.round(Math.abs(r.w)))) });
+  }
   else {
     const free = m.freeSince ? Math.max(0, year - m.freeSince) : 0;
     out.push(free >= 2 ? { text: `Seit ${free} Jahren ohne Stelle`, side: 1, w: 3 } : free >= 1 ? { text: 'Seit einem Jahr ohne Stelle', side: 1, w: 2 } : { text: 'Vereinslos', side: 1, w: 1 });
@@ -133,12 +139,12 @@ export function staffTermsLine(g: Game, m: StaffMember, role: string, t: StaffTe
 }
 
 /** Grund, warum (gerade) nicht verhandelt werden kann – sonst null. */
-export function staffTalkBlocker(g: Game, m: StaffMember, own: boolean): string | null {
+export function staffTalkBlocker(g: Game, m: StaffMember, own: boolean, role = m.roleId): string | null {
   const today = g.calendar.currentDate;
   const prev = g.staffTalks?.[m.id];
   if (prev?.blockedUntil && prev.blockedUntil > today) return `${m.name} will nach dem Abbruch erst ab ${CalendarEngine.formatDate(prev.blockedUntil)} wieder reden.`;
   if (own) { const c = canExtend(g, m); return c.ok ? null : c.reason ?? 'Verlängerung noch nicht möglich.'; }
-  return moveBlocker(g, m);
+  return moveBlocker(g, m, role);
 }
 
 const OPEN_LINES = {
@@ -170,7 +176,7 @@ export function openStaffTalk(g: Game, id: string, role?: string): StaffTalkStat
   const useRole = own ? m.roleId : role ?? m.roleId;
   const prev = g.staffTalks?.[id];
   if (prev && prev.role === useRole && prev.status === 'open' && CalendarEngine.addDays(prev.last, 30) >= today) return prev;
-  const block = staffTalkBlocker(g, m, own);
+  const block = staffTalkBlocker(g, m, own, useRole);
   if (block) return block;
   const def = STAFF_BY_ID[useRole];
   if (!def || !staffAvailable(def, yearOf(today))) return 'Diese Stelle gibt es noch nicht.';

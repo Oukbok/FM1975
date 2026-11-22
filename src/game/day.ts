@@ -13,7 +13,9 @@ import { monthlyEnvironmentUpdate } from './environmentGame';
 import { autoResolveEvents, monthlyEvents } from './eventsGame';
 import { setInjuryRiskHook } from '../engine/injuryRisk';
 import { focusEffect } from '../engine/staffPeople';
-import { applyFocusLoad, currentFocus, devContextFor, monthlyTrainingReport, staffEffectsOf } from './staffGame';
+import { aiInjuryReductions, applyFocusLoad, currentFocus, devContextFor, monthlyTrainingReport, staffEffectsOf } from './staffGame';
+import { aiStaffVacancies } from './staffAi';
+import { aiStaffOffers } from './staffPoach';
 import { CalendarEngine } from '../engine/calendar';
 import { weeklyDevelopment, updateAges } from '../engine/development';
 import { setCurrencyDate, yearOf } from '../engine/economy';
@@ -127,7 +129,9 @@ export function processDay(g: Game, ui: DayUi): boolean {
   {
     const red = staffEffectsOf(g).injuryReduction;
     const focus = currentFocus(g, today);
-    setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1));
+    // KI-Vereine: ihr medizinisches Personal wirkt genauso (game/staffGame.ts aiInjuryReductions).
+    const aiRed = aiInjuryReductions(g);
+    setInjuryRiskHook((p) => (p.clubId === g.managedClubId ? (1 - red) * focusEffect(focus, p).injury : 1 - (aiRed.get(p.clubId) ?? 0)));
     applyLeagueBalance(g);
     ensureYouthTeams(g, today);
     stadiumDaily(g, today);
@@ -249,6 +253,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   const germanHome = homeCountryOf(g) === 'ger';
   if (germanHome) youthCompsDaily(g, today);
   rollAiOffers(g, today);
+  aiStaffOffers(g, today); // KI wirbt deine Mitarbeiter ab (Nachricht mit Wahl, game/staffPoach.ts)
   aiContractsDaily(g, today); // KI: vorzeitige Verlängerungen, Altstars, Bosman-Verkäufe, Vorverträge (game/aiContracts.ts)
   loanLifeDaily(g, today); // Leihen: Gehaltsanteile, Rückkehr, Rückruf, Strafzahlung/Kaufpflicht am 29.6. (game/loanLife.ts)
   aiLoansDaily(g, today); // KI-Leihen, Rückkehr/Kaufoption am 30.6. (game/aiLoans.ts)
@@ -297,6 +302,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     monthlySponsoring(g, today);
     // Positionsvertrautheit: Abbau ungenutzter Positionen, KI-Positionstraining (game/positionsGame.ts).
     monthlyPositions(g, today);
+    aiStaffVacancies(g, today); // offene Stellen der KI-Stäbe besetzen (game/staffAi.ts)
     monthlyFinanceClose(g, today, curMonth); // game/dayFinance.ts
     // Monatsabschluss läuft still – keine Pause.
   }

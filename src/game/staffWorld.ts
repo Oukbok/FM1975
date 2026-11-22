@@ -37,6 +37,7 @@ import {
   careerSuccess, coachAsStaff, coachingChance, coachRepOf, makeOutsider, skillsFromQuality, snapshotOf, staffFromPlayer,
 } from '../engine/staffGen';
 import { recordBook } from './clubRecords';
+import { aiStaffSeason, ensureAiStaff } from './staffAi';
 
 export interface StaffWorldLog { season: string; exPros: number; outsiders: number; promoted: number; retired: number; hires: number }
 export interface StaffWorld {
@@ -47,6 +48,8 @@ export interface StaffWorld {
   log: StaffWorldLog[];
   /** Laufende Saison (Zähler bis zum nächsten Saisonwechsel). */
   cur: StaffWorldLog;
+  /** 1 = KI-Vereine haben einen vollen Stab (game/staffAi.ts); fehlt = alter Spielstand, wird beim Laden einmalig besetzt. */
+  ai?: 1;
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -69,16 +72,18 @@ export function clubStaffTarget(c: Club): number {
   return clamp(3 + (c.reputation ?? 60) * 0.13, 5, 17);
 }
 
-function aiClubs(g: Game): Club[] {
-  return Object.values(g.clubs).filter((c) => isLeagueClub(c) && c.id !== g.managedClubId);
+/** KI-Vereine mit vollem Kader im Heimatland (in Simulationen auch der eigene, den dann die KI führt). */
+export function aiClubs(g: Game): Club[] {
+  const sim = !!(g as Game & { simAutoManage?: boolean }).simAutoManage;
+  return Object.values(g.clubs).filter((c) => isLeagueClub(c) && (sim || c.id !== g.managedClubId));
 }
 
-function contractEndIn(date: string, years: number): string {
+export function contractEndIn(date: string, years: number): string {
   return `${yearOf(date) + years}-06-30`;
 }
 
 /** Eigener, deterministischer Zufall für die Erstbesetzung (verbraucht kein Math.random). */
-function seededRng(key: string): () => number {
+export function seededRng(key: string): () => number {
   let a = hashSeed(key) >>> 0;
   return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
@@ -99,18 +104,10 @@ export function ensureStaffWorld(g: Game, rngIn?: () => number): StaffWorld {
   }
   const w: StaffWorld = { v: 2, people: [], log: [], cur: emptyLog(g.season) };
   g.staffWorld = w;
-  // Startbesetzung der KI-Vereine: passend zum Ruf, gemischt aus Ex-Profis (Name aus dem Pool) und Quereinsteigern.
-  for (const c of aiClubs(g)) {
-    for (const role of AI_TRACKED_ROLES) {
-      if (!staffAvailable(STAFF_BY_ID[role], year)) continue;
-      const m = makeOutsider(year, rng, role);
-      tuneTo(m, clubStaffTarget(c) + (rng() - 0.5) * 5);
-      if (rng() < 0.45 && role !== 'videoanalyst') markExPro(m, rng);
-      hireInto(m, c.id, date, 1 + Math.floor(rng() * 3));
-      w.people.push(m);
-    }
-  }
+  // Startbesetzung der KI-Vereine: voller Stab passend zu Ruf und Epoche (game/staffAi.ts), dazu einige Ex-Profis.
   refillFree(g, w, year, rng, INITIAL_EXTRA);
+  ensureAiStaff(g, rng);
+  for (const m of w.people) if (m.clubId && !m.exPro && !m.coach && rng() < 0.4 && (m.roleId === 'cotrainer' || m.roleId === 'torwarttrainer')) markExPro(m, rng);
   return w;
 }
 
@@ -155,7 +152,7 @@ function markExPro(m: StaffMember, rng: () => number): void {
   m.bg = undefined;
 }
 
-function hireInto(m: StaffMember, clubId: string, date: string, years: number): void {
+export function hireInto(m: StaffMember, clubId: string, date: string, years: number): void {
   m.clubId = clubId;
   m.hired = date;
   m.contractEnd = contractEndIn(date, years);
@@ -163,7 +160,7 @@ function hireInto(m: StaffMember, clubId: string, date: string, years: number): 
   m.loyalty = clamp(m.loyalty, 20, 90);
 }
 
-function freeUp(m: StaffMember, year: number): void {
+export function freeUp(m: StaffMember, year: number): void {
   m.clubId = undefined;
   m.contractEnd = undefined;
   m.freeSince = year;
@@ -173,10 +170,11 @@ function freeUp(m: StaffMember, year: number): void {
 export function staffMovedTo(g: Game, m: StaffMember, clubId: string, date: string, rng: () => number = Math.random): void {
   const w = ensureStaffWorld(g);
   const year = yearOf(date);
-  if (m.roleId === 'cheftrainer') { (g.coachPool ??= []).push(toClubCoach(m, year, date, rng)); return; }
+  // Cheftrainer zu einem deutschen Verein: über den Trainerpool (dort führt das Trainerkarussell); ins Ausland: direkt angestellt.
+  if (m.roleId === 'cheftrainer' && (g.clubs[clubId] || !g.euroClubs?.[clubId])) { (g.coachPool ??= []).push(toClubCoach(m, year, date, rng)); return; }
   const cur = w.people.find((x) => x.clubId === clubId && x.roleId === m.roleId);
   if (cur) freeUp(cur, year);
-  const moved: StaffMember = { ...m, coach: undefined };
+  const moved: StaffMember = { ...m, coach: m.roleId === 'cheftrainer' ? m.coach : undefined, deal: undefined };
   hireInto(moved, clubId, date, 2);
   w.people.push(moved);
 }
@@ -303,7 +301,8 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
       log.retired++;
       continue;
     }
-    const employed = !!m.clubId && !!g.clubs[m.clubId];
+    // Angestellt: bei einem vollen Verein, einem Sim-Verein oder im Ausland (schlanke Stäbe, game/staffLean.ts).
+    const employed = !!m.clubId && (!!g.clubs[m.clubId] || !!g.simClubs?.[m.clubId] || !!g.euroClubs?.[m.clubId]);
     if (m.clubId && !employed) freeUp(m, year);
     learnSeason(m, employed, employed ? clubSuccess(g, m.clubId!) : 0, rng);
     if (employed) m.methodYear = rng() < 0.35 ? year : m.methodYear;
@@ -330,55 +329,13 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
     keep.push(m);
   }
   w.people = keep;
-  aiHiring(g, w, date, rng);
+  aiStaffSeason(g, w, date, rng);
   refillFree(g, w, year, rng, NEWCOMERS);
   if (pool.length > 60) { pool.sort((a, b) => b.reputation - a.reputation); pool.length = 60; }
   w.log.push(log);
   if (w.log.length > 60) w.log.splice(0, w.log.length - 60);
   w.cur = emptyLog(g.season);
   return log;
-}
-
-/** KI-Vereine besetzen freie Stellen und werben bessere Leute ab – nach Eignung, nicht nach bisherigem Beruf. */
-function aiHiring(g: Game, w: StaffWorld, date: string, rng: () => number): void {
-  const year = yearOf(date);
-  const byClub = new Map<string, Map<string, StaffMember>>();
-  for (const m of w.people) {
-    if (!m.clubId) continue;
-    let mm = byClub.get(m.clubId);
-    if (!mm) byClub.set(m.clubId, (mm = new Map()));
-    if (mm.has(m.roleId)) freeUp(m, year); // doppelt besetzt → einer geht
-    else mm.set(m.roleId, m);
-  }
-  // Große Vereine zuerst – sie bekommen die Besten.
-  const clubs = aiClubs(g).sort((a, b) => (b.reputation ?? 0) - (a.reputation ?? 0));
-  for (const c of clubs) {
-    const mine = byClub.get(c.id) ?? new Map<string, StaffMember>();
-    const target = clubStaffTarget(c);
-    for (const role of AI_TRACKED_ROLES) {
-      if (!staffAvailable(STAFF_BY_ID[role], year)) continue;
-      const cur = mine.get(role);
-      if (cur && cur.quality >= target - 3) continue;
-      let best: StaffMember | null = null, bs = -99, bf = 0;
-      for (const m of w.people) {
-        // Frühere Spieler deines Vereins warten im ersten Jahr auf dein Angebot.
-        if (m.clubId || m.age >= 64 || (m.home === g.managedClubId && m.freeSince === year)) continue;
-        const fit = roleFit(m.skills, role, 1);
-        if (fit < 4) continue;
-        const sc = fit - Math.max(0, fit - target - 2) * 0.8 + rng() * 2.5 + (m.exPro ? m.exPro.s * 2 : 0);
-        if (sc > bs) { bs = sc; best = m; bf = fit; }
-      }
-      if (!best || (cur && bf <= cur.quality + 1)) continue;
-      if (cur) freeUp(cur, year);
-      best.roleId = role;
-      syncQuality(best);
-      best.specialty = specialtyOfSkills(best.skills!, role);
-      hireInto(best, c.id, date, 1 + Math.floor(rng() * 3));
-      best.salaryFactor = demandFactor(best, c.reputation ?? 60);
-      mine.set(role, best);
-      w.cur.hires++;
-    }
-  }
 }
 
 /**
@@ -454,7 +411,18 @@ export function findPerson(g: Game, id: string): StaffMember | null {
 export function headCoachMarket(g: Game, onlyFree: boolean): StaffMember[] {
   const year = yearOf(g.calendar.currentDate);
   const out = (g.coachPool ?? []).map((c) => coachAsStaff(c, year));
-  if (!onlyFree) for (const c of aiClubs(g)) if (c.coach) out.push({ ...coachAsStaff(c.coach, year), clubId: c.id });
+  if (!onlyFree) {
+    const today = g.calendar.currentDate;
+    for (const c of aiClubs(g)) {
+      if (!c.coach || c.id === g.managedClubId) continue;
+      // Vertrag des KI-Trainers: zwei bis drei Jahre ab Amtsantritt, mindestens bis zum nächsten Sommer (nicht gespeichert).
+      const since = c.coach.since || today;
+      let end = yearOf(since) + (Number(since.slice(5, 7)) >= 7 ? 1 : 0) + 1 + (hashSeed(c.coach.id) % 2);
+      const next = yearOf(today) + (Number(today.slice(5, 7)) >= 7 ? 1 : 0);
+      if (end < next) end = next + (hashSeed(c.coach.id + today.slice(0, 4)) % 2);
+      out.push({ ...coachAsStaff(c.coach, year), clubId: c.id, hired: since, contractEnd: `${end}-06-30` });
+    }
+  }
   return out;
 }
 
@@ -462,6 +430,10 @@ export interface MarketFilter {
   /** Stelle, nach deren Eignung sortiert wird ('all' = beste Stelle der Person). */
   role: string;
   onlyFree?: boolean;
+  /** Nur angestellte Personen (bei KI-Vereinen, Sim-Vereinen, im Ausland). */
+  onlyEmployed?: boolean;
+  /** Nur Personen dieses Vereins. */
+  clubId?: string;
   /** Mindestwerte je Fähigkeit (1–20). */
   min?: Partial<Record<string, number>>;
   maxAge?: number;
@@ -474,8 +446,10 @@ export interface MarketRow { m: StaffMember; /** Eignung 1–20 (fein) für die 
 /** Arbeitsmarkt (für deinen Verein): beste Eignung zuerst; Vereinslose vor Angestellten bei Gleichstand. */
 export function staffMarket(g: Game, f: MarketFilter): MarketRow[] {
   const year = yearOf(g.calendar.currentDate);
-  const people: StaffMember[] = (g.staffWorld?.people ?? []).filter((m) => !f.onlyFree || !m.clubId);
-  if (f.role === 'cheftrainer' || f.role === 'all') people.push(...headCoachMarket(g, !!f.onlyFree));
+  const people: StaffMember[] = (g.staffWorld?.people ?? []).filter((m) => (!f.onlyFree || !m.clubId) && (!f.onlyEmployed || !!m.clubId) && (!f.clubId || m.clubId === f.clubId));
+  if (f.role === 'cheftrainer' || f.role === 'all') {
+    people.push(...headCoachMarket(g, !!f.onlyFree).filter((m) => (!f.onlyEmployed || !!m.clubId) && (!f.clubId || m.clubId === f.clubId)));
+  }
   const avail = new Set(rolesAvailable(year));
   const rows: MarketRow[] = [];
   for (const m of people) {
@@ -510,4 +484,6 @@ export function migrateStaffPeople(g: Game, rngIn?: () => number): void {
     if (!m.contractEnd) m.contractEnd = contractEndIn(g.calendar.currentDate, 1 + (Number(g.calendar.currentDate.slice(5, 7)) >= 7 ? 1 : 0));
   }
   ensureStaffWorld(g, rngIn);
+  // Älterer Spielstand ohne KI-Stäbe: einmalig besetzen (Markierung staffWorld.ai).
+  ensureAiStaff(g, rngIn);
 }
