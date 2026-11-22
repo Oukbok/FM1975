@@ -58,7 +58,7 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   return (
     <div className="st-start">
       <div className={`st-img era-${era}`}>
-        <img src="assets/start-tribuene.jpg" alt="" draggable={false} />
+        <img src="assets/start-grandstand.jpg" alt="" draggable={false} />
         {[0, 1, 2].map((i) => <div key={i} className={`st-shade s${i} ${era >= 0 && era !== i ? 'dim' : ''}`} />)}
       </div>
       <div className="st-scrim" />

@@ -1,4 +1,4 @@
-// Ligen Ungarn je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_hun.md
+// Ligen Ungarn je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-hun.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_HUN: Record<number, SeasonRow> = {

@@ -1,4 +1,4 @@
-// Vereine Serbien (verfremdet). Quellen/echte Namen: docs/research/weltvereine_srb.md
+// Vereine Serbien (verfremdet). Quellen/echte Namen: docs/research/world-clubs-srb.md
 import type { RealClub } from '../types';
 
 export const CLUBS_SRB: RealClub[] = [

@@ -1,4 +1,4 @@
-// Ligen Schweden je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_swe.md
+// Ligen Schweden je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-swe.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_SWE: Record<number, SeasonRow> = {

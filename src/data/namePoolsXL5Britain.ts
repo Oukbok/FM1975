@@ -1,8 +1,8 @@
 // =============================================================================
 // Namenspools, sechste Stufe – England/Wales/Irland und Schottland (Wunsch Pascal: Namen je Land im Verhältnis
-// zu den simulierten Vereinen, Zielwerte in docs/research/namen-ziel.md). Familiennamen
+// zu den simulierten Vereinen, Zielwerte in docs/research/names-target.md). Familiennamen
 // nach den Häufigkeits-Ranglisten des Landes (Rangfolge echter Namen je Land, siehe
-// docs/research/namen-ziel.md), gefiltert auf in der Bevölkerung übliche Namen ohne
+// docs/research/names-target.md), gefiltert auf in der Bevölkerung übliche Namen ohne
 // Überschneidung mit den Ethnien-Herkünften desselben Landes; England-Pool gilt auch für Wales, Nordirland und Irland (irische O’-Namen); Schottland: Mac/Mc-Namen, typisch schottische Familiennamen und die in ganz Großbritannien häufigsten Namen.
 // Vornamen als Zeitspannen der Geburtsjahrgänge [von, bis, Namen] – Aufbau der
 // Stufen in data/namePoolsXL5.ts, eingemischt über `mergeXL` in data/origins.ts.

@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten ita: Ligen je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1/t2 in Reihenfolge der Abschlusstabelle; t2b = weitere Staffeln der 2. Liga zusammengefasst.
-// Quellen und Unsicherheiten: docs/research/weltvereine_ita.md.
+// Quellen und Unsicherheiten: docs/research/world-clubs-ita.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

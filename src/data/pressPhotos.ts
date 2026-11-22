@@ -1,9 +1,9 @@
 // =============================================================================
 // Pressefotos im Lesebereich des Newscenters (Look „Akte“, Wunsch Pascal)
 // -----------------------------------------------------------------------------
-// Liegt ein Foto unter `images/press/<epoche>/<motiv>.webp`, hier eintragen –
+// Liegt ein Foto unter `images/press/<epoche>/<datei>.webp` (Datei je Motiv: `PRESS_FILES`), hier eintragen –
 // erst dann wird es geladen (keine 404-Anfragen). Ohne Eintrag zeigt die Nachricht
-// kein Foto. Motive und Größen: docs/images/BILDER.md, Abschnitt „Akte“.
+// kein Foto. Motive und Größen: docs/images/IMAGES.md, Abschnitt „Akte“.
 // Epoche = Jahr, ab dem die Fassung gilt (1975 = Schwarzweiß der 70er …).
 // =============================================================================
 import type { InboxMessage } from '../types';
@@ -12,13 +12,21 @@ export type PressMotif =
   | 'zweikampf' | 'torschuss' | 'torjubel' | 'torwart' | 'kopfball' | 'abpfiff'
   | 'fans' | 'stadion' | 'training' | 'vorstand' | 'auslosung' | 'vertrag' | 'verletzung';
 
+/** Dateiname je Motiv (Wunsch Pascal: Dateinamen englisch; die Motiv-IDs bleiben, sie stehen auch in
+ *  Datensätzen als Pose eigener Spielerfotos). Fassungen heißen `<datei>_01.webp` … */
+export const PRESS_FILES: Record<PressMotif, string> = {
+  zweikampf: 'duel', torschuss: 'shot', torjubel: 'goal-celebration', torwart: 'goalkeeper', kopfball: 'header',
+  abpfiff: 'final-whistle', fans: 'fans', stadion: 'stadium', training: 'training', vorstand: 'board',
+  auslosung: 'draw', vertrag: 'contract', verletzung: 'injury',
+};
+
 /** Vorhandene Fotos je Epoche. Beispiel: `1975: ['zweikampf', 'torschuss', 'torwart', 'torjubel']`. */
 export const PRESS_PHOTOS: Record<number, PressMotif[]> = {
   1975: ['zweikampf', 'torschuss', 'torwart', 'torjubel', 'verletzung', 'fans', 'abpfiff', 'kopfball', 'stadion', 'training', 'auslosung', 'vertrag', 'vorstand'],
 };
 
 /** Weitere Fassungen eines Motivs (Wunsch Pascal: nicht immer dasselbe Bild): „Epoche:Motiv“ → Anzahl
- *  zusätzlicher Dateien `<motiv>_01.webp` … `<motiv>_NN.webp` neben `<motiv>.webp`; die Nachricht wählt
+ *  zusätzlicher Dateien `<datei>_01.webp` … `<datei>_NN.webp` neben `<datei>.webp`; die Nachricht wählt
  *  fest aus ihrer ID. */
 export const PRESS_VARIANTS: Record<string, number> = {
   '1975:abpfiff': 10,
@@ -108,7 +116,7 @@ export function pressPhotoFor(m: InboxMessage, opts?: { won?: boolean }): string
     if (!have.length) continue;
     const motif = have[hash(m.id) % have.length];
     const v = hash(`v|${m.id}|${m.date}`) % (1 + (PRESS_VARIANTS[`${era}:${motif}`] ?? 0));
-    return `assets/press/${era}/${motif}${v ? `_${String(v).padStart(2, '0')}` : ''}.webp`;
+    return `assets/press/${era}/${PRESS_FILES[motif]}${v ? `_${String(v).padStart(2, '0')}` : ''}.webp`;
   }
   return null;
 }

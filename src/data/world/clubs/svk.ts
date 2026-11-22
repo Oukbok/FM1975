@@ -1,4 +1,4 @@
-// Vereine Slowakei (verfremdet). Quellen/echte Namen: docs/research/weltvereine_svk.md
+// Vereine Slowakei (verfremdet). Quellen/echte Namen: docs/research/world-clubs-svk.md
 import type { RealClub } from '../types';
 
 export const CLUBS_SVK: RealClub[] = [

@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten Deutschland: Bundesliga (t1) und 2. Bundesliga (t2; bis 1980/81 und 1991/92 Nord = t2, Süd = t2b)
 // je Saison in Reihenfolge der Abschlusstabelle, DFB-Pokal, Europapokal-Teilnehmer (Einstiegswettbewerb).
-// Quellen und Unsicherheiten: docs/research/weltvereine_ger.md
+// Quellen und Unsicherheiten: docs/research/world-clubs-ger.md
 // =============================================================================
 import type { SeasonRow } from '../types';
 

@@ -53,7 +53,7 @@ export function isKeyPlayer(p: Player, squad: Player[]): boolean {
 }
 
 /**
- * Kalibrierung je Epoche (Soll-Werte und Quellen: docs/research/ablösefrei.md):
+ * Kalibrierung je Epoche (Soll-Werte und Quellen: docs/research/free-transfers.md):
  * `refuse` Grundneigung, eine Verlängerung abzulehnen; `preRefused`/`preKey` Chance je
  * Stichtag auf einen Vorvertrag (Ablehner bzw. nicht verlängerte Stammkraft); `fringe` Chance, dass ein
  * Ergänzungsspieler (ab Platz 16, ab 25 Jahren) zum Saisonende keinen neuen Vertrag bekommt.

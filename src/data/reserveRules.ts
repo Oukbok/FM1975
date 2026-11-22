@@ -1,7 +1,7 @@
 // =============================================================================
 // ZWEITE MANNSCHAFTEN (Amateure / U23 / „II“) – REGELN JE EPOCHE (Wunsch Pascal)
 // -----------------------------------------------------------------------------
-// Kurzfassung mit Quellen: docs/research/zweite-mannschaften.md. Umsetzung:
+// Kurzfassung mit Quellen: docs/research/reserve-teams.md. Umsetzung:
 // game/reservePyramid.ts (Ligapyramide, Auf-/Abstieg, Pokal) + game/reserveTeam.ts.
 //
 // Deutschland (West bzw. ab 1991 gesamt):

@@ -1,6 +1,6 @@
 // =============================================================================
 // Top-Transfers: Zeitungs-Doppelseite im Blattstil der Presse (Blattname je Epoche
-// aus game/press/calendar.ts) auf images/dossier/zeitung.webp. Raster wie die Presse
+// aus game/press/calendar.ts) auf images/dossier/newspaper.webp. Raster wie die Presse
 // (.np-sheet: Rand | linke Seite | Falz | rechte Seite | Rand):
 //   Kopf über beide Seiten · links Aufmacher mit Platz 1–3 + Bilanz des Fensters ·
 //   rechts die Tabelle aller Top-Transfers je Liga (scrollt intern).

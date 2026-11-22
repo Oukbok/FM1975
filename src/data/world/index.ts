@@ -5,7 +5,7 @@
 //   import * as eng1 from './clubs/eng'; import * as eng2 from './seasons/eng'; add('eng', eng1, eng2);
 // (`add` sucht die Exporte CLUBS_<CC>/SEASONS_<CC> selbst.) Fehlt ein Land, läuft es wie
 // bisher mit erfundenen Städtevereinen (data/worldSeed.ts) bzw. Deutschland mit den
-// Vereinen von 1975 (data/generate.ts). Format: docs/specs/WELTDATEN_SPEC.md.
+// Vereinen von 1975 (data/generate.ts). Format: docs/specs/WORLD_DATA_SPEC.md.
 // Ein Datensatz (Editor) kann je Land Vereine/Saisons überschreiben (`setWorldOverride`).
 // =============================================================================
 import type { RealClub, SeasonRow } from './types';

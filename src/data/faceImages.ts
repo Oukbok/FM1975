@@ -13,8 +13,8 @@
 //   epoche  = 1970 | 1980 | 1990 | 2000 | 2010 | 2020
 //   nr      = laufende Nummer (01, 02, …) = eine Person
 //   alter   = 18 | 25 | 32 | 38 (Spieler) bzw. 35 | 45 | 55 | 65 (Mitarbeiter), optional
-// FACE_MASKS: Einträge, zu denen eine Trikot-Maske `<…>-maske.webp` vorliegt.
-// Anleitung: docs/images/BILDER.md, Abschnitt 2.
+// FACE_MASKS: Einträge, zu denen eine Trikot-Maske `<…>-mask.webp` vorliegt.
+// Anleitung: docs/images/IMAGES.md, Abschnitt 2.
 // =============================================================================
 export const FACE_FILES: string[] = [
   'balkan/1970/03',

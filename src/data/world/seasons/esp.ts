@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten esp: Ligen je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1/t2 in Reihenfolge der Abschlusstabelle; t2b = weitere Staffeln der 2. Liga zusammengefasst.
-// Quellen und Unsicherheiten: docs/research/weltvereine_esp.md.
+// Quellen und Unsicherheiten: docs/research/world-clubs-esp.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

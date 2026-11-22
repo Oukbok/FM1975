@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten bel: Ligen je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1/t2 in Reihenfolge der Abschlusstabelle; t2b = zweite Staffel der 2. Liga.
-// Quellen und Unsicherheiten (welche Felder aus Wissen, ungeprüft): docs/research/weltvereine_bel.md.
+// Quellen und Unsicherheiten (welche Felder aus Wissen, ungeprüft): docs/research/world-clubs-bel.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

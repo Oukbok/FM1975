@@ -139,7 +139,7 @@ export function NewGameScreen({ defaults, onBack, onStart, onSettings }: {
 
   return (
     <div className="ng-root">
-      <div className="ng-bg" aria-hidden><img src="assets/start-tribuene.jpg" alt="" draggable={false} /></div>
+      <div className="ng-bg" aria-hidden><img src="assets/start-grandstand.jpg" alt="" draggable={false} /></div>
       <header className="ng-head">
         <div className="ng-brand">
           <span className="ng-brand-y">1975</span>

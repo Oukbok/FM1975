@@ -18,7 +18,7 @@
 // Aufgelöste Staaten (ČSSR, UdSSR, Jugoslawien): Ein Spiel behält sein Heimatland,
 // die Währung folgt dem Nachfolgestaat – nach der Stadt des eigenen Vereins
 // (data/currencySuccessors.ts, Schlüssel „tch:svk“ …), sonst dem größten Nachfolger.
-// Details: docs/research/waehrungen.md.
+// Details: docs/research/currencies.md.
 // =============================================================================
 
 import { EURO, eur, type CurrencyEra } from './currencyParts';

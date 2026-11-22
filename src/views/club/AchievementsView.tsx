@@ -11,7 +11,7 @@ import { HonoursView } from './honours/HonoursView';
 
 type Tab = 'pokale' | 'ruhm' | 'auszeichnungen';
 
-export function ErfolgeView({ g }: { g: Game }) {
+export function AchievementsView({ g }: { g: Game }) {
   const [tab, setTab] = useSubTab<Tab>('verein.erfolge', 'pokale');
   return (
     <SubTabsPage className="tro-page" tabsClassName="tro-tabs" active={tab} onSelect={setTab}

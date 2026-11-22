@@ -96,7 +96,7 @@ export function Newspaper({ api, ed }: { api: PressApi; ed: PressEdition }) {
     return () => window.removeEventListener('resize', onResize);
   }, []);
   const allBriefs = [...ed.stories.slice(9), ...ed.briefs];
-  // Doppelseite (Bild images/dossier/zeitung.webp): links Aufmacher + zwei Spalten,
+  // Doppelseite (Bild images/dossier/newspaper.webp): links Aufmacher + zwei Spalten,
   // rechts eine Spalte + Ergebnisse/Tabelle/Torjäger, unten „Kurz notiert“ über beide Seiten.
   // Links je zwei Artikel, rechts der Rest (die rechte Spalte hat die ganze Höhe).
   const st = ed.stories.slice(0, 9);

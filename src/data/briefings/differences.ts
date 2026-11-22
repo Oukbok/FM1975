@@ -394,7 +394,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
 //  - en.wikipedia.org: Bosman ruling; Promotion to the Bundesliga; Foreign football players in
 //    Germany (Nicht-EU-Limit bis 2005/06, Local-Player-Regel ab 2006/07).
 //  - web.de, „Otto Rehhagels Wechselfehler“ (2+1-Regel, Nicht-EU-Kontingent).
-//  - Projektintern: docs/research/fussball_historie_designdaten_1975_2030.md (Torlinie
+//  - Projektintern: docs/research/football-history-design-data-1975-2030.md (Torlinie
 //    2015/16, VAR 2017/18, 3. Liga 2008/09, Trikotwerbung 1973), data/indoorHistory.ts
 //    (Hallen-Masters 1988–2001, Hallenturniere bis Winter 2004), data/campDestinations.ts,
 //    engine/economy.ts (DM bis 2001), CLAUDE.md (Gehaltsniveau 1975).

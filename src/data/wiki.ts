@@ -1820,7 +1820,7 @@ Nicht jeder unterschreibt: Ehrgeizige, unzufriedene oder für den Verein zu gute
 ### Ablösefrei – wie oft?
 - **Bis 1995** gab es in Deutschland auch nach Vertragsende eine Ablöse. Ablösefrei wechselten fast nur Spieler am Karriereende oder in den Amateurbereich: in der ganzen Liga eine Handvoll pro Saison.
 - **Ab 1995/96** (Bosman) werden es schnell mehr; heute verlässt jeder Erstligist pro Saison im Schnitt gut zwei Spieler ablösefrei, rund ein Viertel der Zugänge kommt ohne Ablöse.
-- Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/research/ablösefrei.md\`).
+- Die KI ist auf diese Größenordnungen eingestellt (Quellen und Soll-Werte: \`docs/research/free-transfers.md\`).
 
 ### Altstars laufen aus
 Spieler ab 34 – und ab 32, wenn sie nicht mehr zur Stammelf gehören – bekommen keinen neuen Vertrag. Zum 1. Juli wechseln sie zu einem Verein, der sie noch will, oder gehen unterklassig bzw. beenden die Karriere.
@@ -4895,7 +4895,7 @@ Das Niveau 1975 ist recherchiert (Erstligist ≈ 4,5 Mio. DM Umsatz). Mit dem In
 1985 ≈ 11 Mio. DM, 1995 ≈ 30–35 Mio. DM, 2005 ≈ 45 Mio. €, 2015 ≈ 90 Mio. € und 2024 ≈ 220 Mio. €.
 
 ## Währungen der Länder
-Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583\u2060 DM. Für die Euro-Länder gilt einheitlich der Tag der Bargeld-Einführung; nach der Auflösung von Tschechoslowakei, Sowjetunion und Jugoslawien folgt die Währung dem Staat, in dem dein Verein liegt. Feste Texte (Berater, Briefing, Chronik, Wiki-Beispiele) werden ebenfalls umgerechnet. Daten und Quellen: docs/research/waehrungen.md.`,
+Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung des Heimatlands am jeweiligen Tag um (Stichtage der Euro-Einführungen, Währungsreformen und Streichungen von Nullen, Kurse als Jahresmittel). In Deutschland heißt das: bis 2001 D-Mark, ab 2002 Euro zu 1,95583\u2060 DM. Für die Euro-Länder gilt einheitlich der Tag der Bargeld-Einführung; nach der Auflösung von Tschechoslowakei, Sowjetunion und Jugoslawien folgt die Währung dem Staat, in dem dein Verein liegt. Feste Texte (Berater, Briefing, Chronik, Wiki-Beispiele) werden ebenfalls umgerechnet. Daten und Quellen: docs/research/currencies.md.`,
   },
   {
     id: 'scouting-software',

@@ -1,4 +1,4 @@
-// Ligen Dänemark je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_den.md
+// Ligen Dänemark je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-den.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_DEN: Record<number, SeasonRow> = {

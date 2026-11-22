@@ -15,12 +15,12 @@ export function eraIntro(year: number): string {
   return 'Trainingszentrum, Pulsgurte, Drohnenkamera – und der Livestream läuft. Die Spieler stehen vor dir, jeder Satz landet in Minuten in den sozialen Medien. Was versprichst du für die Saison?';
 }
 
-/** Bild-Slot `images/promises/erstes-training.webp`; ohne Datei eine gezeichnete Szene. */
+/** Bild-Slot `images/promises/first-training.webp`; ohne Datei eine gezeichnete Szene. */
 export function TrainingScene({ year }: { year: number }) {
   const [failed, setFailed] = useState(false);
   return (
     <div className="ft-scene" aria-hidden>
-      {!failed ? <img src="assets/promises/erstes-training.webp" alt="" draggable={false} onError={() => setFailed(true)} /> : (
+      {!failed ? <img src="assets/promises/first-training.webp" alt="" draggable={false} onError={() => setFailed(true)} /> : (
         <svg viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice">
           <rect width="400" height="120" className="ft-sc-sky" />
           <path d="M0 70 L400 58 L400 120 L0 120 Z" className={year < 1980 ? 'ft-sc-ash' : 'ft-sc-turf'} />

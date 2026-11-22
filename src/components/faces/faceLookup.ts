@@ -125,7 +125,7 @@ export function faceImageFor(q: FaceQuery): FaceImage | null {
   return {
     key,
     src: `${path}.webp`,
-    mask: person.masks.has(pick) ? `${path}-maske.webp` : null,
+    mask: person.masks.has(pick) ? `${path}-mask.webp` : null,
   };
 }
 

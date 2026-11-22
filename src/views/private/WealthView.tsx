@@ -20,7 +20,7 @@ const niceRound = (v: number) => { const p = Math.pow(10, Math.floor(Math.log10(
 const stepsFor = (year: number) => { const per = currencyAt(year).perDM; return [5000, 25000, 100000, 500000].map((v) => niceRound(v * cpi(year) * per) / per); };
 const pctTxt = (v: number) => `${(v * 100).toFixed(1).replace('.', ',')} %`;
 
-export function VermoegenView({ g, onChange }: { g: Game; onChange: () => void }) {
+export function WealthView({ g, onChange }: { g: Game; onChange: () => void }) {
   const st = ensurePrivate(g);
   const [fb, setFb] = useFeedback();
   const year = yearOf(g.calendar.currentDate);

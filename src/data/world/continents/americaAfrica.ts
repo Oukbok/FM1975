@@ -1,7 +1,7 @@
 // =============================================================================
 // NORD-/MITTELAMERIKA und AFRIKA – Spitzenvereine je Land (verfremdet nach
 // Stadt/Farbe). Stärke je Epoche grob nach Titeln im Kontinentalpokal und dem
-// Abschneiden bei der Klub-WM (Vorbilder/Quellen: docs/research/kontinente.md).
+// Abschneiden bei der Klub-WM (Vorbilder/Quellen: docs/research/continents.md).
 // USA: Profiliga 1975–1984 und wieder ab 1996 (dazwischen keine landesweite
 // Profiliga). Südafrika: Kontinentalpokal erst nach der Rückkehr 1992/93.
 // Reihenfolge je Land nur hinten erweitern (Platzierungen als Index gespeichert).

@@ -12,7 +12,7 @@ import { Col, Explain, TableEditor } from '../TableEditor';
 // =============================================================================
 // WELTDATEN (Wunsch Pascal): jedes Land – auch Deutschland – mit Vereinen und
 // Ligazusammensetzung je Saison, Pokalsieger und Europapokal-Teilnehmern.
-// Format: docs/specs/WELTDATEN_SPEC.md; im Datensatz das Feld `worldData`.
+// Format: docs/specs/WORLD_DATA_SPEC.md; im Datensatz das Feld `worldData`.
 // =============================================================================
 type Entry = NonNullable<Dataset['worldData']>[string];
 const YEARS = Array.from({ length: 51 }, (_, i) => 1975 + i);

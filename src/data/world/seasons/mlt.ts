@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten mlt: Premier League je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1 in Reihenfolge der Abschlusstabelle; cup/cupFinalist = Landespokal; euro = Europapokal-Teilnehmer.
-// Quellen und Unsicherheiten: docs/research/weltvereine_mlt.md.
+// Quellen und Unsicherheiten: docs/research/world-clubs-mlt.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

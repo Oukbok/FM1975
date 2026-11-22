@@ -21,7 +21,7 @@ import { Game } from './state';
 
 const TARGET: Record<number, number> = { 1: 72.5 };
 const SHIFT_MIN = -0.6, SHIFT_MAX = 0.5;
-/** Ziel der Spieler ≥ 85 in der 1. Liga (Recherche: 10–15, docs/research/spielerkurven.md). */
+/** Ziel der Spieler ≥ 85 in der 1. Liga (Recherche: 10–15, docs/research/player-curves.md). */
 const ELITE_TARGET = 12.5;
 /**
  * PI-Regler: Sofortanteil (Punkte Bremse je Spieler Abweichung) plus langsamer

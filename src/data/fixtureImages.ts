@@ -8,8 +8,8 @@
 // wechselt fest je Spiel. Fehlt ein Jahrzehnt, nimmt sie das nächstfrühere, sonst
 // das nächstspätere, sonst die gezeichnete Kurve. Nur eingetragene Dateien werden
 // geladen (keine 404-Anfragen).
-// Eigene Motive: `images/spielplan/fans-<jahrzehnt>.webp` (1200 × 450) oder die
-// Pressefotos „fans“ der Epoche (1200 × 600). Prompts: docs/images/BILDER.md,
+// Eigene Motive: `images/fixtures/fans-<jahrzehnt>.webp` (1200 × 450) oder die
+// Pressefotos „fans“ der Epoche (1200 × 600). Prompts: docs/images/IMAGES.md,
 // Abschnitt „Spielplan – Fanbild“.
 // =============================================================================
 

@@ -9,13 +9,13 @@
 export interface BudgetEra { from: number; to: number; lines: string[] }
 
 export const BUDGET_ERAS: BudgetEra[] = [
-  // Quellen: docs/research/FINANZEN_Recherche_1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
+  // Quellen: docs/research/finances-research-1975.md (Trikotwerbung seit Herbst 1973 zugelassen;
   // TV-Rechte 1975/76 insgesamt 4,8 Mio. DM – Spiegel „TV-Gelder von 1965 bis heute“; Eintritt wichtigste Säule).
   { from: 1975, to: 1977, lines: [
     'Wir leben von den Zuschauern: Eintritt, Würstchen und Programmhefte sind unser wichtigstes Standbein. Trikotwerbung ist erst seit Herbst 1973 erlaubt, und für die Fernsehrechte zahlen die öffentlich-rechtlichen Sender 1975/76 der ganzen 1. Liga zusammen nur 4,8 Mio. DM.',
     'Das Geld kommt über die Kassenhäuschen. Fernsehgeld ist ein kleiner Zuschuss – die Sender zahlen der ganzen 1. Liga 1975/76 gerade 4,8 Mio. DM –, und Trikotwerbung gibt es erst seit 1973.',
   ] },
-  // Quelle: docs/research/transferrekorde.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
+  // Quelle: docs/research/transfer-records.md (1976 erster Wechsel für 1 Mio. DM, Roger Van Gool nach Köln).
   { from: 1978, to: 1983, lines: [
     'Der Markt wird teurer: Seit 1976 ein belgischer Stürmer für eine Million DM nach Köln ging, sind Millionen-Ablösen kein Tabu mehr. Unsere Einnahmen wachsen aber weiter vor allem über die Ränge.',
     'Seit dem ersten Millionen-Transfer 1976 (ein Belgier nach Köln) ziehen die Ablösen an. Die Kasse füllt sich weiter in erster Linie am Spieltag – das Fernsehen bleibt ein Nebengeschäft.',
@@ -26,17 +26,17 @@ export const BUDGET_ERAS: BudgetEra[] = [
     'Mitte der Achtziger kommen weniger Leute ins Stadion als ein Jahrzehnt zuvor – der Erstliga-Schnitt fällt unter 20.000. Wer seine Ausgaben nach den Zuschauerzahlen der Siebziger plant, plant zu hoch.',
     'Die Ränge werden leerer, die Ligen-Schnitte sind so niedrig wie lange nicht. Das Fernsehen zahlt mehr als früher, aber noch keine Summen, die einen Verein tragen.',
   ] },
-  // Quelle: engine/tvMoney.ts / FINANZEN_SPEC §10.4 (Rechte 1988/89 rund 40 Mio. DM statt zuvor rund 18 Mio.; Privatfernsehen).
+  // Quelle: engine/tvMoney.ts / FINANCES_SPEC §10.4 (Rechte 1988/89 rund 40 Mio. DM statt zuvor rund 18 Mio.; Privatfernsehen).
   { from: 1988, to: 1991, lines: [
     'Mit dem Privatfernsehen steigt der Preis für die Liga-Rechte sprunghaft: 1988/89 sind es rund 40 Mio. DM für die Liga. Das Fernsehgeld wird zum planbaren Posten.',
     'Das Fernsehen entdeckt den Fußball: Der neue Rechtevertrag 1988/89 bringt der Liga rund 40 Mio. DM – mehr als das Doppelte des alten. Damit können wir erstmals fest planen.',
   ] },
-  // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (Sat.1 „ran“).
+  // Quellen: engine/tvMoney.ts (1992/93 rund 145 Mio. DM); docs/research/finances-research-1980-today.md (Sat.1 „ran“).
   { from: 1992, to: 1995, lines: [
     'Seit 1992/93 zahlt das Privatfernsehen rund 145 Mio. DM für die Liga – ein Privatsender zeigt sie als große Samstagsshow. Die TV-Gelder holen bei uns zu den Zuschauern auf.',
     'Die neuen Fernsehverträge verändern die Rechnung: Rund 145 Mio. DM fließen seit 1992/93 an die Liga. Der Spieltag bleibt wichtig, ist aber nicht mehr alles.',
   ] },
-  // Quelle: docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (Bosman-Urteil 15.12.1995:
+  // Quelle: docs/research/finances-research-1980-today.md (Bosman-Urteil 15.12.1995:
   // ablösefrei nach Vertragsende, Gehälter/Handgelder steigen, Vertragslaufzeiten entscheiden).
   { from: 1996, to: 1999, lines: [
     'Seit dem Bosman-Urteil vom Dezember 1995 gehen Spieler nach Vertragsende ablösefrei. Das gesparte Geld wandert in Gehälter und Handgelder – achte auf die Laufzeiten, sonst verlieren wir Werte umsonst.',
@@ -52,7 +52,7 @@ export const BUDGET_ERAS: BudgetEra[] = [
     'Die Pleite der Mediengruppe zeigt, wie schnell Fernsehgeld wegbrechen kann: Die Liga bekommt weniger als im Vertrag stand. Der Vorstand will deshalb mehr Reserve sehen. Seit 2002 rechnen wir in Euro.',
     'Neue Währung, alte Sorgen: Nach der Pleite der Rechte-Mediengruppe 2002 sind die TV-Gelder gesunken. Eine ordentliche Reserve ist jetzt Pflicht, nicht Kür.',
   ] },
-  // Quelle: docs/research/FINANZEN_Recherche_Entwicklung_1980_heute.md (2000er/2010er: Ausgliederungen,
+  // Quelle: docs/research/finances-research-1980-today.md (2000er/2010er: Ausgliederungen,
   // Mehrsäulenmodell, Sponsoring/Hospitality/Merchandising gewinnen gegenüber Eintritt).
   { from: 2005, to: 2012, lines: [
     'Wir stehen inzwischen auf mehreren Säulen: Fernsehen, Sponsoring und Hospitality tragen mehr als der Eintritt. Logen und Business-Seats sind kein Luxus mehr, sondern Einnahmequelle.',
@@ -64,18 +64,18 @@ export const BUDGET_ERAS: BudgetEra[] = [
     'TV-Geld steigt kräftig: Seit 2013/14 sind es rund 628 Mio. € für die Liga. Mehr Geld heißt aber auch höhere Gehaltsforderungen.',
   ] },
   // Quellen: engine/tvMoney.ts (2017/18: 1,16 Mrd. € + Auslandsvermarktung; Verteilung nach vier Säulen);
-  // FINANZEN_Recherche_Entwicklung_1980_heute.md (Ärmelsponsoring seit 2017/18).
+  // finances-research-1980-today.md (Ärmelsponsoring seit 2017/18).
   { from: 2017, to: 2019, lines: [
     'Ab 2017/18 fließt rund 1,16 Mrd. € nationales Fernsehgeld plus Auslandsvermarktung. Der Tabellenplatz entscheidet stärker über unseren Anteil, und seit dieser Saison lässt sich auch der Ärmel vermarkten.',
     'Fernsehgeld in Milliardenhöhe: Rund 1,16 Mrd. € pro Saison national, dazu das Ausland. Ein guter Tabellenplatz zahlt sich jetzt direkt aus.',
   ] },
-  // Quellen: data/timeline.ts (Unterbrechung März 2020); FINANZEN_Recherche_Entwicklung_1980_heute.md
+  // Quellen: data/timeline.ts (Unterbrechung März 2020); finances-research-1980-today.md
   // (DFL Wirtschaftsreport 2023: 2021/22 noch unter Vorkrisenniveau).
   { from: 2020, to: 2022, lines: [
     'Seit der Unterbrechung im März 2020 wissen wir, wie verletzlich der Spieltag ist. Die Liga lag 2021/22 noch unter dem Umsatz vor der Krise – ich plane die Spieltagserlöse vorsichtig.',
     'Nach der Pandemie-Pause erholen sich die Umsätze nur langsam. Der Spieltag ist das unsicherste Standbein; TV und Sponsoring tragen uns.',
   ] },
-  // Quellen: FINANZEN_Recherche_Entwicklung_1980_heute.md (DFL 2023/24: 4,80 Mrd. € Umsatz, Medien 31,95 %,
+  // Quellen: finances-research-1980-today.md (DFL 2023/24: 4,80 Mrd. € Umsatz, Medien 31,95 %,
   // Spielbetrieb 10,91 %; nationaler Zyklus 2025/26–2028/29 Ø 1,121 Mrd. € je Saison).
   { from: 2023, to: 2100, lines: [
     'Die 1. Liga setzt inzwischen fast fünf Milliarden Euro um; Medien sind mit rund einem Drittel der größte Posten, der Spieltag bringt nur noch gut ein Zehntel. Der nationale Rechtezyklus ab 2025/26 bringt im Schnitt 1,121 Mrd. € pro Saison.',

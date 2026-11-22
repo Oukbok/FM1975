@@ -1,8 +1,8 @@
 // =============================================================================
 // Namenspools, sechste Stufe – Griechenland/Zypern, Türkei, Serbien/Bulgarien, Kroatien, Jugoslawien (Wunsch Pascal: Namen je Land im Verhältnis
-// zu den simulierten Vereinen, Zielwerte in docs/research/namen-ziel.md). Familiennamen
+// zu den simulierten Vereinen, Zielwerte in docs/research/names-target.md). Familiennamen
 // nach den Häufigkeits-Ranglisten des Landes (Rangfolge echter Namen je Land, siehe
-// docs/research/namen-ziel.md), gefiltert auf in der Bevölkerung übliche Namen ohne
+// docs/research/names-target.md), gefiltert auf in der Bevölkerung übliche Namen ohne
 // Überschneidung mit den Ethnien-Herkünften desselben Landes; griechische Namen in lateinischer Umschrift (Festland und Zypern), männliche Formen; serbische Namen in lateinischer Schrift.
 // Vornamen als Zeitspannen der Geburtsjahrgänge [von, bis, Namen] – Aufbau der
 // Stufen in data/namePoolsXL5.ts, eingemischt über `mergeXL` in data/origins.ts.

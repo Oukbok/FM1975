@@ -1,4 +1,4 @@
-// Ligen Luxemburg je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_lux.md
+// Ligen Luxemburg je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-lux.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_LUX: Record<number, SeasonRow> = {

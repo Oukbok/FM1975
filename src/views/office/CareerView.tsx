@@ -11,7 +11,7 @@ import { careerData } from '../../game/managerView';
 import { Game } from '../../game/state';
 import { DashPage, DashBox, Empty } from '../../ui/DashPage';
 import { SubTabsPage, useSubTab, type SubTab } from '../../ui/SubTabs';
-import { BilanzTab } from './career/BilanzTab';
+import { BalanceTab } from './career/BalanceTab';
 import { PeopleTab } from './career/PeopleTab';
 import { SeasonsTab } from './career/SeasonsTab';
 import { NtCareerTab } from '../national/NtCareerTab';
@@ -34,7 +34,7 @@ export function CareerView({ g }: { g: Game; onChange?: () => void }) {
   ];
   return (
     <SubTabsPage tabs={tabs} active={tab} onSelect={setTab}>
-      {tab === 'bilanz' && <BilanzTab g={g} d={d} rep={c.rep} onTab={setTab} />}
+      {tab === 'bilanz' && <BalanceTab g={g} d={d} rep={c.rep} onTab={setTab} />}
       {tab === 'saisons' && <SeasonsTab g={g} d={d} />}
       {tab === 'personen' && <PeopleTab g={g} d={d} />}
       {tab === 'national' && nationalJob(g) && <NtCareerTab g={g} />}

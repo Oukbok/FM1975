@@ -18,7 +18,7 @@ import type { PressApi } from './press/parts';
 // =============================================================================
 const dm = (iso: string) => `${['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'][new Date(iso + 'T00:00:00Z').getUTCDay()]} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
 
-export function PresseView({ g, onWatch, onGoto }: { g: Game; onWatch: (matchId: string) => void; onGoto: (s: Screen) => void }) {
+export function PressView({ g, onWatch, onGoto }: { g: Game; onWatch: (matchId: string) => void; onGoto: (s: Screen) => void }) {
   const today = g.calendar.currentDate;
   const issues = useMemo(() => pressIssues(g), [g, today]);
   const [sel, setSel] = useState(0);

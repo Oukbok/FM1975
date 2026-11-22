@@ -1,4 +1,4 @@
-// Vereine Ukraine (verfremdet). Quellen/echte Namen: docs/research/weltvereine_ukr.md
+// Vereine Ukraine (verfremdet). Quellen/echte Namen: docs/research/world-clubs-ukr.md
 import type { RealClub } from '../types';
 
 export const CLUBS_UKR: RealClub[] = [

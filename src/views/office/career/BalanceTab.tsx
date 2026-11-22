@@ -1,6 +1,6 @@
 // =============================================================================
 // Privat › Karriere, Reiter „Bilanz“ im Akten-/Scrapbook-Look (Wunsch Pascal,
-// Vorschlag 2): aufgeschlagene Ringmappe `images/dossier/bilanz.webp` (2400×1174),
+// Vorschlag 2): aufgeschlagene Ringmappe `images/dossier/balance-binder.webp` (2400×1174),
 // darauf Zettel aus `images/dossier/balance/` – alle Lagen in % der Mappe (CSS
 // `28-career-binder.css`, `.bnd-*`). Links Managerbilanz + Blatt „Je Wettbewerb“,
 // rechts Ansehen je Saison auf Karopapier, Titel (Abriss, Platz für alle 19 möglichen Titelarten inkl. Supercups), Rekorde als Notizen auf dem Blatt, Zeitungsausschnitt,
@@ -38,7 +38,7 @@ function Row({ k, v, info }: { k: string; v: ReactNode; info?: InfoKey }) {
   return <div className="bnd-kv"><span>{k}{info && <InfoTip k={info} />}</span><b>{v}</b></div>;
 }
 
-export function BilanzTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: number; onTab?: (t: Tab) => void }) {
+export function BalanceTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: number; onTab?: (t: Tab) => void }) {
   const club = g.clubs[g.managedClubId];
   const all = d.totals.all;
   const years = d.seasons.length;

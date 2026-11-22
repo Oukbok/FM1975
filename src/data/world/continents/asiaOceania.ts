@@ -4,7 +4,7 @@
 // 1972–1984 kein Wettbewerb), dem Aufbau der Profiligen (Japan 1993, Südkorea
 // 1983, China ab 1994, Saudi-Arabien mit großem Sprung nach 2022) und der
 // Klub-WM. Australien spielt bis 2005 in Ozeanien, ab 2006 in Asien.
-// Vorbilder/Quellen: docs/research/kontinente.md. Reihenfolge je Land nur hinten erweitern.
+// Vorbilder/Quellen: docs/research/continents.md. Reihenfolge je Land nur hinten erweitern.
 // =============================================================================
 import { club } from './southAmerica';
 import type { CtCountry } from './types';

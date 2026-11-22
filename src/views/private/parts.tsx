@@ -1,5 +1,5 @@
 // Gemeinsame Bausteine der Privat-Seiten (views/private/): Stufenwahl, kleiner Balken,
-// Rückmeldezeile, Personen-Kurzinfo. CSS 28-privat.css (`.pv-*`).
+// Rückmeldezeile, Personen-Kurzinfo. CSS 28-private.css (`.pv-*`).
 import { useState, type ReactNode } from 'react';
 import type { Game } from '../../game/state';
 import { ageOf, type Person } from '../../game/private/privateState';

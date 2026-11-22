@@ -50,7 +50,7 @@ function TreeCard({ g, p, cur }: { g: Game; p: Person; cur: string }) {
   );
 }
 
-export function FamilieView({ g, onChange }: { g: Game; onChange: () => void }) {
+export function FamilyView({ g, onChange }: { g: Game; onChange: () => void }) {
   const st = ensurePrivate(g);
   const [fb, setFb] = useFeedback();
   const [confirm, setConfirm] = useState<string>('');

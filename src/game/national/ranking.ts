@@ -1,6 +1,6 @@
 // =============================================================================
 // WELTRANGLISTE der Nationalmannschaften (Wunsch Pascal) – Elo-Verfahren wie die
-// World Football Elo Ratings (Formel/Quellen: docs/research/weltrangliste.md).
+// World Football Elo Ratings (Formel/Quellen: docs/research/world-ranking.md).
 // -----------------------------------------------------------------------------
 // • Start: Elo-Punkte je Nation aus den historischen Stützwerten (data/eloAnchors.ts)
 //   zum Startdatum – die Liste ähnelt zu Spielbeginn der echten Rangfolge.

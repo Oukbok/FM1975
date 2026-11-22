@@ -3,7 +3,7 @@
 // Holzbanden → bedruckte Kunststoffbanden → Prismenwender → LED mit wechselnden
 // Motiven), darunter die Liste der Bandenverträge (Banden + Wettpartner, Topf
 // „Werbung“) und rechts Angebote, freie Flächen, Fernsehen der Epoche.
-// Bild-Slot sponsor/bande-<epoche>.webp siehe docs/images/BILDER.md.
+// Bild-Slot sponsor/bande-<epoche>.webp siehe docs/images/IMAGES.md.
 // =============================================================================
 import { useEffect, useState } from 'react';
 import { LED_YEAR, SLOT_BY_ID } from '../../../data/sponsorCatalog';

@@ -646,7 +646,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
 // Frauen-EM 2029: https://dfb.de/news/dfb-to-host-uefa-womens-euro-2029
 // Frauen-WM 2031/2035: https://en.wikipedia.org/wiki/2031_FIFA_Women%27s_World_Cup
 // Neuer Wehrdienst 2026: https://www.bundesregierung.de/breg-de/aktuelles/antworten-zum-neuen-wehrdienst-2397476
-// Spielinterne Daten/Recherche: docs/research/fussball_historie_designdaten_1975_2030.md,
+// Spielinterne Daten/Recherche: docs/research/football-history-design-data-1975-2030.md,
 //   data/timeline.ts, data/indoorHistory.ts, data/campDestinations.ts,
 //   data/groundsCatalog.ts, engine/youthAcademy.ts
 // =============================================================================

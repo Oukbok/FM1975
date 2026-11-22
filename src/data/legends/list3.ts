@@ -1,6 +1,6 @@
 // Ausnahmetalente 101–132 (Wunsch Pascal: weniger deutsches Übergewicht, mehr
 // andere Nationen gerade in den frühen Jahrzehnten). Aufbau wie list1.ts;
-// Vorbilder nur in docs/research/legenden.md.
+// Vorbilder nur in docs/research/legends.md.
 import { L, type LegendDef } from './types';
 
 export const LEGENDS_C: LegendDef[] = [

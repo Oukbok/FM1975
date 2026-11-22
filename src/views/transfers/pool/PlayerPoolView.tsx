@@ -28,7 +28,7 @@ const PRESET_LABEL: Record<Preset, string> = { best: 'Weltbeste', talents: 'Tale
 const PRESET_SORT: Record<Preset, MarketSortKey> = { best: 'ability', talents: 'potential', youth: 'potential', home: 'ability', abroad: 'ability', scouted: 'ability' };
 
 
-export function SpielerpoolView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
+export function PlayerPoolView({ g, onChange = () => {} }: { g: Game; onChange?: () => void }) {
   const [preset, setPreset] = useSubTab<Preset>('transfers.pool', 'best');
   const [f, setF] = useState<MarketFilter>(EMPTY_FILTER);
   const [sort, setSort] = useState<MarketSort | null>(null);

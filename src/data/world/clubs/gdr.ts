@@ -3,7 +3,7 @@
 // die ab 1991/92 in seasons/ger.ts spielen). Vorhandene Spiel-IDs aus data/ddr.ts und
 // data/history/historicClubs.ts; neue Vereine `gdr-<slug>`. Farben der DDR-Liga-Vereine nach
 // Trägerbereich (Chemie grün, Motor blau, Dynamo weinrot …), nicht einzeln belegt.
-// Echte Namen und Quellen: docs/research/weltvereine_gdr.md
+// Echte Namen und Quellen: docs/research/world-clubs-gdr.md
 // =============================================================================
 import type { RealClub } from '../types';
 

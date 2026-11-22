@@ -14,7 +14,7 @@ import PosBadge from '../../components/PosBadge';
 // =============================================================================
 // VERTRÄGE — Vertragsliste, auslaufende Verträge, Gehaltsstruktur, Zufriedenheit
 // =============================================================================
-export function VertraegeView({ g, onChange }: { g: Game; onChange?: () => void }) {
+export function ContractsView({ g, onChange }: { g: Game; onChange?: () => void }) {
   const [sel, setSel] = useState<string | null>(null);
   const club = g.clubs[g.managedClubId];
   const today = g.calendar.currentDate;

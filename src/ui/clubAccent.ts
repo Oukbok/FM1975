@@ -1,5 +1,5 @@
 // =============================================================================
-// Vereinsfarbe als Akzent (Look „Akte“, styles/31-akte.css)
+// Vereinsfarbe als Akzent (Look „Akte“, styles/31-dossier.css)
 // -----------------------------------------------------------------------------
 // Wunsch Pascal: Die Hauptfarbe des eigenen Vereins färbt wichtige und gewählte
 // Knöpfe. Liegt sie zu nah am Dunkelblau der Kopfleiste/Boxköpfe (--navy), nimmt
@@ -10,7 +10,7 @@
 // --club-accent-ink (Schrift auf der Akzentfläche), --club-accent-hover.
 // =============================================================================
 
-/** Dunkelblau der Kopfleiste/Boxköpfe – gleicher Wert wie --navy in 31-akte.css. */
+/** Dunkelblau der Kopfleiste/Boxköpfe – gleicher Wert wie --navy in 31-dossier.css. */
 export const AKTE_NAVY = '#1b2a44';
 /** Ersatz, wenn keine Vereinsfarbe geht (Startbildschirm, fehlende Daten). */
 export const AKTE_DEFAULT_ACCENT = '#c8202a';

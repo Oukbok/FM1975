@@ -1,4 +1,4 @@
-// Vereine Ungarn (verfremdet). Quellen/echte Namen: docs/research/weltvereine_hun.md
+// Vereine Ungarn (verfremdet). Quellen/echte Namen: docs/research/world-clubs-hun.md
 import type { RealClub } from '../types';
 
 export const CLUBS_HUN: RealClub[] = [

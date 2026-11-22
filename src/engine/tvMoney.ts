@@ -1,6 +1,6 @@
 // =============================================================================
 // TV-GELDER — Topf der Ligen nach den echten Rechteverträgen und Verteilung nach
-// Tabellenplatz (Finanzen 2.0). Quellen: docs/specs/FINANZEN_SPEC.md §10.4.
+// Tabellenplatz (Finanzen 2.0). Quellen: docs/specs/FINANCES_SPEC.md §10.4.
 // =============================================================================
 import { Club } from '../types';
 import { revenueScale } from './economy';

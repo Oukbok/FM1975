@@ -1,4 +1,4 @@
-// Vereine Island 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_isl.md
+// Vereine Island 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/world-clubs-isl.md
 import type { RealClub } from '../types';
 
 export const CLUBS_ISL: RealClub[] = [

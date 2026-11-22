@@ -365,7 +365,7 @@ for (const [id, x] of [...Object.entries(XL_WEST), ...Object.entries(XL_SOUTH_EA
 // Verdeckte Ethnie je Herkunft (Vorgabe; im Editor unter Namen › Ethnie änderbar).
 // Grobe Anteile unter den Profis DIESER Nationalität (nicht der Liga), Stützjahr =
 // Jahr, in dem die Spieler etwa 20 sind. Weicht die Ethnie ab, passt der Name dazu
-// (data/ethnicity.ts). Quellen und Herleitung: docs/research/ethnie.md – u. a.
+// (data/ethnicity.ts). Quellen und Herleitung: docs/research/ethnicity.md – u. a.
 // WM-Kader 2018 mit Migrationswurzeln (Big Think nach Pew/UN): Frankreich > 75 %,
 // Schweiz fast 2/3, Belgien fast 1/2, England 48 %, Deutschland 39 %, Portugal 30 %,
 // Spanien/Schweden 17 %, Dänemark 13 %; Profis in England heute rund ein Drittel

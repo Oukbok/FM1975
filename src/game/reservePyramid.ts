@@ -2,7 +2,7 @@
 // ZWEITE MANNSCHAFTEN IN DER LIGAPYRAMIDE (Wunsch Pascal: „inwiefern zweite
 // Mannschaften simuliert werden können und zu welchen Zeiten sie unter welchen
 // Bedingungen in den oberen Ligen mitspielen können“). Regeln mit Quellen:
-// data/reserveRules.ts, Kurzfassung docs/research/zweite-mannschaften.md.
+// data/reserveRules.ts, Kurzfassung docs/research/reserve-teams.md.
 // -----------------------------------------------------------------------------
 // • Jede zweite Mannschaft ist ein schlanker Sim-Verein `res-<Stammverein>` (Name je
 //   Epoche „X Amateure“ bzw. ab 2005 „X II“). Pool (tier 9) = Amateurligen unterhalb der

@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten cyp: First Division je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1 in Reihenfolge der Abschlusstabelle; cup/cupFinalist = Landespokal; euro = Europapokal-Teilnehmer.
-// Quellen und Unsicherheiten: docs/research/weltvereine_cyp.md.
+// Quellen und Unsicherheiten: docs/research/world-clubs-cyp.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

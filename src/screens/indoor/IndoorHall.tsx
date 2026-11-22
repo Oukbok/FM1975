@@ -5,7 +5,7 @@
 // Rundumbande mit Werbefeldern, Spielfläche in Perspektive – bis 1990 heller
 // Kunststoffboden mit Handball-Linien, danach Kunstrasen-Teppich (Annahme nach
 // Fotos der Masters-Endrunden). Ab 1990 hängt ein Videowürfel unter dem Dach.
-// Foto-Slot: data/indoorImages.ts (images/indoor/halle-<epoche>.webp).
+// Foto-Slot: data/indoorImages.ts (images/indoor/hall-<epoche>.webp).
 // Farben: Tokens --hall-* in 00-base.css, Bewegung nur per CSS (28-indoor.css).
 // =============================================================================
 import { memo, useState } from 'react';

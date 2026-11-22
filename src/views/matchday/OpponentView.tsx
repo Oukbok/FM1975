@@ -26,7 +26,7 @@ import { DangerCard, FormationPitch, H2HBar, NextStrip, UnitRadar } from './oppo
 import { useMemo } from 'react';
 import { TAC_STYLE_DE } from '../categoryDashboards';
 
-export function GegnerView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void }) {
+export function OpponentView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Screen) => void; onWatch: (id: string) => void }) {
   const me = g.managedClubId;
   const myClub = g.clubs[me];
   const nx = nextOpponent(g);

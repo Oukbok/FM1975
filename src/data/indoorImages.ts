@@ -1,11 +1,11 @@
 // =============================================================================
 // Foto-Slots der Hallen-Show (screens/indoor/IndoorHall.tsx)
 // -----------------------------------------------------------------------------
-// Liegt ein Foto unter `images/indoor/halle-<epoche>.webp`, hier die Epoche
+// Liegt ein Foto unter `images/indoor/hall-<epoche>.webp`, hier die Epoche
 // eintragen – dann liegt das Foto über der gezeichneten Halle (die bleibt Rückfall,
 // auch bei Ladefehlern). Nur eingetragene Epochen werden geladen (keine 404-Anfragen).
 // Format: WebP 1920 × 1080 px, Halleninneres mit Tribünen und Rundumbande, ohne
-// erkennbare Personen und Logos, entsättigt und kühl abgedunkelt. Motive: docs/images/BILDER.md.
+// erkennbare Personen und Logos, entsättigt und kühl abgedunkelt. Motive: docs/images/IMAGES.md.
 // =============================================================================
 export type HallEra = '70er' | '80er' | '90er' | '2000er';
 
@@ -19,5 +19,5 @@ export function hallEra(year: number): HallEra {
 
 export function hallPhoto(year: number): string | null {
   const e = hallEra(year);
-  return INDOOR_HALL_PHOTOS[e] ? `assets/indoor/halle-${e}.webp` : null;
+  return INDOOR_HALL_PHOTOS[e] ? `assets/indoor/hall-${e}.webp` : null;
 }

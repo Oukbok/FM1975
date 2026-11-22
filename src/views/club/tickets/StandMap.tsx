@@ -70,8 +70,8 @@ export function StandMap({ club, people, sel, onSel }: { club: Club; people: Rec
           </pattern>
         </defs>
         <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} rx="2" className="tk-turf" />
-        {/* Bild-Slot: Rasentextur von oben (images/tickets/rasen.jpg); fehlt sie, bleibt die Fläche. */}
-        <image href="assets/tickets/rasen.jpg" x={x0} y={y0} width={x1 - x0} height={y1 - y0} preserveAspectRatio="xMidYMid slice" className="tk-turf-img" />
+        {/* Bild-Slot: Rasentextur von oben (images/tickets/grass.jpg); fehlt sie, bleibt die Fläche. */}
+        <image href="assets/tickets/grass.jpg" x={x0} y={y0} width={x1 - x0} height={y1 - y0} preserveAspectRatio="xMidYMid slice" className="tk-turf-img" />
         <g className="tk-lines">
           <rect x={x0 + 4} y={y0 + 4} width={x1 - x0 - 8} height={y1 - y0 - 8} />
           <line x1={(x0 + x1) / 2} y1={y0 + 4} x2={(x0 + x1) / 2} y2={y1 - 4} />

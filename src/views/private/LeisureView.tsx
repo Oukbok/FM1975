@@ -13,7 +13,7 @@ import { DashBox, DashPage } from '../../ui/DashPage';
 import { fmtDM } from '../../ui/format';
 import { Bar, Feedback, MeterRow, Steps, useFeedback } from './parts';
 
-export function FreizeitView({ g, onChange }: { g: Game; onChange: () => void }) {
+export function LeisureView({ g, onChange }: { g: Game; onChange: () => void }) {
   const st = ensurePrivate(g);
   const [fb, setFb] = useFeedback();
   const today = g.calendar.currentDate;

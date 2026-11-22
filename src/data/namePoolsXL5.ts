@@ -4,7 +4,7 @@
 // Deutschland …“). Ziel je Land = Namen Deutschlands (ger + ger_modern + ger_ost) ×
 // simulierte Vereine mit Spielern bei diesem Heimatland ÷ bei Heimat Deutschland, Länder
 // mit 4. Ebene (England, Spanien, Italien, Frankreich) mindestens so viele wie Deutschland.
-// Zählung, Ziele und Vorgehen: docs/research/namen-ziel.md (Skript tests/name-count.ts).
+// Zählung, Ziele und Vorgehen: docs/research/names-target.md (Skript tests/name-count.ts).
 // Rohdaten je Region in namePoolsXL5<Region>.ts; Vornamen dort als Zeitspannen der
 // Geburtsjahrgänge, hier in Stufen je Jahrzehnt umgesetzt (Format `XLNames.eras` wie
 // data/namePoolsXL.ts) und in data/origins.ts über `mergeXL` eingemischt.

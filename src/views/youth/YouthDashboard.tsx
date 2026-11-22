@@ -14,7 +14,7 @@ import { ScoutStars } from '../shared';
 // =============================================================================
 // JUGEND — Kategorie-Übersicht (Akademie, Talente, Mannschaften, Eigengewächse)
 // =============================================================================
-export function JugendDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
+export function YouthDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
   const club = g.clubs[g.managedClubId];
   const year = yearOf(g.calendar.currentDate);
   const inv = youthInvestOf(club, year);

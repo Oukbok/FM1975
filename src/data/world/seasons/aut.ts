@@ -1,7 +1,7 @@
 // =============================================================================
 // Weltdaten aut: Bundesliga (1. Division) je Saison (Schlüssel = Startjahr, 1975 = 1975/76).
 // t1 in Reihenfolge der Abschlusstabelle; cup/cupFinalist = Landespokal; euro = Europapokal-Teilnehmer.
-// Quellen und Unsicherheiten: docs/research/weltvereine_aut.md.
+// Quellen und Unsicherheiten: docs/research/world-clubs-aut.md.
 // =============================================================================
 import type { SeasonRow } from '../types';
 

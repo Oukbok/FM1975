@@ -155,7 +155,7 @@ export interface Dataset {
    */
   formationEras?: Record<string, number[]>;
   /**
-   * Weltdaten (docs/specs/WELTDATEN_SPEC.md): je Land (Code, z. B. 'ger', 'eng') alle Vereine
+   * Weltdaten (docs/specs/WORLD_DATA_SPEC.md): je Land (Code, z. B. 'ger', 'eng') alle Vereine
    * und je Saison (Startjahr als Schlüssel) die Ligen, Pokalsieger, Europapokal-Teilnehmer.
    * Fehlt das Feld oder ein Land, gelten die eingebauten Daten. Deutschland: gleiche IDs wie
    * `clubs`; geänderte Namen/Farben gelten auch für die Startvereine.

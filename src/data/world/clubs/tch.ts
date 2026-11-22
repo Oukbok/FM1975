@@ -1,4 +1,4 @@
-// Vereine Tschechoslowakei (verfremdet). Quellen/echte Namen: docs/research/weltvereine_tch.md
+// Vereine Tschechoslowakei (verfremdet). Quellen/echte Namen: docs/research/world-clubs-tch.md
 import type { RealClub } from '../types';
 
 export const CLUBS_TCH: RealClub[] = [

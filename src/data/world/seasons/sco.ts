@@ -1,4 +1,4 @@
-// Ligen Schottland je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_sco.md
+// Ligen Schottland je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-sco.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_SCO: Record<number, SeasonRow> = {

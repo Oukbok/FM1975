@@ -3,7 +3,7 @@
 // Brust (Druck in Kontrastfarbe), Ausrüster (klein auf der linken Brust),
 // Ärmel (ab 2017/18). Freie Flächen gestrichelt. Die Logos liegen als eigene
 // Ebene über <JerseySVG> (gleiches 200×210-Raster), damit auch ein hochgeladenes
-// Trikotbild bedruckt wird. Bild-Slot fürs Trikotfoto siehe docs/images/BILDER.md.
+// Trikotbild bedruckt wird. Bild-Slot fürs Trikotfoto siehe docs/images/IMAGES.md.
 // =============================================================================
 import JerseySVG, { type JerseyPattern } from '../../../components/JerseySVG';
 import { getClubKitDisplay } from '../../../data/kits';

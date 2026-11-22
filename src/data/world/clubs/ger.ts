@@ -3,7 +3,7 @@
 // 1975/76–2025/26. Vorhandene Spiel-IDs/Namen aus data/generate.ts und data/history/historicClubs.ts;
 // neue Vereine `ger-<slug>`. Vereine aus der DDR (IDs `ddr-*`/`gdr-*`, z. B. Rostock, Dresden, Köpenick)
 // stehen nur in clubs/gdr.ts und werden ab 1991/92 auch in seasons/ger.ts verwendet.
-// Echte Namen und Quellen: docs/research/weltvereine_ger.md
+// Echte Namen und Quellen: docs/research/world-clubs-ger.md
 // =============================================================================
 import type { RealClub } from '../types';
 

@@ -5,7 +5,7 @@
 // Kopf: Titel, Anlass, Schritte (z. B. Verein → Spieler → Abschluss).
 // Körper: drei Spalten – links das Gegenüber, in der Mitte Position und Punkte,
 // rechts Stimmung, Gespräch und Auswirkung. Fuß: Hinweis und Knöpfe.
-// Feste Größe – nichts wächst beim Bedienen. CSS: styles/28-verhandlung.css.
+// Feste Größe – nichts wächst beim Bedienen. CSS: styles/28-negotiation.css.
 // =============================================================================
 import { type ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';

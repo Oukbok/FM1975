@@ -1,4 +1,4 @@
-// Vereine Nordirland 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/weltvereine_nir.md
+// Vereine Nordirland 1975–2025 (verfremdet). Quellen/echte Namen: docs/research/world-clubs-nir.md
 import type { RealClub } from '../types';
 
 export const CLUBS_NIR: RealClub[] = [

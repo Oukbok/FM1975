@@ -3,7 +3,7 @@
 // Epoche grob nach Kontinentalerfolgen (Titel/Finals im Südamerika-Pokal der
 // Landesmeister), Ligatiteln und dem Abstand zu Europas Spitze im Weltpokal
 // (1980–2004 gewann Südamerika 15 von 25 Endspielen in Tokio, die Klub-WM ab
-// 2005 nur noch 4 von 19 Ausgaben) – Vorbilder/Quellen: docs/research/kontinente.md.
+// 2005 nur noch 4 von 19 Ausgaben) – Vorbilder/Quellen: docs/research/continents.md.
 // Reihenfolge je Land nur hinten erweitern (Platzierungen als Index gespeichert).
 // =============================================================================
 import type { CtClub, CtCountry } from './types';

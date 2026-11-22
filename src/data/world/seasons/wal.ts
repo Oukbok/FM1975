@@ -1,4 +1,4 @@
-// Ligen Wales je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_wal.md
+// Ligen Wales je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-wal.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_WAL: Record<number, SeasonRow> = {

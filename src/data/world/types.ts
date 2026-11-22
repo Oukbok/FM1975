@@ -1,6 +1,6 @@
 // =============================================================================
 // Weltdaten 1975–2025: echte (verfremdete) Vereine und Ligazusammensetzung je Saison.
-// Format und Regeln: docs/specs/WELTDATEN_SPEC.md. Echte Namen nur in docs/research/weltvereine_<cc>.md.
+// Format und Regeln: docs/specs/WORLD_DATA_SPEC.md. Echte Namen nur in docs/research/world-clubs-<cc>.md.
 // =============================================================================
 export type EuroComp = 'ec' | 'cwc' | 'uefa' | 'cl' | 'el' | 'ecl';
 

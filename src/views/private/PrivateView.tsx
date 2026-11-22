@@ -1,6 +1,6 @@
 // =============================================================================
 // PRIVAT (Übersicht, Wunsch Pascal #47): du, diese Woche, Familie, Vermögen,
-// Wirkung auf den Verein, Lebenslauf. Logik game/private/, CSS 28-privat.css.
+// Wirkung auf den Verein, Lebenslauf. Logik game/private/, CSS 28-private.css.
 // =============================================================================
 import type { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
@@ -18,7 +18,7 @@ import { MeterRow, personLine } from './parts';
 const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
 const pct = (f: number) => `${f >= 0 ? '+' : '−'}${Math.abs(f * 100).toFixed(1).replace('.', ',')} %`;
 
-export function PrivatView({ g, onGoto }: { g: Game; onChange?: () => void; onGoto: (s: Screen) => void }) {
+export function PrivateView({ g, onGoto }: { g: Game; onChange?: () => void; onGoto: (s: Screen) => void }) {
   if (!privOn(g)) {
     return <DashPage><DashBox title="Privat" span={3} rows={2}><Empty icon="home">Das Privatleben ist in diesem Spielstand abgeschaltet (Einstellung beim Spielstart).</Empty></DashBox></DashPage>;
   }

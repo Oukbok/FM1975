@@ -15,7 +15,7 @@
 // Größe; Auf-/Abstieg dann wie im letzten „ruhigen“ Saisonwechsel ohne Größenänderung. Länder ohne
 // 2. Liga in den Daten: `t2` = null (die Hintergrund-Welt behält ihre bisherige 2. Liga).
 // Stichproben gegen Quellen (England, Italien, Spanien, Frankreich, Niederlande, Portugal,
-// Deutschland): docs/research/ligastruktur-ausland.md. Genutzt von engine/world.ts
+// Deutschland): docs/research/foreign-league-structure.md. Genutzt von engine/world.ts
 // (Hintergrund-Saisonwechsel), engine/worldData.ts (Start) und game/homeStructure.ts (Heimatland).
 // =============================================================================
 import { COUNTRY_BY_KEY } from './countries';

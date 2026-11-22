@@ -1,8 +1,8 @@
 // =============================================================================
 // Namenspools, sechste Stufe – Spanien (Wunsch Pascal: Namen je Land im Verhältnis
-// zu den simulierten Vereinen, Zielwerte in docs/research/namen-ziel.md). Familiennamen
+// zu den simulierten Vereinen, Zielwerte in docs/research/names-target.md). Familiennamen
 // nach den Häufigkeits-Ranglisten des Landes (Rangfolge echter Namen je Land, siehe
-// docs/research/namen-ziel.md), gefiltert auf in der Bevölkerung übliche Namen ohne
+// docs/research/names-target.md), gefiltert auf in der Bevölkerung übliche Namen ohne
 // Überschneidung mit den Ethnien-Herkünften desselben Landes; Familiennamen aus allen Regionen (Kastilien, Andalusien, Katalonien/Valencia/Balearen, Baskenland, Galicien, Kanaren); Vornamen inkl. der üblichen Doppelvornamen (José Luis, Juan Carlos) sowie katalanischer, baskischer und galicischer Formen.
 // Vornamen als Zeitspannen der Geburtsjahrgänge [von, bis, Namen] – Aufbau der
 // Stufen in data/namePoolsXL5.ts, eingemischt über `mergeXL` in data/origins.ts.

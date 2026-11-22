@@ -1,4 +1,4 @@
-// Ligen Norwegen je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_nor.md
+// Ligen Norwegen je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-nor.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_NOR: Record<number, SeasonRow> = {

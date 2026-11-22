@@ -1,7 +1,7 @@
 // =============================================================================
 // REKORDKURVE DER ABLÖSESUMMEN (Spitzenablöse eines Jahres, nominal in EUR)
 // -----------------------------------------------------------------------------
-// Grundlage: Recherche in docs/research/transferrekorde.md (Weltrekorde und
+// Grundlage: Recherche in docs/research/transfer-records.md (Weltrekorde und
 // Spitzentransfers je Jahr, Bundesliga-Rekordzugänge). Die Stützwerte sind
 // GEGLÄTTET: Ausreißer wie der 222-Mio.-Transfer 2017 heben die Kurve nur
 // teilweise an. Im Spiel ist die Kurve eine weiche Obergrenze – sie kann

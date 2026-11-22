@@ -1,4 +1,4 @@
-// Ligen Nordirland je Saison (Schlüssel = Startjahr). Quellen: docs/research/weltvereine_nir.md
+// Ligen Nordirland je Saison (Schlüssel = Startjahr). Quellen: docs/research/world-clubs-nir.md
 import type { SeasonRow } from '../types';
 
 export const SEASONS_NIR: Record<number, SeasonRow> = {

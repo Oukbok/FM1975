@@ -384,7 +384,7 @@ export function runAiEconomy(ctx: AiEconomyContext): string[] {
     const budgetWeekly = Math.min(quota * netRev, room) / scale / 52 / WAGE_OVERHEAD;
     const squad = c.playerIds.map((id) => ctx.players[id]).filter(Boolean);
     // Gehaltsgefälle im Kader je Epoche: bis in die 1980er flacher (Stars ≈ 0,3–0,55 Mio. DM,
-    // Recherche FINANZEN_Recherche_Entwicklung), nach Bosman steil (Marktgehalt voll).
+    // Recherche finances-research-1980-today), nach Bosman steil (Marktgehalt voll).
     const spread = wageSpread(ctx.year);
     const weight = (p: Player) => Math.pow(marketWage(p), spread);
     const sum = squad.reduce((a, p) => a + weight(p), 0) || 1;
