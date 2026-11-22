@@ -182,6 +182,8 @@ export function leagueStories(c: PressCtx): LeagueOut {
     const games = g.fixtures.filter((m) => m.matchday === md && m.status === 'finished' && m.result);
     const results = games.map(resultOf);
     matchday = { md, results };
+    // Nur ein (Nachhol-)Spiel dieses Spieltags im Fenster: kein Spieltags-Überblick („1 Spiele, 3 Tore“).
+    if (games.length >= 2) {
     const goals = results.reduce((s, r) => s + r.hg + r.ag, 0);
     const hw = results.filter((r) => r.hg > r.ag).length, aw = results.filter((r) => r.ag > r.hg).length;
     const top = rated.find((x) => x.m.matchday === md && !x.flags.includes('own')) ?? rated.find((x) => x.m.matchday === md);
@@ -194,6 +196,7 @@ export function leagueStories(c: PressCtx): LeagueOut {
       image: top ? { kind: 'club', id: winnerOf(top.m)?.w ?? top.m.homeClubId } : undefined,
       targets: [{ kind: 'screen', screen: 'fixtures', label: 'Spielplan' }, { kind: 'screen', screen: 'table', label: 'Tabelle' }],
     }));
+    }
   }
 
   // Spielabsagen (game/fixtureWatch.ts): Wetter – Nachholspiel unter der Woche.
