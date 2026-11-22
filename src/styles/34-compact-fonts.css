@@ -535,8 +535,13 @@
 [data-fs] .ms-note { font-size: 17.6px; }
 [data-fs] .ms-sec { font-size: 17.6px; }
 [data-fs] .ms-chip { font-size: 17.6px; }
+[data-fs] .ms-shout-tag { font-size: 17.6px; }
 [data-fs] .ms-shout-t { font-size: 17.6px; }
 [data-fs] .ms-shout-h { font-size: 17.6px; }
+[data-fs] .ms-stimer-txt b { font-size: 17.6px; }
+[data-fs] .ms-stimer-txt span { font-size: 17.6px; }
+[data-fs] .ms-sring text { font-size: 34px; }
+[data-fs] .ms-schip { font-size: 17.6px; }
 [data-fs] .ms-dialog-head { font-size: 30px; }
 [data-fs] .ms-dialog-p { font-size: 20px; }
 [data-fs] .ms-verdict { font-size: 44px; }

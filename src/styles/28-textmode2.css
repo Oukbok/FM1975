@@ -83,6 +83,8 @@
 /* 0 und 90 (bzw. 120) an den Enden: nur die Zahl, rechts bündig nach innen (Wunsch Pascal) */
 .tm-tl-tick.edge { background: transparent; }
 .tm-tl-tick.end em { left: auto; right: 4px; }
+.tm-tl-shout { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: rgba(var(--green-rgb), 0.28); box-shadow: inset 0 0 0 1px rgba(var(--green-rgb), 0.55); pointer-events: auto; }
+.tm-tl-shout.live { background: rgba(var(--green-rgb), 0.5); }
 .tm-tl-ball { position: absolute; top: 50%; transform: translate(-50%, -50%); line-height: 0; transition: left 0.5s; }
 .tm-tl-mark { position: absolute; transform: translateX(-50%); line-height: 0; }
 .tm-tl-mark.home { top: 0; }

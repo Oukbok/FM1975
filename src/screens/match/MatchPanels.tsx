@@ -1,11 +1,16 @@
 // =============================================================================
-// Seitenteile des Textmodus: Statistik (zeitgemäß) und Taktik/Zurufe.
+// Seitenteile des Textmodus: Statistik (zeitgemäß) und Taktik/Zurufe (Laufzeit board/ShoutTimer.tsx).
 // Aufstellung: board/LineupBoard.tsx, Druckphasen: Zeitleiste in board/Stage.tsx.
 // =============================================================================
 import Icon from '../../components/Icon';
 import type { MatchSim } from '../../engine/match/sim';
 import type { TeamState } from '../../engine/match/state';
 import { MENTALITY_LABEL, type Mentality, type ShoutId, type Side } from '../../engine/match/types';
+import {
+  captainLead, leadFactor, repeatFactor, SHOUT_LIST, SHOUT_MINUTES, SHOUT_REPEAT_WINDOW, shoutFxText, shoutRepeats, shoutStatus,
+} from '../../engine/match/shouts';
+import { InfoTip } from '../../ui/InfoTip';
+import { ShoutTimer } from './board/ShoutTimer';
 
 // -----------------------------------------------------------------------------
 // Statistik (nur, was es in der jeweiligen Zeit schon gab)
@@ -75,20 +80,17 @@ export function StatsPanel({ sim }: { sim: MatchSim }) {
 // Taktik & Zurufe
 // -----------------------------------------------------------------------------
 
-const SHOUTS: [ShoutId, string, string][] = [
-  ['druck', 'Mehr Druck!', 'Mehr Angriffe, kostet Kraft'],
-  ['ruhe', 'Ruhe reinbringen', 'Ballkontrolle, weniger Fehler'],
-  ['kompakt', 'Kompakt stehen', 'Sicherer hinten, weniger vorne'],
-  ['fluegel', 'Über die Flügel', 'Mehr Flanken und Kopfbälle'],
-  ['konzentration', 'Konzentration!', 'Weniger Fehler und Karten'],
-  ['zweikampf', 'Zweikämpfe annehmen', 'Härter, aber foulanfälliger'],
-];
+/** Etikett vor dem Klick: Abschlag durch Wiederholung (−30 % je Wiederholung unter den letzten drei). */
+function repeatTag(t: TeamState, id: ShoutId): { pct: number; n: number } {
+  const n = shoutRepeats(t, id);
+  return { n, pct: Math.round((1 - repeatFactor(n)) * 100) };
+}
 
 export function TacticsPanel({ sim, side, act }: { sim: MatchSim; side: Side; act: (fn: () => unknown) => unknown }) {
   const t = sim.team(side);
-  const cd = sim.shoutCooldown(side);
-  const active = t.shout && sim.minute < t.shoutUntil ? t.shout : null;
+  const st = shoutStatus(sim, side);
   const closed = sim.finished || sim.phase === 'shootout';
+  const lead = captainLead(t), lf = Math.round((leadFactor(lead) - 1) * 100);
   return (
     <div className="ms-tactics">
       <div className="ms-sec">Ausrichtung</div>
@@ -98,23 +100,29 @@ export function TacticsPanel({ sim, side, act }: { sim: MatchSim; side: Side; ac
             onClick={() => act(() => sim.setMentality(side, m))}>{MENTALITY_LABEL[m]}</button>
         ))}
       </div>
-      <div className="ms-sec">
-        Zurufe {active ? <span className="ms-hint">wirkt bis {t.shoutUntil}'</span> : cd > 0 ? <span className="ms-hint">wieder in {cd}'</span> : null}
-      </div>
+      <div className="ms-sec"><span>Zurufe <InfoTip k="zurufe" /></span></div>
+      <ShoutTimer sim={sim} side={side} />
       <div className="ms-shouts">
-        {SHOUTS.map(([id, label, hint]) => {
-          const used = t.shoutHistory.slice(-3).filter((x) => x === id).length;
+        {SHOUT_LIST.map(([id, label, hint]) => {
+          const rep = repeatTag(t, id);
+          const title = `${label}: ${shoutFxText(id)} – ${SHOUT_MINUTES} Minuten lang.`
+            + (rep.n ? ` Schon ${rep.n}× unter deinen letzten ${SHOUT_REPEAT_WINDOW} Zurufen: Wirkung −${rep.pct} %.` : ' Volle Wirkung.');
           return (
-            <button key={id} className={`ms-shout ${active === id ? 'on' : ''}`} disabled={closed || cd > 0 || !!active}
-              onClick={() => act(() => sim.shout(side, id))}>
+            <button key={id} className={`ms-shout ${st.active === id ? 'on' : ''}`} disabled={closed || st.wait > 0 || !!st.active}
+              title={title} onClick={() => act(() => sim.shout(side, id))}>
               <Icon name="whistle" size={26} />
               <span className="ms-shout-t">{label}</span>
-              <span className="ms-shout-h">{used >= 2 ? 'nutzt sich ab' : hint}</span>
+              <span className="ms-shout-h">{hint}</span>
+              {st.active === id ? <span className="ms-shout-tag now">wirkt gerade</span>
+                : <span className={`ms-shout-tag ${rep.n ? 'rep' : ''}`}>{rep.n ? `Wiederholung: −${rep.pct} %` : 'volle Wirkung'}</span>}
             </button>
           );
         })}
       </div>
-      <div className="ms-note">Zurufe wirken etwa zehn Minuten. Wer zu oft dasselbe ruft, wird überhört.</div>
+      <div className="ms-note">
+        Dein Kapitän (Führung {lead}) gibt Zurufe weiter: {lf === 0 ? 'normale Stärke' : `${lf > 0 ? '+' : '−'}${Math.abs(lf)} %`}.
+        Derselbe Zuruf kurz hintereinander nutzt sich ab.
+      </div>
     </div>
   );
 }

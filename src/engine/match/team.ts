@@ -12,6 +12,7 @@ import { withLayout } from '../../data/pitchGrid';
 import { getEraYear, getSkillRev, positionSuitability, sideOf } from '../positions';
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 import { NEUTRAL_RF, NEUTRAL_RU } from '../tacticRoles';
+import { SHOUT_FX } from './shouts';
 
 /** Anzahl zwischengespeicherter Fähigkeiten je Spieler (engine/match/skills.ts). */
 export const SKILL_SLOTS = 13;
@@ -358,17 +359,7 @@ export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: 
   m.exposed *= 1 + mentality * 0.14;
   m.drain *= 1 + Math.abs(mentality) * 0.05;
   // Zurufe
-  if (shout && shoutPower > 0) {
-    const s = shoutPower;
-    switch (shout) {
-      case 'druck': m.att *= 1 + 0.07 * s; m.rate *= 1 + 0.12 * s; m.def *= 1 - 0.03 * s; m.drain *= 1 + 0.3 * s; break;
-      case 'ruhe': m.ctrl *= 1 + 0.07 * s; m.rate *= 1 - 0.08 * s; m.errors *= 1 - 0.3 * s; m.exposed *= 1 - 0.1 * s; break;
-      case 'kompakt': m.def *= 1 + 0.07 * s; m.att *= 1 - 0.04 * s; m.exposed *= 1 - 0.15 * s; break;
-      case 'fluegel': m.cross *= 1 + 0.6 * s; m.att *= 1 + 0.02 * s; break;
-      case 'konzentration': m.def *= 1 + 0.035 * s; m.errors *= 1 - 0.45 * s; m.cards *= 1 - 0.4 * s; break;
-      case 'zweikampf': m.duel *= 1 + 0.1 * s; m.def *= 1 + 0.035 * s; m.foul *= 1 + 0.45 * s; m.cards *= 1 + 0.25 * s; break;
-    }
-  }
+  if (shout && shoutPower > 0) for (const [k, c] of SHOUT_FX[shout]) (m[k] as number) *= 1 + c * shoutPower;
   // Halbzeitansprache (Faktor um 1)
   m.att *= talk; m.def *= talk; m.ctrl *= talk;
   return m;

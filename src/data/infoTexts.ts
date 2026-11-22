@@ -803,6 +803,11 @@ export const INFO_TEXTS = {
   },
 
   // ---------------------------------------------------------------- Textmodus
+  zurufe: {
+    title: 'Zurufe von der Seitenlinie',
+    text: 'Ein Zuruf wirkt 15 Minuten, der nächste ist 21 Minuten nach dem letzten möglich. Der Ring zeigt die Restzeit. Rufst du denselben Zuruf, der schon unter deinen letzten drei war, wirkt er je Wiederholung 30 % schwächer (das Etikett am Knopf zeigt es vorher). Ein führungsstarker Kapitän verstärkt jeden Zuruf.',
+    wiki: 'match-sideline',
+  },
   textmodusOptionen: {
     title: 'Optionen im Textmodus',
     text: 'Automatische Auswechslungen: Dein Co-Trainer wärmt Ersatz auf und wechselt Erschöpfte und Verletzte selbst. Ohne ihn humpelt ein Verletzter weiter, bis du reagierst – das Spiel hält dann immer an. Die Anhalte-Optionen öffnen den Wechsel-Bildschirm zur Halbzeit, zur Schlussphase, bei Rückstand oder wenn bei dir ein Wechsel ansteht.',

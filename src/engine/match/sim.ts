@@ -18,6 +18,7 @@ import { aerial, attack } from './attack';
 import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refreshSkills, tackleSkill } from './skills';
 import type { MPlayer, Mentality, ShoutId, Side, SimEvent, SimEventKind, TeamTalk } from './types';
 import { applyWarmBonus, assistantCoach, drainWarmUps } from './sideline';
+import { giveShout, shoutStatus } from './shouts';
 import { other } from './types';
 import { NEUTRAL_TRAITS, teamworkBias, workRateF } from './traits';
 
@@ -502,28 +503,10 @@ export class MatchSim {
     this.emit('mentality', { side, value: m });
   }
 
-  /** Zuruf; liefert die verbleibende Abklingzeit, wenn (noch) nicht möglich. */
-  shout(side: Side, id: ShoutId): boolean {
-    const t = this.team(side);
-    if (this.phase !== 'play' && this.phase !== 'halftime') return false;
-    if (this.minute < t.shoutReadyAt || (t.shout && this.minute < t.shoutUntil)) return false;
-    const repeats = t.shoutHistory.slice(-3).filter((s) => s === id).length;
-    const cap = t.players.find((m) => m.id === t.captainId && m.onPitch);
-    const lead = cap ? cap.p.attributes.leadership : 55;
-    t.shoutPower = Math.max(0.2, (1 - repeats * 0.3) * (0.8 + lead / 250) * (0.85 + this.rng() * 0.3));
-    t.shout = id;
-    t.shoutUntil = this.minute + 10;
-    t.shoutReadyAt = this.minute + 16;
-    t.shoutHistory.push(id);
-    t.dirty = true;
-    this.emit('shout', { side, value: id, detail: repeats >= 2 ? 'stumpf' : t.shoutPower > 1 ? 'zuendet' : undefined });
-    return true;
-  }
+  /** Zuruf (Regeln in shouts.ts); false, solange der vorige wirkt oder die Abklingzeit läuft. */
+  shout(side: Side, id: ShoutId): boolean { return giveShout(this, side, id); }
 
-  shoutCooldown(side: Side): number {
-    const t = this.team(side);
-    return Math.max(0, t.shoutReadyAt - this.minute);
-  }
+  shoutCooldown(side: Side): number { return shoutStatus(this, side).wait; }
 
   /** Halbzeitansprache (wirkt in der zweiten Hälfte). */
   teamTalk(side: Side, talk: TeamTalk): void {

@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import type { Club } from '../../../types';
 import type { MatchSim } from '../../../engine/match/sim';
-import type { Side, SimEvent } from '../../../engine/match/types';
+import type { ShoutId, Side, SimEvent } from '../../../engine/match/types';
 import type { Game } from '../../../game/state';
 import type { OwnMatchInfo } from '../../../game/ownMatch';
 import type { Line } from '../../../data/ticker/narrator';
@@ -16,6 +16,7 @@ import { onPitch } from '../../../engine/match/state';
 import { rating } from '../../../engine/match/team';
 import { InfoTip } from '../../../ui/InfoTip';
 import { DangerMeter } from './DangerMeter';
+import { SHOUT_MINUTES, shoutLabel } from '../../../engine/match/shouts';
 
 export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, history, current }: {
   g: Game; sim: MatchSim; info: OwnMatchInfo; score: [number, number]; pens: [number, number] | null;
@@ -144,11 +145,22 @@ function marksOf(evs: SimEvent[], shownSeq: number): Mark[] {
 export function Timeline({ sim, shownSeq }: { sim: MatchSim; shownSeq: number }) {
   const len = sim.knockout && sim.period >= 3 ? 120 : 90;
   const now = sim.phase === 'done' ? len : Math.min(len, sim.minute);
-  return <TimelineView len={len} now={now} momentum={sim.momentum} marks={marksOf(sim.events, shownSeq)} />;
+  return <TimelineView len={len} now={now} momentum={sim.momentum} marks={marksOf(sim.events, shownSeq)} spans={shoutSpans(sim.events, shownSeq)} />;
+}
+
+/** Zuruf-Spannen (Wirkungsdauer) für die Zeitleiste. */
+export type Span = { from: number; to: number; side: Side; label: string; seq: number };
+function shoutSpans(evs: SimEvent[], shownSeq: number): Span[] {
+  const out: Span[] = [];
+  for (const ev of evs) {
+    if (ev.kind !== 'shout' || ev.seq > shownSeq || !ev.side) continue;
+    out.push({ from: ev.minute, to: ev.minute + SHOUT_MINUTES, side: ev.side, label: shoutLabel(ev.value as ShoutId), seq: ev.seq });
+  }
+  return out;
 }
 
 /** Zeitleiste als reine Anzeige (Textmodus und Spielbericht). */
-export function TimelineView({ len, now, momentum, marks }: { len: number; now: number; momentum: readonly number[]; marks: Mark[] }) {
+export function TimelineView({ len, now, momentum, marks, spans }: { len: number; now: number; momentum: readonly number[]; marks: Mark[]; spans?: Span[] }) {
   const pct = (m: number) => `${(Math.min(len, Math.max(0, m)) / len) * 100}%`;
   const ticks = len === 120 ? [0, 15, 30, 45, 60, 75, 90, 105, 120] : [0, 15, 30, 45, 60, 75, 90];
   return (
@@ -162,6 +174,10 @@ export function TimelineView({ len, now, momentum, marks }: { len: number; now: 
       </div>
       <div className="tm-tl-track">
         <div className="tm-tl-fill" style={{ width: pct(now) }} />
+        {spans?.map((sp) => (
+          <span key={sp.seq} className={`tm-tl-shout ${sp.side} ${now < sp.to ? 'live' : ''}`} title={`Zuruf „${sp.label}“: ${sp.from}.–${sp.to}. Min.`}
+            style={{ left: pct(sp.from), width: `calc(${pct(sp.to)} - ${pct(sp.from)})` }} />
+        ))}
         {ticks.map((t) => <span key={t} className={`tm-tl-tick ${t === 0 ? 'edge start' : t === len ? 'edge end' : t === 45 || t === 90 ? 'half' : ''}`} style={{ left: pct(t) }}><em>{t}</em></span>)}
         <span className="tm-tl-ball" style={{ left: pct(now) }}><Icon name="matchball" size={22} /></span>
       </div>

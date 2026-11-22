@@ -20,6 +20,7 @@ import { StatsPanel, TacticsPanel } from './MatchPanels';
 import { EndTab, verdictOf } from './MatchDialogs';
 import { useTicker, type TextSpeed } from './useTicker';
 import { Stage } from './board/Stage';
+import { ShoutChip } from './board/ShoutTimer';
 import { TickerList } from './board/TickerList';
 import { LineupBoard } from './board/LineupBoard';
 import { OptionsBox, optOn } from './board/OptionsBox';
@@ -115,6 +116,7 @@ export function MatchScreen({ g, sim, info, settings, onSettings, onComplete, on
           {state.paused && !changesOpen && <span className="ms-pill">Pause</span>}
         </div>
         <div className="ms-top-r">
+          <ShoutChip sim={sim} side={side} onClick={() => setRtab('taktik')} />
           <button type="button" className="btn-primary tm-change-btn" onClick={() => openChanges()} disabled={state.ended || sim.phase === 'shootout'}>
             <Icon name="swap" size={22} /> Wechsel / Taktik
           </button>

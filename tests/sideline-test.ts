@@ -1,6 +1,6 @@
 // Seitenlinie im Textmodus ohne UI:  npm run test:sideline
 // Aufwärmen (Bonus beim Einwechseln), Co-Trainer-Wechsel, Verletzter wartet auf dich,
-// Umstellung (Formation/Positionen), Einzelgespräche, Wechsel-Entwurf, KI-Spiele unverändert.
+// Umstellung (Formation/Positionen), Einzelgespräche, Wechsel-Entwurf, KI-Spiele unverändert, Zurufe (Dauer/Pause/Wiederholung).
 import { createNewGame } from '../src/game/newGame';
 import { leagueClubs } from '../src/game/season';
 import { setEraYear } from '../src/engine/positions';
@@ -8,6 +8,8 @@ import { MatchSim } from '../src/engine/match/sim';
 import { bench, onPitch } from '../src/engine/match/state';
 import { isWarm, playerTalk, reshape, warmUp, WARM_ENERGY } from '../src/engine/match/sideline';
 import { getFormation } from '../src/data/formations';
+import { captainLead, leadFactor, repeatFactor, SHOUT_COOLDOWN, SHOUT_LIST, SHOUT_MINUTES, shoutStatus } from '../src/engine/match/shouts';
+import { tacticMods } from '../src/engine/match/team';
 import { applyDraft, changeFormation, draftDiff, initialDraft, swap } from '../src/screens/match/changes/draft';
 
 let fails = 0;
@@ -107,6 +109,49 @@ for (const auto of [true, false]) {
   const a = new MatchSim(clubs[0], clubs[9], P, { year: 1995, seed: 42 }); a.runToEnd();
   const b = new MatchSim(clubs[0], clubs[9], P, { year: 1995, seed: 42 }); b.runToEnd();
   check(a.score().join() === b.score().join() && !a.events.some((e) => e.kind === 'warmup' || e.kind === 'reshape'), 'KI-Spiel reproduzierbar, ohne Seitenlinie');
+}
+
+// 6) Zurufe: 15 Minuten Wirkung, 21 Minuten bis zum nächsten, Wiederholung −30 %, Wirkung wie vor dem Umbau
+{
+  check(SHOUT_MINUTES === 15 && SHOUT_COOLDOWN === 21, `Zuruf ${SHOUT_MINUTES} Min., Abstand ${SHOUT_COOLDOWN} Min.`);
+  const sim = new MatchSim(clubs[2], clubs[5], P, { year: 1995, seed: 11, humanSides: ['home'], live: true });
+  run(sim, 20);
+  const m0 = sim.minute;
+  check(sim.shout('home', 'druck'), `Zuruf in der ${m0}. Minute`);
+  const st = shoutStatus(sim, 'home');
+  check(st.active === 'druck' && st.left === 15 && st.until === m0 + 15 && st.readyAt === m0 + 21, `Status: noch ${st.left} Min., bis ${st.until}., wieder ab ${st.readyAt}.`);
+  run(sim, m0 + 14);
+  check(sim.home.shout === 'druck' && shoutStatus(sim, 'home').left === 1, 'nach 14 Minuten wirkt er noch');
+  check(!sim.shout('home', 'ruhe'), 'kein zweiter Zuruf, solange er wirkt');
+  run(sim, m0 + 16);
+  const s2 = shoutStatus(sim, 'home');
+  check(!s2.active && s2.wait === 5 && sim.home.shout === null, `nach 15 Minuten vorbei, Pause noch ${s2.wait} Min.`);
+  check(!sim.shout('home', 'ruhe'), 'in der Pause kein Zuruf');
+  run(sim, m0 + 21);
+  check(sim.shout('home', 'druck'), 'nach 21 Minuten wieder möglich');
+  const lf = leadFactor(captainLead(sim.home));
+  check(sim.home.shoutPower <= repeatFactor(1) * lf * 1.15 + 1e-9 && sim.home.shoutPower >= repeatFactor(1) * lf * 0.85 - 1e-9,
+    `Wiederholung: Stärke ${sim.home.shoutPower.toFixed(2)} im Rahmen ${(0.7 * lf * 0.85).toFixed(2)}–${(0.7 * lf * 1.15).toFixed(2)}`);
+  check(repeatFactor(0) === 1 && Math.abs(repeatFactor(1) - 0.7) < 1e-9 && Math.abs(repeatFactor(2) - 0.4) < 1e-9 && repeatFactor(3) === 0.2, 'Abschlag 0 / −30 / −60 / −80 %');
+  // Wirkung je Zuruf = alte feste Formeln (Tabelle SHOUT_FX)
+  const old = (id: string, s: number) => {
+    const m = tacticMods(undefined, 0, null, 0, 1) as any;
+    switch (id) {
+      case 'druck': m.att *= 1 + 0.07 * s; m.rate *= 1 + 0.12 * s; m.def *= 1 - 0.03 * s; m.drain *= 1 + 0.3 * s; break;
+      case 'ruhe': m.ctrl *= 1 + 0.07 * s; m.rate *= 1 - 0.08 * s; m.errors *= 1 - 0.3 * s; m.exposed *= 1 - 0.1 * s; break;
+      case 'kompakt': m.def *= 1 + 0.07 * s; m.att *= 1 - 0.04 * s; m.exposed *= 1 - 0.15 * s; break;
+      case 'fluegel': m.cross *= 1 + 0.6 * s; m.att *= 1 + 0.02 * s; break;
+      case 'konzentration': m.def *= 1 + 0.035 * s; m.errors *= 1 - 0.45 * s; m.cards *= 1 - 0.4 * s; break;
+      case 'zweikampf': m.duel *= 1 + 0.1 * s; m.def *= 1 + 0.035 * s; m.foul *= 1 + 0.45 * s; m.cards *= 1 + 0.25 * s; break;
+    }
+    return JSON.stringify(m);
+  };
+  const same = SHOUT_LIST.every(([id]) => [0.2, 0.83, 1.1].every((s) => JSON.stringify(tacticMods(undefined, 0, id, s, 1)) === old(id, s)));
+  check(same, 'Wirkung der sechs Zurufe unverändert (bitgleich)');
+  // KI ruft nie
+  const ai = new MatchSim(clubs[2], clubs[5], P, { year: 1995, seed: 12, humanSides: ['home'], live: true });
+  ai.runToEnd();
+  check(!ai.events.some((e) => e.kind === 'shout'), 'KI-Seite gibt keine Zurufe');
 }
 
 console.log(fails ? `${fails} Prüfung(en) fehlgeschlagen.` : 'Seitenlinien-Test bestanden.');

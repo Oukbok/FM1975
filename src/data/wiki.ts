@@ -15,6 +15,7 @@
 import { YOUTH_RECRUIT_EVENTS } from './youthRecruitEvents';
 import { CALENDAR_ERAS } from './matchCalendarRules';
 import { LOAN_SOURCES } from './loanRules';
+import { SIDELINE_WIKI } from './wikiSideline';
 
 export interface WikiCategory {
   id: string;
@@ -1596,13 +1597,13 @@ Den vollen Ticker behält der Spielstand für die **letzten zehn eigenen Spiele*
 - **Ereignisliste:** Tabelle Min. | Erg. | Symbol | Wappen | Ereignis, neueste oben. Jede Szene ist ein Block – Aufbau, Verlauf und Abschluss stehen untereinander. Spielernamen erscheinen mit Position, deine in Bernstein, die des Gegners hellblau; ein Klick öffnet das Spielerprofil. Tore stehen fett mit „1:0 Name (n. Tor in dieser Saison)“. Reiter filtern: **Alles, Highlights, Tore, Wechsel, Karten**.
 - **Spannungsmoment:** Bei Großchancen, Elfmetern und direkten Freistößen flimmert im Block zuerst unleserlicher Text, der sich erst dann zu **TOR!**, **GEHALTEN!**, **DANEBEN!** oder **LATTE!** auflöst.
 - **Schiedsrichter:** Name, Linie und Stimmung – abgeleitet aus Fouls und Karten dieses Spiels. Er hat keinen eigenen Einfluss, die Kartenhärte folgt der Epoche.
-- **Rechts:** Reiter **Team** (deine Aufstellung mit Live-Note, Stärke, Kraft, Fitness, Karten/Verletzung; Bank mit Aufwärmen, ausgewechselte Spieler rot; auch hier lässt sich **ziehen**: Bankspieler auf einen Feldspieler = sofortiger Wechsel, Feldspieler auf Feldspieler = Positionstausch – gilt ohne Bestätigen, Escape bricht ab), **Taktik** (Ausrichtung, Zurufe), **Gegner**, **Live** (Tabelle mit dem aktuellen Spielstand), **Statistik** und **Tabelle** (vor dem Anpfiff).
+- **Rechts:** Reiter **Team** (deine Aufstellung mit Live-Note, Stärke, Kraft, Fitness, Karten/Verletzung; Bank mit Aufwärmen, ausgewechselte Spieler rot; auch hier lässt sich **ziehen**: Bankspieler auf einen Feldspieler = sofortiger Wechsel, Feldspieler auf Feldspieler = Positionstausch – gilt ohne Bestätigen, Escape bricht ab), **Taktik** (Ausrichtung, Zurufe mit Laufzeit-Ring – Regeln im Artikel *Seitenlinie: Zurufe, Ansprache, Gespräche, Aufwärmen*), **Gegner**, **Live** (Tabelle mit dem aktuellen Spielstand), **Statistik** und **Tabelle** (vor dem Anpfiff).
 
 ## Wechsel und Taktik: der Wechsel-Bildschirm
 Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er öffnet sich über **Wechsel / Taktik** (oben rechts) bzw. die Knöpfe **Aufstellung, Taktik, Individuelle Anweisungen**, zur **Halbzeit** und wenn eine Option das Spiel anhält. Das Spiel steht so lange still; alles ist ein Entwurf und gilt erst mit **Bestätigen** (Abbrechen verwirft ihn).
 - **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld, auf dem Feld auch am Kopf) oder per **Ziehen & Ablegen** – zwischen Liste, Feld und Bank in jeder Richtung (Escape bricht ab). Ein Bankspieler auf einem Platz bedeutet eine Einwechslung; umgekehrt kommt ein Feldspieler nur per Wechsel auf die Bank – zieh ihn direkt auf den Bankspieler, der für ihn kommt (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
 - **Taktik öffnen:** Ausrichtung sowie Tempo, Breite, Pressing, Abwehrlinie, Einsatz und Aufbauspiel **nur für dieses Spiel** – deine gespeicherte Taktik bleibt unverändert.
-- **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden.
+- **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden. Die Wirkung in Prozent steht im Artikel *Seitenlinie*.
 - **Spielergespräche:** ein kurzes Wort an einzelne Spieler, einmal je Halbzeit. **Loben** stärkt Spieler, die gut spielen; **Mehr fordern** weckt schwache, kränkt aber starke; **Beruhigen** hilft Verwarnten und Nervösen. Die Wirkung ist klein (rund ±1–2 % Tagesleistung).
 
 ## Aufwärmen
@@ -1620,6 +1621,7 @@ Angezeigt wird nur, was es damals schon gab: Schüsse, Ecken, Fouls, Karten und 
 ## Abwechslung im Text
 Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bausteinen gebaut (\`data/ticker/\`). Ein Gedächtnis verhindert, dass dieselbe Formulierung kurz hintereinander auftaucht; Wetter, Derby, Pokal, Spielstand und Epoche verändern die Wortwahl.`,
   },
+  SIDELINE_WIKI,
   {
     id: 'match-engine',
     category: 'match',
