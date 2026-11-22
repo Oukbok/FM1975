@@ -17,10 +17,13 @@ import {
 } from '../../engine/staffSkills';
 import type { Game } from '../../game/state';
 import {
-  canCourse, canReassign, compensationOf, demandOf, dismiss, moveBlocker, reassign, replacedBy,
+  canCourse, canReassign, compensationOf, demandOf, dismiss, reassign, replacedBy,
   sendToCourse, severanceOf, slotInfo,
 } from '../../game/trainerTeam';
 import { Empty } from '../../ui/DashPage';
+import { InfoTip } from '../../ui/InfoTip';
+import { poachView } from '../../game/staffPoach';
+import { anyClubName, isAbroad } from '../../game/staffLean';
 import { fmtDM, fmtStaffWage } from '../../ui/format';
 import { Fact, fitLevel, growthWord, Level, LevelBar, originText, type StaffScope } from './staffUi';
 
@@ -43,7 +46,8 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
   const view = role === 'all' ? m.roleId : role;
   const keys = ROLE_SKILLS[view] ?? {};
   const club = m.clubId ? g.clubs[m.clubId] : null;
-  const block = own ? null : staffTalkBlocker(g, m, false);
+  const block = own ? null : staffTalkBlocker(g, m, false, view);
+  const pv = !own && m.clubId ? poachView(g, m, view) : null;
   const mf = methodFactor(m, year);
   // Beste Stellen der Person; die betrachtete und die eigene Stelle sind immer dabei.
   const list = bestRoles(m.skills ?? {}, year, 7);
@@ -66,10 +70,16 @@ export function StaffProfile({ g, m, own, role, scope, onOffer, onAct }: {
         <Fact k="Herkunft">{originText(m, true)}</Fact>
         {m.exPro?.clubs.length ? <Fact k="Stationen">{m.exPro.clubs.map((c, i) => <Fragment key={i}>{i ? ', ' : ''}<ClubByName g={g} name={c} /></Fragment>)}</Fact> : null}
         {m.coach && <Fact k="Spielidee">{COACH_STYLE_LABEL[m.coach.style]} · {COACH_PHILOSOPHY_LABEL[m.coach.philosophy]}</Fact>}
-        <Fact k="Arbeitgeber">{own ? 'dein Verein' : club ? <ClubLink id={club.id}>{club.name}</ClubLink> : 'vereinslos'}</Fact>
-        {own && <Fact k="Vertrag bis">{m.contractEnd?.slice(0, 4) ?? '–'}</Fact>}
+        <Fact k="Arbeitgeber">{own ? 'dein Verein' : club ? <ClubLink id={club.id}>{club.name}</ClubLink> : m.clubId ? `${anyClubName(g, m.clubId)}${isAbroad(g, m.clubId) ? ' (Ausland)' : ''}` : 'vereinslos'}</Fact>
+        {(own || m.clubId) && <Fact k="Vertrag bis">{m.contractEnd?.slice(0, 4) ?? '–'}</Fact>}
         <Fact k={own ? 'Gehalt' : 'Forderung'} strong>{fmtStaffWage(memberMonthlySalary(own ? m : { ...m, roleId: view, salaryFactor: demandOf(g, m, view) }, scale))}</Fact>
-        {!own && m.clubId && <Fact k="Ablöse">{fmtDM(compensationOf(g, m))}</Fact>}
+        {!own && m.clubId && <Fact k={<>Ablöse <InfoTip k="staffAbloese" /></>}>{fmtDM(compensationOf(g, m))}</Fact>}
+        {pv && <Fact k={<>Wechsel <InfoTip k="staffWechselwunsch" /></>}>{pv.blocker && !pv.reasons.length ? 'gesperrt' : pv.score >= 2 ? 'will gern wechseln' : pv.score >= 0 ? 'offen für Gespräche' : 'will bleiben'}</Fact>}
+        {pv && pv.reasons.length > 0 && (
+          <div className="sf-reasons">
+            {pv.reasons.slice(0, 4).map((r) => <span key={r.text} className={r.w >= 0 ? 'pro' : 'con'}>{r.w >= 0 ? '+' : '−'} {r.text}</span>)}
+          </div>
+        )}
         <Fact k="Methodenstand">{m.methodYear}{mf < 0.9 ? ` · veraltet (${Math.round(mf * 100)} %)` : ''}</Fact>
         {m.traits?.map((t) => <div key={t} className="sf-trait"><b>{TRAIT_LABEL[t]}</b><span>{TRAIT_INFO[t]}</span></div>)}
         {m.home === g.managedClubId && !own && <div className="sf-trait"><b>Einer von uns</b><span>Früherer Spieler deines Vereins: kommt dir beim Gehalt entgegen und wartet ein Jahr auf dein Angebot.</span></div>}

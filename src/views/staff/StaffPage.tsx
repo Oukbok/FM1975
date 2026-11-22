@@ -29,7 +29,7 @@ const MARKET_ROWS = 60;
 export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; onChange: () => void }) {
   const [, setTick] = useState(0);
   const [view, setView] = useState<'slots' | 'fx'>('slots');
-  const [f, setF] = useState<MarketState>({ role: 'all', skill: '', minLvl: 0, maxAge: 0, onlyFree: true, exPro: false });
+  const [f, setF] = useState<MarketState>({ role: 'all', skill: '', minLvl: 0, maxAge: 0, emp: 'free', club: '', exPro: false });
   const [sel, setSel] = useState<{ id: string; own: boolean } | null>(null);
   // Verhandelt wird am Verhandlungstisch (screens/negotiation/StaffTalk.tsx); danach zeichnet die Shell die Seite neu.
   const setTalk = (t: { id: string; role: string }) => openContractScreen({ kind: 'staff', id: t.id, role: t.role });
@@ -41,7 +41,7 @@ export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; 
   const staff = ensureStaff(g);
   const roles = useMemo(() => availableIn(scopeRoles(scope), year), [scope, year]);
   const rows = staffMarket(g, {
-    role: f.role, onlyFree: f.onlyFree, exPro: f.exPro || undefined, maxAge: f.maxAge || undefined, roles,
+    role: f.role, onlyFree: f.emp === 'free', onlyEmployed: f.emp === 'employed', clubId: f.emp !== 'free' && f.club ? f.club : undefined, exPro: f.exPro || undefined, maxAge: f.maxAge || undefined, roles,
     min: f.skill && f.minLvl ? { [f.skill as CoachSkill]: staffValueOf(f.minLvl) } : undefined,
   });
   const shown = rows.slice(0, MARKET_ROWS);
@@ -65,7 +65,7 @@ export function StaffPage({ g, scope, onChange }: { g: Game; scope: StaffScope; 
       <DashBox title="Arbeitsmarkt" info="arbeitsmarktStab" span={2} className="sf-market" flush
         right={<span className="sf-count">{rows.length > MARKET_ROWS ? `beste ${MARKET_ROWS} von ${rows.length}` : `${rows.length} ${rows.length === 1 ? 'Person' : 'Personen'}`}</span>}>
         <MarketFilters g={g} roles={roles} f={f} set={(p) => { setF((x) => ({ ...x, ...p })); if (p.role) setSel(null); }} />
-        <MarketTable g={g} rows={shown} role={f.role} selId={sel && !sel.own ? sel.id : null}
+        <MarketTable g={g} rows={shown} role={f.role} employed={f.emp !== 'free'} selId={sel && !sel.own ? sel.id : null}
           onSelect={(id) => setSel({ id, own: false })} onTalk={(id, role) => setTalk({ id, role })} />
       </DashBox>
 

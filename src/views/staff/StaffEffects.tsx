@@ -9,6 +9,7 @@ import { yearOf } from '../../engine/economy';
 import { coachingOutlook, type OutlookRow } from '../../game/coachingGame';
 import type { Game } from '../../game/state';
 import { staffEffectsOf, staffStrengthOf } from '../../game/staffGame';
+import { InfoTip } from '../../ui/InfoTip';
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
 import { Meter } from '../../ui/DashPage';
 import { Level, type StaffScope } from './staffUi';
@@ -40,6 +41,15 @@ export function StaffEffectsPanel({ g, scope }: { g: Game; scope: StaffScope }) 
         <div className="sf-sg-h">Wirkung des Stabs</div>
         <Meter label="Spielstärke" info="stabSpielstaerke" value={Math.min(1, ss.coverage)} max={1}
           text={`${p >= 0 ? '+' : '−'}${Math.abs(p).toLocaleString('de-DE', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} %`} color={p < -1.5 ? 'var(--orange)' : undefined} />
+        {(() => {
+          // Vergleich mit den anderen Vereinen der Liga (gleiche Formel, game/staffGame.ts).
+          const ids = g.table.rows.map((r) => r.clubId).filter((id) => id !== g.managedClubId);
+          if (!ids.length || !g.staffWorld?.ai) return null;
+          const fs = ids.map((id) => staffStrengthOf(g, id).factor);
+          const rank = 1 + fs.filter((f) => f > ss.factor + 1e-9).length;
+          const avg = (fs.reduce((a, b) => a + b, 0) / fs.length - 1) * 100;
+          return <div className="sf-fx-line wide"><span>Stab im Ligavergleich <InfoTip k="staffKiStab" /></span><i>Ø Liga {avg >= 0 ? '+' : '−'}{Math.abs(avg).toLocaleString('de-DE', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} %</i><b>{rank}. von {ids.length + 1}</b></div>;
+        })()}
         <Meter label="Verletzungsrisiko" value={fx.injuryReduction} max={STAFF_CAPS.injuryReduction} text={`−${Math.round(fx.injuryReduction * 100)} %`} />
         <Meter label="Ausfallzeit" value={fx.rehabReduction} max={STAFF_CAPS.rehabReduction} text={`−${Math.round(fx.rehabReduction * 100)} %`} />
         <Meter label="Regeneration" value={fx.recovery} max={STAFF_CAPS.recovery} text={`+${fx.recovery.toFixed(1)}/Tag`} />
