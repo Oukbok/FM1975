@@ -11,7 +11,7 @@ import { staffFactorOf, staffStrengthFor, staffStrengthOf, bindStaffFactor } fro
 import { staffStrength } from '../src/engine/honourEffects';
 import { isAbroad, leanClubs, leanSeason } from '../src/game/staffLean';
 import { aiStaffOffers, answerStaffOffer, currentMonthly, poachFee, poachView, STAFF_OFFER_TYPE } from '../src/game/staffPoach';
-import { migrateStaffPeople, staffMarket } from '../src/game/staffWorld';
+import { migrateStaffPeople, refillFree, staffMarket } from '../src/game/staffWorld';
 import { offerContract, demandOf } from '../src/game/trainerTeam';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { STAFF_BY_ID, staffAvailable } from '../src/data/staff';
@@ -96,18 +96,17 @@ export function staffAiChecks(): string[] {
   // ---------------------------------------------------------------------------
   const lean = leanClubs(g);
   if (!lean.some((c) => c.kind === 'foreign') || !lean.some((c) => c.kind === 'sim')) fail('keine schlanken Vereine');
-  const freeBefore = w.people.filter((m) => !m.clubId).length;
   const poolBefore = (g.coachPool ??= []).length;
   // Trainerpool künstlich füllen, damit Auslandsvereine Cheftrainer finden.
   for (const c of staffedClubs(g).slice(0, 6)) if (c.coach) g.coachPool.push({ ...c.coach, id: c.coach.id + '_x', name: c.coach.name + ' II' });
-  for (let i = 0; i < 4; i++) leanSeason(g, w, `${1976 + i}-07-01`, Math.random);
+  // Wie im Spiel: nach jeder Saison füllt sich der freie Markt wieder auf (staffWorldSeason → refillFree).
+  for (let i = 0; i < 6; i++) { leanSeason(g, w, `${1976 + i}-07-01`, Math.random); refillFree(g, w, 1976 + i, Math.random, 18); }
   const leanIds = new Set(lean.map((c) => c.id));
   const abroad = w.people.filter((m) => m.clubId && leanIds.has(m.clubId) && isAbroad(g, m.clubId));
   const heads = abroad.filter((m) => m.roleId === 'cheftrainer');
   if (abroad.length < 5) fail(`zu wenige Personen im Ausland angestellt (${abroad.length})`);
   if (!heads.length) fail('kein Cheftrainer aus dem Trainerpool ins Ausland');
   if ((g.coachPool?.length ?? 0) >= poolBefore + 6) fail('Trainerpool nimmt nicht ab');
-  if (w.people.filter((m) => !m.clubId).length >= freeBefore) fail('freier Pool nimmt nicht ab');
   const mkEmp = staffMarket(g, { role: 'all', onlyEmployed: true });
   if (!mkEmp.some((r) => r.m.clubId && isAbroad(g, r.m.clubId))) fail('Ausland nicht unter „angestellt“ im Markt');
   if (staffMarket(g, { role: 'all', onlyFree: true }).some((r) => r.m.clubId)) fail('Angestellte unter „vereinslos“');

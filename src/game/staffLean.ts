@@ -123,7 +123,8 @@ export function leanSeason(g: Game, w: StaffWorld, date: string, rng: () => numb
     held.set(m.clubId, roles);
   }
   if (gone.size) w.people = w.people.filter((m) => !gone.has(m));
-  for (const c of lean.values()) {
+  // Größere Vereine wählen zuerst (Ausland vor der 2. Liga).
+  for (const c of [...lean.values()].sort((a, b) => b.rep - a.rep || (a.id < b.id ? -1 : 1))) {
     const roles = held.get(c.id) ?? new Set<string>();
     for (const role of leanSlots(c, year)) {
       if (roles.has(role)) continue;
@@ -147,7 +148,7 @@ export function leanSeason(g: Game, w: StaffWorld, date: string, rng: () => numb
       for (const m of w.people) {
         if (m.clubId || m.age >= 62 || m.home === g.managedClubId) continue;
         const fit = roleFit(m.skills, role, 1);
-        if (fit < target - 3) continue;
+        if (fit < Math.max(7, target - 6)) continue;
         const s = fit - Math.max(0, fit - target - 2) + rng() * 3;
         if (s > bs) { bs = s; best = m; }
       }

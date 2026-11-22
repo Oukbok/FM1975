@@ -342,7 +342,7 @@ export function staffWorldSeason(g: Game, date: string, rng: () => number = Math
  * Pool auffüllen: `extra` neue Leute (ein Jahrgang Nachwuchskräfte, zu Spielbeginn bunt gemischt),
  * dann für jede Stelle der Zeit genug brauchbare Bewerber; zuletzt den Pool begrenzen.
  */
-function refillFree(g: Game, w: StaffWorld, year: number, rng: () => number, extra: number): void {
+export function refillFree(g: Game, w: StaffWorld, year: number, rng: () => number, extra: number): void {
   // Unter den Neuen sind ehemalige Spieler aus Ligen außerhalb der Spielerliga (Trainer, Torwartspezialisten, Späher).
   const add = (m: StaffMember) => {
     if (!m.exPro && (m.bg === 'amateurtrainer' || m.bg === 'torwartspezialist' || m.bg === 'talentspaeher') && rng() < 0.6) { markExPro(m, rng); w.cur.exPros++; } else w.cur.outsiders++;
