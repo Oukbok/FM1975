@@ -24,23 +24,23 @@
   --folder-2: #cbc5b5;
   --folder-edge: #b9b2a1;
   --sheet-shadow: 0 1px 2px rgba(20, 28, 40, 0.12), 0 6px 16px rgba(20, 28, 40, 0.10);
-  /* Bild-Slots: Pascal reicht Mappe/Blatt/Klammer/Korn nach (docs/images/BILDER.md, Abschnitt Akte).
+  /* Bild-Slots: Pascal reicht Mappe/Blatt/Klammer/Korn nach (docs/images/IMAGES.md, Abschnitt Akte).
      Liegt eine Datei vor, hier url('assets/dossier/<datei>') eintragen. */
-  --akte-paper: url('assets/dossier/papier.webp');
-  --akte-folder: url('assets/dossier/mappe.webp');
-  --akte-sheet: url('assets/dossier/blatt.webp');
+  --akte-paper: url('assets/dossier/paper.webp');
+  --akte-folder: url('assets/dossier/folder.webp');
+  --akte-sheet: url('assets/dossier/sheet.webp');
   --akte-grain: none;
-  --np-paper: url('assets/dossier/zeitung.webp');   /* Presse: Doppelseite */
-  --cal-paper: url('assets/dossier/kalender.webp');  /* Kalender: Ringbuch */
-  /* Karriere › Bilanz als Ringmappe (views/office/career/BilanzTab.tsx, 28-career-binder.css) */
-  --bnd-folder: url('assets/dossier/bilanz.webp');
-  --bnd-blatt: url('assets/dossier/balance/zettel-blatt.webp');
-  --bnd-abriss: url('assets/dossier/balance/zettel-abriss.webp');
-  --bnd-zeitung: url('assets/dossier/balance/zettel-zeitung.webp');
-  --bnd-orange: url('assets/dossier/balance/zettel-orange.webp');
-  --bnd-gelb: url('assets/dossier/balance/zettel-gelb.webp');
-  --bnd-klein: url('assets/dossier/balance/zettel-klein.webp');
-  --bnd-tape: url('assets/dossier/balance/klebestreifen.webp');
+  --np-paper: url('assets/dossier/newspaper.webp');   /* Presse: Doppelseite */
+  --cal-paper: url('assets/dossier/calendar.webp');  /* Kalender: Ringbuch */
+  /* Karriere › Bilanz als Ringmappe (views/office/career/BalanceTab.tsx, 28-career-binder.css) */
+  --bnd-folder: url('assets/dossier/balance-binder.webp');
+  --bnd-blatt: url('assets/dossier/balance/note-lined.webp');
+  --bnd-abriss: url('assets/dossier/balance/note-torn.webp');
+  --bnd-zeitung: url('assets/dossier/balance/note-newspaper.webp');
+  --bnd-orange: url('assets/dossier/balance/note-orange.webp');
+  --bnd-gelb: url('assets/dossier/balance/note-yellow.webp');
+  --bnd-klein: url('assets/dossier/balance/note-small.webp');
+  --bnd-tape: url('assets/dossier/balance/tape.webp');
   --bnd-polaroid: url('assets/dossier/balance/polaroid.webp');
   --bnd-ink: #1f2a3d;          /* Schrift auf dem Papier (Tinte, dunkles Blaugrau) */
   --bnd-ink-2: #4c5568;        /* Beschriftungen */
@@ -237,7 +237,7 @@ body { background: var(--paper-page); }
 .dz-fn-item { border-bottom-color: var(--border-soft); }
 
 /* ---- Newscenter als Aktenmappe ----------------------------------------------- */
-/* Bild images/dossier/mappe.webp (1327×1185, Wunsch Pascal): Mappe mit zwei Blättern – links
+/* Bild images/dossier/folder.webp (1327×1185, Wunsch Pascal): Mappe mit zwei Blättern – links
    die Nachrichtenliste, rechts der Lesebereich. Raster in Prozent der Bildmaße, damit Liste
    und Text genau auf den Blättern liegen. Der durchsichtige Bildrand (≈ 4 %) liegt außerhalb
    der Box (Hintergrund 108 % groß, mittig), damit die Mappe bündig mit den Nachbarboxen steht.
@@ -375,7 +375,7 @@ body { background: var(--paper-page); }
 .hd-nav-item:hover, .hd-nav-item:focus-visible { background: transparent; border-color: transparent; color: #ffffff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.55), 0 0 2px rgba(255, 255, 255, 0.4); }
 .hd-nav-item.active:hover { color: var(--accent-ink); }
 
-/* ---- Kalender als Ringbuch (images/dossier/kalender.webp, 1511×1041, Wunsch Pascal) ------------
+/* ---- Kalender als Ringbuch (images/dossier/calendar.webp, 1511×1041, Wunsch Pascal) ------------
    Durchsichtiger Bildrand liegt außerhalb der Box (Hintergrund 104,3 % × 107,4 %, Mitte), Werte bezogen auf
    das Ringbuch (x 28–1477, y 34–1003 px): Ringe bis ≈ 7 %, Blatt rechts bis 95,7 %, unten bis 94 %.
    Zeilen: Rand | Hinweis | Wochentage | Raster | Legende | Rand. */

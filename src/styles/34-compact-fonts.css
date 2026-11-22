@@ -1039,7 +1039,7 @@
 [data-fs] .wr-thead { font-size: 17.6px; }
 [data-fs] .wr-conf { font-size: 17.6px; }
 
-/* 28-privat.css */
+/* 28-private.css */
 [data-fs] .pv-sub { font-size: 17.6px; }
 [data-fs] .pv-mrow { font-size: 17.6px; }
 [data-fs] .pv-plan-k b { font-size: 17.6px; }
@@ -1193,7 +1193,7 @@
 [data-fs] .calm-kind { font-size: 17.6px; }
 [data-fs] .calm-comp { font-size: 17.6px; }
 
-/* 28-kabine.css */
+/* 28-dressing-room.css */
 [data-fs] .kb-kpis .dkpi-val { font-size: 28px; }
 [data-fs] .kb-kpis .dkpi-lbl { font-size: 15.5px; }
 [data-fs] .kb-factor { font-size: 17.6px; }
@@ -1586,7 +1586,7 @@
 [data-fs] .sf-fit { font-size: 17.6px; }
 [data-fs] .sf-fit-s { font-size: 17.6px; }
 
-/* 28-presse.css */
+/* 28-press.css */
 [data-fs] .np-mast-l,
 [data-fs] .np-mast-r { font-size: 17.6px; }
 [data-fs] .np-name { font-size: 64px; }
@@ -2360,7 +2360,7 @@
 [data-fs] .hm-tip-tier em { font-size: 17.6px; }
 [data-fs] .hm-tip-foot { font-size: 17.6px; }
 
-/* 28-verhandlung.css */
+/* 28-negotiation.css */
 [data-fs] .vt-title { font-size: 32px; }
 [data-fs] .vt-ctx { font-size: 20px; }
 [data-fs] .vt-step { font-size: 19px; }
@@ -2516,7 +2516,7 @@
 [data-fs] .ev-result { font-size: 17.6px; }
 [data-fs] .dz-ntable td.dz-ncol-cat { font-size: 17.6px; }
 
-/* 31-akte.css */
+/* 31-dossier.css */
 [data-fs] .hd-nav-item { font-size: 17.6px; }
 [data-fs] .tn-sub-item { font-size: 17.6px; }
 [data-fs] .dbox > .dxh .dxh-title { font-size: 22px; }

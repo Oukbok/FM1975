@@ -5,7 +5,7 @@
    Oberfläche bleibt neutral.
    ============================================================================= */
 
-/* --- gemeinsam (sponsor/parts.tsx; Verhandlung: screens/negotiation/SponsorTalk.tsx, 28-verhandlung.css) --- */
+/* --- gemeinsam (sponsor/parts.tsx; Verhandlung: screens/negotiation/SponsorTalk.tsx, 28-negotiation.css) --- */
 .sp-meta { color: var(--text-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sp-clauses { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 13.5px; color: var(--text-2); }
 .sp-clauses.compact { max-height: 38px; overflow: hidden; }

@@ -208,7 +208,7 @@
   height: 156px;
   background:
     linear-gradient(180deg, rgba(var(--deep-rgb), 0.34) 0%, rgba(var(--deep-rgb), 0.72) 100%),
-    url('assets/stadion-zuschauer.jpg?v=1') center / cover no-repeat;
+    url('assets/stadium-crowd.jpg?v=1') center / cover no-repeat;
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
    (großes Wappen + Name als Bildunterschrift darunter). */
@@ -277,14 +277,14 @@
   width: 152px;
   aspect-ratio: 1024 / 1280;
   background: var(--jc, #cccccc);
-  -webkit-mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
-  mask: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+  -webkit-mask: url(assets/shirt-base.png?v=1) center / contain no-repeat;
+  mask: url(assets/shirt-base.png?v=1) center / contain no-repeat;
 }
 .ckd-jersey-photo::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: url(assets/trikot-basis.png?v=1) center / contain no-repeat;
+  background: url(assets/shirt-base.png?v=1) center / contain no-repeat;
   mix-blend-mode: multiply;
   pointer-events: none;
 }

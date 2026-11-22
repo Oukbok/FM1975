@@ -1,6 +1,6 @@
 /* =============================================================================
    ZENTRALE › KARRIERE › BILANZ als Ringmappe (Wunsch Pascal, Vorschlag 2 „Akten- &
-   Scrapbook-Design“) – views/office/career/BilanzTab.tsx. Mappe images/dossier/bilanz.webp
+   Scrapbook-Design“) – views/office/career/BalanceTab.tsx. Mappe images/dossier/balance-binder.webp
    (2400×1174); alle Lagen in % der Mappe, Zettel aus images/dossier/balance/.
    ============================================================================= */
 .sub3-page > .dpage.bnd-page { display: flex; align-items: center; justify-content: center; padding: 6px 1.5% 18px; }
@@ -32,7 +32,7 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 
 /* Links oben: Managerbilanz */
 .bnd-sheet { --ln: 3.373cqh; left: 11%; top: 6.303%; width: 26%; display: flex; flex-direction: column; }
-/* Block-Linien (bilanz.webp): erste Linie bei 6,30 %, Abstand 3,373 % der Mappenhöhe – jede Zeile genau eine Linie. */
+/* Block-Linien (balance-binder.webp): erste Linie bei 6,30 %, Abstand 3,373 % der Mappenhöhe – jede Zeile genau eine Linie. */
 .bnd-sheet .bnd-h { height: calc(var(--ln) * 2); margin: 0; align-items: flex-end; padding-bottom: 0.45cqh; font-size: 3.5cqh; line-height: 1; }
 .bnd-sheet .bnd-kpis { height: calc(var(--ln) * 2); margin: 0; padding: 0.5cqh 0 0.45cqh; }
 .bnd-sheet .bnd-kpis > div { justify-content: center; padding: 0 4px; }
@@ -57,7 +57,7 @@ button.bnd-tab:hover { filter: brightness(1.08); text-decoration: underline; tex
 
 /* Links unten: Blatt „Je Wettbewerb“ */
 .bnd-comp { left: 10.5%; top: 54.5%; width: 33%; aspect-ratio: 1200 / 770; --img: var(--bnd-blatt); transform: rotate(-0.6deg); padding: 0 3.4cqw; container-type: size; }
-/* Zettel-Linien (zettel-blatt.webp): erste Linie bei 11,56 %, Abstand 6,65 % der Zettelhöhe. */
+/* Zettel-Linien (note-lined.webp): erste Linie bei 11,56 %, Abstand 6,65 % der Zettelhöhe. */
 .bnd-comp .bnd-h3 { height: 11.56cqh; margin: 0; display: flex; align-items: flex-end; padding-bottom: 0.9cqh; font-size: 5.6cqh; line-height: 1; }
 .bnd-comp .bnd-table { font-size: 4.3cqh; border-spacing: 0; }
 .bnd-comp .bnd-table tr { height: 6.65cqh; }

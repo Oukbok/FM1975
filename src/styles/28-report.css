@@ -1,6 +1,6 @@
 /* =============================================================================
    SPIELBERICHT im Look des Textmodus (views/matchday/report/TickerReport.tsx).
-   Dunkle Bühne wie .ms-root (Tokens im Block am Ende von 31-akte.css), Teile
+   Dunkle Bühne wie .ms-root (Tokens im Block am Ende von 31-dossier.css), Teile
    .tm-* aus 28-textmode2.css. Feste Fenstergröße; Ticker und rechte Spalte
    scrollen intern. Design-Raum 2560 × 1440 wie der Textmodus.
    ============================================================================= */

@@ -17,7 +17,7 @@
   background:
     radial-gradient(1100px 520px at 50% -8%, rgba(var(--accent-rgb), 0.12), transparent 62%),
     linear-gradient(180deg, rgba(var(--deep-rgb), 0.45), rgba(var(--deep-rgb), 0.72)),
-    url('assets/start-tribuene.jpg') center / cover no-repeat,
+    url('assets/start-grandstand.jpg') center / cover no-repeat,
     var(--bg);
 }
 .menu-wrap {

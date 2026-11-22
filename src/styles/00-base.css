@@ -248,7 +248,7 @@
   --border: #303339;
   --border-soft: #24272d;
   --border-strong: #45484e;
-  /* Rand um Flaggen (CountryFlag): auf dunklem Grund hell, auf Papier dunkel (31-akte.css). */
+  /* Rand um Flaggen (CountryFlag): auf dunklem Grund hell, auf Papier dunkel (31-dossier.css). */
   --flag-edge: rgba(255, 255, 255, 0.3);
   /* RGB-Tripel für Überlagerungen: rgba(var(--ink-rgb), a) = „heller als die Fläche“
      (in hellen Themes dunkel), --shade-rgb = Schatten/Mulden, --bg-rgb/--panel-rgb =
@@ -272,8 +272,8 @@
   --photo-filter-zentrale: saturate(0.55) contrast(1.06) brightness(0.92);
   --photo-opacity: 1;
   /* Motiv (Pascal reicht eigene Fotos nach; Themes/Test können es tauschen) */
-  --photo-url: url('assets/stadion-hintergrund.jpg');
-  --photo-url-zentrale: url('assets/zentrale-hintergrund.png?v=2');
+  --photo-url: url('assets/stadium-background.jpg');
+  --photo-url-zentrale: url('assets/office-background.png?v=2');
   --photo-pos: center top;
   /* Glas: Deckkraft-Faktor der Boxen über dem Foto (1 = bisherige Deckkraft, 0,6 = deutlich
      durchscheinend) und Filter dahinter (z. B. blur(14px) = Milchglas). Gilt für DashBox,

@@ -338,7 +338,7 @@
 /* Spielplan: Nachholspiel / verlegt (game/fixtureWatch.ts) */
 .fx-tag { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--text-3); vertical-align: 1px; }
 
-/* Aufstellung › Gegner: Mannschaftsteile im Vergleich (views/matchday/GegnerView.tsx) */
+/* Aufstellung › Gegner: Mannschaftsteile im Vergleich (views/matchday/OpponentView.tsx) */
 .opp-units-head, .opp-unit { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px 48px; align-items: center; gap: 8px; }
 .opp-units-head { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding-bottom: 4px; }
 .opp-units-head span:not(:first-child) { text-align: right; }

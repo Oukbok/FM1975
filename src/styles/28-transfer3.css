@@ -110,7 +110,7 @@
 .tw-page-top { min-height: 0; overflow: hidden; padding: 10px 16px; grid-row: 2 / span 2; }
 
 /* ------------------------------------------------- Top-Transfers (Zeitung)
-   Doppelseite auf dem Zeitungsbild über das Raster von .np-sheet (28-presse.css):
+   Doppelseite auf dem Zeitungsbild über das Raster von .np-sheet (28-press.css):
    Spalten Rand | linke Seite | Falz | rechte Seite | Rand. Jedes Kind sitzt fest in
    seiner Zelle – nichts wird automatisch in die Randspalten gesetzt (früher lagen
    Überschrift und Kasten in der 4,2-%-Randspalte und überdeckten den Kopf). */
