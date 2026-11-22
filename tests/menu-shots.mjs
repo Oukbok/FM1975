@@ -15,10 +15,6 @@ for (const [w, h, tag] of [[1920, 1080, 'fhd'], [1280, 800, 'small'], [2560, 108
   await pg.waitForTimeout(1200);
   await pg.screenshot({ path: `${out}/menu_${tag}.png` });
   if (tag === 'fhd') {
-    await pg.click('.st-era button:has-text("1975")'); await pg.waitForTimeout(700);
-    await pg.screenshot({ path: `${out}/menu_1975.png` });
-    await pg.click('.st-era button:has-text("2025")'); await pg.waitForTimeout(700);
-    await pg.screenshot({ path: `${out}/menu_2025.png` });
     await pg.click('.st-btn:has-text("Einstellungen")'); await pg.waitForTimeout(400);
     await pg.screenshot({ path: `${out}/menu_settings.png` });
   }

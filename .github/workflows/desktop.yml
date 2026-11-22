@@ -1,5 +1,5 @@
 # Desktop-Builds (Electron): Windows (NSIS-Installer, portable .exe, ZIP) und Linux (AppImage, für Steam Deck).
-# Start: von Hand (Actions → Desktop-Build → Run workflow) oder durch ein Tag v* (z. B. v1.1.0).
+# Start: von Hand (Actions → Desktop-Build → Run workflow) oder durch ein Tag v* (z. B. v0.1.0).
 # Ablauf und Patch-Vorgehen: desktop/README.md
 name: Desktop-Build
 

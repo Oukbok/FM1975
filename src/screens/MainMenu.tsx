@@ -18,7 +18,7 @@ const loading = <div className="lazy-page" role="status"><span className="lazy-n
 
 // =============================================================================
 // STARTBILDSCHIRM (Menü) – Entwurf „Abendhimmel“: Tribünenfoto mit drei
-// Epochen, Logo im Himmel, Menüleiste auf dem Rasen, Zeitreise-Umschalter.
+// Epochen, Logo im Himmel, Menüleiste auf dem Rasen.
 // =============================================================================
 export type MenuView = 'main' | 'new' | 'load' | 'settings' | 'datasets';
 
@@ -31,8 +31,6 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   const [view, setView] = useState<MenuView>('main');
   const [saves, setSaves] = useState<SaveMeta[]>(() => listSaves());
   const refreshSaves = () => setSaves(listSaves());
-  // Zeitreise: -1 = ganzes Bild, 0/1/2 = 1970er/1990er/2020er hervorheben.
-  const [era, setEra] = useState(-1);
 
   // Neues Spiel: eigener Vollbild-Assistent statt schmaler Menüspalte.
   if (view === 'new') {
@@ -53,13 +51,11 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
     window.close();
     setTimeout(() => alert('Du kannst den Tab jetzt schließen. Dein Fortschritt ist gespeichert, sofern du gespeichert hast.'), 50);
   };
-  const ERAS: { k: number; l: string }[] = [{ k: -1, l: 'Heute' }, { k: 0, l: '1975' }, { k: 1, l: '1995' }, { k: 2, l: '2025' }];
 
   return (
     <div className="st-start">
-      <div className={`st-img era-${era}`}>
+      <div className="st-img">
         <img src="assets/start-grandstand.jpg" alt="" draggable={false} />
-        {[0, 1, 2].map((i) => <div key={i} className={`st-shade s${i} ${era >= 0 && era !== i ? 'dim' : ''}`} />)}
       </div>
       <div className="st-scrim" />
 
@@ -82,12 +78,6 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
         <div className="st-version">
           <span>{versionLabel()}</span>
           {desktop && <button onClick={() => { desktop.saves.openFolder(); }}>Spielstand-Ordner öffnen</button>}
-        </div>
-        <div className="st-era" role="group" aria-label="Zeitreise">
-          <span className="lbl">ZEITREISE</span>
-          {ERAS.map((x) => (
-            <button key={x.k} className={era === x.k ? 'on' : ''} aria-pressed={era === x.k} onClick={() => setEra(x.k)}>{x.l}</button>
-          ))}
         </div>
       </>}
 

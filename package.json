@@ -1,7 +1,7 @@
 {
   "name": "fm1975",
   "private": true,
-  "version": "1.1.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "node scripts/build.mjs --serve",
