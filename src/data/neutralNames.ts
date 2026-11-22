@@ -4,7 +4,10 @@
 // Bundesliga, Champions League …), sondern das Schema des Spiels – Tabelle in CLAUDE.md:
 //   Weltverband · Europaverband · Fußballbund · Ligaverband · Regelgremium ·
 //   Pokal der Landesmeister → Meisterliga · Pokal der Pokalsieger → Konferenz-Liga ·
-//   Messepokal → Europa-Pokal → Europa-Liga · Landespokal · 1. Liga/2. Liga · Goldener Ball.
+//   Messepokal → Europa-Pokal → Europa-Liga · Landespokal · 1. Liga/2. Liga ·
+//   Transatlantik-Pokal · Klub-Weltturnier · Kontinentalsieger-Pokal · Gipfelpokal · Auftaktpokal ·
+//   Hallenfinale · Goldener Stern · Torjägerstern (Stufe 2, `game.namesV` 2: sprachliche Glättung
+//   „Erstligist“ → „Klub der 1. Liga“ – `RULES_V2` mit den Fällen im Satz).
 // `neutralText` setzt die Regeln auf einen fertigen Text um (Spielstände: game/neutralNamesMigration.ts);
 // neue Texte schreiben die neutralen Namen gleich selbst. Kein neuer Name enthält einen alten
 // (idempotent). Interne Schlüssel ('UEFA' als Kontinent, 'uefa' als Wettbewerb) bleiben.
@@ -69,6 +72,8 @@ const RULES: Rule[] = [
   [/NOFV-Liga/g, 'Liga Nordost'],
   // --- Verbände: Wortverbindungen ---------------------------------------------------------------
   [/DFB-Jugend-Kicker-Pokal/g, 'Junioren-Pokal'],
+  [/\bUEFA-Super(?:cup|-Cup| Cup)/g, 'Europäischer Gipfelpokal'],
+  [/\bD[FB][BLV]-Super(?:cup|-Cup| Cup)/g, 'Gipfelpokal'],
   [/\bD[FB][BL]-(Hallenpokal|Ligapokal|Junioren-Pokal|Junioren-Vereinspokal|Nachwuchsliga|Kinderfußball-Reform|Talentförderprogramm)/g, '$1'],
   [/\bDFB-Pokal/g, 'Landespokal'],
   [/\bDFB-Qualifikation/g, 'Verbandsqualifikation'],
@@ -115,19 +120,99 @@ const RULES: Rule[] = [
   [/\bNOFV\b/g, 'Nordost-Verband'],
 ];
 
+/** Klub-WM (die) → Klub-Weltturnier (das): Artikel, Präpositionen und Adjektivendung mitziehen. */
+const KWM = '(?:Klub|Club)-(?:WM|Weltmeisterschaft)';
+const ADJ = '((?:\\p{L}+e[nr]? )?)';
+const kw = (s: string) => new RegExp(s, 'gu');
+const KLUB_WM: Rule[] = [
+  [kw(`\\b([Ii])n der ${ADJ}${KWM}`), '$1m $2Klub-Weltturnier'],
+  [kw(`\\b([Bb])ei der ${ADJ}${KWM}`), '$1eim $2Klub-Weltturnier'],
+  [kw(`\\b([Zz])ur ${ADJ}${KWM}`), '$1um $2Klub-Weltturnier'],
+  [kw(`\\b([Vv])on der ${ADJ}${KWM}`), '$1om $2Klub-Weltturnier'],
+  [kw(`\\b([Aa])n der ${ADJ}${KWM}`), '$1m $2Klub-Weltturnier'],
+  [kw(`\\b(mit|nach|aus|seit|vor|auf|unter|nach|Mit|Nach|Aus|Seit|Vor|Auf|Unter) der ${ADJ}${KWM}`), '$1 dem $2Klub-Weltturnier'],
+  [kw(`\\b([Dd])ie ${ADJ}${KWM}`), '$1as $2Klub-Weltturnier'],
+  [kw(`\\b([Ee]in|[Kk]ein)e (\\p{L}+)e ${KWM}`), '$1 $2es Klub-Weltturnier'],
+  [kw(`\\b([Ee]in|[Kk]ein)e ${KWM}`), '$1 Klub-Weltturnier'],
+  [kw(`\\b([Ee]in|[Kk]ein)er ${ADJ}${KWM}`), '$1em $2Klub-Weltturnier'],
+  [kw(`\\bder ${ADJ}${KWM}`), 'des $1Klub-Weltturniers'],
+  [kw(`${KWM}s\\b`), 'Klub-Weltturniere'],
+  [kw(`(?:Klub|Club)-Weltmeister(?!schaft)`), 'Sieger des Klub-Weltturniers'],
+  [kw(KWM), 'Klub-Weltturnier'],
+];
+
+/** „Erstligist“ klingt holprig (Wunsch Pascal) → „Klub der 1. Liga“, Fall nach dem Begleiter. */
+const SG_DAT_ACC = 'den|dem|einen|einem|diesen|diesem|jenen|jenem|keinen|keinem|jeden|jedem|seinen|seinem|ihren|ihrem|unseren|unserem|euren|eurem';
+const SG_GEN = 'des|eines|dieses|jenes|keines|jedes|seines|ihres|unseres|eures';
+const DAT_PL = 'mit|von|bei|zu|aus|nach|unter|vor|neben|zwischen|seit|gegenüber|Mit|Von|Bei|Zu|Aus|Nach|Unter|Vor|Neben|Zwischen|Seit';
+const ERSTLIGIST: Rule[] = [
+  [kw(`\\b(${DAT_PL}) den ((?:\\p{L}+en )*)(?:Erstligisten|Bundesligisten)\\b`), '$1 den $2Klubs der 1. Liga'],
+  [kw(`\\b(${SG_GEN}|Des|Eines|Dieses|Jedes) ((?:\\p{L}+en )*)(?:Erstligisten|Bundesligisten)\\b`), '$1 $2Klubs der 1. Liga'],
+  [kw(`\\b(${SG_DAT_ACC}|Den|Dem|Einen|Einem|Diesen|Diesem|Jeden|Jedem) ((?:\\p{L}+en )*)(?:Erstligisten|Bundesligisten)\\b`), '$1 $2Klub der 1. Liga'],
+  [kw(`(?:Erstligisten|Bundesligisten)\\b`), 'Klubs der 1. Liga'],
+  [kw(`(?:Erst|Bundes)ligist\\b`), 'Klub der 1. Liga'],
+];
+
+/** Stufe 2 (Wunsch Pascal: „Ja, bitte alles neutral umbenennen“): Weltpokal, Klub-WM, Supercup,
+ *  Ligapokal, Hallen-Masters, Goldener Ball/Schuh, Interkontinentalpokal, Confed-Cup,
+ *  Sommermärchen (Filmtitel), Wembley (Marke als Ortsname). Kein neuer Name enthält einen alten. */
+const RULES_V2: Rule[] = [
+  // --- Welt -----------------------------------------------------------------------------------
+  [/Weltpokal/g, 'Transatlantik-Pokal'],
+  [/Interkontinental-?[Pp]okal/g, 'Kontinentalsieger-Pokal'],
+  [/Intercontinental Cup/g, 'Kontinentalsieger-Pokal'],
+  ...KLUB_WM,
+  [/Konföderationen-Pokal|Confed(?:erations)?-?Cup/g, 'Turnier der Kontinentalmeister'],
+  // --- Supercups und Ligapokal ------------------------------------------------------------------
+  [/\b(?:UEFA|Europa)-Super(?:cup|-Cup| Cup)/g, 'Europäischer Gipfelpokal'],
+  [/\bDFV-Super(?:cup|-Cup| Cup)/g, 'Gipfelpokal'],
+  [kw(`\\b(${SG_GEN}) ((?:\\p{L}+en )?)Super(?:cup|-Cup| Cup)s\\b`), '$1 $2Gipfelpokals'],
+  [kw(`\\b(${DAT_PL}) den ((?:\\p{L}+en )?)Super(?:cup|-Cup| Cup)s\\b`), '$1 den $2Gipfelpokalen'],
+  [/Super(?:cup|-Cup| Cup)s\b/g, 'Gipfelpokale'],
+  [/Super(?:cup|-Cup| Cup)/g, 'Gipfelpokal'],
+  [/Ligapokal/g, 'Auftaktpokal'],
+  // --- Halle ----------------------------------------------------------------------------------
+  [/Hallen-?[Mm]asters/g, 'Hallenfinale'],
+  [/Masters-Sieg/g, 'Hallenfinal-Sieg'],
+  [/Masters-Endrunde/g, 'Hallenfinale'],
+  [/(?<![\p{L}\p{N}_])Masters-(?=\p{L})/gu, 'Hallenfinal-'],
+  [/\b(des|eines) Masters(?![\p{L}\p{N}_])/gu, '$1 Hallenfinales'],
+  // Alleinstehend nur nach Begleiter/Präposition: „Masters“ ist auch ein englischer Familienname (Spielernamen bleiben).
+  [/\b(das|Das|dem|zum|beim|im|ins|vom|am|fürs|kein|keinem|ein|einem|inkl\.|ohne|der|seit) Masters(?![\p{L}\p{N}_])/gu, '$1 Hallenfinale'],
+  // --- Preise ---------------------------------------------------------------------------------
+  [/(Goldene[nmr]?) Ball(?:e?s)\b/g, '$1 Sterns'],
+  [/(Goldene[nmr]?) Ball\b/g, '$1 Stern'],
+  [/Goldene[nmr]? Schuh(?:e?s)\b/g, 'Torjägersterns'],
+  [/Goldene[nmr]? Schuh\b/g, 'Torjägerstern'],
+  // --- Orte/Titel als Marke -------------------------------------------------------------------
+  [/\bDas Sommermärchen\b/g, 'Der WM-Sommer'],
+  [/\bdas Sommermärchen\b/g, 'der WM-Sommer'],
+  [/Sommermärchens\b/g, 'WM-Sommers'],
+  [/Sommermärchen/g, 'WM-Sommer'],
+  [/Wembley[- ]Arena/g, 'Arena im Londoner Nordwesten'],
+  [/Wembley-?[Ss]tadion/g, 'Londoner Nationalstadion'],
+  [/Wembley-Tor/g, 'Tor von London'],
+  [/\bWembley\b/g, 'London'],
+  // --- Sprache --------------------------------------------------------------------------------
+  ...ERSTLIGIST,
+];
+
 /** Schneller Vorfilter: nur Texte mit einem der alten Namen laufen durch alle Regeln. */
 const ANY = /UEFA|FIFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|\bCAF\b|\bAFC\b|\bOFC\b|Bundesligi?|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der|Intertoto|UI-Cup|Messestädte|Libertadores|Ballon d|Premier League|Serie A|LaLiga|La Liga|Ligue 1|Eredivisie|Europäischer? Verband/;
+/** Vorfilter Stufe 2. */
+const ANY_V2 = /Weltpokal|Interkontinental|Intercontinental|(?:Klub|Club)-W|Konföderationen|Confed|Super(?:cup|-Cup| Cup)|Ligapokal|[Mm]asters|Goldene[nmr]? (?:Ball|Schuh)|Sommermärchen|Wembley|(?:Erst|Bundes)ligist/;
 
 /** Interne Schlüssel, die genau so im Spielstand stehen (Kontinent eines Nationalteams, Kürzel). */
 const KEYS = new Set(['UEFA', 'FIFA', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC', 'OFC', 'DFB', 'DFL']);
 
 /** Echte Verbands-/Wettbewerbsnamen eines angezeigten Textes durch die neutralen ersetzen. */
 export function neutralText(s: string): string {
-  if (!ANY.test(s) || KEYS.has(s)) return s;
+  if (KEYS.has(s)) return s;
   let out = s;
-  for (const [rx, to] of RULES) out = out.replace(rx, to);
+  if (ANY.test(out)) for (const [rx, to] of RULES) out = out.replace(rx, to);
+  if (ANY_V2.test(out)) for (const [rx, to] of RULES_V2) out = out.replace(rx, to);
   return out;
 }
 
 /** Enthält der Text noch einen alten Namen? (Prüfung in Tests.) */
-export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && ANY.test(s);
+export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && (ANY.test(s) || ANY_V2.test(s));

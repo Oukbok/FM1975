@@ -11,7 +11,7 @@
 // =============================================================================
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC, ORGS } from './realPeopleList';
+import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC, ORGS, CLUNKY } from './realPeopleList';
 
 let fails = 0;
 const ok = (c: boolean, msg: string) => { if (!c || process.env.VERBOSE) console.log(`${c ? 'OK  ' : 'FEHL'} ${msg}`); if (!c) fails++; };
@@ -186,14 +186,18 @@ for (const f of files) {
 // Ausgenommen: die Regeln selbst (data/neutralNames.ts), Recherche-Belege der Ligastruktur
 // (data/leagueTiers.ts, nicht angezeigt), Quellen mit Adresse (Zeile mit „url:“) und reine
 // interne Schlüssel ('UEFA' als Kontinent, 'DFL' als Kürzel eines schottischen Vereins).
-const ORG_RULES = listRules('Verband/Wettbewerb', ORGS, false);
+const ORG_RULES = [...listRules('Verband/Wettbewerb', ORGS, false), ...listRules('holprig', CLUNKY, false)];
 const ORG_SKIP = new Set(['src/data/neutralNames.ts', 'src/data/leagueTiers.ts']);
 const ORG_KEYS = /^(?:UEFA|FIFA|CONMEBOL|CONCACAF|CAF|AFC|OFC|DFB|DFL)$/;
 const orgHit = (s: string) => ORG_RULES.find(([, r]) => r.test(s));
-const orgMust = ['die UEFA', 'Champions League', 'DFB-Pokal', 'Bundesligist', '2. Bundesliga', 'Serie A', 'FIFA-Regel', 'NOFV-Oberliga', 'Fridays for Future'];
+const orgMust = ['die UEFA', 'Champions League', 'DFB-Pokal', 'Bundesligist', '2. Bundesliga', 'Serie A', 'FIFA-Regel', 'NOFV-Oberliga', 'Fridays for Future',
+  'Weltpokal', 'Klub-WM', 'Klub-Weltmeisterschaft', 'Interkontinentalpokal', 'Supercup', 'Europäischer Supercup', 'Ligapokal', 'Hallen-Masters', 'zum Masters',
+  'Masters-Sieger', 'Goldener Ball', 'Goldenen Schuh', 'Confed-Cup', 'Sommermärchen', 'in Wembley', 'Erstligist', 'Erstligisten'];
 const orgFree = ['Meisterliga', 'Europa-Liga', 'Konferenz-Liga', 'Weltverband', 'Europaverband', 'Fußballbund', 'Ligaverband', 'Landespokal',
-  '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Goldener Ball', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
-  'Bosman-Urteil', 'Orkan Kyrill', 'Stuttgart 21', 'Bundesanstalt für Arbeit', 'Bundestrainer', 'Café am Markt', 'Weltpokal', 'Klub-WM'];
+  '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Goldener Stern', 'Torjägerstern', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
+  'Bosman-Urteil', 'Orkan Kyrill', 'Stuttgart 21', 'Bundesanstalt für Arbeit', 'Bundestrainer', 'Café am Markt', 'Transatlantik-Pokal', 'Klub-Weltturnier',
+  'Kontinentalsieger-Pokal', 'Gipfelpokal', 'Europäischer Gipfelpokal', 'Auftaktpokal', 'Hallenfinale', 'Hallenpokal', 'Erstliga-Profis', 'Verein der 1. Liga',
+  'Weltmeisterschaft', 'Europameisterschaft', 'Haywood, Masters, Cain', 'Olympiahalle'];
 const orgMissed = orgMust.filter((s) => !orgHit(s)), orgWrong = orgFree.filter((s) => orgHit(s));
 ok(!orgMissed.length, `Verbände/Wettbewerbe: Beispiele erkannt${orgMissed.length ? ' – verfehlt: ' + orgMissed.join(', ') : ''}`);
 ok(!orgWrong.length, `Verbände/Wettbewerbe: neutrale Namen frei${orgWrong.length ? ' – fälschlich: ' + orgWrong.join(', ') : ''}`);

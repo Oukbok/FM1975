@@ -27,6 +27,8 @@ import { loadGameSync, saveGameSync } from '../src/engine/save';
 import { prepareLoadedGame } from '../src/game/loadMigrations';
 import { Game } from '../src/game/state';
 import { migrateTacticsRefs } from '../src/game/tacticsRefsMigration';
+import { hasRealOrgName, neutralText } from '../src/data/neutralNames';
+import { NEUTRAL_NAMES_V } from '../src/game/neutralNamesMigration';
 
 // --- Umgebung wie tests/season-test.ts: localStorage, feste Uhr, fester Zufall --
 const store = new Map<string, string>();
@@ -221,6 +223,23 @@ function readFixture(file: string): Game {
   return (JSON.parse(json) as { game: Game }).game;
 }
 
+/** Neutrale Namen (game/neutralNamesMigration.ts): nach dem Laden keine alten Wettbewerbsnamen mehr. */
+const NAME_SKIP = new Set(['id', 'ids', 'clubId', 'playerId', 'managedClubId', 'relatedId', 'matchId', 'key', 'cc', 'code', 'conf', 'firstName', 'lastName', 'fullName']);
+function checkNames(g: Game): void {
+  const left: string[] = [];
+  const stack: unknown[] = [g];
+  while (stack.length) {
+    const o = stack.pop();
+    if (!o || typeof o !== 'object') continue;
+    for (const [k, v] of Array.isArray(o) ? o.entries() : Object.entries(o as object)) {
+      if (typeof k === 'string' && NAME_SKIP.has(k)) continue;
+      if (typeof v === 'string') { if (hasRealOrgName(v) && neutralText(v) !== v && left.length < 3) left.push(v.slice(0, 80)); }
+      else if (v && typeof v === 'object') stack.push(v);
+    }
+  }
+  ok(g.namesV === NEUTRAL_NAMES_V && !left.length, `Neutrale Namen Stufe ${g.namesV}${left.length ? ` – übrig: ${left.join(' | ')}` : ''}`);
+}
+
 function run(fx: Fixture): void {
   cur = fx.file;
   console.log(`\n== ${fx.file} (${fx.season}, ${fx.club}; ${fx.source})`);
@@ -233,6 +252,7 @@ function run(fx: Fixture): void {
     ok(false, `Laden (prepareLoadedGame): ${(e as Error).stack?.split('\n').slice(0, 4).join(' | ')}`); return;
   }
   checkInv(g, 'nach dem Laden');
+  checkNames(g);
   const start = g.calendar.currentDate;
   let errors = 0;
   const until = CalendarEngine.addDays(start, DAYS);

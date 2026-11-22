@@ -127,7 +127,8 @@ export const HISTORIC: string[] = [
  * Verbände und Wettbewerbe (Wunsch Pascal: „Verbände und Wettbewerbe müssen neutral heißen“) –
  * im Text das Schema aus data/neutralNames.ts (Tabelle in CLAUDE.md): Weltverband, Europaverband,
  * Fußballbund, Ligaverband, Regelgremium, Meisterliga, Europa-Liga, Konferenz-Liga, Europa-Pokal,
- * Landespokal, 1. Liga/2. Liga, Nationenliga, Goldener Ball. Geprüft in ALLEN Quelltexten
+ * Landespokal, 1. Liga/2. Liga, Nationenliga, Transatlantik-Pokal, Klub-Weltturnier, Kontinentalsieger-Pokal,
+ * Gipfelpokal, Auftaktpokal, Hallenfinale, Goldener Stern, Torjägerstern. Geprüft in ALLEN Quelltexten
  * (String-Inhalte); reine interne Schlüssel ('UEFA' als Kontinent) sind ausgenommen.
  */
 export const ORGS: string[] = [
@@ -137,6 +138,15 @@ export const ORGS: string[] = [
   'Messestädte-Pokal', 'Copa (?:Libertadores|América|Sudamericana)', 'Ballon d.Or', 'Premier League', 'Premiership',
   'Serie [A-D]', 'LaLiga', 'La Liga', 'Ligue [12]', 'Eredivisie', 'Allsvenskan', 'Superliga', 'Süper Lig', 'Ekstraklasa',
   'FA[- ]Cup', 'League Cup', 'Coppa Italia', 'Copa del Rey', 'Coupe de France',
+  // Stufe 2 (Wunsch Pascal: „Ja, bitte alles neutral umbenennen“): Welt-, Super- und Ligapokale, Halle, Preise
+  'Weltpokal\\p{L}*', '(?:Klub|Club)-W(?:M|eltmeister)\\p{L}*', 'Club World Cup', 'Interkontinental-?[Pp]okal\\p{L}*', 'Intercontinental Cup',
+  'Konföderationen-Pokal', 'Confed(?:erations)?-?Cup', 'Super(?:cup|-Cup| Cup)\\p{L}*', 'Ligapokal\\p{L}*', 'Hallen-?[Mm]asters',
+  'Masters-\\p{L}+', '(?:das|des|dem|zum|beim|im|ins|der|inkl\\.) Masters', 'Goldene[nrm]? (?:Ball|Schuh)\\p{L}*',
+  // Orte/Titel als Marke (Filmtitel „Sommermärchen“, Stadion-/Hallenmarke „Wembley“)
+  'Sommermärchen\\p{L}*', 'Wembley\\p{L}*',
   // Kampagnen-/Aktionsnamen (Wunsch Pascal: geschützte Namen umschreiben, Ereignisbegriffe wie Bosman-Urteil bleiben)
   'Fridays for Future', 'Ice Bucket', 'One ?Love',
 ];
+
+/** Sprachlich holprig (Wunsch Pascal: „Erstligist“ glätten → „Verein/Klub der 1. Liga“, „Oberhaus-Klub“). */
+export const CLUNKY: string[] = ['Erstligist\\p{L}*', 'Bundesligist\\p{L}*'];
