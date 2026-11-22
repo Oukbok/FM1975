@@ -35,6 +35,9 @@ import { depart, install, pickSuccessor } from './coachCarousel';
 import { closeHeadCoach, syncHeadCoach } from './headCoaches';
 import { honourFx } from '../engine/honourEffects';
 import { goalOf } from './dressingRoomGame';
+import { poachFee, poachView } from './staffPoach';
+import { anyClubName } from './staffLean';
+import { fmtDM } from '../ui/format';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -60,24 +63,27 @@ export function severanceOf(g: Game, m: StaffMember): number {
   return memberMonthlySalary(m, scale) * months;
 }
 
-/** Ablöse beim Abwerben (an den alten Verein): sechs Monatsgehälter, für einen Cheftrainer ein Jahresgehalt. */
+/** Ablöse beim Abwerben (an den bisherigen Verein; Rechnung game/staffPoach.ts `poachFee`). */
 export function compensationOf(g: Game, m: StaffMember): number {
-  return m.clubId ? memberMonthlySalary(m, economyScale(yearOf(g.calendar.currentDate))) * (m.coach ? 12 : 6) : 0;
+  return m.clubId ? poachFee(g, m) : 0;
 }
 
 const myRep = (g: Game) => g.clubs[g.managedClubId]?.reputation ?? 60;
 
-/** Will die Person überhaupt kommen? Abwerben nur von gleich großen oder kleineren Vereinen; große Trainernamen meiden kleine Vereine. */
-export function willMove(g: Game, m: StaffMember): boolean {
-  const mine = myRep(g) + honourFx(g.managedClubId, 'coachAppeal') * 50; // Ruhige Hand
-  if (m.home === g.managedClubId) return true;
-  if (m.clubId) return mine >= (g.clubs[m.clubId]?.reputation ?? 60) - 4;
-  return !m.coach || mine >= m.coach.rep - 10; // wie bei den KI-Vereinen (coachCarousel.ts pickSuccessor)
+/**
+ * Will die Person überhaupt kommen? Angestellte nach ihren Gründen dafür/dagegen (game/staffPoach.ts
+ * `poachView`: Vereinsgröße, Gehalt, Heimat, Rolle, Aussichten, Treue, Abwerbeschutz); große
+ * Trainernamen ohne Verein meiden kleine Vereine.
+ */
+export function willMove(g: Game, m: StaffMember, role = m.roleId): boolean {
+  return !moveBlocker(g, m, role);
 }
 /** Grund, warum jemand nicht kommt (für die Anzeige). */
-export function moveBlocker(g: Game, m: StaffMember): string | null {
-  if (willMove(g, m)) return null;
-  return m.clubId ? `${m.name} will ${g.clubs[m.clubId]?.name ?? 'seinen Verein'} nicht für einen kleineren Verein verlassen.` : `${m.name} wartet auf das Angebot eines größeren Vereins.`;
+export function moveBlocker(g: Game, m: StaffMember, role = m.roleId): string | null {
+  if (m.home === g.managedClubId && !m.clubId) return null;
+  if (m.clubId) return poachView(g, m, role).blocker ?? null;
+  const mine = myRep(g) + honourFx(g.managedClubId, 'coachAppeal') * 50; // Ruhige Hand
+  return !m.coach || mine >= m.coach.rep - 10 ? null : `${m.name} wartet auf das Angebot eines größeren Vereins.`;
 }
 
 /**
@@ -141,7 +147,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   const roleId = opts.roleId ?? m.roleId;
   const role = STAFF_BY_ID[roleId];
   if (!role || !staffAvailable(role, year)) return { ok: false, text: 'Diese Stelle gibt es noch nicht.' };
-  const block = moveBlocker(g, m);
+  const block = moveBlocker(g, m, roleId);
   if (block) return { ok: false, text: block };
   if (!opts.agreed && !acceptsOffer(m, offerFactor, years, club.reputation ?? 60, demandOf(g, m, roleId))) {
     return { ok: false, text: `${m.name} lehnt ab – das Angebot liegt unter seinen Vorstellungen.` };
@@ -150,8 +156,10 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
   const lines: string[] = [];
   const fee = compensationOf(g, m);
   if (fee > 0) {
-    book(club.finances, today, -fee, 'staff_wages', `Ablöse ${m.name} (${g.clubs[m.clubId!]?.shortName ?? ''})`, true);
-    lines.push(`Ablöse an ${g.clubs[m.clubId!]?.name ?? 'den Verein'} bezahlt.`);
+    book(club.finances, today, -fee, 'staff_wages', `Ablöse ${m.name} (${anyClubName(g, m.clubId!, true)})`, true);
+    const seller = g.clubs[m.clubId!];
+    if (seller) book(seller.finances, today, fee, 'other', `Ablöse ${m.name}`, false);
+    lines.push(`Ablöse ${fmtDM(fee)} an ${anyClubName(g, m.clubId!)} bezahlt.`);
   }
   const old = replacedBy(g, roleId, opts.replaceId);
   if (old) {
@@ -174,6 +182,9 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
       if (g.coachPool) g.coachPool = g.coachPool.filter((c) => c.id !== cid);
       install(g, from, pickSuccessor(g, from, today, Math.random), today, false);
     }
+    // Cheftrainer im Ausland stehen als Person im Pool (game/staffLean.ts).
+    const j = w.people.indexOf(m);
+    if (j >= 0) w.people.splice(j, 1);
   } else {
     const i = w.people.indexOf(m);
     if (i >= 0) w.people.splice(i, 1);
@@ -193,7 +204,7 @@ export function offerContract(g: Game, personId: string, offerFactor: number, ye
 
 /** Den besten vereinslosen Bewerber, der kommen will, zu seiner Forderung einstellen (Tests, Simulation). */
 export function quickHire(g: Game, roleId: string, pick = 0): HireResult {
-  const rows = staffMarket(g, { role: roleId, onlyFree: true }).filter((r) => willMove(g, r.m));
+  const rows = staffMarket(g, { role: roleId, onlyFree: true }).filter((r) => willMove(g, r.m, roleId));
   const r = rows[pick] ?? rows[0];
   if (!r) return { ok: false, text: 'Kein Bewerber.' };
   return offerContract(g, r.m.id, demandOf(g, r.m, roleId), 2, { roleId });

@@ -12,14 +12,20 @@ import { bookDebtInterest } from '../engine/clubEconomy';
 import { book, bookMonthly } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
 import { Game, bumpMorale } from './state';
+import { bookAiStaffPayroll, staffedClubs, staffIndex } from './staffAi';
 import { fmtDM } from '../ui/format';
 
 /** MONATSABSCHLUSS (am 1.): Buchungen aller Vereine, dann Mitarbeiter & Werbung (nur eigener Verein). */
 export function monthlyFinanceClose(g: Game, today: string, curMonth: string): void {
+  const sim = !!(g as Game & { simAutoManage?: boolean }).simAutoManage;
+  const staffIdx = staffIndex(g);
+  const staffed = new Set(staffedClubs(g).map((c) => c.id));
   for (const club of Object.values(g.clubs)) {
     if (club.finances.lastMonthlyBooking === curMonth) continue;
     const isMine = club.id === g.managedClubId;
     const m = bookMonthly(club, g.players, today, g.table, isMine, economyScale(yearOf(today)));
+    // KI-Vereine zahlen ihren Stab wie du deinen (game/staffAi.ts).
+    if (staffed.has(club.id)) bookAiStaffPayroll(g, club, staffIdx, today);
     bookDebtInterest(club, today, isMine);
     if (isMine) {
       const net = m.net;
@@ -69,7 +75,7 @@ export function monthlyFinanceClose(g: Game, today: string, curMonth: string): v
     const staffCost = g.staff
       ? g.staff.reduce((a, m) => a + memberMonthlySalary(m, scale), 0)
       : staffMonthlyTotal(g.hiredStaff ?? [], scale);
-    if (staffCost > 0 && mine) {
+    if (staffCost > 0 && mine && !sim) {
       book(mine.finances, today, -staffCost, 'staff_wages', 'Gehälter Mitarbeiterstab (Monat)', true);
     }
     // 2) Werbung: Kosten, Wirkung nachziehen, Marke aufbauen (game/marketingGame.ts).

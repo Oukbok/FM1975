@@ -12,6 +12,9 @@ import { seasonStartYear } from '../src/data/timeline';
 import { headCoachNow, headCoachRows } from '../src/game/headCoaches';
 import { quickHire } from '../src/game/trainerTeam';
 import { bindCoaching } from '../src/game/coachingGame';
+import { aiStaffSummary } from '../src/game/staffAi';
+import { staffStrengthOf } from '../src/game/staffGame';
+import { leanClubs } from '../src/game/staffLean';
 import { coachCutFor, coachLevelFor } from '../src/engine/development';
 import { teachFactor } from '../src/engine/coaching';
 import { careerSummary } from './simCareers';
@@ -346,6 +349,17 @@ function staffReport(game: Game) {
     const cut = pl.map((p) => coachCutFor(p));
     const teach = pl.filter((p) => p.age <= 27).map((p) => teachFactor(coachLevelFor(p) ?? 0, p.overall));
     console.log(`   COACH Niveau ${lv[0].toFixed(0)}–${lv[lv.length - 1].toFixed(0)} (Ø ${avg(lv).toFixed(1)}) | Decke greift bei ${cut.filter((c) => c >= 1).length}/${pl.length} Spielern (Ø ${avg(cut.filter((c) => c >= 1)).toFixed(1)}, max ${Math.max(0, ...cut).toFixed(1)}) | Lerntempo ≤27 Ø ${avg(teach).toFixed(3)} (${Math.min(...teach).toFixed(2)}–${Math.max(...teach).toFixed(2)})`);
+  }
+  {
+    // KI-Stäbe (game/staffAi.ts): Besetzung, Güte, Kosten, Faktor auf die Spielstärke – große gegen kleine Vereine.
+    const rows = aiStaffSummary(game).sort((a, b) => b.rep - a.rep);
+    if (rows.length) {
+      const f = rows.map((r) => staffStrengthOf(game, r.id).factor);
+      const third = Math.max(1, Math.floor(rows.length / 3));
+      const part = (xs: typeof rows) => `${avg(xs.map((r) => r.filled / Math.max(1, r.avail)) ).toFixed(2)} besetzt, Q ${avg(xs.map((r) => r.q)).toFixed(1)}, Faktor ${avg(xs.map((r) => staffStrengthOf(game, r.id).factor)).toFixed(4)}, Kosten ${Math.round(avg(xs.map((r) => r.pay * 12 / econScale(Number(game.calendar.currentDate.slice(0, 4))))) / 1000)} Tsd. (1975)`;
+      const lean = new Set(leanClubs(game).map((c) => c.id));
+      console.log(`   KISTAB groß: ${part(rows.slice(0, third))} | klein: ${part(rows.slice(-third))} | Faktor ${Math.min(...f).toFixed(4)}–${Math.max(...f).toFixed(4)} | schlank angestellt ${ps.filter((m) => m.clubId && lean.has(m.clubId)).length} (Cheftrainer ${ps.filter((m) => m.clubId && lean.has(m.clubId) && m.roleId === 'cheftrainer').length}) | Trainerpool ${game.coachPool?.length ?? 0}`);
+    }
   }
   console.log(`   STAFF ${ps.length} Personen (${free.length} frei), Ex-Profis ${Math.round(ex.length / Math.max(1, ps.length) * 100)} %, Qualität Ø ${avg(q).toFixed(1)} max ${q[q.length - 1]}, neu ${l?.exPros ?? 0} Ex-Profis/${l?.outsiders ?? 0} Quereinsteiger, Aufstiege ${l?.promoted ?? 0}, Abgänge ${l?.retired ?? 0}, KI-Einstellungen ${l?.hires ?? 0} | frei je Rolle: ${Object.entries(roles).map(([k, v]) => k + ' ' + v).join(', ')}`);
 }

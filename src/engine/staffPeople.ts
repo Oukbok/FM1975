@@ -241,7 +241,7 @@ export function focusEffect(focus: TrainingFocus, p: Player): { dev: number; inj
 export interface StaffSeasonNews { left: { m: StaffMember; reason: string }[] }
 
 export function staffSeasonTurnover(
-  members: StaffMember[], clubRep: number, year: number, r: () => number, rivalName: () => string,
+  members: StaffMember[], clubRep: number, year: number, r: () => number, rivalName: () => string, poach = true,
 ): StaffSeasonNews {
   const left: { m: StaffMember; reason: string }[] = [];
   for (const m of [...members]) {
@@ -253,7 +253,7 @@ export function staffSeasonTurnover(
     }
     // Abwerbeschutz (ausgehandelt): Solange der Vertrag läuft, wechselt die Person nicht.
     const shielded = !!m.deal?.protect && !!m.contractEnd && Number(m.contractEnd.slice(0, 4)) > year;
-    if (m.quality >= 14 && !m.traits?.includes('treu') && !shielded) {
+    if (poach && m.quality >= 14 && !m.traits?.includes('treu') && !shielded) {
       const chance = 0.06 + (m.quality - 14) * 0.035 - m.loyalty / 500 + (clubRep < 70 ? 0.05 : 0) - (m.salaryFactor > 2.2 ? 0.04 : 0);
       if (r() < chance) left.push({ m, reason: `wird von ${rivalName()} abgeworben` });
     }

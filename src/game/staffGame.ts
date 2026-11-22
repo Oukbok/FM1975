@@ -19,6 +19,8 @@ import {
 import { skillsFromQuality } from '../engine/staffGen';
 import { staffLevel } from '../engine/staffSkills';
 import { aiStaffExtras, staffMovedTo, staffWorldSeason } from './staffWorld';
+import { eraWeight, staffedClubs, staffIndex, STAFF_W } from './staffAi';
+import { isLeagueClub } from '../engine/clubEconomy';
 import { ownStaffSeason } from './trainerTeam';
 import { bindCoaching, ownCoaching } from './coachingGame';
 import { closeHeadCoach } from './headCoaches';
@@ -162,7 +164,8 @@ export function staffSeasonChange(g: Game, date: string): void {
   const rivals = Object.values(g.clubs).filter((c) => c.id !== g.managedClubId && !c.guest && !c.id.startsWith('am') && !c.id.startsWith('eu_') && !c.id.startsWith('w_') && (c.reputation ?? 0) >= (club?.reputation ?? 60));
   const picked: (Club | null)[] = [];
   const pick = () => { const c = rivals.length ? rivals[Math.floor(Math.random() * rivals.length)] : null; picked.push(c); return c ? c.name : 'einem Verein aus dem Ausland'; };
-  const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick);
+  // Abwerben eigener Leute läuft über Angebote mit Wahl (game/staffPoach.ts); hier nur noch der Ruhestand.
+  const res = staffSeasonTurnover(staff, club?.reputation ?? 60, yearOf(date), Math.random, pick, !g.staffWorld?.ai);
   for (const l of res.left) {
     const retired = l.reason.startsWith('geht in den Ruhestand');
     closeHeadCoach(g, l.m.id, retired ? 'ruhestand' : 'abgeworben', date);
@@ -225,38 +228,74 @@ export function applyFocusLoad(g: Game, club: Club, today: string, injuryReducti
 // -----------------------------------------------------------------------------
 // Stab und Spielstärke (Wunsch Pascal): Jede Stelle wirkt nur wenig, zusammen aber
 // spürbar. Abdeckung = gewichtete, nach Qualität bewertete Besetzung der in der
-// Epoche üblichen Stellen (nur freigeschaltete). Ganz ohne Stab: bis −4 % Spielstärke
-// (1975 halb so viel – damals gab es kaum Fachpersonal), voller guter Stab: +0,4 %.
-// KI-Vereine gelten als normal besetzt (Faktor 1).
+// Epoche üblichen Stellen (nur freigeschaltete, Gewichte `STAFF_W` in staffAi.ts).
+// Ohne Stab bis −4 %, Spitzenstab stufenlos bis +2 % (Abdeckung 1,0 → 1,1);
+// 1975 halb so viel, ab 2010 voll. Gilt für JEDEN Verein mit Stab – den eigenen
+// (g.staff) und die KI-Vereine (Personen im Pool, game/staffAi.ts). Auslands-
+// vereine mit vollem Kader (Europapokal) bekommen den Wert eines Stabs, wie ihn
+// ein Verein ihrer Größe hätte (`expectedStaffFactor`).
 // -----------------------------------------------------------------------------
-const STAFF_W: Record<string, number> = {
-  cotrainer: 1, torwarttrainer: 0.6, mannschaftsarzt: 1, masseur: 0.5, physio_haupt: 0.8, konditionstrainer: 0.7,
-  athletiktrainer: 0.7, reha_trainer: 0.4, leistungsdiag: 0.4, ernaehrung: 0.3, sportpsychologe: 0.4, head_performance: 0.5,
-  sportwissenschaftler: 0.3, belastungsmanager: 0.4, return_to_play: 0.3, fussballpsychologe: 0.3, gegnerbeobachter: 0.6,
-  videoanalyst: 0.6, spielanalyst: 0.6, datenanalyst: 0.4, head_data: 0.3, sportl_leiter: 0.5, sportdirektor: 0.5,
-  zeugwart: 0.2, platzwart: 0.3, kaufm_leiter: 0.2, verwaltung: 0.2,
-};
+export { STAFF_W } from './staffAi';
 
-/** Abdeckung 0…1,1 und Faktor auf die Spielstärke des eigenen Vereins. */
-export function staffStrengthOf(g: Game): { coverage: number; factor: number } {
-  const year = yearOf(g.calendar.currentDate);
-  const members = g.staff ?? [];
+/** Faktor auf die Spielstärke aus der Abdeckung (gleiche Formel für alle Vereine). */
+export function staffFactorOf(coverage: number, year: number): number {
+  const eraW = eraWeight(year);
+  if (coverage < 1) return 1 - 0.04 * eraW * (1 - coverage);
+  return 1 + 0.02 * eraW * Math.min(1, (coverage - 1) / 0.1);
+}
+
+/** Abdeckung 0…1,1 und Faktor für eine Liste von Mitarbeitern (je Stelle zählt der Beste). */
+export function staffStrengthFor(members: StaffMember[], year: number): { coverage: number; factor: number } {
   let avail = 0, have = 0;
+  const best = new Map<string, number>();
+  for (const m of members) {
+    if (!STAFF_W[m.roleId]) continue;
+    best.set(m.roleId, Math.max(best.get(m.roleId) ?? 0, Math.min(1.1, effectiveQuality(m, year) / 14)));
+  }
   for (const [id, w] of Object.entries(STAFF_W)) {
     const role = STAFF_BY_ID[id];
     if (!role || role.unlockYear > year || (role.obsoleteYear != null && role.obsoleteYear <= year)) continue;
     avail += w;
-    const best = members.filter((m) => m.roleId === id).reduce((a, m) => Math.max(a, Math.min(1.1, effectiveQuality(m, year) / 14)), 0);
-    have += w * best;
+    have += w * (best.get(id) ?? 0);
   }
   const coverage = avail ? have / avail : 1;
-  const eraW = 0.5 + 0.5 * Math.min(1, Math.max(0, (year - 1975) / 35));
-  const factor = 1 - 0.04 * eraW * Math.max(0, 1 - coverage) + (coverage > 1 ? 0.004 : 0);
-  return { coverage, factor };
+  return { coverage, factor: staffFactorOf(coverage, year) };
 }
 
-/** Täglich/beim Laden: Faktor des eigenen Vereins für die Match-Engine setzen. */
+/** Abdeckung/Faktor eines Vereins: eigener Verein aus deinem Stab, KI-Vereine aus ihren Leuten im Pool. */
+export function staffStrengthOf(g: Game, clubId = g.managedClubId): { coverage: number; factor: number } {
+  const year = yearOf(g.calendar.currentDate);
+  const sim = !!(g as Game & { simAutoManage?: boolean }).simAutoManage;
+  if (clubId === g.managedClubId && !sim) return staffStrengthFor(g.staff ?? [], year);
+  return staffStrengthFor((g.staffWorld?.people ?? []).filter((m) => m.clubId === clubId), year);
+}
+
+/** Erwarteter Faktor eines Vereins mit diesem Ruf (Stab nach `aiStaffTarget`, alle Stellen besetzt). */
+export function expectedStaffFactor(rep: number, year: number): number {
+  const q = Math.max(4, Math.min(18, 3 + rep * 0.13 + eraWeight(year) * (rep - 70) / 12));
+  return staffFactorOf(Math.min(1.1, q / 14) * 0.92, year);
+}
+
+/** Täglich/beim Laden: Faktoren aller Vereine mit Stab für die Match-Engine setzen. */
 export function bindStaffFactor(g: Game): void {
-  if ((g as Game & { simAutoManage?: boolean }).simAutoManage) { setStaffFactor({}); return; }
-  setStaffFactor({ [g.managedClubId]: staffStrengthOf(g).factor });
+  const year = yearOf(g.calendar.currentDate);
+  const sim = !!(g as Game & { simAutoManage?: boolean }).simAutoManage;
+  const t: Record<string, number> = {};
+  if (g.staffWorld?.ai) {
+    const idx = staffIndex(g);
+    for (const c of staffedClubs(g)) t[c.id] = staffStrengthFor(idx.get(c.id) ?? [], year).factor;
+    // Auslandsvereine mit vollem Kader (Europapokal): Stab wie ein Verein ihrer Größe.
+    for (const c of Object.values(g.clubs)) if (!isLeagueClub(c)) t[c.id] = expectedStaffFactor(c.reputation ?? 60, year);
+  }
+  if (!sim && g.clubs[g.managedClubId]) t[g.managedClubId] = staffStrengthFor(g.staff ?? [], year).factor;
+  setStaffFactor(t);
+}
+
+/** Verletzungsrisiko-Senkung je KI-Verein aus seinem medizinischen Personal (gleiche Rechnung wie beim eigenen Verein). */
+export function aiInjuryReductions(g: Game): Map<string, number> {
+  const out = new Map<string, number>();
+  if (!g.staffWorld?.ai) return out;
+  const year = yearOf(g.calendar.currentDate);
+  for (const [id, list] of staffIndex(g)) if (g.clubs[id]) out.set(id, staffEffectsFromMembers(list, year).injuryReduction);
+  return out;
 }
