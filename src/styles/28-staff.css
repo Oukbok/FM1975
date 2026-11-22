@@ -122,6 +122,11 @@
 .sf-reasons .pro::first-letter { color: var(--pos); }
 .sf-reasons .con::first-letter { color: var(--neg); }
 .sf-prof-btns { flex: 0 0 auto; display: flex; gap: 8px; margin-top: auto; padding-top: 10px; }
+/* Viele Eckdaten (Angestellte: Vertrag, Ablöse, Wechsel): Kopf scrollt, die Knöpfe bleiben unten sichtbar. */
+.sf-prof > .sf-prof-head { overflow-y: auto; }
+.sf-prof-head .sf-prof-btns, .sf-prof-head .sf-prof-note { position: sticky; background: var(--panel); z-index: 1; }
+.sf-prof-head .sf-prof-btns { bottom: 22px; }
+.sf-prof-head .sf-prof-note { bottom: 0; }
 .sf-prof-btns .b3 { flex: 1 1 0; white-space: nowrap; }
 .sf-prof-note { flex: 0 0 auto; height: 22px; font-size: 14.5px; color: var(--neg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .b3.sf-danger { border-color: var(--neg); color: var(--neg); }
