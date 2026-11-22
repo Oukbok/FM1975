@@ -161,6 +161,8 @@ export interface Game {
   ratingRounds?: { date: string; label: string; n: number; ups: number; downs: number; sum: number }[];
   /** Kaderplanung der KI über die Saisons: Verlängerungen, Bosman, Leihen (game/aiSquadLog.ts). */
   aiSquadLog?: import('./aiSquadLog').AiSquadLogEntry[];
+  /** Spielende nach dem Abstieg aus der untersten Liga (game/relegationGame.ts): Karrierebilanz; gesetzt = kein Weiterspielen. */
+  over?: import('./relegationGame').GameOver;
   /** Deine Managerkarriere: Ansehen, Trainer-Historie, Vorstandsdruck, Managerbilanz (game/careerGame.ts). */
   career?: import('./careerState').CareerState;
   /** Ausnahmetalente der Fußballgeschichte: an/aus und bereits erschienene (game/legendsGame.ts). Fehlt = keine. */

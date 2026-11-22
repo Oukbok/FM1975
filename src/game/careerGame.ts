@@ -6,6 +6,9 @@
 // Karriere-Modus). Der Code für Angebote/Wechsel/Entlassung unten bleibt
 // erhalten, wird aber nie ausgelöst; `migrateCareer` räumt offene Angebote,
 // Ultimaten und zugesagte Wechsel alter Spielstände ab (idempotent).
+// Einzige Ausnahme (Wunsch Pascal): Abstieg aus der untersten Liga beendet die
+// Amtszeit – game/relegationGame.ts nutzt dafür `makeOffer`, die Entlassungs-Wahl
+// `career_sacked` und den Wechsel zum Saisonende (`career.releg` schützt sie).
 // Täglich (`careerDaily`): Cheftrainer-Historie abgleichen (headCoaches.ts),
 // Vorstandsdruck gegen den Trainer (boardPressure.ts).
 // Saisonwechsel (`careerSeasonStart`): Ansehen, Trainerbilanz, Managerbilanz
@@ -314,6 +317,8 @@ function boardCheck(g: Game, today: string): void {
  * abräumen (Vereinswechsel und Entlassung gibt es nicht mehr). Idempotent.
  */
 export function migrateCareer(g: Game): void {
+  // Abstieg aus der untersten Liga (game/relegationGame.ts): Entlassung, Angebote und Wechsel dieser Saison gelten.
+  if (g.career?.releg?.season === g.season) { g.career.mode = 2; return; }
   for (const m of g.messages) {
     const ref = m.eventRef;
     if (!ref || ref.resolved || (ref.type !== OFFER_TYPE && ref.type !== SACK_TYPE)) continue;
@@ -364,7 +369,7 @@ export function careerSeasonReview(g: Game): CareerState | null {
   return c;
 }
 
-/** Aufruf aus startNextSeason: Ansehen, Trainer- und Managerbilanz. Kein Vereinswechsel mehr (immer null). */
+/** Aufruf aus startNextSeason: Ansehen, Trainer- und Managerbilanz. Vereinswechsel nur nach dem Abstieg aus der untersten Liga (sonst null). */
 export function careerSeasonStart(g: Game): ReturnType<typeof careerSeasonSwitchStart> {
   if (!g.clubs[g.managedClubId]) return null;
   if (g.career) migrateCareer(g);
@@ -372,10 +377,11 @@ export function careerSeasonStart(g: Game): ReturnType<typeof careerSeasonSwitch
   careerSeasonReview(g);
   headCoachSeasonEnd(g);
   mgrSeasonEnd(g);
-  return null;
+  // Einziger Vereinswechsel: nach dem Abstieg aus der untersten Liga (game/relegationGame.ts).
+  return g.career?.releg?.season === g.season ? careerSeasonSwitchStart(g) : null;
 }
 
-/** Nicht mehr genutzt (kein Vereinswechsel); bleibt für die Schnittstelle in season.ts. */
+/** Vereinswechsel nach dem Abstieg aus der untersten Liga (season.ts). */
 export { careerSeasonSwitchFinish };
 // Alte Abläufe (Angebote, Sofortwechsel, Entlassung) – werden nicht mehr ausgelöst.
 export const _legacyCareer = { boardCheck, sackedTodayOffer, rollJobOffers, switchClubNow, careerSeasonSwitchStart };

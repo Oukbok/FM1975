@@ -2,6 +2,7 @@ import { leagueName } from '../data/leagueNames';
 import { retireLibero } from './liberoEra';
 import { rescueLegends } from './legendsGame';
 import { careerSeasonStart, careerSeasonSwitchFinish } from './careerGame';
+import { relegationSeasonEnd } from './relegationGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { recordBudgetPlan } from './budgetPlan';
 import { seasonPromiseSnapshot, settleSeasonPromises } from './seasonPromisesGame';
@@ -31,6 +32,7 @@ import { homeBTeamTransition, isReserveCupId, reserveCupClubs, reserveTransition
 import { cupField } from '../engine/worldReserves';
 import { absorbPlaceholders, ddrExchange, mergeDdrPool, poolDrift, poolExchange, refillPool, settlePool } from './clubPool';
 import { structureForSeason } from '../data/reforms';
+import { balanceDivisions } from '../data/reformSteady';
 import { CurrentDivision, TransitionResult, computeSeasonTransition } from '../data/reformTransition';
 import { applyHomePlan, homeRegionHint, homeSeasonPlan, homeZoneOf } from './homeStructure';
 import { seasonStartYear } from '../data/timeline';
@@ -125,6 +127,8 @@ export function finalOrder(g: Game, divId: string): string[] {
 
 export function startNextSeason(g: Game): void {
   bindGameIds(g); // IDs aus diesem Spielstand (engine/idSeq.ts)
+  // Abstieg aus der untersten Liga: Spielende (kein Saisonwechsel) bzw. Vereinswechsel vormerken (game/relegationGame.ts).
+  if (relegationSeasonEnd(g)) return;
   // Trainer des Jahres + Elf der Saison (eigene Liga): Endtabelle/Pokale stehen, KI-Trainer noch im Amt.
   homeExtraAwards(g, g.calendar.currentDate);
   // Trainerbilanz und -karussell der KI-Vereine, solange die Endtabelle vorliegt.
@@ -206,7 +210,7 @@ export function startNextSeason(g: Game): void {
   closeAmateurLeagues(g, ownAmateurTable(g));
   // Vereinsauszeichnungen (Bronze/Silber/Gold) für alle Vereine mit vollem Kader.
   honoursSeasonEnd(g, oldSeason);
-  // Managerkarriere: Ansehen, Trainer- und Managerbilanz (kein Vereinswechsel mehr; careerSw ist immer null)
+  // Managerkarriere: Ansehen, Trainer- und Managerbilanz; Vereinswechsel nur nach dem Abstieg aus der untersten Liga
   const careerSw = careerSeasonStart(g);
 
   // --- 3) Auf-/Abstieg + evtl. Ligareform datengetrieben berechnen ---
@@ -523,49 +527,3 @@ export function startNextSeason(g: Game): void {
   // Saisonbudget des Finanzberaters (game/budgetPlan.ts): Plan anlegen, Popup nach dem Briefing.
   recordBudgetPlan(g, { pending: true });
 }
-
-
-/**
- * Gleicht Ligagrößen an die Sollstruktur an: Überzählige (schwächste) wandern eine
- * Ebene tiefer, fehlende Plätze werden mit den stärksten Vereinen der Ebene darunter
- * aufgefüllt. Auf der untersten Ebene werden Überzählige gestrichen.
- */
-function balanceDivisions(
-  membership: Record<string, { ids: string[]; meta: DivisionMeta }>,
-  target: { id: string; tier: number; teamCount: number }[],
-  strengthOf: (id: string) => number,
-  protectedId: string,
-): void {
-  const want: Record<string, number> = {};
-  for (const t of target) want[t.id] = t.teamCount;
-  const keys = Object.keys(membership).filter((k) => want[k] != null);
-  const tiers = [...new Set(keys.map((k) => membership[k].meta.tier))].sort((a, b) => a - b);
-  for (const tier of tiers) {
-    const here = keys.filter((k) => membership[k].meta.tier === tier);
-    const below = keys.filter((k) => membership[k].meta.tier === tier + 1);
-    for (const k of here) {
-      const ids = membership[k].ids;
-      // Zu viele: schwächste nach unten (nie den eigenen Verein).
-      while (ids.length > want[k]) {
-        const sorted = ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(a) - strengthOf(b));
-        const out = sorted[0];
-        if (!out) break;
-        ids.splice(ids.indexOf(out), 1);
-        if (below.length) {
-          const dest = below.sort((a, b) => (membership[a].ids.length - want[a]) - (membership[b].ids.length - want[b]))[0];
-          membership[dest].ids.push(out);
-        }
-      }
-      // Zu wenige: stärkste von unten holen.
-      while (ids.length < want[k] && below.length) {
-        const src = below.sort((a, b) => membership[b].ids.length - membership[a].ids.length)[0];
-        const pool = membership[src].ids.filter((id) => id !== protectedId).sort((a, b) => strengthOf(b) - strengthOf(a));
-        const inn = pool[0];
-        if (!inn) break;
-        membership[src].ids.splice(membership[src].ids.indexOf(inn), 1);
-        ids.push(inn);
-      }
-    }
-  }
-}
-
