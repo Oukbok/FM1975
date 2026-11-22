@@ -130,6 +130,8 @@ export function leanSeason(g: Game, w: StaffWorld, date: string, rng: () => numb
       const p = role === 'cheftrainer' ? LEAN_TAKE.coach : LEAN_TAKE[c.kind];
       if (rng() >= p * (initial ? 1.4 : 1)) continue;
       if (role === 'cheftrainer') {
+        // Der Trainerpool der Liga soll nicht leerlaufen: nur zugreifen, wenn genug Trainer frei sind.
+        if ((g.coachPool?.length ?? 0) <= 3) continue;
         const cc = pickCoach(g, c.rep, rng);
         if (!cc) continue;
         g.coachPool = (g.coachPool ?? []).filter((x) => x !== cc);

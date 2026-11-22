@@ -6,6 +6,7 @@
 // einer schlechten Aufstellung (falsche Positionen + müde Spieler).
 // =============================================================================
 import { createNewGame } from '../src/game/newGame';
+import { bindStaffFactor } from '../src/game/staffGame';
 import { leagueClubs } from '../src/game/season';
 import { setEraYear } from '../src/engine/positions';
 import { MatchSim } from '../src/engine/match/sim';
@@ -43,6 +44,10 @@ let shotMix: Record<string, [number, number]> = {}, buildMix: Record<string, [nu
 /** Ist-Werte einer Epoche (gleiche Schlüssel wie die Soll-Werte in data/matchStats.ts). */
 function measure(year: number, n: number): Record<keyof MatchTargets, number> & { goalsRaw: number } {
   setEraYear(year);
+  // STAFFBIND=1: Stab-Faktoren aller Vereine wie im Spiel binden (game/staffGame.ts, Stäbe von 1975 mit dem
+  // Epochengewicht des Jahres – spätere Stellen fehlen, also deutliche Abzüge) – symmetrische Faktoren dürfen
+  // die Kalibrierung nicht verschieben.
+  if (process.env.STAFFBIND) { const d = g.calendar.currentDate; g.calendar.currentDate = `${year}-09-01`; bindStaffFactor(g); g.calendar.currentDate = d; }
   const z = { goals: 0, hw: 0, dr: 0, shots: 0, sot: 0, yel: 0, red: 0, corners: 0, fouls: 0, off: 0, pen: 0,
     head: 0, corner: 0, fk: 0, penG: 0, cnt: 0, long: 0, own: 0, duels: 0, passes: 0, passOk: 0, crosses: 0, crossOk: 0, subs: 0,
     nil: 0, g2: 0, penAll: 0, dist: [0, 0, 0, 0, 0, 0, 0] };
