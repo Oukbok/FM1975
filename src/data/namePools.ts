@@ -4,7 +4,7 @@
 // Namen über Jahrzehnte kaum wiederholen. Kombinationen sind zufällig – es gibt
 // keine Zuordnung zu realen Personen.
 // =============================================================================
-import { BLOCKED_WORLD } from './namePoolsBlocked';
+import { BLOCKED_WORLD, BLOCKED_XL5 } from './namePoolsBlocked';
 
 export const EXTRA_NAMES: Record<string, { first?: string[]; last?: string[] }> = {
   ger: {
@@ -114,6 +114,8 @@ export const BLOCKED_NAMES = new Set([
   'Gordon Brown', 'Tony Blair', 'David Cameron', 'Boris Johnson', 'Margaret Thatcher', 'John Major',
   // Lateinamerika, Afrika, Nahost, Ostasien (fünfte Stufe der Namenspools): data/namePoolsBlocked.ts
   ...BLOCKED_WORLD,
+  // Sechste Stufe (Namen je Land nach simulierten Vereinen): data/namePoolsBlocked.ts
+  ...BLOCKED_XL5,
 ]);
 
 /**
