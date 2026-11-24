@@ -1,7 +1,7 @@
 // =============================================================================
 // Einzelduelle der Match-Engine: Welche Attribute entscheiden welche Aktion?
 // Jede Fähigkeit ist ein gewichteter Mittelwert passender Attribute (0–100),
-// skaliert mit Tagesform, Kraft und (mild) der Eignung für die gespielte Position.
+// skaliert mit Tagesform, Energie und (mild) der Eignung für die gespielte Position.
 // Ein Duell wird logistisch entschieden: 60 gegen 85 gewinnt der Bessere in
 // gut drei von vier Fällen – deutlich, aber mit Zufall.
 // =============================================================================
@@ -19,8 +19,8 @@ export function duelP(a: number, d: number, bias = 0): number {
 }
 
 /**
- * Spieler-Faktor ohne Kraft: Tagesform × Tagesleistung (Konstanz) × milde Positionseignung
- * (Kopfball bleibt Kopfball, auch fehlbesetzt). Die Kraft wirkt beim Abruf (`energyF`).
+ * Spieler-Faktor ohne Energie: Tagesform × Tagesleistung (Konstanz) × milde Positionseignung
+ * (Kopfball bleibt Kopfball, auch fehlbesetzt). Die Energie wirkt beim Abruf (`energyF`).
  */
 export function phys(m: MPlayer): number {
   // Eignungsfaktor zwischenspeichern; ändert sich nur mit der Position (Wechsel, Torwart-Ersatz).
@@ -31,7 +31,7 @@ export function phys(m: MPlayer): number {
   }
   return m.cond * (m.fitF ?? 1) * (m.day ?? 1) * (m.rfit ?? 1);
 }
-/** Kraft im Spiel: müde Spieler verlieren bis zu 18 % in jedem Duell. */
+/** Energie im Spiel: müde Spieler verlieren bis zu 18 % in jedem Duell (Energie 60 ≈ −7 %). */
 export const energyF = (m: MPlayer): number => 0.82 + 0.18 * m.energy / 100;
 
 /**
@@ -182,7 +182,7 @@ export function countDuel(win: MPlayer | undefined, lose: MPlayer | undefined, s
 // --- Zwischenspeicher: alle Fähigkeiten je Spieler, neu berechnet bei refresh() (alle 5 Minuten, nach Wechseln) ---
 const RAW = [raw_dribbleSkill, raw_tackleSkill, raw_duelSkill, raw_aerialSkill, raw_passSkill, raw_longPassSkill, raw_crossSkill, raw_interceptSkill, raw_paceSkill, raw_recoverSkill, raw_timingSkill, raw_boxSkill, raw_blockSkill];
 let GEN = 1;
-/** Zwischenspeicher verwerfen (Positionen ändern sich nur nach Wechseln; die Kraft wirkt beim Abruf). */
+/** Zwischenspeicher verwerfen (Positionen ändern sich nur nach Wechseln; die Energie wirkt beim Abruf). */
 export function refreshSkills(): void { GEN++; }
 /** Aktuelle Generation des Zwischenspeichers (für abgeleitete Tabellen). */
 export const skillGen = (): number => GEN;

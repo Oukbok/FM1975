@@ -24,7 +24,7 @@ export const SHOUT_LUCK = 0.3;
 
 /** Zurufe mit Knopftext und Kurzhinweis. */
 export const SHOUT_LIST: [ShoutId, string, string][] = [
-  ['druck', 'Mehr Druck!', 'Mehr Angriffe, kostet Kraft'],
+  ['druck', 'Mehr Druck!', 'Mehr Angriffe, kostet Energie'],
   ['ruhe', 'Ruhe reinbringen', 'Ballkontrolle, weniger Fehler'],
   ['kompakt', 'Kompakt stehen', 'Sicherer hinten, weniger vorne'],
   ['fluegel', 'Über die Flügel', 'Mehr Flanken und Kopfbälle'],
@@ -104,7 +104,7 @@ export function shoutStatus(sim: MatchSim, side: Side): ShoutStatus {
 /** Mannschaftswerte in Worten (Wiki, Tooltips). */
 export const FX_LABEL: Partial<Record<keyof TacticMods, string>> = {
   att: 'Angriffsstärke', def: 'Abwehrstärke', ctrl: 'Spielkontrolle', rate: 'Zahl der Angriffe', foul: 'Fouls',
-  drain: 'Kraftverbrauch', cross: 'Flankenspiel', exposed: 'Anfälligkeit für Konter', counter: 'Konterstärke',
+  drain: 'Energieverbrauch', cross: 'Flankenspiel', exposed: 'Anfälligkeit für Konter', counter: 'Konterstärke',
   errors: 'Fehler', cards: 'Kartenrisiko', duel: 'Zweikampfstärke', injury: 'Verletzungsrisiko',
 };
 

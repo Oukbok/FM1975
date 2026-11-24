@@ -18,7 +18,7 @@ interface Props {
   /** Zahl neben dem Symbol anzeigen. */
   showValue?: boolean;
   className?: string;
-  /** Andere Bezeichnung im Hover (z. B. Kraft im Textmodus). */
+  /** Andere Bezeichnung im Hover (z. B. Energie im Textmodus). */
   kind?: StatusKind;
 }
 

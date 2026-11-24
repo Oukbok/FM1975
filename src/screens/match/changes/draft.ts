@@ -119,7 +119,7 @@ export function draftStrength(sim: MatchSim, side: Side, d: Draft, id: string): 
   return Math.round(pos ? matchBase(m.p, pos) : m.base);
 }
 
-/** Mannschaftsstärke des Entwurfs: Ø Positionsstärke × Tagesform × Kraft. */
+/** Mannschaftsstärke des Entwurfs: Ø Positionsstärke × Tagesform × Energie. */
 export function draftTeamStrength(sim: MatchSim, side: Side, d: Draft): number {
   const t = sim.team(side);
   let sum = 0, n = 0;

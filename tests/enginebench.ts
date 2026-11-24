@@ -43,7 +43,7 @@ if (MODE === 'attrs') {
   // [Bezeichnung, Attribute, Gruppe, Messgröße]
   const exps: [string, AttributeKey[], Grp, (z: Z) => string][] = [
     ['Fitness (Feld)', ['fitness'], all, (z) => `Tore ${g(z.m.goals, z)}`],
-    ['Ausdauer (Feld)', ['stamina'], all, (z) => `Kraft am Ende ${(z.m.energy / z.m.energyN).toFixed(0)} · Tore ab 70. ${g(z.m.late, z)}:${g(z.o.late, z)}`],
+    ['Ausdauer (Feld)', ['stamina'], all, (z) => `Energie am Ende ${(z.m.energy / z.m.energyN).toFixed(0)} · Tore ab 70. ${g(z.m.late, z)}:${g(z.o.late, z)}`],
     ['Schnelligkeit (Angriff)', ['speed'], ATT, (z) => `Laufduelle ${r(z.m.raceW, z.m.race)} · Konter ${g(z.m.counters, z)}`],
     ['Antritt (Angriff)', ['acceleration'], ATT, (z) => `Laufduelle ${r(z.m.raceW, z.m.race)} · Dribblings ${r(z.m.drW, z.m.dr)}`],
     ['Schnelligkeit + Antritt (Abwehr)', ['speed', 'acceleration'], DEF, (z) => `Gegner-Laufduelle ${r(z.o.raceW, z.o.race)} · Gegner-Konter ${g(z.o.counters, z)}`],
@@ -197,7 +197,7 @@ if (MODE === 'tactics') {
   const cols: [string, keyof LabStats, number][] = [
     ['Flanken', 'crosses', 1], ['Kopfb.', 'headers', 2], ['Konter', 'counters', 2], ['Distanz', 'longShots', 2], ['Steil', 'throughBalls', 2],
     ['Dribbl.', 'dribbles', 1], ['Schüsse', 'shots', 1], ['Tore', 'goalsFor', 2], ['Gegent.', 'goalsAgainst', 2], ['Ballb.%', 'possession', 0],
-    ['Pass%', 'passAcc', 0], ['Fouls', 'fouls', 1], ['Karten', 'cards', 2], ['Abs.Geg', 'offsidesAgainst', 2], ['Kraft', 'energy', 0], ['Punkte', 'points', 2],
+    ['Pass%', 'passAcc', 0], ['Fouls', 'fouls', 1], ['Karten', 'cards', 2], ['Abs.Geg', 'offsidesAgainst', 2], ['Energie', 'energy', 0], ['Punkte', 'points', 2],
   ];
   const fmt = (k: keyof LabStats, v: number, d: number) => (k === 'possession' || k === 'passAcc' ? (v * 100).toFixed(0) : v.toFixed(d));
   console.log(`Taktik-Wirkung ${club.shortName} (${YEAR}) gegen sein neutrales Spiegelbild, je ${N} Heim- + Auswärtsspiele; Zeile = Wert (Δ zu neutral)`);

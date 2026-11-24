@@ -41,7 +41,7 @@ export const ATTR_DUELS: Grammar = {
     '{d} steht goldrichtig und läuft {p} den Ball ab.', '{d} hat die Situation früh erkannt – {p} kommt nicht durch.',
     'Gutes Stellungsspiel von {d}: Er muss gar nicht sprinten, um {p} zu stoppen.',
   ],
-  fail_race_tired: ['{p} fehlen die Kräfte, {d} läuft ihn mühelos ab.', 'Der Sprint von {p} verpufft – er ist sichtlich müde.'],
+  fail_race_tired: ['{p} fehlt die Energie, {d} läuft ihn mühelos ab.', 'Der Sprint von {p} verpufft – er ist sichtlich müde.'],
 
   // --- Dribbling / Zweikampf am Boden -------------------------------------------
   b_dribbling_drib: ['{p} tanzt {d} aus!', 'Feine Ballführung von {p}, {d} greift ins Leere.', '{p} mit einem Haken – {d} ist überspielt.'],
@@ -90,7 +90,7 @@ export const ATTR_DUELS: Grammar = {
     '{d} ahnt den Pass von {p} und geht dazwischen.', '{d} liest das Spiel – Pass von {p} abgefangen.',
     'Gute Antizipation von {d}: Der Ball von {p} kommt nie an.', '{d} steht genau im Passweg von {p}.',
   ],
-  fail_intercept_tired: ['Der Pass von {p} ist zu lasch – die Kräfte schwinden. {d} fängt ihn ab.'],
+  fail_intercept_tired: ['Der Pass von {p} ist zu lasch – die Energie schwindet. {d} fängt ihn ab.'],
 
   // --- Abschluss -----------------------------------------------------------------------
   b_abpraller_handling: ['{k} kann den Ball nicht festhalten – {p} ist zur Stelle!', '{k} lässt nach vorne abprallen, {p} setzt nach!'],

@@ -1,6 +1,6 @@
 // =============================================================================
 // Wechsel-Bildschirm, Reiter „Aufstellung“ links: Spielerliste Startelf + Bank
-// (Nr, Pos, B.Pos, Name, Note, Stärke, Fitness, Kraft, Form, Moral, Potenzial).
+// (Nr, Pos, B.Pos, Name, Note, Stärke, Fitness, Energie, Form, Moral, Potenzial).
 // Klick wählt einen Spieler, zweiter Klick tauscht (Wechsel oder Positionstausch);
 // Zeilen lassen sich auch ziehen – auf eine andere Zeile, einen Slot oder Bankspieler.
 // =============================================================================
@@ -58,7 +58,7 @@ export function PlayerTable({ sim, side, d, sel, drag, down, onPick, onPlayer }:
     <div className="tm-cs-table">
       <div className="tm-cs-row head">
         <span>Nr</span><span>Pos</span><span>B.Pos</span><span>Name</span><span>Note</span><span>Stä</span>
-        <span>Fit</span><span>Kraft</span><span>Form</span><span>Moral</span><span>Potenzial</span>
+        <span>Fit</span><span>Energie</span><span>Form</span><span>Moral</span><span>Potenzial</span>
       </div>
       <div className="tm-cs-list">
         {field.map((m) => row(m, true))}

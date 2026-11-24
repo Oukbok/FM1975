@@ -1460,21 +1460,21 @@ Genaue Zahlen gibt es nicht – was am besten funktioniert, findest du durch **A
 - **Mentalität mit Ball** (oben unter *Mit Ball*): Offensiv = mehr Angriffe, Dribblings und Steilpässe. Defensiv = weniger Risiko, weniger Angriffe, mehr lange Bälle. Konter = weniger Ballbesitz, aber viel mehr Gegenstöße nach Ballgewinn.
 - **Mentalität gegen den Ball** (unten unter *Gegen den Ball*): Defensiv = hinten stabiler, kaum Räume für Konter. Offensiv = nach vorn verteidigen, weniger stabil und offener für Konter. Ohne eigene Wahl richtet sie sich nach der Mentalität mit Ball (Konter = ausgewogen).
 - Vor jeder Anweisung zeigt ein **Balken von Rot nach Grün**, wie gut die Mannschaft sie eingeübt hat (siehe *Eingespieltheit*); beim Einsatz gibt es nichts einzuüben.
-- **Einsatz (5 Stufen):** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Kraftverbrauch, Frischeverlust, Karten und Verletzungen.
+- **Einsatz (5 Stufen):** mehr gewonnene Zweikämpfe und Laufduelle in beide Richtungen, aber mehr Energieverbrauch, Frischeverlust, Karten und Verletzungen.
 
 ### Mit Ball
 - **Aufbau kurz/lang:** Kurz = höhere Passquote; lang = viele lange Bälle auf den Zielspieler (Kopfballduell), dazu Steilpässe – lohnt mit einem starken Mittelstürmer und gegen hohe Abwehrlinien.
-- **Tempo (5 Stufen):** mehr Steilpässe, Dribblings und Konter, weniger Geduld und Distanzschüsse; schlechtere Passquote und mehr Kraftverbrauch.
+- **Tempo (5 Stufen):** mehr Steilpässe, Dribblings und Konter, weniger Geduld und Distanzschüsse; schlechtere Passquote und mehr Energieverbrauch.
 - **Breite (5 Stufen):** Flügel = deutlich mehr Flanken und Kopfballchancen, Mitte = Kombinationen, Steilpässe und mehr Distanzschüsse.
 - **Flanken flach / gemischt / hoch:** Hoch führt zu Kopfballduellen (lohnt mit großen, kopfballstarken Stürmern), flach zu Abschlüssen aus dem Rückraum (für schnelle, abschlussstarke Angreifer). Die Flankenqualität des Flankengebers entscheidet mit, ob der Ball ankommt.
 
 ### Gegen den Ball
 - **Deckung:** *Manndeckung* – jeder hat seinen Gegenspieler, stark im direkten Zweikampf. *Raumdeckung* – die Mannschaft verschiebt im Verbund: Sie fängt mehr Pässe ab, sichert den Raum hinter der Linie und macht die Abseitsfalle wirksamer, ist im Zweikampf und bei Flanken aber weniger eng am Mann. Raumdeckung greift nur mit **eingespielter** Mannschaft – frisch umgestellt ist sie klar schlechter als Manndeckung.
-- **Pressing (5 Stufen):** Gegnerische Pässe werden öfter abgefangen, du kommst häufiger zum Konter – kostet aber viel Kraft und bringt Fouls und Karten.
+- **Pressing (5 Stufen):** Gegnerische Pässe werden öfter abgefangen, du kommst häufiger zum Konter – kostet aber viel Energie und bringt Fouls und Karten.
 - **Abwehrlinie (5 Stufen):** Hoch = Raum hinter deiner Abwehr (gegnerische Steilpässe und Konter gewinnen leichter das Laufduell), aber mehr Abseits des Gegners; tief = sicher gegen Tempo, dafür mehr Distanzschüsse des Gegners.
 - **Zweikampf (5 Stufen):** gewinnt mehr Zweikämpfe in der Abwehr, kostet aber Fouls, Freistöße, Elfmeter und Karten.
 - **Abseitsfalle:** deutlich mehr gegnerische Abseitsstellungen; wird sie überlaufen, ist der Stürmer meist frei durch.
-- **Ballverlust:** *Ordnen* oder *Gegenpressing* – sofortiges Nachsetzen stoppt gegnerische Konter früh, kostet aber Kraft.
+- **Ballverlust:** *Ordnen* oder *Gegenpressing* – sofortiges Nachsetzen stoppt gegnerische Konter früh, kostet aber Energie.
 
 ### Taktik im Wandel der Jahrzehnte
 Nicht alles gibt es von Anfang an, und manches schließt sich aus. Gesperrte Stufen tragen ein Schloss; unten steht der Grund.
@@ -1509,7 +1509,7 @@ Eine **Position** sagt, wo ein Spieler steht – die **Rolle**, was er dort tut.
 ### Was eine Rolle bewirkt
 - **Wer woran beteiligt ist.** Über einen *Spielmacher* laufen deutlich mehr Pässe – seine Passstärke prägt dann fast jeden Angriff. Ein *Offensiver Außenverteidiger* flankt etwa doppelt so oft wie ein defensiver. Ein *Wandspieler* geht in jedes Luftduell, ein *Strafraumstürmer* kommt öfter zum Abschluss.
 - **Gewicht in der Mannschaft.** Jede Rolle verschiebt, wie stark der Spieler zu Angriff, Kontrolle und Abwehr zählt. Viele offensive Rollen bringen Tore und kosten hinten Stabilität – und umgekehrt.
-- **Kraft.** Laufintensive Rollen (Antreiber, Offensiver Außenverteidiger) verbrauchen mehr Kraft.
+- **Energie.** Laufintensive Rollen (Antreiber, Offensiver Außenverteidiger) verbrauchen mehr Energie.
 
 ### Passt die Rolle zum Spieler?
 Die fünf Kästchen in der Rollenwahl zeigen die **Eignung**: Sie vergleicht die Schlüsselattribute der Rolle mit der Stärke des Spielers auf der Position. Ein Spezialist in seiner Rolle spielt bis zu 2,5 % besser, eine Fehlbesetzung bis zu 4 % schlechter. Die Grundrolle ist immer neutral.
@@ -1627,11 +1627,11 @@ Den vollen Ticker behält der Spielstand für die **letzten zehn eigenen Spiele*
 - **Ereignisliste:** Tabelle Min. | Erg. | Symbol | Wappen | Ereignis, neueste oben. Jede Szene ist ein Block – Aufbau, Verlauf und Abschluss stehen untereinander. Spielernamen erscheinen mit Position, deine in Bernstein, die des Gegners hellblau; ein Klick öffnet das Spielerprofil. Tore stehen fett mit „1:0 Name (n. Tor in dieser Saison)“. Reiter filtern: **Alles, Highlights, Tore, Wechsel, Karten**.
 - **Spannungsmoment:** Bei Großchancen, Elfmetern und direkten Freistößen flimmert im Block zuerst unleserlicher Text, der sich erst dann zu **TOR!**, **GEHALTEN!**, **DANEBEN!** oder **LATTE!** auflöst.
 - **Schiedsrichter:** Name, Linie und Stimmung – abgeleitet aus Fouls und Karten dieses Spiels. Er hat keinen eigenen Einfluss, die Kartenhärte folgt der Epoche.
-- **Rechts:** Reiter **Team** (deine Aufstellung mit Live-Note, Stärke, Kraft, Fitness, Karten/Verletzung; Bank mit Aufwärmen, ausgewechselte Spieler rot; auch hier lässt sich **ziehen**: Bankspieler auf einen Feldspieler = sofortiger Wechsel, Feldspieler auf Feldspieler = Positionstausch – gilt ohne Bestätigen, Escape bricht ab), **Taktik** (Ausrichtung, Zurufe mit Laufzeit-Ring – Regeln im Artikel *Seitenlinie: Zurufe, Ansprache, Gespräche, Aufwärmen*), **Gegner**, **Live** (Tabelle mit dem aktuellen Spielstand), **Statistik** und **Tabelle** (vor dem Anpfiff).
+- **Rechts:** Reiter **Team** (deine Aufstellung mit Live-Note, Stärke, Energie, Fitness, Karten/Verletzung; Bank mit Aufwärmen, ausgewechselte Spieler rot; auch hier lässt sich **ziehen**: Bankspieler auf einen Feldspieler = sofortiger Wechsel, Feldspieler auf Feldspieler = Positionstausch – gilt ohne Bestätigen, Escape bricht ab), **Taktik** (Ausrichtung, Zurufe mit Laufzeit-Ring – Regeln im Artikel *Seitenlinie: Zurufe, Ansprache, Gespräche, Aufwärmen*), **Gegner**, **Live** (Tabelle mit dem aktuellen Spielstand), **Statistik** und **Tabelle** (vor dem Anpfiff).
 
 ## Wechsel und Taktik: der Wechsel-Bildschirm
 Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er öffnet sich über **Wechsel / Taktik** (oben rechts) bzw. die Knöpfe **Aufstellung, Taktik, Individuelle Anweisungen**, zur **Halbzeit** und wenn eine Option das Spiel anhält. Das Spiel steht so lange still; alles ist ein Entwurf und gilt erst mit **Bestätigen** (Abbrechen verwirft ihn).
-- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Kraft, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld, auf dem Feld auch am Kopf) oder per **Ziehen & Ablegen** – zwischen Liste, Feld und Bank in jeder Richtung (Escape bricht ab). Ein Bankspieler auf einem Platz bedeutet eine Einwechslung; umgekehrt kommt ein Feldspieler nur per Wechsel auf die Bank – zieh ihn direkt auf den Bankspieler, der für ihn kommt (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
+- **Aufstellung:** links die Spielerliste (Startelf und Bank mit Note, Stärke auf der Position, Fitness, Energie, Form, Moral und Potenzial-Einschätzung der Scouts), rechts das **Spielsystem** mit Formationswahl und dem Feld mit Gesichtern und „Position | Stärke“, die Bank daneben. Wechseln oder Positionen tauschen: zwei Spieler nacheinander anklicken (Liste oder Feld, auf dem Feld auch am Kopf) oder per **Ziehen & Ablegen** – zwischen Liste, Feld und Bank in jeder Richtung (Escape bricht ab). Ein Bankspieler auf einem Platz bedeutet eine Einwechslung; umgekehrt kommt ein Feldspieler nur per Wechsel auf die Bank – zieh ihn direkt auf den Bankspieler, der für ihn kommt (grün „rein“, der Ausgewechselte rot „raus“). Eine neue Formation verteilt deine Elf nach Eignung auf die Positionen. **Mannschaftsstärke** und **verbleibende Wechsel** rechnen sofort mit. Wechsel je nach Epoche: **2** (bis 1994), **3** (ab 1995), **5** (ab 2020).
 - **Taktik öffnen:** Ausrichtung sowie Tempo, Breite, Pressing, Abwehrlinie, Einsatz und Aufbauspiel **nur für dieses Spiel** – deine gespeicherte Taktik bleibt unverändert.
 - **Halbzeitansprache** (nur in der Pause): Loben, ruhig analysieren oder Kabinenpredigt, daneben die Statistik zur Pause. Lob hilft bei Führung, eine Predigt bei Rückstand; falscher Ton kann schaden. Die Wirkung in Prozent steht im Artikel *Seitenlinie*.
 - **Spielergespräche:** ein kurzes Wort an einzelne Spieler, einmal je Halbzeit. **Loben** stärkt Spieler, die gut spielen; **Mehr fordern** weckt schwache, kränkt aber starke; **Beruhigen** hilft Verwarnten und Nervösen. Die Wirkung ist klein (rund ±1–2 % Tagesleistung).
@@ -1640,7 +1640,7 @@ Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er �
 Ein Klick auf das Lauf-Symbol in der Bank schickt einen Ersatzspieler zum Aufwärmen („Alle Spieler aufwärmen“, „Aufwärmen abbrechen“). Nach **drei Minuten** ist er warm: Eingewechselt bringt er etwas mehr Kraft mit (+4) und kommt schneller ins Spiel (+1 % Tagesleistung). Wer länger als zehn Minuten an der Linie läuft, verliert langsam etwas Kraft.
 
 ## Optionen (Knopf „Einstellungen“)
-- **Automatische Auswechslungen:** Dein Co-Trainer wärmt bei nachlassender Kraft einen Ersatz auf und wechselt Erschöpfte und Verletzte selbst aus; den letzten Wechsel hebt er bis zur Schlussphase auf. Ausrichtung und Taktik bleiben deine Sache.
+- **Automatische Auswechslungen:** Dein Co-Trainer wärmt bei nachlassender Energie einen Ersatz auf (ab Energie 70, ausgewechselt wird unter 62) und wechselt Erschöpfte und Verletzte selbst aus; den letzten Wechsel hebt er bis zur Schlussphase auf. Ausrichtung und Taktik bleiben deine Sache.
 - Ohne Co-Trainer **humpelt ein Verletzter weiter**, bis du ihn auswechselst – das Spiel hält dann immer an. Hast du keinen Wechsel mehr, muss er raus und deine Elf spielt in Unterzahl.
 - **Zur Halbzeit anhalten**, **Bei Auswechslungen anhalten** (Verletzung, Platzverweis, ein Spieler am Ende seiner Kräfte, Wechsel des Co-Trainers), **Zur Schlussphase anhalten** (75. Minute), **Bei Rückstand anhalten**, **Spannungsmomente** und die **Schnelligkeit** (Langsam, Normal, Schnell, Rasant). Alles wird gespeichert und gilt auch beim nächsten Spiel.
 - **Pause** (runder Knopf unten rechts oder Leertaste) und **Vorspulen** bis zur Pause bzw. zum Ende – angehalten wird trotzdem, wenn eine Option greift.
@@ -1656,9 +1656,9 @@ Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bau
     id: 'match-engine',
     category: 'match',
     title: 'So rechnet die Match-Engine',
-    keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'kraft', 'frische', 'epoche', 'attribute', 'schnelligkeit', 'antritt', 'teamwork', 'laufbereitschaft', 'konzentration', 'führung', 'abschlag', 'fangsicherheit', 'kommandos'],
+    keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'energie', 'kraft', 'frische', 'epoche', 'attribute', 'schnelligkeit', 'antritt', 'teamwork', 'laufbereitschaft', 'konzentration', 'führung', 'abschlag', 'fangsicherheit', 'kommandos'],
     body: `## Spielerstärke im Spiel
-Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Kraft**; müde Spieler verlieren in jedem Duell bis zu 18 %.
+Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Energie** (Batterie-Symbol): Sie startet je nach Frische bei 90–100 und fällt alle fünf Minuten – schneller bei geringer **Ausdauer**, hohem Pressing/Tempo/Einsatz, laufintensiven Rollen, Hitze und in der Verlängerung; in der Pause kommen 6 Punkte zurück. Nach 90 Minuten bleiben Feldspielern mit mittlerer Ausdauer bei normaler Taktik etwa 60–68, mit guter Ausdauer etwa 68–75, bei hoher Intensität rund 8 Punkte weniger; der **Torwart** verliert deutlich weniger (meist 85–92). Müde Spieler verlieren in jedem Duell bis zu 18 % (bei Energie 60 etwa 7 %), Laufbereitschaft und – leicht – Konzentration lassen nach. Deshalb lohnen sich Wechsel ab etwa der 60. Minute.
 
 ## Jede Aktion ist ein Duell
 Ein Angriff besteht aus mehreren Schritten, und jeder Schritt wird zwischen **zwei konkreten Spielern** mit den passenden Attributen entschieden:
@@ -1677,7 +1677,7 @@ Ein Duell 60 gegen 85 gewinnt der Bessere in gut drei von vier Fällen – deutl
 ### Was jedes Attribut im Spiel bewirkt
 Kein Wert ist Dekoration. Neben den Duellen oben wirken die Attribute so:
 - **Schnelligkeit & Antritt:** entscheiden jedes Laufduell bei Steilpässen und Kontern. Gegen eine **hoch stehende Abwehr** zählt fast nur noch das Tempo (und der Unterschied wirkt stärker), gegen eine tiefe Abwehr hilft dem Verteidiger sein **Stellungsspiel**. Schnelle Angreifer gegen eine langsame Abwehr kontern öfter, die Mannschaft sucht dann auch öfter den Steilpass, und ein schneller Flügelspieler lässt seinen Gegenspieler im Dribbling einfach stehen.
-- **Ausdauer:** wie schnell die Kraft sinkt; müde Spieler verlieren Duelle, und die **Laufbereitschaft** sinkt mit der Kraft.
+- **Ausdauer:** wie schnell die Energie sinkt; müde Spieler verlieren Duelle, und die **Laufbereitschaft** sinkt mit der Energie.
 - **Laufbereitschaft (Mannschaft):** mehr Spieler gehen mit nach vorn, das Pressing erzwingt mehr Fehler, und nach einem Ballverlust eilen alle zurück – der Gegner kontert seltener.
 - **Teamwork:** Kombinationen, Steil- und Konterpässe kommen öfter an (abgestimmte Laufwege); die Abseitsfalle schnappt nur bei einer eingespielten Kette zu.
 - **Konzentration:** weniger Patzer im Aufbau – besonders in der Schlussphase, wenn unkonzentrierte Abwehrreihen nachlassen.

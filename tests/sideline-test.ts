@@ -38,7 +38,7 @@ const run = (sim: MatchSim, until: number) => { let n = 0; while (!sim.finished 
   const out1 = onPitch(t).find((m) => m.group !== 'GK')!, out2 = onPitch(t).filter((m) => m.group !== 'GK')[1];
   sim.substitute('home', out1.id, b1.id);
   sim.substitute('home', out2.id, b2.id);
-  check(b1.energy === Math.min(100, e1 + WARM_ENERGY) && (b1.day ?? 1) > d1, `aufgewärmt: Kraft ${e1.toFixed(1)} → ${b1.energy.toFixed(1)}`);
+  check(b1.energy === Math.min(100, e1 + WARM_ENERGY) && (b1.day ?? 1) > d1, `aufgewärmt: Energie ${e1.toFixed(1)} → ${b1.energy.toFixed(1)}`);
   check(b2.energy === e2, 'ohne Aufwärmen kein Bonus');
   check(t.layout!.map[Object.keys(t.layout!.map).find((k) => t.layout!.map[k] === b1.id)!] === b1.id, 'Einwechsler übernimmt den Slot');
 }

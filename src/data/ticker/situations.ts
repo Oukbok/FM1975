@@ -67,7 +67,7 @@ export const SITUATIONS: Grammar = {
     'Wechsel bei {t}: {p} kommt für {d}.', '{p} ersetzt {d}.', '{tn} wechselt: {d} geht, {p} kommt.', 'Frische Kräfte: {p} für {d}.',
     '{d} verlässt unter Applaus den Platz, {p} ist neu dabei.', 'Der Trainer von {t} reagiert: {p} für {d}.',
   ],
-  sub_reason_muede: ['{d} war platt.', '{d} hatte keine Kraft mehr.', 'Die Beine von {d} wurden schwer.', '{d} ist ausgepumpt.'],
+  sub_reason_muede: ['{d} war platt.', '{d} hatte keine Energie mehr.', 'Die Beine von {d} wurden schwer.', '{d} ist ausgepumpt.'],
   sub_reason_taktik: ['Eine taktische Maßnahme.', '{tn} will neue Impulse.', 'Frischer Wind soll her.', 'Der Trainer sucht eine neue Lösung.', 'Ein Wechsel aus taktischen Gründen.', '{p} soll für mehr Schwung sorgen.'],
   sub_reason_verletzt: ['{d} kann nicht mehr.'],
   sub_reason_torwart: ['Ersatztorwart {p} muss rein.'],
