@@ -20,6 +20,7 @@ import { unpackLines, type MatchTicker } from '../../../game/matchTicker';
 import type { Game } from '../../../game/state';
 import { firstLegFor } from '../../../game/ownMatch';
 import { AggNote, ClockView, splitLabel, StageRow, TeamInfo, TimelineView, type Mark } from '../../../screens/match/board/Stage';
+import { stageColors } from '../../../screens/match/board/teamColors';
 import { TickerFeed, type FeedSource } from '../../../screens/match/board/TickerList';
 import type { Match } from '../../../types';
 import { fmtDateFull } from '../../../ui/format';
@@ -71,6 +72,7 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
   const [comp, sub] = splitLabel(label);
   // Rückspiel: Hinspiel + Gesamtstand (bis 2020/21 Auswärtstore) wie im Textmodus.
   const fl = t.fl ?? firstLegFor(g, m.date, m.homeClubId, m.awayClubId);
+  const colors = useMemo(() => stageColors(H, A), [H, A]);
   const hasDetail = !!rep?.lineups.home.some((e) => e.st);
   const tabs: [RTab, string][] = [['stats', 'Statistik'], ['lineups', 'Aufstellungen'], ...(hasDetail ? [['detail', 'Einzelwerte'] as [RTab, string]] : [])];
   const Teams = () => (
@@ -105,7 +107,8 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
             flags={[<ClubFlag key="h" g={g} id={H.id} date={m.date} height={26} />, <ClubFlag key="a" g={g} id={A.id} date={m.date} height={26} />]} />
           <div className="tm-stage-info">
             <TeamInfo side="home" coach={t.coach[0]} strength={t.str[0]} scorers={scorers('home')} />
-            <div className="tm-stage-mid mr2-motm">
+            <div className="tm-stage-mid col mr2-motm">
+              <ClockView frac={1} clock={tie ? 'i.E.' : 'Ende'} />
               {motm ? (
                 <>
                   <span className="mr2-motm-h">Spieler des Spiels</span>
@@ -117,12 +120,9 @@ export function TickerReport({ g, match: m, label, ticker: t, onClose }: { g: Ga
                 </>
               ) : <span className="mr2-motm-h">Abpfiff</span>}
             </div>
-            <div className="tm-stage-away">
-              <ClockView frac={1} clock={tie ? 'i.E.' : 'Ende'} />
-              <TeamInfo side="away" coach={t.coach[1]} strength={t.str[1]} scorers={scorers('away')} />
-            </div>
+            <TeamInfo side="away" coach={t.coach[1]} strength={t.str[1]} scorers={scorers('away')} />
           </div>
-          <TimelineView len={len} now={len} momentum={rep?.momentum ?? []} marks={marksOf(m)} />
+          <TimelineView len={len} now={len} momentum={rep?.momentum ?? []} marks={marksOf(m)} colors={colors} />
         </div>
 
         <div className="mr2-body">

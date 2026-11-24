@@ -86,7 +86,11 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
         <div className="tm-cs-score">
           <ClubCrest club={H} size={64} />
           <span className="tm-cs-tn">{H.name}</span>
-          <b>{hs}:{as}</b>
+          {/* Spielminute zentral unter dem Ergebnis (Wunsch Pascal) */}
+          <div className="tm-cs-sc">
+            <b>{hs}:{as}</b>
+            <span className="tm-cs-min"><Icon name="hourglass" size={24} /> {minute}</span>
+          </div>
           <span className="tm-cs-tn">{A.name}</span>
           <ClubCrest club={A} size={64} />
         </div>
@@ -97,8 +101,7 @@ export function ChangesScreen({ sim, side, reason, halftime, initialTab, initial
         <button role="tab" aria-selected={tab === 'aufstellung'} className={tab === 'aufstellung' ? 'on' : ''} onClick={() => setTab('aufstellung')}>Aufstellung</button>
         {halftime && <button role="tab" aria-selected={tab === 'ansprache'} className={tab === 'ansprache' ? 'on' : ''} onClick={() => setTab('ansprache')}>Halbzeitansprache</button>}
         <button role="tab" aria-selected={tab === 'gespraeche'} className={tab === 'gespraeche' ? 'on' : ''} onClick={() => setTab('gespraeche')}>Spielergespräche</button>
-        {reason && <div className="tm-cs-reason" title={reason}>Angehalten: {reason}</div>}
-        <div className="tm-cs-minute"><Icon name="hourglass" size={30} /> {minute}</div>
+        {reason && <div className="tm-cs-stop" role="status" title={reason}><Icon name="warn" size={26} /><span><b>Angehalten:</b> {reason}</span></div>}
       </div>
 
       <div className="tm-cs-body">

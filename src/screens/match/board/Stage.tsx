@@ -3,7 +3,7 @@
 // (Platz)“ mit Ergebnis, Spieluhr als Kreis, Wettbewerb darunter und die
 // Zeitleiste mit Toren/Karten/Wechseln und Druckphasen.
 // =============================================================================
-import type { ReactNode } from 'react';
+import { useMemo, type CSSProperties, type ReactNode } from 'react';
 import ClubCrest from '../../../components/ClubCrest';
 import type { Club } from '../../../types';
 import type { MatchSim } from '../../../engine/match/sim';
@@ -17,6 +17,7 @@ import { rating } from '../../../engine/match/team';
 import { InfoTip } from '../../../ui/InfoTip';
 import { DangerMeter } from './DangerMeter';
 import { SHOUT_MINUTES, shoutLabel } from '../../../engine/match/shouts';
+import { stageColors } from './teamColors';
 
 export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, history, current }: {
   g: Game; sim: MatchSim; info: OwnMatchInfo; score: [number, number]; pens: [number, number] | null;
@@ -34,6 +35,7 @@ export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, h
   const strength = (s: Side) => Math.round(onPitch(sim.team(s)).reduce((x, m) => x + rating(m), 0) / 11);
   const ht = sim.period >= 2 || sim.phase === 'halftime' ? sim.halftimeScore : null;
   const [label, sub] = splitLabel(info.label);
+  const colors = useMemo(() => stageColors(H, A), [H, A]);
   return (
     <div className="tm-stage">
       <div className="tm-comp"><div>{label}{sub && <span> · {sub}</span>}{pens && <b> · {pens[0]}:{pens[1]} i.E.</b>}</div>
@@ -42,16 +44,14 @@ export function Stage({ g, sim, info, score, pens, clock, revealing, shownSeq, h
       <StageRow home={H} away={A} ranks={[rh, ra]} mySide={side} score={score} ht={ht} tense={revealing} />
       <div className="tm-stage-info">
         <TeamInfo side="home" coach={coach('home')} strength={strength('home')} scorers={scorers('home')} />
-        {/* Meter genau mittig unter dem Spielstand (Wunsch Pascal), die Uhr steht vorn in der Gastspalte. */}
-        <div className="tm-stage-mid">
-          <DangerMeter line={sim.finished ? null : current} homeName={H.name} awayName={A.name} />
-        </div>
-        <div className="tm-stage-away">
+        {/* Uhr und Meter genau mittig unter dem Spielstand (Wunsch Pascal). */}
+        <div className="tm-stage-mid col">
           <Clock sim={sim} clock={clock} />
-          <TeamInfo side="away" coach={coach('away')} strength={strength('away')} scorers={scorers('away')} />
+          <DangerMeter line={sim.finished ? null : current} homeName={H.name} awayName={A.name} colors={colors} />
         </div>
+        <TeamInfo side="away" coach={coach('away')} strength={strength('away')} scorers={scorers('away')} />
       </div>
-      <Timeline sim={sim} shownSeq={shownSeq} />
+      <Timeline sim={sim} shownSeq={shownSeq} colors={colors} />
     </div>
   );
 }
@@ -142,10 +142,10 @@ function marksOf(evs: SimEvent[], shownSeq: number): Mark[] {
 }
 
 /** Zeitleiste 0–90 (bzw. 120) mit Ereignissen beider Teams (Heim oben, Gast unten) und Druckphasen. */
-export function Timeline({ sim, shownSeq }: { sim: MatchSim; shownSeq: number }) {
+export function Timeline({ sim, shownSeq, colors }: { sim: MatchSim; shownSeq: number; colors?: [string, string] }) {
   const len = sim.knockout && sim.period >= 3 ? 120 : 90;
   const now = sim.phase === 'done' ? len : Math.min(len, sim.minute);
-  return <TimelineView len={len} now={now} momentum={sim.momentum} marks={marksOf(sim.events, shownSeq)} spans={shoutSpans(sim.events, shownSeq)} />;
+  return <TimelineView len={len} now={now} momentum={sim.momentum} marks={marksOf(sim.events, shownSeq)} spans={shoutSpans(sim.events, shownSeq)} colors={colors} />;
 }
 
 /** Zuruf-Spannen (Wirkungsdauer) für die Zeitleiste. */
@@ -159,12 +159,14 @@ function shoutSpans(evs: SimEvent[], shownSeq: number): Span[] {
   return out;
 }
 
-/** Zeitleiste als reine Anzeige (Textmodus und Spielbericht). */
-export function TimelineView({ len, now, momentum, marks, spans }: { len: number; now: number; momentum: readonly number[]; marks: Mark[]; spans?: Span[] }) {
+/** Zeitleiste als reine Anzeige (Textmodus und Spielbericht).
+ *  `colors` [Heim, Gast]: Momentum-Säulen in der Vereinsfarbe (teamColors.ts). */
+export function TimelineView({ len, now, momentum, marks, spans, colors }: { len: number; now: number; momentum: readonly number[]; marks: Mark[]; spans?: Span[]; colors?: [string, string] }) {
   const pct = (m: number) => `${(Math.min(len, Math.max(0, m)) / len) * 100}%`;
   const ticks = len === 120 ? [0, 15, 30, 45, 60, 75, 90, 105, 120] : [0, 15, 30, 45, 60, 75, 90];
   return (
-    <div className="tm-tl" title="Zeitleiste: oben Heim, unten Gast">
+    <div className={`tm-tl ${colors ? 'club' : ''}`} title="Zeitleiste: oben Heim, unten Gast"
+      style={colors ? { '--mc-home': colors[0], '--mc-away': colors[1] } as CSSProperties : undefined}>
       <div className="tm-tl-mom">
         {Array.from({ length: len }, (_, i) => {
           const v = momentum[i];
