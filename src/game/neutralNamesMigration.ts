@@ -8,6 +8,7 @@
 // Stufe 2 (namesV 2): Weltpokal → Transatlantik-Pokal, Klub-WM → Klub-Weltturnier, Supercup →
 // Gipfelpokal, Hallen-Masters → Hallenfinale, Goldener Ball → Goldener Stern u. a. (Tabelle CLAUDE.md).
 // Stufe 3 (namesV 3): gespeicherte „Europa-Liga“ → „Kontinental-Liga“, „Konferenz-Liga“ → „Europa-Trophäe“.
+// Stufe 4 (namesV 4): „Goldener Ball“/„Goldener Stern“ in allen Fällen → „Kristallstern“ (Fußballer des Jahres).
 // Idempotent (kein neuer Name enthält einen alten); Markierung `game.namesV`.
 // =============================================================================
 import { neutralText } from '../data/neutralNames';
@@ -15,8 +16,9 @@ import type { Game } from './state';
 
 /** 1 = Verbände/Ligen/Europapokale · 2 = Weltpokal, Klub-WM, Supercup, Ligapokal, Hallen-Masters,
  *  Goldener Ball/Schuh u. a. + „Erstligist“ geglättet (Regeln `RULES_V2` in data/neutralNames.ts) ·
- *  3 = „Europa-Liga“ → „Kontinental-Liga“, „Konferenz-Liga“ → „Europa-Trophäe“ (`RULES_V3`). */
-export const NEUTRAL_NAMES_V = 3;
+ *  3 = „Europa-Liga“ → „Kontinental-Liga“, „Konferenz-Liga“ → „Europa-Trophäe“ (`RULES_V3`) ·
+ *  4 = „Goldener Ball“/„Goldener Stern“ → „Kristallstern“ (`RULES_V4`). */
+export const NEUTRAL_NAMES_V = 4;
 
 /** Objektschlüssel, unter denen nie Anzeigetexte stehen (Kennungen, Zahlenreihen). */
 const SKIP_KEYS = new Set(['id', 'ids', 'clubId', 'playerId', 'managedClubId', 'relatedId', 'matchId', 'key', 'cc', 'code', 'conf',

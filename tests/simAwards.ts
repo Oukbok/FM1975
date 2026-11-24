@@ -1,4 +1,4 @@
-// Sim-Bericht Goldener Ball über die Epochen: `AWARDS=1 node scripts/sim.mjs 40`
+// Sim-Bericht Kristallstern über die Epochen: `AWARDS=1 node scripts/sim.mjs 40`
 // Je Jahr: Sieger + Top 10 (Heimatland vs. Ausland, Land, Rang des Landes in der
 // Fünfjahreswertung, Vereinsrang im Land, Nationalität, Stärke). Am Ende je Jahrzehnt:
 // Anteile Heimat/Ausland bei Siegern und Top 10, Länderverteilung, Nicht-Europäer ab 1995,

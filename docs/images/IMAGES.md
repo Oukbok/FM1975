@@ -56,7 +56,7 @@ Die Seiten liegen jetzt auf Papier; diese Fotos werden nur noch für die dunklen
 | `bg/buero-{1975,1995,2015}.webp` | Managerbüro, Schreibtisch mit Telefon/Akten (1975), Faxgerät/PC (1995), Bildschirme (2015) | 2560×1440 | Zentrale, Saisonbudget, Vorstand |
 | `bg/trainingsplatz-{1975,2015}.webp` | Trainingsplatz mit Hütchen, Toren, Nebel am Morgen | 2560×1440 | Training, Erstes Training |
 | `bg/pressesaal.webp` | Pressekonferenz-Raum, Mikrofone, leere Stuhlreihen | 2560×1440 | Presse, Pressekonferenzen |
-| `bg/gala-buehne.webp` | Festliche Bühne mit Scheinwerfern und Lichtpunkt-Raster, dunkelblau | 2560×1440 | Auslosung, Goldener Ball, Saisonehrung |
+| `bg/gala-buehne.webp` | Festliche Bühne mit Scheinwerfern und Lichtpunkt-Raster, dunkelblau | 2560×1440 | Auslosung, Kristallstern, Saisonehrung |
 
 ## 2. Spielergesichter (A – größter Einzelhebel)
 **Stand:** 615 Bilder – Epoche `1970` 310, Epoche `1980` 305 (dünn besetzt: `ostasien`, `nordafrika`, `lateinamerika`), alle ohne Altersstufe und ohne Maske; es fehlen `staff` und alle Epochen ab `1990`. Seit dem Look „Akte“ werden die Köpfe senkrecht mittig gezeigt – Bildvorgaben bleiben gleich.
@@ -132,7 +132,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|
 | `trophies/{league-champions-plate,gdr-champions-cup,division-winners-plate,national-cup,continental-champions-cup,cup-winners-cup,continental-league-cup,europe-trophy,world-club-cup,indoor-cup,youth-cup,youth-champions-cup,promotion-plaque}.webp` (Zuordnung Form → Datei in `src/data/trophyImages.ts`) | Trophäe frontal, mittig, Licht von links oben, dunkler Schiefersockel, ohne Schrift | 1000×1100, Alpha | Verein › Erfolge, Saisonehrung, Gala |
-| `trophies/player-of-the-year.webp` | Goldene Kugel-Trophäe auf schwarzem Sockel | 1000×1100, Alpha | Gala Goldener Ball |
+| `trophies/player-of-the-year.webp` | Goldene Kugel-Trophäe auf schwarzem Sockel | 1000×1100, Alpha | Gala Kristallstern |
 | `draw/lostopf.webp` | Glaskugeln/Lostopf auf Bühne | 1200×900, Alpha | Auslosung |
 | `awards/podest.webp` | Podest mit Spotlights | 1600×900 | Saisonehrung |
 

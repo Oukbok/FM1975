@@ -1,5 +1,5 @@
 // Bereitet einen Spielstand für die Screenshots der Ehrungen vor: spielt ohne UI weiter,
-// bis „Die Besten der Saison“ (MODE=awards, Standard) bzw. die Gala des Goldenen Balls
+// bis „Die Besten der Saison“ (MODE=awards, Standard) bzw. die Gala des Kristallsterns
 // (MODE=gala) vorgemerkt ist, und schreibt den Stand im Speicherformat.
 //   node scripts/run-ts.mjs tests/awards-prep.ts <ein.txt> <aus.txt>
 import { readFileSync, writeFileSync } from 'node:fs';

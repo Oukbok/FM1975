@@ -144,7 +144,7 @@ export function SettingsScreen({ settings, onBack, onSave }: {
       <div className="card mt16">
         <h3 style={{ margin: '0 0 4px' }}>Ehrungen</h3>
         <p className="dim mini" style={{ margin: '0 0 14px' }}>
-          Die Besten der Saison (nach dem letzten Ligaspieltag) und die Gala zum Goldenen Stern (20. Dezember) als Zeremonie zeigen – oder nur als Nachricht. Alle Jahrgänge stehen unter Statistiken › Auszeichnungen.
+          Die Besten der Saison (nach dem letzten Ligaspieltag) und die Gala zum Kristallstern (20. Dezember) als Zeremonie zeigen – oder nur als Nachricht. Alle Jahrgänge stehen unter Statistiken › Auszeichnungen.
         </p>
         <div className="seg-group">
           {([['an', 'Zeremonie zeigen'], ['aus', 'Nur Nachricht']] as const).map(([v, l]) => (

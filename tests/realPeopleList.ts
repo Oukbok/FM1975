@@ -128,7 +128,7 @@ export const HISTORIC: string[] = [
  * im Text das Schema aus data/neutralNames.ts (Tabelle in CLAUDE.md): Weltverband, Europaverband,
  * Fußballbund, Ligaverband, Regelgremium, Meisterliga, Kontinental-Liga, Europa-Trophäe, Europa-Pokal,
  * Landespokal, 1. Liga/2. Liga, Nationenliga, Transatlantik-Pokal, Klub-Weltturnier, Kontinentalsieger-Pokal,
- * Gipfelpokal, Auftaktpokal, Hallenfinale, Goldener Stern, Torjägerstern. Geprüft in ALLEN Quelltexten
+ * Gipfelpokal, Auftaktpokal, Hallenfinale, Kristallstern, Torjägerstern. Geprüft in ALLEN Quelltexten
  * (String-Inhalte); reine interne Schlüssel ('UEFA' als Kontinent) sind ausgenommen.
  */
 export const ORGS: string[] = [
@@ -148,6 +148,9 @@ export const ORGS: string[] = [
   'Fridays for Future', 'Ice Bucket', 'One ?Love',
   // Stufe 3: frühere neutrale Namen, die die Marken „Europa League“/„Conference League“ direkt übersetzen
   'Europa[- ]Liga\\p{L}*', 'Konferenz[- ]Liga\\p{L}*',
+  // Stufe 4: früherer neutraler Name des Fußballers des Jahres („Goldener Ball“ → „Goldener Stern“ → „Kristallstern“);
+  // die Mehrzahl „Goldene Sterne“ (Potenzial-Anzeige) bleibt frei.
+  'Goldene[nrm]? Stern(?:e?s)?',
 ];
 
 /** Sprachlich holprig (Wunsch Pascal: „Erstligist“ glätten → „Verein/Klub der 1. Liga“, „Oberhaus-Klub“). */

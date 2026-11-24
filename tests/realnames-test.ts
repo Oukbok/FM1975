@@ -11,6 +11,7 @@
 // =============================================================================
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { neutralText } from '../src/data/neutralNames';
 import { POLITICS, ATHLETES, FOOTBALL_PEOPLE, CULTURE, PRODUCTS, HISTORIC, ORGS, CLUNKY } from './realPeopleList';
 
 let fails = 0;
@@ -192,16 +193,30 @@ const ORG_KEYS = /^(?:UEFA|FIFA|CONMEBOL|CONCACAF|CAF|AFC|OFC|DFB|DFL)$/;
 const orgHit = (s: string) => ORG_RULES.find(([, r]) => r.test(s));
 const orgMust = ['die UEFA', 'Champions League', 'DFB-Pokal', 'Bundesligist', '2. Bundesliga', 'Serie A', 'FIFA-Regel', 'NOFV-Oberliga', 'Fridays for Future',
   'Weltpokal', 'Klub-WM', 'Klub-Weltmeisterschaft', 'Interkontinentalpokal', 'Supercup', 'Europäischer Supercup', 'Ligapokal', 'Hallen-Masters', 'zum Masters',
-  'Masters-Sieger', 'Goldener Ball', 'Goldenen Schuh', 'Confed-Cup', 'Sommermärchen', 'in Wembley', 'Erstligist', 'Erstligisten',
+  'Masters-Sieger', 'Goldener Ball', 'Goldenen Balls', 'Goldener Stern', 'den Goldenen Stern', 'des Goldenen Sterns', 'Goldenen Schuh', 'Confed-Cup', 'Sommermärchen', 'in Wembley', 'Erstligist', 'Erstligisten',
   'Europa-Liga', 'Europa Liga', 'der Konferenz-Liga'];
 const orgFree = ['Meisterliga', 'Kontinental-Liga', 'Europa-Trophäe', 'Weltverband', 'Europaverband', 'Fußballbund', 'Ligaverband', 'Landespokal',
-  '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Goldener Stern', 'Torjägerstern', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
+  '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Kristallstern', 'des Kristallsterns', 'Goldene Sterne', 'Torjägerstern', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
   'Bosman-Urteil', 'Orkan Kyrill', 'Stuttgart 21', 'Bundesanstalt für Arbeit', 'Bundestrainer', 'Café am Markt', 'Transatlantik-Pokal', 'Klub-Weltturnier',
   'Kontinentalsieger-Pokal', 'Gipfelpokal', 'Europäischer Gipfelpokal', 'Auftaktpokal', 'Hallenfinale', 'Hallenpokal', 'Erstliga-Profis', 'Verein der 1. Liga',
   'Weltmeisterschaft', 'Europameisterschaft', 'Haywood, Masters, Cain', 'Olympiahalle'];
 const orgMissed = orgMust.filter((s) => !orgHit(s)), orgWrong = orgFree.filter((s) => orgHit(s));
 ok(!orgMissed.length, `Verbände/Wettbewerbe: Beispiele erkannt${orgMissed.length ? ' – verfehlt: ' + orgMissed.join(', ') : ''}`);
 ok(!orgWrong.length, `Verbände/Wettbewerbe: neutrale Namen frei${orgWrong.length ? ' – fälschlich: ' + orgWrong.join(', ') : ''}`);
+// Stufe 4 (Spielstände): „Goldener Ball“/„Goldener Stern“ → „Kristallstern“ mit Artikel und Fall, idempotent.
+const ksCases: [string, string][] = [
+  ['Der Goldene Ball geht an Muster.', 'Der Kristallstern geht an Muster.'],
+  ['erhielt den Goldenen Ball 1980', 'erhielt den Kristallstern 1980'],
+  ['die Gala des Goldenen Balls', 'die Gala des Kristallsterns'],
+  ['Goldener Stern 1990', 'Kristallstern 1990'],
+  ['Platz 2 beim Goldenen Stern 1990', 'Platz 2 beim Kristallstern 1990'],
+  ['Bei der Gala erhielt er den Goldenen Stern.', 'Bei der Gala erhielt er den Kristallstern.'],
+  ['Archiv des Goldenen Sterns', 'Archiv des Kristallsterns'],
+  ["Ballon d'Or", 'Kristallstern'],
+  ['Goldene Sterne zeigen das Potenzial', 'Goldene Sterne zeigen das Potenzial'],
+];
+const ksBad = ksCases.filter(([a, b]) => neutralText(a) !== b || neutralText(neutralText(a)) !== b).map(([a]) => `${a} → ${neutralText(a)}`);
+ok(!ksBad.length, `Kristallstern: Umbenennung alter Texte${ksBad.length ? ' – falsch: ' + ksBad.join(' | ') : ''}`);
 const allSrc = walk('src').filter((f) => !ORG_SKIP.has(f.replace(/\\/g, '/')));
 let orgStrings = 0;
 for (const f of allSrc) {

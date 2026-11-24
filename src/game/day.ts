@@ -359,7 +359,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   if (twKey && ui.onTransferWindow?.(twKey)) stopForAction = true;
   // Die Besten der Saison: am Tag nach dem letzten Ligaspieltag (Popup über game.seasonAwards.pending).
   if (awardsDaily(g, today)) stopForAction = true;
-  // Goldener Ball (Fußballer des Jahres) am 20. Dezember: Gala über game.goldenBall.pending.
+  // Kristallstern (Fußballer des Jahres) am 20. Dezember: Gala über game.goldenBall.pending.
   if (goldenBallDaily(g, today)) stopForAction = true;
 
   // Pause nur, wenn heute eine neue Entscheidung ansteht (Ereignis mit Auswahl).

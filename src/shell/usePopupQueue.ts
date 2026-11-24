@@ -2,7 +2,7 @@
 // Fensterkette des laufenden Spiels (Pausen-Fenster): Zustand, Fälligkeiten und
 // die feste Reihenfolge. Immer nur EIN Pausen-Fenster zur Zeit:
 //   Spielbericht/Textmodus/Bewertung/Briefing/Budget → Auslosung → Trainingslager
-//   → Hallenturnier → Transferbilanz → Erstes Training → Goldener Ball
+//   → Hallenturnier → Transferbilanz → Erstes Training → Kristallstern
 //   → Die Besten der Saison → Vorschau „Nächstes Spiel“.
 // Solange eines offen ist, steht die Zeit. Gezeichnet in shell/PopupLayer.tsx.
 // =============================================================================
@@ -72,7 +72,7 @@ export function usePopupQueue(g: Game, settings: AppSettings, rerender: () => vo
   const awardsDue = pendingAwards(g);
   useEffect(() => { if (awardsDue) setRunning(false); }, [awardsDue]);
   const closeAwards = useCallback(() => { markShownRead(g, 'Die Besten der Saison'); clearPendingAwards(g); rerender(); }, [g, rerender]);
-  // Goldener Ball (game/goldenBallGame.ts): Gala am 20. Dezember.
+  // Kristallstern (game/goldenBallGame.ts): Gala am 20. Dezember.
   const galaDue = pendingGoldenBall(g);
   useEffect(() => { if (galaDue) setRunning(false); }, [galaDue]);
   const closeGala = useCallback(() => { if (galaDue) markShownRead(g, `${galaDue.title} ${galaDue.year}`); clearPendingGoldenBall(g); rerender(); }, [g, rerender, galaDue]);

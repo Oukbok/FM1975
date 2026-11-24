@@ -1,5 +1,5 @@
 // Screenshots der Ehrungen: Popup „Die Besten der Saison“, Seite Statistiken › Auszeichnungen
-// und die Gala zum Goldenen Ball (alle Schritte), je 1920×1080 und 1366×768.
+// und die Gala zum Kristallstern (alle Schritte), je 1920×1080 und 1366×768.
 //   npm run build && node tests/awards-shots.mjs [ordner]
 // Spielstände (SAVES=name:pfad,…; Name mit „gala“ = Gala, sonst Saisonehrung), z. B.:
 //   CLUB=fra DUMP=a.txt UNTIL=1979-06-10 node scripts/sim.mjs 3
@@ -51,10 +51,25 @@ for (const [vw, vh] of [[1920, 1080], [1366, 768]]) {
         if (s < 4) await page.locator('.gb-foot .btn-primary').click();
       }
       await over('.gb-root', 'Gala');
+      // Trophäe: Foto des Kristallsterns geladen (sonst Rückfall auf die Zeichnung)?
+      const photo = await page.evaluate(() => { const i = document.querySelector('.gb-root img.ks-photo'); return i ? i.complete && i.naturalWidth > 0 : false; });
+      if (!photo) errors.push(`${name} ${vw}: Foto des Kristallsterns fehlt in der Gala`);
+      // Profil des Siegers › Stationen: Auszeichnungen mit Kristallstern
+      const prof = page.locator('.gb-foot button:has-text("Profil des Siegers")');
+      if (await prof.count()) {
+        await prof.click();
+        await page.waitForTimeout(700);
+        await page.locator('.pp2 button:has-text("Stationen"), .pp2 [role="tab"]:has-text("Stationen")').first().click().catch(() => {});
+        await page.waitForTimeout(700);
+        await page.locator('.pp3-honsum').first().scrollIntoViewIfNeeded().catch(() => {});
+        await page.screenshot({ path: `${pre}_profil.png` });
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(400);
+      }
       await page.locator('.gb-foot .btn-primary').click();
       await page.waitForTimeout(300);
       if (await page.locator('.gb-root').count()) errors.push(`${name}: Gala schließt nicht`);
-      // Seite Statistiken › Auszeichnungen: Goldener Ball oben, Wahl einer Auslandsliga, Pfeile.
+      // Seite Statistiken › Auszeichnungen: Kristallstern oben, Wahl einer Auslandsliga, Pfeile.
       await page.locator('.hd-nav-item:has-text("Statistiken")').first().click().catch(() => {});
       await page.waitForTimeout(400);
       await page.locator('.tn-sub-item:has-text("Auszeichnungen")').first().click().catch(() => {});

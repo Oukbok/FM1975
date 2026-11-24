@@ -39,7 +39,7 @@ const EMPTY = (): LeanStats => ({ goals: [], assists: [], scorer: [], yellow: []
  * des Stammtorwarts. `tag` trennt die Wettbewerbe: dieselbe Mannschaft hat in Liga und Pokal eigene
  * Zufallsfolgen. Die Torverteilung ist dieselbe wie in der früheren reinen Torschützenliste.
  */
-/** Saisonzeile eines Weltspielers (für Auszeichnungen/Goldenen Ball): Einsätze geschätzt nach Stammplatz. */
+/** Saisonzeile eines Weltspielers (für Auszeichnungen/Kristallstern): Einsätze geschätzt nach Stammplatz. */
 export interface LeanLine { w: WP; clubId: string; apps: number; goals: number; assists: number; clean: number; played: number }
 
 /** FNV-1a wie engine/leagues.ts hashStr, aber mit Zwischenstand (hashStr(a + b) = fnv(fnv(FNV0, a), b) >>> 0). */

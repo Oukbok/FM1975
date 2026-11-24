@@ -194,7 +194,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
   for (const r of abroadReturns(g)) consider({ date: r.date, icon: 'international', line: `Scout zurück: ${countryName(r.country)}`, accent: undefined, isMatch: false, prio: 21, screen: 'scouting', kind: 'Scouting' });
   for (const c of campDates(g)) consider({ date: c.date, icon: 'youth', line: `Jugendcamp ${c.name} fertig`, accent: undefined, isMatch: false, prio: 21, screen: 'jugendcamps', kind: 'Jugend' });
 
-  // Quelle E — Ehrungen: Goldener Ball (20.12., game/goldenBallGame.ts) und „Die Besten der Saison“
+  // Quelle E — Ehrungen: Kristallstern (20.12., game/goldenBallGame.ts) und „Die Besten der Saison“
   // (Tag nach dem letzten Ligaspiel, game/seasonAwardsGame.ts).
   const y0 = Number(g.season.slice(0, 4));
   consider({ date: `${y0}-${GB_DAY}`, icon: 'trophy', line: gbEra(y0).short, accent: undefined, isMatch: false, prio: 32, screen: 'auszeichnungen', kind: 'Ehrung' });

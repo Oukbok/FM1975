@@ -1,8 +1,9 @@
 // Reiter „Stationen“ (Vorbild EA Fussball Manager): frühere Stationen Von–bis/Mannschaft/Ablöse/
 // Spiele/Tore (aus Transfers + Saisonbilanzen, engine/history.ts), Vereinsspiele der laufenden
 // Saison je Wettbewerb (engine/compStats.ts), Saisonbilanzen, Auszeichnungen (Die Besten der
-// Saison, Goldener Ball) und Titel mit dem Verein (game/trophyCabinet.ts). Nur vorhandene Daten.
+// Saison, Kristallstern) und Titel mit dem Verein (game/trophyCabinet.ts). Nur vorhandene Daten.
 import { useMemo } from 'react';
+import { CrystalStarTrophy } from '../awards/CrystalStarTrophy';
 import type { CareerStation, Club, Player, TransferRecord } from '../../types';
 import type { Game } from '../../game/state';
 import { useClubProfile } from '../club/ClubLink';
@@ -183,7 +184,7 @@ export default function CareerTab({ p, club, season }: { p: Player; club?: Club;
       <Section title="Auszeichnungen" right={hon.list.length ? `${hon.list.length}` : undefined}>
         <div className="pp3-honsum">
           <div><b>{hon.sds}</b><span>Spieler der Saison</span></div>
-          <div><b>{hon.gb}</b><span>Goldener Stern</span></div>
+          <div className="pp3-hon-ks">{hon.gb > 0 && <CrystalStarTrophy size={20} className="pp3-ks-trophy" />}<b>{hon.gb}</b><span>Kristallstern</span></div>
           <div><b>{titles.length}</b><span>Titel mit dem Verein</span></div>
         </div>
         {hon.list.length === 0 && titles.length === 0 && <div className="pp-note">Noch keine Ehrung und kein Titel seit Spielbeginn.</div>}

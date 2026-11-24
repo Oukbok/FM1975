@@ -1,5 +1,5 @@
 // =============================================================================
-// GOLDENER BALL — Fußballer des Jahres (rein, ohne Spielstand)
+// KRISTALLSTERN — Fußballer des Jahres (rein, ohne Spielstand)
 // -----------------------------------------------------------------------------
 // Ende Dezember wählt die Jury den besten Spieler des Kalenderjahres. Vorbild ist
 // die europäische Auszeichnung der Fachpresse (seit 1956). Regeln je Epoche
@@ -10,7 +10,7 @@
 //   • ab 2007: Spieler aller Ligen weltweit (im Spiel sind nur europäische Ligen
 //     simuliert – praktisch also wie ab 1995, die Wahl heißt dann „Weltfußballer“).
 // Gala-Ort: Paris; 2010–2015 Zürich (Zusammenlegung mit der Weltfußballer-Wahl),
-// ab 2016 wieder Paris. Der Name der Trophäe ist bewusst neutral („Goldener Ball“).
+// ab 2016 wieder Paris. Der Name der Trophäe ist bewusst neutral („Kristallstern“).
 //
 // Wertung (Punkte, höher = besser) – Leistung des Kalenderjahres:
 //   Leistung   3,0 × (4,0 − Notenschnitt)
@@ -46,9 +46,9 @@ export interface GBEra { title: string; short: string; rule: string; venue: stri
 /** Bezeichnung, Teilnahmeregel und Gala-Ort eines Jahres. */
 export function gbEra(year: number): GBEra {
   const venue = year >= 2010 && year <= 2015 ? 'Zürich' : 'Paris';
-  if (year < 1995) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Stern', rule: 'Nur Europäer bei europäischen Vereinen', venue };
-  if (year < 2007) return { title: 'Europas Fußballer des Jahres', short: 'Goldener Stern', rule: 'Alle Spieler europäischer Vereine', venue };
-  return { title: 'Weltfußballer des Jahres', short: 'Goldener Stern', rule: 'Spieler aller Ligen weltweit', venue };
+  if (year < 1995) return { title: 'Europas Fußballer des Jahres', short: 'Kristallstern', rule: 'Nur Europäer bei europäischen Vereinen', venue };
+  if (year < 2007) return { title: 'Europas Fußballer des Jahres', short: 'Kristallstern', rule: 'Alle Spieler europäischer Vereine', venue };
+  return { title: 'Weltfußballer des Jahres', short: 'Kristallstern', rule: 'Spieler aller Ligen weltweit', venue };
 }
 
 /** Darf der Spieler in diesem Jahr gewählt werden? (Alle simulierten Vereine sind europäisch.) */

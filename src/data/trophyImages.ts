@@ -27,7 +27,8 @@ export const TROPHY_PHOTOS: Partial<Record<TrophyShape, string>> = {
   aufstieg: 'promotion-plaque',
 };
 
-/** Spieler des Jahres (Goldener Ball) – noch kein Anzeige-Slot verdrahtet. */
+/** Spieler des Jahres (Kristallstern auf schwarzem Sockel) – angezeigt über components/awards/CrystalStarTrophy.tsx
+ *  (Gala, Statistiken › Auszeichnungen, Spielerprofil), Rückfall: gezeichneter Stern. */
 export const PLAYER_OF_THE_YEAR_PHOTO = 'assets/trophies/player-of-the-year.webp';
 
 export function trophyPhoto(shape: TrophyShape): string | null {

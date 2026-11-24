@@ -1,8 +1,8 @@
 // =============================================================================
-// DIE BESTEN DER SAISON IM AUSLAND + Kandidaten für den Goldenen Ball
+// DIE BESTEN DER SAISON IM AUSLAND + Kandidaten für den Kristallstern
 // -----------------------------------------------------------------------------
 // Wunsch Pascal: auf Statistiken › Auszeichnungen jede Liga wählen können und
-// beim Goldenen Ball echte Konkurrenz aus dem Ausland. Die 1. Ligen im Ausland
+// beim Kristallstern echte Konkurrenz aus dem Ausland. Die 1. Ligen im Ausland
 // spielen ohne Spielereignisse (game/worldLeagues.ts); Tore/Vorlagen/Zu-null je
 // Spieler kommen aus game/worldScorers.ts `leanLines`, die Note schätzt
 // game/leanGrades.ts nach dem Maßstab der voll simulierten Heimatliga. Wertung
@@ -62,7 +62,7 @@ export function leanCandidates(g: Game, key: string, d: LeanDiv, season: string,
   const regulars = ls.filter((l) => l.apps >= l.played * 0.5);
   const mean = regulars.length ? regulars.reduce((t, l) => t + l.w[W.ov], 0) / regulars.length : 65;
   const y = seasonStartYear(season) + 1;
-  // Vergleich über Ligen hinweg (Goldener Ball): schwächere Liga → Note und Torquote nach dem Maßstab
+  // Vergleich über Ligen hinweg (Kristallstern): schwächere Liga → Note und Torquote nach dem Maßstab
   // der Heimatliga abwerten (Tore gegen schwache Abwehrreihen zählen weniger). Die Stärke zählt dann
   // gegen den Schnitt der Heimatliga, nicht gegen die eigene Liga – sonst wirkt ein guter Spieler in
   // einer schwachen Liga wie ein Weltstar (Kalibrierung über die Epochen, tests/simAwards.ts).

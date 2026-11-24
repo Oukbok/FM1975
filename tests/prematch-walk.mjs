@@ -36,7 +36,7 @@ export async function walkToPrematch(page, label, maxSec = 150, abort = async (m
       await page.waitForTimeout(400); continue;
     }
     if (await visible('.gb-root')) {
-      saw('Goldener Stern');
+      saw('Kristallstern');
       if (!(await tryClick('.gb-root footer button:has-text("Überspringen")', 1000))) await tryClick('.gb-root .btn-primary');
       await page.waitForTimeout(400); continue;
     }

@@ -1,7 +1,7 @@
 // =============================================================================
-// Statistiken › Auszeichnungen, oben: Goldener Ball des Jahres (Wunsch Pascal:
+// Statistiken › Auszeichnungen, oben: Kristallstern des Jahres (Wunsch Pascal:
 // standardmäßig oben zu sehen). Plätze 1–3 als Karten im Stil der Besten der
-// Saison, darunter die Plätze 4–10 und „Gala ansehen“. Daten: game.goldenBall
+// Saison, darunter die Plätze 4–10 und „Gala ansehen“. Links im Kopf die Trophäe (Foto, Rückfall Zeichnung). Daten: game.goldenBall
 // (game/goldenBallGame.ts), CSS 28-awards.css (.aw-*, .gbt-*).
 // =============================================================================
 import type { CSSProperties } from 'react';
@@ -12,12 +12,14 @@ import type { GBYear } from '../../../game/goldenBallGame';
 import type { Game } from '../../../game/state';
 import FaceThumb from '../../../components/FaceThumb';
 import { AwardFace, AwardName, awardPerson, fmtGrade } from './AwardParts';
+import { CrystalStarTrophy } from '../../../components/awards/CrystalStarTrophy';
 
 export function GoldenBallTop({ g, y, onGala }: { g: Game; y: GBYear; onGala: () => void }) {
   const mine = y.mine ?? g.managedClubId;
   return (
     <div className="aw-page-top">
       <div className="gbt-sub">
+        <CrystalStarTrophy size={30} className="gbt-trophy" title={`Kristallstern ${y.year}`} />
         <span>{y.title} {y.year} · Gala in {y.venue}</span>
         <span className="gbt-rule">{y.rule}</span>
         <button type="button" className="b3 b3-s" onClick={onGala}>Gala ansehen</button>

@@ -1,5 +1,5 @@
 // =============================================================================
-// GALA GOLDENER BALL — Zeremonie zum Fußballer des Jahres (20. Dezember)
+// GALA KRISTALLSTERN — Zeremonie zum Fußballer des Jahres (20. Dezember)
 // Ablauf: Startbild „Gala live aus …“ mit Pokal → Platz 3 → Platz 2 → Platz 1
 // werden nacheinander auf dem Podest enthüllt → darunter die Plätze 4–10.
 // Jeder Spieler erscheint genau einmal (kein doppeltes Podest wie beim Vorbild).
@@ -51,7 +51,7 @@ export function GalaShow({ g, y, onClose }: { g: Game; y: GBYear; onClose: () =>
       <header className="gb-top">
         <div className="gb-kicker">Gala live aus {y.venue} · {y.year}</div>
         <h1 className="gb-title">{y.title}</h1>
-        <div className="gb-sub">Der Goldene Stern · {y.rule}</div>
+        <div className="gb-sub">Der Kristallstern · {y.rule}</div>
       </header>
 
       {step === 0 ? (

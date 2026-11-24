@@ -1,5 +1,5 @@
 // =============================================================================
-// GALA GOLDENER STERN — Bausteine: Pokal (SVG), Nationalitäts-Etikett, Preisträger-Karte,
+// GALA KRISTALLSTERN — Bausteine: Pokal (SVG), Nationalitäts-Etikett, Preisträger-Karte,
 // Liste der Plätze 4–10. CSS 28-awards.css (.gb-*).
 // =============================================================================
 import { PlayerLink } from '../../components/playerMenu/PlayerLink';
@@ -14,34 +14,13 @@ import PosBadge from '../../components/PosBadge';
 import { NatFlag } from '../../components/competition/CountryFlag';
 import FaceThumb from '../../components/FaceThumb';
 import { awardPerson } from '../../views/stats/awards/AwardParts';
+import { CrystalStarTrophy } from '../../components/awards/CrystalStarTrophy';
 
 const fmt = (v: number) => v.toFixed(2).replace('.', ',');
 
-/** Der Goldene Stern: fünfzackiger Stern mit Graten auf schlankem Sockel (eigene Zeichnung, kein Markenlogo). */
+/** Der Kristallstern: Foto mit gezeichnetem Rückfall (components/awards/CrystalStarTrophy.tsx). */
 export function GoldenBallTrophy({ size = 180 }: { size?: number }) {
-  return (
-    <svg className="gb-trophy" width={size} height={size * 1.25} viewBox="0 0 160 200" aria-hidden>
-      <defs>
-        <radialGradient id="gbBall" cx="38%" cy="32%" r="70%">
-          <stop offset="0%" stopColor="var(--text)" stopOpacity="0.95" />
-          <stop offset="22%" stopColor="var(--gold)" />
-          <stop offset="100%" stopColor="var(--bg)" stopOpacity="0.9" />
-        </radialGradient>
-        <linearGradient id="gbBase" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="var(--panel-2)" />
-          <stop offset="50%" stopColor="var(--elevated)" />
-          <stop offset="100%" stopColor="var(--bg-2)" />
-        </linearGradient>
-      </defs>
-      <path d="M80 12 L96 54 L141 56 L106 84 L118 128 L80 103 L42 128 L54 84 L19 56 L64 54 Z" fill="url(#gbBall)" stroke="var(--gold)" strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M80 26 L92 59 L128 61 L100 82 L109 116 L80 97 L51 116 L60 82 L32 61 L68 59 Z" fill="none" stroke="var(--bg)" strokeOpacity="0.3" strokeWidth="1.4" strokeLinejoin="round" />
-      <path d="M80 76 L80 12 M80 76 L141 56 M80 76 L118 128 M80 76 L42 128 M80 76 L19 56" stroke="var(--bg)" strokeOpacity="0.18" strokeWidth="1.2" />
-      <path d="M62 136 L98 136 L92 150 L68 150 Z" fill="url(#gbBase)" />
-      <rect x="56" y="150" width="48" height="12" rx="2" fill="url(#gbBase)" />
-      <rect x="46" y="162" width="68" height="22" rx="3" fill="url(#gbBase)" stroke="var(--border)" />
-      <rect x="58" y="169" width="44" height="8" rx="1" fill="var(--gold)" opacity="0.55" />
-    </svg>
-  );
+  return <CrystalStarTrophy size={size} />;
 }
 
 /** Staatsangehörigkeit als Landesflagge (Ländername als Tooltip; Wunsch Pascal statt Kürzel-Kasten). */

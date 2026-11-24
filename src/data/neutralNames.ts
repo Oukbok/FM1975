@@ -6,10 +6,11 @@
 //   Pokal der Landesmeister → Meisterliga · Pokal der Pokalsieger → Europa-Trophäe ·
 //   Messepokal → Europa-Pokal → Kontinental-Liga · Landespokal · 1. Liga/2. Liga ·
 //   Transatlantik-Pokal · Klub-Weltturnier · Kontinentalsieger-Pokal · Gipfelpokal · Auftaktpokal ·
-//   Hallenfinale · Goldener Stern · Torjägerstern (Stufe 2, `game.namesV` 2: sprachliche Glättung
+//   Hallenfinale · Kristallstern · Torjägerstern (Stufe 2, `game.namesV` 2: sprachliche Glättung
 //   „Erstligist“ → „Klub der 1. Liga“ – `RULES_V2` mit den Fällen im Satz; Stufe 3, `game.namesV` 3:
 //   frühere Namen „Europa-Liga“/„Konferenz-Liga“ – direkte Übersetzungen der geschützten Marken –
-//   → „Kontinental-Liga“/„Europa-Trophäe“, `RULES_V3`; „Europa-Pokal“ bleibt als Gattungsbegriff).
+//   → „Kontinental-Liga“/„Europa-Trophäe“, `RULES_V3`; „Europa-Pokal“ bleibt als Gattungsbegriff;
+//   Stufe 4, `game.namesV` 4: „Goldener Ball“/„Goldener Stern“ → „Kristallstern“, `RULES_V4`).
 // `neutralText` setzt die Regeln auf einen fertigen Text um (Spielstände: game/neutralNamesMigration.ts);
 // neue Texte schreiben die neutralen Namen gleich selbst. Kein neuer Name enthält einen alten
 // (idempotent). Interne Schlüssel ('UEFA' als Kontinent, 'uefa' als Wettbewerb) bleiben.
@@ -49,7 +50,7 @@ const RULES: Rule[] = [
   [/\b(?:UEFA[- ])?Intertoto(?:[- ]Cup)?\b|\bUI-Cup\b/g, 'Sommerpokal'],
   [/Messestädte-Pokal/g, 'Messepokal'],
   [/\bCopa Libertadores\b/g, 'Südamerika-Pokal der Landesmeister'],
-  [/Ballon d['’]Or/g, 'Goldener Ball'],
+  [/Ballon d['’]Or/g, 'Kristallstern'],
   // --- Ligen ----------------------------------------------------------------------------------
   [/Frauen-Bundesliga/g, 'Frauen-Liga'],
   [/\b([AB])-Junioren-Bundesliga/g, '$1-Junioren-Liga'],
@@ -182,8 +183,9 @@ const RULES_V2: Rule[] = [
   // Alleinstehend nur nach Begleiter/Präposition: „Masters“ ist auch ein englischer Familienname (Spielernamen bleiben).
   [/\b(das|Das|dem|zum|beim|im|ins|vom|am|fürs|kein|keinem|ein|einem|inkl\.|ohne|der|seit) Masters(?![\p{L}\p{N}_])/gu, '$1 Hallenfinale'],
   // --- Preise ---------------------------------------------------------------------------------
-  [/(Goldene[nmr]?) Ball(?:e?s)\b/g, '$1 Sterns'],
-  [/(Goldene[nmr]?) Ball\b/g, '$1 Stern'],
+  // „Goldener Ball“ direkt zum Kristallstern (Stufe 4): der Artikel davor bleibt, das Adjektiv fällt weg.
+  [/Goldene[nmr]? Ball(?:e?s)\b/g, 'Kristallsterns'],
+  [/Goldene[nmr]? Ball\b/g, 'Kristallstern'],
   [/Goldene[nmr]? Schuh(?:e?s)\b/g, 'Torjägersterns'],
   [/Goldene[nmr]? Schuh\b/g, 'Torjägerstern'],
   // --- Orte/Titel als Marke -------------------------------------------------------------------
@@ -207,6 +209,18 @@ const RULES_V3: Rule[] = [
   [/Konferenz[- ]Liga/g, 'Europa-Trophäe'],
 ];
 
+/** Stufe 4 (Wunsch Pascal: „Goldener Ball“ übersetzt „Ballon d'Or“ direkt): Fußballer des Jahres heißt
+ *  „Kristallstern“ (Trophäe: Kristallstern auf schwarzem Sockel). Der Zwischenname „Goldener Stern“
+ *  aus Stufe 2 wird umgeschrieben – männlich wie vorher, nur das Adjektiv fällt weg („den Goldenen
+ *  Stern“ → „den Kristallstern“, „des Goldenen Sterns“ → „des Kristallsterns“). „Goldene Sterne“
+ *  (Mehrzahl, Potenzial-Anzeige) bleibt. Kein neuer Name enthält einen alten. */
+const RULES_V4: Rule[] = [
+  [/Goldene[nmr]? Ball(?:e?s)\b/g, 'Kristallsterns'],
+  [/Goldene[nmr]? Ball\b/g, 'Kristallstern'],
+  [/Goldene[nmr]? Stern(?:e?s)(?![\p{L}\p{N}])/gu, 'Kristallsterns'],
+  [/Goldene[nmr]? Stern(?![\p{L}\p{N}])/gu, 'Kristallstern'],
+];
+
 /** Schneller Vorfilter: nur Texte mit einem der alten Namen laufen durch alle Regeln. */
 const ANY = /UEFA|FIFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|\bCAF\b|\bAFC\b|\bOFC\b|Bundesligi?|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der|Intertoto|UI-Cup|Messestädte|Libertadores|Ballon d|Premier League|Serie A|LaLiga|La Liga|Ligue 1|Eredivisie|Europäischer? Verband/;
 /** Vorfilter Stufe 2. */
@@ -214,6 +228,9 @@ const ANY_V2 = /Weltpokal|Interkontinental|Intercontinental|(?:Klub|Club)-W|Konf
 
 /** Vorfilter Stufe 3. */
 const ANY_V3 = /Europa[- ]Liga|Konferenz[- ]Liga/;
+
+/** Vorfilter Stufe 4. */
+const ANY_V4 = /Goldene[nmr]? (?:Ball|Stern)(?![\p{L}\p{N}])|Goldene[nmr]? (?:Ball|Stern)e?s(?![\p{L}\p{N}])/u;
 
 /** Interne Schlüssel, die genau so im Spielstand stehen (Kontinent eines Nationalteams, Kürzel). */
 const KEYS = new Set(['UEFA', 'FIFA', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC', 'OFC', 'DFB', 'DFL']);
@@ -225,8 +242,9 @@ export function neutralText(s: string): string {
   if (ANY.test(out)) for (const [rx, to] of RULES) out = out.replace(rx, to);
   if (ANY_V2.test(out)) for (const [rx, to] of RULES_V2) out = out.replace(rx, to);
   if (ANY_V3.test(out)) for (const [rx, to] of RULES_V3) out = out.replace(rx, to);
+  if (ANY_V4.test(out)) for (const [rx, to] of RULES_V4) out = out.replace(rx, to);
   return out;
 }
 
 /** Enthält der Text noch einen alten Namen? (Prüfung in Tests.) */
-export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && (ANY.test(s) || ANY_V2.test(s) || ANY_V3.test(s));
+export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && (ANY.test(s) || ANY_V2.test(s) || ANY_V3.test(s) || ANY_V4.test(s));

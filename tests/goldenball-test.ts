@@ -1,4 +1,4 @@
-// Goldener Ball (Fußballer des Jahres) ohne UI: Sieger je Kalenderjahr, Epochenregel
+// Kristallstern (Fußballer des Jahres) ohne UI: Sieger je Kalenderjahr, Epochenregel
 // Nationalität (bis 1994 nur Europäer), Archiv begrenzt, Migration, einmal je Jahr.
 //   npm run test:goldenball [jahre]   (Standard 3)
 import { createNewGame } from '../src/game/newGame';
@@ -72,4 +72,4 @@ expect(JSON.stringify(st) === snap, 'Migration nicht idempotent');
 const old = { ...g } as any; delete old.goldenBall; migrateGoldenBall(old);
 expect(old.goldenBall === undefined, 'Migration legt Feld an');
 console.log(`Spielstand: ${(JSON.stringify(st.years[0]).length / 1024).toFixed(1)} KB je Jahr`);
-console.log('OK – Goldener Stern');
+console.log('OK – Kristallstern');

@@ -103,7 +103,7 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
 }
 
 /* =============================================================================
-   GALA GOLDENER BALL (.gb-*) – screens/gala/GalaShow.tsx + GalaParts.tsx
+   GALA KRISTALLSTERN (.gb-*) – screens/gala/GalaShow.tsx + GalaParts.tsx
    Bühne wie die Trainingslager-Bilanz: dunkel, ruhig, ein heller Lichtkegel.
    ============================================================================= */
 .gb-root {
@@ -129,6 +129,8 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
 .gb-podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 22px; width: min(1320px, 100%); }
 .gb-center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .gb-center .gb-trophy { animation: none; }
+/* Kristallstern als Foto (freigestellt): gleiche Größe wie die Zeichnung, Bild mittig eingepasst. */
+.gb-trophy.ks-photo { object-fit: contain; user-select: none; }
 .gb-pod {
   /* Feste Höhen je Platz (Wunsch Pascal: Podest 1 > 2 > 3, unabhängig vom Inhalt);
      Inhalt bleibt in der Karte (Begründung auf zwei Zeilen gekürzt). */
@@ -192,15 +194,16 @@ button.aw-name { font-family: var(--font-display); font-size: 24px; font-weight:
   .gb-kpi b { font-size: 18px; }
 }
 
-/* Seite: Goldener Ball oben (GoldenBallTop.tsx) + Wahl Wertung/Saison mit Pfeilen */
+/* Seite: Kristallstern oben (GoldenBallTop.tsx) + Wahl Wertung/Saison mit Pfeilen */
 .aw-pick .b3-icon { width: 32px; padding: 0; }
 .aw-pick-league { min-width: 250px; }
 .gbt-sub { display: flex; align-items: center; gap: 18px; color: var(--text-2); font-size: 15px; }
 .gbt-rule { color: var(--text-3); }
 .gbt-sub .b3 { margin-left: auto; }
+.gbt-sub .gbt-trophy { display: block; flex: none; margin-right: -8px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(var(--shade-rgb), 0.35)); }
 .gbt-first::before { background: var(--text-2); }
 .gbt-rest .aw-rest { margin-top: 0; }
-/* Meistgeehrt: einzeilig wie das Archiv des Goldenen Balls */
+/* Meistgeehrt: einzeilig wie das Archiv des Kristallsterns */
 .aw-tally .rl-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 44px; align-items: center; gap: 8px; }
 .aw-tally .rl-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

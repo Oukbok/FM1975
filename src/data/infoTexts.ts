@@ -1277,7 +1277,7 @@ export const INFO_TEXTS = {
     wiki: 'season-awards',
   },
   goldener_ball: {
-    title: 'Goldener Stern',
+    title: 'Kristallstern',
     text: 'Am 20. Dezember wählt die Jury den Fußballer des Jahres – bewertet wird das Kalenderjahr: Noten, Tore und Vorlagen, Titel und Klasse. Bis 1994 sind nur Europäer wählbar, ab 1995 alle Spieler europäischer Vereine, ab 2007 Spieler weltweit. Klick auf ein Jahr zeigt die Gala noch einmal.',
     wiki: 'season-awards',
   },

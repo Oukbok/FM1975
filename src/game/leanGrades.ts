@@ -3,14 +3,14 @@
 // -----------------------------------------------------------------------------
 // Die Auslandsligen kennen Tore, Vorlagen und Zu-null-Spiele je Spieler
 // (game/worldScorers.ts `leanLines`), aber keine Noten. Damit „Die Besten der
-// Saison“ je Land und der Goldene Ball fair vergleichen, wird die Note aus dem
+// Saison“ je Land und der Kristallstern fair vergleichen, wird die Note aus dem
 // Maßstab der voll simulierten Liga gelernt (kleinste Quadrate je Mannschaftsteil):
 //   Note ≈ a + b1 · (Stärke − Ligaschnitt) + b2 · Tabellenplatz-Anteil + b3 · Beitrag
 // (Beitrag: Tore + ½ Vorlagen je Spiel, Torwart/Abwehr dazu Zu-null-Quote).
 // Dazu kommt eine feste Formschwankung je Spieler und Saison in der Größe der
 // echten Streuung (Reststreuung des Modells) – sonst stünden die Weltspieler immer
 // genau im Mittel, und die Besten der voll simulierten Liga gewännen jede Wahl
-// (Fehlermeldung Pascal: beim Goldenen Ball nur Spieler deutscher Vereine).
+// (Fehlermeldung Pascal: beim Kristallstern nur Spieler deutscher Vereine).
 // =============================================================================
 import { hashStr } from '../engine/leagues';
 import type { PositionGroup } from '../types';

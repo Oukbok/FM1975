@@ -379,7 +379,7 @@ export interface AppSettings {
   indoorSpeed?: 'langsam' | 'normal' | 'schnell';
   /** Masters-Qualifikation: Ø Punkte je Spiel (historisch, Standard) oder Platzierungspunkte je Turnier (game/indoorMasters.ts). */
   indoorScoring?: 'schnitt' | 'platz';
-  /** Ehrungen (Die Besten der Saison, Gala Goldener Ball) als Fenster zeigen oder nur Nachricht. */
+  /** Ehrungen (Die Besten der Saison, Gala Kristallstern) als Fenster zeigen oder nur Nachricht. */
   awardsShow?: 'an' | 'aus';
   /** Tempo der Bewertungs-Show. */
   ratingSpeed?: 'langsam' | 'normal' | 'schnell';

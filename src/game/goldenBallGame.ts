@@ -1,5 +1,5 @@
 // =============================================================================
-// GOLDENER BALL — Spielablauf und Archiv (Wertung engine/goldenBall.ts)
+// KRISTALLSTERN — Spielablauf und Archiv (Wertung engine/goldenBall.ts)
 // -----------------------------------------------------------------------------
 // Am 20. Dezember (`goldenBallDaily` in game/day.ts) wählt die Jury den Fußballer
 // des Jahres. Kandidaten:
@@ -221,7 +221,7 @@ export function awardGoldenBall(g: Game, year: number, date: string, popup = tru
   if (popup) st.pending = year;
   const mine = res.top.map((e, i) => ({ e, i })).filter((x) => x.e.c === g.managedClubId);
   for (const { e, i } of mine) {
-    moraleJolt(g, g.players[e.p], i === 0 ? 8 : i < 3 ? 4 : 2, i === 0 ? `Goldener Stern ${year}` : `Platz ${i + 1} beim Goldenen Stern ${year}`, date);
+    moraleJolt(g, g.players[e.p], i === 0 ? 8 : i < 3 ? 4 : 2, i === 0 ? `Kristallstern ${year}` : `Platz ${i + 1} beim Kristallstern ${year}`, date);
   }
   const club = g.clubs[g.managedClubId];
   if (club && mine.some((x) => x.i === 0)) club.reputation = Math.min(100, club.reputation + 1); // Ansehen des Vereins
@@ -229,9 +229,9 @@ export function awardGoldenBall(g: Game, year: number, date: string, popup = tru
   pushMessage(g.messages, makeMessage({
     date, category: 'media', from: 'Sportredaktion',
     subject: `${res.title} ${year}: ${w.n}`,
-    shortText: `Der Goldene Stern geht an ${w.n} (${w.cn}).`,
+    shortText: `Der Kristallstern geht an ${w.n} (${w.cn}).`,
     bodyText: [
-      `Bei der Gala in ${res.venue} erhielt ${w.n} (${w.cn}) den Goldenen Stern ${year} – ${res.title}. ${w.why ?? ''}`,
+      `Bei der Gala in ${res.venue} erhielt ${w.n} (${w.cn}) den Kristallstern ${year} – ${res.title}. ${w.why ?? ''}`,
       '',
       ...res.top.map((e, i) => `${i + 1}. ${e.n} (${e.cn}, ${e.nat})`),
       ...(mine.length ? ['', `Aus deinem Kader unter den Besten: ${mine.map((x) => `${x.e.n} (Platz ${x.i + 1})`).join(', ')}.`] : []),

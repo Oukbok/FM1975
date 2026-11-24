@@ -97,7 +97,7 @@ export function PopupLayer({ g, settings, onSettings, rerender, q, f, due, calLi
         </LazyWin>
       )}
       {f.promisesOn && <LazyWin><P.FirstTrainingModal g={g} onClose={rerender} /></LazyWin>}
-      {/* Goldener Ball, danach Die Besten der Saison. */}
+      {/* Kristallstern, danach Die Besten der Saison. */}
       {f.galaOn && q.galaDue && <LazyWin><P.GalaShow g={g} y={q.galaDue} onClose={q.closeGala} /></LazyWin>}
       {f.awardsOn && q.awardsDue && (
         <LazyWin><P.AwardsModal g={g} s={q.awardsDue} onClose={q.closeAwards} onArchive={() => { q.closeAwards(); setScreen('auszeichnungen'); }} /></LazyWin>

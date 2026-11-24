@@ -1,5 +1,5 @@
 // =============================================================================
-// STATISTIKEN › AUSZEICHNUNGEN — oben wahlweise der Goldene Ball (Standard) oder
+// STATISTIKEN › AUSZEICHNUNGEN — oben wahlweise der Kristallstern (Standard) oder
 // die Besten der Saison einer Liga (eigene Liga + 1. Ligen im Ausland,
 // game/worldAwardsGame.ts); Saison per Pfeilen oder Liste. Unten alle Jahrgänge
 // der eigenen Liga und die meistgeehrten Spieler. Daten: game.seasonAwards, game.goldenBall.
@@ -29,7 +29,7 @@ import { TeamOfSeasonTop } from './TeamOfSeasonTop';
 export function AwardsView({ g }: { g: Game }) {
   const seasons = [...(awardsState(g)?.seasons ?? [])].reverse();
   const gb = [...(goldenBallState(g)?.years ?? [])].reverse();
-  // Saisons für die Wahl oben: Ehrungen der Liga + Goldener Ball (verliehen im Dezember der Saison).
+  // Saisons für die Wahl oben: Ehrungen der Liga + Kristallstern (verliehen im Dezember der Saison).
   const extra = extraAwardsState(g);
   const allSeasons = [...new Set([
     ...seasons.map((x) => x.season), ...gb.map((y) => seasonLabel(y.year)),
@@ -55,7 +55,7 @@ export function AwardsView({ g }: { g: Game }) {
   const step = (d: number) => { const next = allSeasons[idx + d]; if (next) setPick(next); };
 
   const mine = g.managedClubId;
-  const title = league === 'gb' ? (gbYear ? `Goldener Stern ${gbYear.year}` : 'Goldener Stern')
+  const title = league === 'gb' ? (gbYear ? `Kristallstern ${gbYear.year}` : 'Kristallstern')
     : league === 'shoe' ? `Torjägerstern ${season ?? ''}`.trim()
       : league === 'coach' ? `Trainer des Jahres ${season ?? ''}`.trim()
         : league.startsWith('xi:') ? `Elf der Saison ${season ?? ''}`.trim()
@@ -68,7 +68,7 @@ export function AwardsView({ g }: { g: Game }) {
         right={season ? (
           <span className="aw-pick">
             <Select className="dselect aw-pick-league" value={pickValue} onChange={(v) => setLeague(v)} aria-label="Wertung wählen">
-              <option value="gb">Goldener Stern</option>
+              <option value="gb">Kristallstern</option>
               <option value="shoe">Torjägerstern</option>
               <option value="coach">Trainer des Jahres</option>
               {leagues.length ? <optgroup label="Die Besten der Saison">
@@ -86,7 +86,7 @@ export function AwardsView({ g }: { g: Game }) {
           </span>
         ) : undefined}>
         {!season ? (
-          <Empty icon="trophy">Der Goldene Stern (seit 1956) wird jedes Jahr am 20. Dezember verliehen – in deiner ersten Saison also schon im Dezember {g.season.slice(0, 4)}. Am Tag nach dem letzten Ligaspieltag werden außerdem die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm.</Empty>
+          <Empty icon="trophy">Der Kristallstern (seit 1956) wird jedes Jahr am 20. Dezember verliehen – in deiner ersten Saison also schon im Dezember {g.season.slice(0, 4)}. Am Tag nach dem letzten Ligaspieltag werden außerdem die besten Spieler auf ihren Positionen geehrt – Torwart, Abwehr, Mittelfeld und Sturm.</Empty>
         ) : showGb ? (
           <GoldenBallTop g={g} y={gbYear!} onGala={() => setGala(gbYear!.year)} />
         ) : league === 'shoe' && shoe ? (
@@ -103,7 +103,7 @@ export function AwardsView({ g }: { g: Game }) {
             <AwardHonours g={g} s={s} face={44} />
           </div>
         ) : (
-          <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Goldener Stern verliehen.`
+          <Empty icon="trophy">{league === 'gb' ? `In der Saison ${season} wurde (noch) kein Kristallstern verliehen.`
             : league === 'shoe' ? `Der Torjägerstern ${season} wird am Saisonende vergeben, wenn alle 1. Ligen fertig sind.`
               : league === 'coach' ? `Der Trainer des Jahres ${season} wird am Saisonende gewählt.`
                 : league.startsWith('xi:') ? `Die Elf der Saison ${season} steht am Saisonende fest.`
@@ -139,7 +139,7 @@ export function AwardsView({ g }: { g: Game }) {
         )}
       </DashBox>
 
-      <DashBox title="Goldener Stern" icon="trophy" flush info="goldener_ball" right={gb.length ? `${gb.length} Jahre` : undefined}>
+      <DashBox title="Kristallstern" icon="trophy" flush info="goldener_ball" right={gb.length ? `${gb.length} Jahre` : undefined}>
         {gb.length ? (
           <div className="rl rl-sm rl-players gb-archive">
             {gb.map((y) => {
@@ -153,7 +153,7 @@ export function AwardsView({ g }: { g: Game }) {
               );
             })}
           </div>
-        ) : <Empty icon="trophy">Der Goldene Stern wird seit 1956 vergeben – die nächste Wahl ist am 20. Dezember {g.season.slice(0, 4)}.</Empty>}
+        ) : <Empty icon="trophy">Der Kristallstern wird seit 1956 vergeben – die nächste Wahl ist am 20. Dezember {g.season.slice(0, 4)}.</Empty>}
         <div className="dsec aw-dsec">Meistgeehrt (Saison)</div>
         {tallies.length ? (
           <div className="rl rl-sm rl-players aw-tally">

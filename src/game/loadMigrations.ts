@@ -381,7 +381,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateMerch(g); } catch (err) { console.error('Fanartikel-Nachrüstung fehlgeschlagen:', err); }
   // Saison-Briefing: Archiv ab der aktuellen Saison, beim Laden kein automatisches Popup.
   try { migrateBriefing(g); } catch (err) { console.error('Briefing-Nachrüstung fehlgeschlagen:', err); }
-  try { migrateGoldenBall(g); } catch (err) { console.error('Goldener-Ball-Nachrüstung fehlgeschlagen:', err); }
+  try { migrateGoldenBall(g); } catch (err) { console.error('Kristallstern-Nachrüstung fehlgeschlagen:', err); }
   try { migrateExtraAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
   try { migrateSeasonAwards(g); } catch (err) { console.error('Auszeichnungen-Nachrüstung fehlgeschlagen:', err); }
   // Auslandsligen: Objektlisten seasonAwards.world/extraAwards.xiw → kompaktes seasonAwards.wv (vor ensureWorldPool).

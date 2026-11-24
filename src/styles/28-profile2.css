@@ -281,6 +281,8 @@
 .pp3-honsum > div { display: flex; align-items: baseline; gap: 8px; padding: 7px 10px; background: rgba(var(--ink-rgb), 0.025); border: 1px solid var(--border-soft); border-radius: 6px; }
 .pp3-honsum b { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; }
 .pp3-honsum span { font-size: 12.5px; color: var(--text-3); }
+.pp3-honsum > .pp3-hon-ks { align-items: center; }
+.pp3-ks-trophy { display: block; flex: none; object-fit: contain; margin: -4px -2px -4px 0; }
 .pp3-honlist { display: flex; flex-direction: column; }
 .pp3-hon { display: grid; grid-template-columns: 70px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 5px 0; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
 .pp3-hon .w { color: var(--text-3); font-variant-numeric: tabular-nums; }
