@@ -16,21 +16,31 @@ import { PlayerLink } from '../../../components/playerMenu/PlayerLink';
 import { getClubKitDisplay } from '../../../data/kits';
 import { fmtDateShort } from '../../../ui/format';
 
-/** Leiste über der Seite: Heim · VS · Gast | Datum | Wettbewerb. */
+/** Leiste über der Seite: Heim · VS · Gast | Datum | Wettbewerb.
+ *  Dreispaltig (1fr | VS | 1fr): links Label + Heim (rechtsbündig), rechts Gast
+ *  (linksbündig) + Datum/Wettbewerb – so steht das VS genau in der Mitte der Leiste. */
 export function NextStrip({ g, nx }: { g: Game; nx: NextOpp | null }) {
-  if (!nx) return <div className="opx-strip"><span className="opx-strip-tag">Nächstes Spiel</span><span className="opx-strip-none">Kein weiteres Pflichtspiel angesetzt.</span></div>;
+  if (!nx) return <div className="opx-strip opx-strip-empty"><span className="opx-strip-tag">Nächstes Spiel</span><span className="opx-strip-none">Kein weiteres Pflichtspiel angesetzt.</span></div>;
   const me = g.managedClubId;
   const home = nx.home ? me : nx.opp, away = nx.home ? nx.opp : me;
-  const side = (id: string) => (
-    <ClubLink id={id}><span className="opx-strip-club">{g.clubs[id] ? <ClubCrest club={g.clubs[id]} size={36} /> : null}<b>{oppName(g, id)}</b></span></ClubLink>
+  const side = (id: string, cls: string) => (
+    <div className={`opx-strip-team ${cls}`}>
+      <ClubLink id={id}><span className="opx-strip-club" title={oppName(g, id)}>{g.clubs[id] ? <ClubCrest club={g.clubs[id]} size={54} /> : null}<b>{oppName(g, id)}</b></span></ClubLink>
+    </div>
   );
   return (
     <div className="opx-strip">
-      <span className="opx-strip-tag">Nächstes Spiel</span>
-      <div className="opx-strip-match">{side(home)}<span className="opx-strip-vs">VS</span>{side(away)}</div>
-      <span className="opx-strip-sep" />
-      <span className="opx-strip-info"><Icon name="schedule" size={20} />{fmtDateShort(nx.date).dmy}</span>
-      <span className="opx-strip-info"><Icon name="trophy" size={20} />{nx.comp}</span>
+      <div className="opx-strip-l">
+        <span className="opx-strip-tag">Nächstes Spiel</span>
+        {side(home, 'home')}
+      </div>
+      <span className="opx-strip-vs">VS</span>
+      <div className="opx-strip-r">
+        {side(away, 'away')}
+        <span className="opx-strip-sep" />
+        <span className="opx-strip-info"><Icon name="schedule" size={22} />{fmtDateShort(nx.date).dmy}</span>
+        <span className="opx-strip-info"><Icon name="trophy" size={22} />{nx.comp}</span>
+      </div>
     </div>
   );
 }

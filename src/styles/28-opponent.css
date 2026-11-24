@@ -2,21 +2,28 @@
    Aufstellung › Gegner (views/matchday/OpponentView.tsx + opponent/parts.tsx, Mockup Pascal):
    Leiste „Nächstes Spiel“ über drei hohen Boxen. Seitenränder/Spalten wie jede .dpage.
    ============================================================================= */
-.dpage.opx-page { grid-template-rows: 64px minmax(0, 1fr); row-gap: 28px; }
+.dpage.opx-page { grid-template-rows: 96px minmax(0, 1fr); row-gap: 28px; }
 
-/* Leiste */
-.opx-strip { grid-column: 1 / -1; display: flex; align-items: center; gap: 28px; height: 64px; padding-right: 28px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-.opx-strip-tag { align-self: stretch; display: flex; align-items: center; padding: 0 44px 0 26px; background: var(--club-accent, var(--accent)); color: var(--club-accent-ink, #fff);
-  font-family: var(--font-display); font-size: 26px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 100%, 0 100%); }
-.opx-strip-match { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 40px; min-width: 0; }
-.opx-strip-club { display: inline-flex; align-items: center; gap: 14px; font-size: 20px; color: var(--text); }
-.opx-strip-club b { font-weight: 700; white-space: nowrap; }
-.opx-strip-vs { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--text-3); }
-.opx-strip-sep { width: 1px; align-self: stretch; margin: 12px 0; background: var(--border); }
-.opx-strip-info { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: var(--text); white-space: nowrap; }
+/* Leiste (96px): Spalten 1fr | VS | 1fr, damit das VS exakt in der Leistenmitte steht. */
+.opx-strip { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 36px;
+  height: 96px; padding: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.opx-strip.opx-strip-empty { display: flex; gap: 28px; padding-right: 28px; }
+.opx-strip-r { padding-right: 28px; } /* nur innen: die Leiste selbst bleibt symmetrisch */
+.opx-strip-l, .opx-strip-r { display: flex; align-items: center; gap: 28px; min-width: 0; align-self: stretch; }
+.opx-strip-tag { flex: none; align-self: stretch; display: flex; align-items: center; padding: 0 54px 0 30px; background: var(--club-accent, var(--accent)); color: var(--club-accent-ink, #fff);
+  font-family: var(--font-display); font-size: 32px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; clip-path: polygon(0 0, 100% 0, calc(100% - 30px) 100%, 0 100%); }
+.opx-strip-team { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; }
+.opx-strip-team.home { justify-content: flex-end; }
+.opx-strip-team.away { justify-content: flex-start; }
+.opx-strip-team > .club-link { min-width: 0; max-width: 100%; display: flex; }
+.opx-strip-club { display: inline-flex; align-items: center; gap: 16px; min-width: 0; max-width: 100%; font-size: 32px; line-height: 1.1; color: var(--text); }
+.opx-strip-club > :first-child { flex: none; }
+.opx-strip-club b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.opx-strip-vs { font-family: var(--font-display); font-size: 32px; line-height: 1.1; font-weight: 600; color: var(--text-3); text-align: center; }
+.opx-strip-sep { flex: none; width: 1px; align-self: stretch; margin: 18px 0; background: var(--border); }
+.opx-strip-info { flex: none; display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; color: var(--text); white-space: nowrap; }
 .opx-strip-info svg { color: var(--club-accent, var(--accent)); }
-.opx-strip-none { color: var(--text-3); font-size: 17px; }
+.opx-strip-none { color: var(--text-3); font-size: 18px; }
 
 /* Box Nächstes Spiel */
 .opx-next .dbox-body { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
