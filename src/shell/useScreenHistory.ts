@@ -1,8 +1,10 @@
 // Seitenwahl des laufenden Spiels mit Verlauf „Zurück“/„Vorwärts“ (je bis zu 20 Seiten,
 // geleert, sobald ein neuer Tag beginnt) und Tastatur Alt+← / Alt+→ (nicht in Eingabefeldern).
-// 'chronicle' ist kein Menüpunkt, sondern öffnet das große Chronik-Fenster.
+// 'chronicle' ist kein Menüpunkt, sondern öffnet das große Chronik-Fenster; 'supercup' springt
+// nach Statistiken › Nationale Pokale › Gipfelpokal.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Screen } from './navigation';
+import { presetSubTab } from '../ui/SubTabs';
 
 export function useScreenHistory(currentDate: string) {
   const [screen, setScreenRaw] = useState<Screen>('dashboard');
@@ -13,8 +15,11 @@ export function useScreenHistory(currentDate: string) {
   const screenRef = useRef<Screen>('dashboard');
   useEffect(() => { screenRef.current = screen; }, [screen]);
 
-  const setScreen = useCallback((s: Screen) => {
-    if (s === 'chronicle') { setChronicleOpen(true); return; }
+  const setScreen = useCallback((to: Screen) => {
+    if (to === 'chronicle') { setChronicleOpen(true); return; }
+    // 'supercup' ist kein Menüpunkt mehr: Statistiken › Nationale Pokale › Gipfelpokal.
+    let s = to;
+    if (s === 'supercup') { presetSubTab('cup-tab', 'gipfel'); s = 'cup'; }
     const cur = screenRef.current;
     if (s !== cur) setHist((h) => ({ back: [...h.back, cur].slice(-20), fwd: [] }));
     screenRef.current = s;

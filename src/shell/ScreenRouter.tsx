@@ -52,6 +52,7 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'freizeit': return <P.LeisureView g={g} onChange={ch} />;
     case 'vermoegen': return <P.WealthView g={g} onChange={ch} />;
     case 'briefing': return <P.BriefingView g={g} onGoto={setScreen} onOpen={onPause} />;
+    case 'supercup': // Sprungziel, wird in useScreenHistory zu 'cup' (Reiter Gipfelpokal)
     case 'cup': return <P.CupView g={g} onWatch={onWatch} onReplayDraw={(ri) => onReplayDraw('cup', ri)} />;
     case 'ruhmeshalle': return <P.AchievementsView g={g} />;
     case 'wiki': return <P.WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} onGoto={setScreen} />;
@@ -70,7 +71,6 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'presse': return <P.PressView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.ContractsView g={g} onChange={ch} />;
     case 'nationalteams': return <P.NationalView g={g} onGoto={setScreen} />;
-    case 'supercup': return <P.SuperCupView g={g} />;
     case 'meldung': return <P.RegistrationView g={g} onChange={ch} />;
     case 'reserve': return <P.ReserveTeamView g={g} onChange={ch} onGoto={setScreen} />;
     case 'beobachtung': return <P.BeobachtungView g={g} onChange={ch} />;

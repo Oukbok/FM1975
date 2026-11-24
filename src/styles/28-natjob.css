@@ -71,7 +71,7 @@
 
 /* --- Zentrale (Nationalteam-Sicht) --- */
 .ntw-list { display: flex; flex-direction: column; }
-.ntw-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
+.ntw-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 0 5px 10px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
 .ntw-row:last-child { border-bottom: 0; }
 .ntw-row.own .ntw-txt, .ntw-row.me .ntw-txt { font-weight: 700; color: var(--text); }
 .ntw-row.me { box-shadow: inset 3px 0 0 var(--accent); }

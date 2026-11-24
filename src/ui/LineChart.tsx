@@ -69,6 +69,13 @@ function useSize<T extends HTMLElement>() {
   return [ref, size] as const;
 }
 
+/** Index des Punkts, der waagerecht am nächsten an `fx` liegt (Hover; auch RankSpark der Weltrangliste). */
+export function nearestIndex(xs: number[], fx: number): number {
+  let best = 0;
+  for (let i = 1; i < xs.length; i++) if (Math.abs(xs[i] - fx) < Math.abs(xs[best] - fx)) best = i;
+  return best;
+}
+
 export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compact, className, ariaLabel, zeroBase, timeAxis, axisFactor = 1 }: {
   points: LinePoint[];
   /** Wert im Hover. */
@@ -122,9 +129,7 @@ export function LineChart({ points, fmt, fmtAxis, yTitle, minHeight = 120, compa
         if (!n) return;
         const r = e.currentTarget.getBoundingClientRect();
         const fx = ((e.clientX - r.left) / Math.max(1, r.width)) * w;
-        let best = 0;
-        for (let i = 1; i < n; i++) if (Math.abs(x(i) - fx) < Math.abs(x(best) - fx)) best = i;
-        setHover(best);
+        setHover(nearestIndex(points.map((_, i) => x(i)), fx));
       }}>
       {w > 0 && h > 0 && n > 0 && (
         <svg width={w} height={h} role="img" aria-label={ariaLabel ?? 'Verlauf'}>

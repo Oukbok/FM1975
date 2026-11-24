@@ -1,6 +1,8 @@
 // Screenshots Länderprofil (components/country/): Flagge klicken, alle Reiter, mehrere Länder
 // (Heimatland, Ausland mit Liga, DDR, Land ohne Liga). Prüft feste Fenstergröße je Reiter,
-// leere Boxen ohne „keine Daten“ und JS-Fehler.
+// leere Boxen ohne „keine Daten“ und JS-Fehler. Weltrangliste: Hover auf dem Rangverlauf (Seite und
+// Länderprofil, Bilder `…_hover_*.png`), Einzug der Platzzahl neben der Markierung, Achsenzahlen ohne
+// Überlappung (Wunsch Pascal).
 //   npm run build && node tests/country-shots.mjs [ordner] [präfix]
 //   SAVE=… (Standard public/saves/test-20-jahre.txt), VIEW=1366x768 für nur eine Größe,
 //   LAND=England,Brasilien für eigene Länder (Flaggen-Schlüssel aus data/countryFlags.ts).
@@ -37,6 +39,7 @@ for (const view of VIEWS) {
   await page.locator('.app-main .sub3-tabs .tab:has-text("Weltrangliste")').first().click().catch(() => {});
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${outDir}/${prefix}_${W}_weltrangliste.png` });
+  await sparkChecks(page, `${view} Weltrangliste`, `${outDir}/${prefix}_${W}_hover_seite`);
   const flag = page.locator('.app-main .wr-trow .cflag[data-country]').nth(2);
   if (await flag.count()) {
     await flag.click();
@@ -82,11 +85,42 @@ for (const view of VIEWS) {
       });
       for (const b of bad) errors.push(`${view} ${land} › ${t}: ${b}`);
       await page.screenshot({ path: `${outDir}/${prefix}_${W}_${land}_${TABS.indexOf(t) + 1}.png` });
+      if (t === 'Übersicht' && land === LANDS[0]) await sparkChecks(page, `${view} ${land}`, `${outDir}/${prefix}_${W}_hover_${land}`);
     }
     await page.locator('.cnx-modal .modal-close').click();
     await page.waitForTimeout(200);
   }
   await page.close();
+}
+
+/** Rangverlauf: Hover zeigt Kärtchen + Fadenkreuz, Achsenzahlen überlappen nicht; markierte Zeile mit Einzug. */
+async function sparkChecks(page, n, file) {
+  const wrap = page.locator('.wr-spark-wrap').last();
+  if (!await wrap.count()) { console.log(`${n}: kein Rangverlauf`); return; }
+  const ax = await wrap.evaluate((w) => {
+    const t = [...w.querySelectorAll('text.wr-ax')].filter((e) => Number(e.getAttribute('y')) > w.clientHeight - 12).map((e) => e.getBoundingClientRect()).sort((a, b) => a.left - b.left);
+    let over = 0;
+    for (let i = 1; i < t.length; i++) over = Math.max(over, t[i - 1].right - t[i].left);
+    return over;
+  });
+  if (ax > 0) errors.push(`${n}: Jahreszahlen der Achse überlappen (${Math.round(ax)} px)`);
+  const b = await wrap.boundingBox();
+  for (const [k, fx] of [['ende', 0.99], ['mitte', 0.5]]) {
+    await page.mouse.move(b.x + b.width * fx, b.y + b.height / 2);
+    await page.waitForTimeout(150);
+    if (!await page.locator('.wr-spark-wrap .lc-tip').count()) errors.push(`${n}: kein Hover-Kärtchen (${k})`);
+    if (!await page.locator('.wr-spark .wr-guide').count()) errors.push(`${n}: kein Fadenkreuz (${k})`);
+    await page.screenshot({ path: `${file}_${k}.png` });
+  }
+  await page.mouse.move(2, 2);
+  const pad = await page.evaluate(() => {
+    const r = document.querySelector('.wr-row.me, .wr-trow.me');
+    if (!r) return null;
+    const rank = r.querySelector('.rl-rank');
+    const range = document.createRange(); range.selectNodeContents(rank);
+    return range.getBoundingClientRect().left - r.getBoundingClientRect().left;
+  });
+  if (pad != null && pad < 8) errors.push(`${n}: Platzzahl klebt an der Markierung (${pad.toFixed(1)} px)`);
 }
 
 await browser.close();

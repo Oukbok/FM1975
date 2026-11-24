@@ -48,7 +48,7 @@ export const INFO_TEXTS = {
   },
   fuenfjahreswertung: {
     title: 'Fünfjahreswertung',
-    text: 'Die Länderwertung des Europapokals: Je Saison bekommt ein Land den Durchschnitt der Punkte seiner Starter (1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis). Die Summe der letzten fünf Saisons ergibt den Rang, der Rang die Startplätze der nächsten Saison in jedem Wettbewerb. Für dein Land stehen sie damit fest; die anderen Länder werden beim Saisonwechsel mit der laufenden Saison neu gereiht.',
+    text: 'Die Länderwertung des Europapokals: Je Saison bekommt ein Land den Durchschnitt der Punkte seiner Starter (1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis). Die Summe der letzten fünf Saisons ergibt den Rang, der Rang die Startplätze der nächsten Saison in jedem Wettbewerb. Für dein Land stehen sie damit fest; die anderen Länder werden beim Saisonwechsel mit der laufenden Saison neu gereiht. Die ganze Tabelle (Statistiken › International › Fünfjahreswertung) zählt die laufende Saison live mit; ein Klick auf Saisonpunkte zeigt die Punkte je Verein.',
     wiki: 'league-system',
   },
   laenderprofil: {

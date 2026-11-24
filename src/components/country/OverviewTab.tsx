@@ -7,6 +7,7 @@ import {
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
 import { fmtCoef } from '../../game/coefficients';
+import { presetSubTab } from '../../ui/SubTabs';
 import { TeamName } from '../../views/stats/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
 import { CtChampBox, CtClubsBox, CtCupBox } from './ContinentBoxes';
@@ -15,7 +16,7 @@ import { nationExists } from '../../data/nationalTeams';
 
 const sign = (d: number) => `${d > 0 ? '+' : d < 0 ? '−' : '±'}${Math.abs(d).toFixed(0)}`;
 
-export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
+export default function OverviewTab({ g, c, pyramid, onGoto }: CountryTabProps) {
   const facts = countryFacts(g, c);
   const rep = countryRep(g, c);
   const holders = useMemo(() => countryHolders(g, c), [g, c]);
@@ -51,7 +52,8 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
           {rep.rank != null && <div className="cnx-coef-seasons" title="Punkte der letzten fünf Saisons">
             {rep.seasonLabels.map((l, i) => <span key={l}><small>{l.slice(2)}</small><b>{fmtCoef(rep.seasons[i] ?? null)}</b></span>)}
           </div>}
-          {rep.slots.length ? <div className="cnx-slots"><em>Startplätze {rep.next}</em>{rep.slots.map((s) => <span key={s.label} className={s.n ? '' : 'none'}><b>{s.n}</b>{s.label}</span>)}</div>
+          {rep.slots.length ? <div className="cnx-slots"><em>Startplätze {rep.next}</em>{rep.slots.map((s) => <span key={s.label} className={s.n ? '' : 'none'}><b>{s.n}</b>{s.label}</span>)}
+            {onGoto && <button type="button" className="b3 b3-s cnx-coef-go" title="Statistiken › International › Fünfjahreswertung" onClick={() => { presetSubTab('intl-tab', 'coef'); onGoto('international'); }}>Ganze Wertung</button>}</div>
             : <div className="dnote">Keine Daten – das Land steht nicht in der Wertung.</div>}
         </> : <Empty icon="international">{c.kind === 'none' ? 'Keine Liga im Spiel – deshalb kein Ligaruf und keine Fünfjahreswertung.' : `${c.name} besteht in dieser Saison nicht – kein Ligaruf, keine Fünfjahreswertung.`}</Empty>}
       </DashBox>}

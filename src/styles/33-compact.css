@@ -26,6 +26,10 @@
 [data-ui] .tn-sub-item { padding: 7px 10px; letter-spacing: 0.6px; }
 [data-ui="narrow"] .tn-sub { --sub-slot: 156px; }
 [data-ui="narrow"] .tn-sub-item { padding: 7px 6px; letter-spacing: 0.4px; }
+/* Lange Beschriftung („Nationale Pokale“) passt sonst nicht in den festen Platz */
+[data-ui] .tn-sub-item.tight { letter-spacing: 0; }
+[data-ui] .tn-sub-item.tight > span { font-size: 0.9em; }
+[data-ui="narrow"] .tn-sub-item.tight > span { font-size: 0.84em; }
 
 /* ---- Tabellen: weniger Zellabstand, damit breite Spielertabellen ohne waagerechten
    Bildlauf passen (Transfermarkt, Beobachtung, Kader, Mitarbeiter) ------------------ */

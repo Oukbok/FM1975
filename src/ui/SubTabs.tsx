@@ -7,7 +7,7 @@
 // CSS `.sub3-page > .dpage` in 28-subtabs.css) – keine Box ragt seitlich hinaus.
 // Gemerkter Reiter je Seite über `useSubTab(schlüssel, standard)` (nur im Speicher).
 // =============================================================================
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 export interface SubTab<T extends string> {
   id: T;
@@ -50,15 +50,24 @@ export function SubTabsPage<T extends string>({ tabs, active, onSelect, classNam
 }
 
 const remembered = new Map<string, string>();
+const listeners = new Map<string, Set<(t: string) => void>>();
 
-/** Reiter einer Seite vorwählen, bevor sie geöffnet wird (z. B. Sprung aus dem Newscenter). */
+/** Reiter einer Seite vorwählen (z. B. Sprung aus dem Newscenter); ist die Seite schon offen,
+ *  wechselt sie sofort auf den Reiter. */
 export function presetSubTab(key: string, tab: string): void {
   remembered.set(key, tab);
+  for (const l of listeners.get(key) ?? []) l(tab);
 }
 
 /** Reiter-Zustand, der beim Seitenwechsel erhalten bleibt (bis zum Neuladen). */
 export function useSubTab<T extends string>(key: string, initial: T): [T, (t: T) => void] {
   const [tab, setTab] = useState<T>(() => (remembered.get(key) as T | undefined) ?? initial);
+  useEffect(() => {
+    const l = (t: string) => setTab(t as T);
+    const set = listeners.get(key) ?? new Set();
+    set.add(l); listeners.set(key, set);
+    return () => { set.delete(l); };
+  }, [key]);
   const set = (t: T) => { remembered.set(key, t); setTab(t); };
   return [tab, set];
 }

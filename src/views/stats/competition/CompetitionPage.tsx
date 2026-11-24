@@ -67,8 +67,11 @@ function keyFor(g: Game, c: StatsCountry, opts: CompOption[], start: CompStart, 
   return opts.find((o) => o.kind === want && o.section !== 'Europa')?.key ?? opts[0]?.key ?? '';
 }
 
-export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
+export function CompetitionPage({ g, start, onWatch, onReplayDraw, season: seasonCtl, onSeason, lockKey }: {
   g: Game; start: CompStart; onWatch?: (matchId: string) => void; onReplayDraw?: (comp: 'cup' | EuroCompId, roundIndex: number) => void;
+  /** Statistiken › International (Wunsch Pascal: ein Reiter je Europapokal): Saison vom Aufrufer
+   *  gesteuert und Wettbewerb fest – die Wettbewerbswahl im Kopf entfällt. */
+  season?: string; onSeason?: (s: string) => void; lockKey?: string;
 }) {
   const countries = useMemo(() => statsCountries(g), [g, g.season]);
   const homeC = homeStatsCountry(countries);
@@ -80,7 +83,9 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const euroMode = start === 'euro';
   const country = euroMode ? homeC : countries.find((c) => c.cc === cc) ?? homeC;
   const seasons = useMemo(() => countrySeasons(g, country), [g, g.season, country]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [seasonState, setSeason] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
+  const [seasonOwn, setSeasonOwn] = useState(() => preset?.season ?? pickSeason(countrySeasons(g, country), g.season));
+  const seasonState = seasonCtl ?? seasonOwn;
+  const setSeason = (s: string) => { if (onSeason) onSeason(s); else setSeasonOwn(s); };
   const season = seasons.some((s) => s.season === seasonState) ? seasonState : pickSeason(seasons, seasonState);
   const src = seasons.find((s) => s.season === season)?.source ?? 'live';
   const opts = useMemo(() => countryOptions(g, country, season, src).filter((o) => fitsTab(o, start)), [g, country, season, src, start]);
@@ -118,7 +123,7 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   // Wettbewerb beim Saisonwechsel halten, sonst gleichartigen wählen.
   const cur = opts.find((o) => o.key === key);
   const wantKind = kind ?? (key === 'cup' || key === 'xcup' || ['ec', 'cwc', 'uefa'].includes(key) ? 'cup' : 'league');
-  const effKey = cur ? key : (opts.find((o) => o.kind === wantKind && o.section !== 'Europa')?.key ?? opts[0]?.key ?? '');
+  const effKey = lockKey ?? (cur ? key : (opts.find((o) => o.kind === wantKind && o.section !== 'Europa')?.key ?? opts[0]?.key ?? ''));
   const snap = countrySnapshot(g, country, season, src, effKey);
   const sIdx = seasons.findIndex((s) => s.season === season);
   const step = (d: number) => { const n = seasons[sIdx + d]; if (n) setSeason(n.season); };
@@ -130,16 +135,16 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   // Reihenfolge im Kopf (Wunsch Pascal): Land | Wettbewerb | Saison; darunter der Spieltag (in der Tabelle).
   const header = (
     <span className="cmp-select">
-      {euroMode
+      {lockKey ? null : euroMode
         ? <Select className="dselect cmp-country" width={168} value="eu" onChange={() => undefined} title="Wettbewerbe" options={[{ value: 'eu', text: 'Europa', label: 'Europa' }]} />
         : <CountrySelect countries={countries} value={country.cc} onChange={changeCountry} mineCc={homeC.cc} />}
-      <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
+      {!lockKey && <Select className="dselect cmp-comp" width={190} popWidth={260} value={effKey} onChange={(v) => setKey(v)} title="Wettbewerb">
         {sections.map((sec) => (
           <optgroup key={sec} label={sec}>
             {opts.filter((o) => o.section === sec).map((o) => <option key={o.key} value={o.key} data-mine={isMineComp(o.key) || undefined}>{o.label}</option>)}
           </optgroup>
         ))}
-      </Select>
+      </Select>}
       <button className="b3 b3-icon" disabled={sIdx <= 0} onClick={() => step(-1)} title="Vorherige Saison" aria-label="Vorherige Saison"><Icon name="navPrev" size={18} /></button>
       <Select className="dselect cmp-season" width={150} popWidth={260} value={season} onChange={(v) => setSeason(v)} title="Saison">
         {seasons.map((s) => <option key={s.season} value={s.season}>{s.season}{seasonSuffix(s)}</option>)}

@@ -73,7 +73,6 @@ export const PrivateView = lz(() => import('../views/private/PrivateView'), 'Pri
 export const FamilyView = lz(() => import('../views/private/FamilyView'), 'FamilyView');
 export const LeisureView = lz(() => import('../views/private/LeisureView'), 'LeisureView');
 export const WealthView = lz(() => import('../views/private/WealthView'), 'WealthView');
-export const SuperCupView = lz(() => import('../views/stats/SuperCupView'), 'SuperCupView');
 export const RegistrationView = lz(() => import('../views/squad/RegistrationView'), 'RegistrationView');
 export const TrainingCampView = lz(() => import('../views/squad/TrainingCampView'), 'TrainingCampView');
 export const DressingRoomView = lz(() => import('../views/squad/DressingRoomView'), 'DressingRoomView');

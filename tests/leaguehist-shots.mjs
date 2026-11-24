@@ -1,6 +1,7 @@
 // Screenshots Statistiken › Ligensystem mit Zeiträumen (Wunsch Pascal): aktueller Zeitraum, erster
 // Zeitraum (1975er), archivierte Liga (DDR, aufgelöste Staaten) mit Stempel „Archiviert“; Pokale des
-// Landes neben der Pyramide (Trophäe + Auf/Ab je Liga), Reiter Fünfjahreswertung und Ligen der Welt.
+// Landes neben der Pyramide (Trophäe + Auf/Ab je Liga), Reiter Ligen der Welt (die Fünfjahreswertung
+// steht unter Statistiken › International – Screenshots dort: INTL=1 node tests/statsland-shots.mjs).
 //   npm run build && SAVE=public/saves/test-60-jahre.txt node tests/leaguehist-shots.mjs [ordner] [präfix]
 //   VIEW=1366x768 für kleine Bildschirme. Prüft Kopf-Überlauf, feste Boxgröße und JS-Fehler.
 import { createServer } from 'node:http';
@@ -106,23 +107,21 @@ for (const [v, n] of [['ddr', 'ddr'], ['a:Sowjetunion', 'urs'], ['a:Tschechoslow
   await shot(n);
   if (n === 'eng' && ps.length > 2) { await pickOption(page, periodSel(), { index: 0 }); await shot('eng_erster'); }
 }
-// Reiter Fünfjahreswertung und Ligen der Welt (drittes Menü).
+// Reiter Ligen der Welt (drittes Menü).
 const tabShot = async (label, n, sel) => {
   await page.locator(`.app-main .sub3-tabs .tab:has-text("${label}")`).first().click();
   await page.waitForTimeout(700);
   const r = await page.evaluate((s) => {
     const rows = document.querySelectorAll(s).length;
-    const bad = [...document.querySelectorAll('.app-main .dbox')].filter((b) => b.scrollHeight > b.clientHeight + 2 && !b.querySelector('.cf-list, .lsv-list')).length;
-    return { rows, bad, scroll: document.scrollingElement.scrollHeight > window.innerHeight + 2, me: document.querySelectorAll('.cf-row.me').length };
+    const bad = [...document.querySelectorAll('.app-main .dbox')].filter((b) => b.scrollHeight > b.clientHeight + 2 && !b.querySelector('.lsv-list')).length;
+    return { rows, bad, scroll: document.scrollingElement.scrollHeight > window.innerHeight + 2, me: 0 };
   }, sel);
   if (!r.rows) errors.push(`${n}: keine Zeilen`);
   if (r.scroll) errors.push(`${n}: Seite scrollt`);
-  console.log(`${n}: ${r.rows} Zeilen${n === 'wertung' ? `, eigenes Land markiert: ${r.me}` : ''}`);
-  if (n === 'wertung' && r.me !== 1) errors.push('wertung: eigenes Land nicht genau einmal hervorgehoben');
+  console.log(`${n}: ${r.rows} Zeilen`);
   await page.screenshot({ path: `${outDir}/${tag}_${n}.png` });
   console.log('Bild', `${outDir}/${tag}_${n}.png`);
 };
-await tabShot('Fünfjahreswertung', 'wertung', '.cf-list .cf-row');
 await tabShot('Ligen der Welt', 'welt', '.lsv-list .lsv-row');
 await page.locator('.app-main .sub3-tabs .tab:has-text("Ligensystem")').first().click();
 console.log(errors.length ? errors.join('\n') : 'Keine Fehler.');

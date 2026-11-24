@@ -934,10 +934,10 @@ Beim Start erscheint ein Menü mit:
     body: `## Übersicht Ligensystem
 Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du das Land: **alle Länder alphabetisch in einer Liste**, vorgewählt ist dein Heimatland. Ligen, die es in der Saison nicht mehr gibt (DDR nach der Wiedervereinigung, aufgelöste Staaten), stehen mit **„(Archiv)“** dahinter (siehe „Archivierte Ligen“) – ihre alten Tabellen findest du unter Statistiken › Liga, wo die Länderwahl genauso aufgebaut ist.
 
-Die Seite hat drei Reiter: **Ligensystem**, **Fünfjahreswertung** und **Ligen der Welt**.
+Die Seite hat zwei Reiter: **Ligensystem** und **Ligen der Welt**. Die Fünfjahreswertung steht unter **Statistiken › International › Fünfjahreswertung**.
 
 - **Kasten:** Trophäe der Liga (Meisterschale der 1. Ebene, Meisterteller einer Staffel darunter, DDR-Meisterpokal), Name, Zahl der Vereine, Meister-/Europapokalplätze und Auf- und Abstieg als Marken: **„3 Auf“** = direkte Aufsteiger, **„Aufstiegsrunde“** = die Staffelmeister (ab 2012/13 auch der Zweite der Regionalliga Südwest) spielen in gelosten Duellen weniger Plätze aus, **„+1 bester Zweiter“** = der stärkste Zweite aller Staffeln steigt mit auf (2. Liga Nord/Süd bis 1980/81), **„3 Ab“** = Absteiger, **„Relegation“/„Play-offs“** (gelbe Raute) = Entscheidungsspiele um einen Platz nach den Regeln des Landes und der Saison (Zeiger auf die Marke zeigt das Format, Artikel „Relegation & Play-offs“). Die Zahlen kommen aus derselben Rechnung wie der Saisonwechsel. „Dein Verein“ markiert deine Liga.
-- **Pokale des Landes (rechts):** Landespokal (in der DDR FDGB-Pokal), Gipfelpokal bzw. Auftaktpokal und in Deutschland der Junioren-Pokal – je mit Trophäe, Format, Stand der Saison und Sieger (sonst dem letzten bekannten). Darunter der Platz des Landes in der Fünfjahreswertung mit seinen Startplätzen der nächsten Saison; „Ganze Wertung“ springt in den Reiter Fünfjahreswertung. Trophäenfotos erscheinen automatisch, sobald es für eine Trophäe ein Foto gibt – sonst die gezeichnete Trophäe.
+- **Pokale des Landes (rechts):** Landespokal (in der DDR FDGB-Pokal), Gipfelpokal bzw. Auftaktpokal und in Deutschland der Junioren-Pokal – je mit Trophäe, Format, Stand der Saison und Sieger (sonst dem letzten bekannten). Darunter der Platz des Landes in der Fünfjahreswertung mit seinen Startplätzen der nächsten Saison; „Ganze Wertung“ springt nach Statistiken › International › Fünfjahreswertung. Trophäenfotos erscheinen automatisch, sobald es für eine Trophäe ein Foto gibt – sonst die gezeichnete Trophäe.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
 - **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Zahl der Ebenen, Staffeln und Mannschaften (z. B. Spanien ab 1977 mit einer zusätzlichen dritten Ebene in Staffeln). Die Namen folgen dem Schema in der Landessprache (1. League, 2. Ligue, 3. División …, Artikel „Ligareformen im Ausland“). Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
 - **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
@@ -952,7 +952,14 @@ Oben rechts im Kopf der Box wählst du – wie die Saison unter Statistiken › 
 Ligen, die es nicht mehr gibt – die **DDR** ab 1991/92 sowie **Sowjetunion**, **Jugoslawien** (beide ab 1992/93) und **Tschechoslowakei** (ab 1993/94) –, bleiben in der Länderwahl. Sie zeigen immer ihren **letzten Stand** mit dem roten Stempel **„Archiviert“** und der Zeile „Diese Liga existiert seit … nicht mehr“; frühere Zeiträume dieser Ligen kannst du weiter durchblättern.
 
 ### Fünfjahreswertung
-Der Reiter zeigt die Länderwertung des Europapokals: **Rang**, **Land**, die **Punkte der letzten fünf Saisons** einzeln, die **Summe** und die **Startplätze der nächsten Saison** je Wettbewerb (Namen der Epoche, z. B. Pokal der Landesmeister/Meisterliga, Pokal der Pokalsieger/Europa-Trophäe, Europa-Pokal/Kontinental-Liga). Dein Land ist hervorgehoben. Punkte je Saison = Durchschnitt aller Starter eines Landes: 1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis. Rechts steht, welcher Rang wie viele Plätze bringt. Für dein Land stehen Rang und Plätze schon fest (so rechnet der Saisonwechsel); die anderen Länder werden beim Saisonwechsel mit den Punkten der laufenden Saison neu gereiht. Dieselben Angaben stehen kompakt im Länderprofil auf der ersten Seite.
+Die ganze Wertung steht unter **Statistiken › International › Fünfjahreswertung** (letzter Reiter): eine Tabelle aller Länder, sortierbar nach **Gesamt** oder der **laufenden Saison** (Klick auf den Spaltenkopf).
+- **Pl.** = Platz nach vier abgeschlossenen Saisons plus der **laufenden Saison (live)**, **Vorjahr** = amtlicher Platz nach der letzten abgeschlossenen Saison mit Bewegung (+/−). Nach dem amtlichen Platz richten sich die Startplätze dieser Saison.
+- **Starter** = Vereine des Landes, die noch im Wettbewerb sind, in Klammern alle Starter der Saison (Zeiger zeigt sie je Wettbewerb).
+- **Fünf Saisonspalten** (die laufende hervorgehoben), **Gesamt**, **Teampunkte** = alle Punkte der Starter dieser Saison zusammen, **Rückstand** auf den Platz davor.
+- **Startplätze der nächsten Saison** je Wettbewerb (Kürzel der Epoche, Legende unten). Für dein Land stehen sie fest (unterstrichen – so rechnet der Saisonwechsel); bei den anderen Ländern sind sie eine Prognose nach dem heutigen Platz, denn sie werden beim Saisonwechsel mit der vollen laufenden Saison neu gereiht. Die Zeilen sind nach Gruppen gleicher Startplätze getönt (Legende unten), dein Land ist hervorgehoben.
+- **Klick auf Punkte einer Saison** öffnet rechts die Punkte **je Verein**: Wettbewerb, in der laufenden Saison der Stand (dabei/ausgeschieden/Sieger), Summe ÷ Starter = Wert des Landes. Für frühere Saisons geht das nur, solange ihre Europapokale im Spielstand-Archiv stehen und die Nachrechnung genau den gespeicherten Wert ergibt; sonst ist die Zelle nicht anklickbar.
+- **Klick auf ein Land** öffnet das Länderprofil.
+Punkte je Saison = Durchschnitt aller Starter eines Landes: 1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis. Kompakt stehen Rang und Startplätze auch neben der Pyramide und im Länderprofil (Knopf „Ganze Wertung“).
 
 ### Ligen der Welt
 Stand der höchsten Liga jedes anderen Landes: Spieltag, Tabellenführer und Ligaruf ± Vorsaison; ein Klick öffnet Tabelle und Begegnungen unter Statistiken › Liga.
@@ -3234,7 +3241,7 @@ Spielst du gegen einen Verein eines anderen Kontinents, bekommt er für dieses S
     title: 'Gipfelpokal, Auftaktpokal und Europäischer Gipfelpokal',
     keywords: ['supercup', 'ligapokal', 'europäischer supercup', 'saisonauftakt', 'meister gegen pokalsieger', 'double', 'kleine pokale', 'titel'],
     body: `## Wo
-**Statistiken › Gipfelpokal** zeigt den Gipfelpokal bzw. Auftaktpokal deines Landes in der laufenden Saison, die Regeln der Epoche, den Europäischen Gipfelpokal, die Siegerliste seit deinem Start und die letzten Sieger der übrigen Länder. Eigene Spiele stehen im Kalender und laufen wie ein Pokalspiel (Vorschau, Textmodus, Schnellsimulation).
+**Statistiken › Nationale Pokale › Gipfelpokal** (bzw. Auftaktpokal in seiner Epoche) zeigt den Wettbewerb deines Landes in der laufenden Saison, die Regeln der Epoche, die Siegerliste seit deinem Start und die letzten Sieger der übrigen Länder. Eigene Spiele stehen im Kalender und laufen wie ein Pokalspiel (Vorschau, Textmodus, Schnellsimulation). Der **Europäische Gipfelpokal** hat einen eigenen Reiter unter **Statistiken › International** (Spiel der Saison, Regeln, alle Sieger seit deinem Start).
 
 ## Wer spielt?
 Meister gegen Pokalsieger der Vorsaison. Holte der Meister das Double, rückt je nach Land und Zeit der **Pokalfinalist** oder der **Vizemeister** nach.
@@ -3292,7 +3299,7 @@ Zusätzlich zum Verein kannst du eine Nationalmannschaft betreuen – siehe „N
     title: 'Weltrangliste der Nationalmannschaften',
     keywords: ['weltrangliste', 'rangliste', 'elo', 'punkte', 'fifa', 'platz', 'nationalmannschaft', 'länderspiel', 'ausgabe', 'verlauf'],
     body: `## Wo
-**Statistiken › Nationalteams › Weltrangliste** zeigt alle Nationen mit Platz, Veränderung, Kontinent, Punkten und Punkte-Veränderung (Filter je Kontinent), dazu dein Land mit dem Verlauf seines Rangs und die größten Sprünge seit der letzten Ausgabe. Im **Länderprofil** (Klick auf eine Flagge) steht auf der Übersicht die Box „Weltrangliste“: Platz, Punkte, ± zur Ausgabe davor, die Nachbarn in der Liste und der Verlauf über die Jahre.
+**Statistiken › Nationalteams › Weltrangliste** zeigt alle Nationen mit Platz, Veränderung, Kontinent, Punkten und Punkte-Veränderung (Filter je Kontinent), dazu dein Land mit dem Verlauf seines Rangs und die größten Sprünge seit der letzten Ausgabe. Im **Länderprofil** (Klick auf eine Flagge) steht auf der Übersicht die Box „Weltrangliste“: Platz, Punkte, ± zur Ausgabe davor, die Nachbarn in der Liste (bei wenig Platz nur die eigene Zeile) und der Verlauf über die Jahre. Fährst du mit der Maus über einen Verlauf, zeigt ein Kärtchen die Ausgabe (je Jahr die Ausgabe zum Jahresende, rechts die aktuelle), den Platz und die Veränderung seit dem Punkt davor; bei der aktuellen Ausgabe auch Punkte und ± Punkte. Frühere Punktzahlen speichert das Spiel nicht, nur den Platz.
 
 ## Wie wird gerechnet?
 Wie bei der bekannten Elo-Weltrangliste des Fußballs: Jede Nation hat Punkte, jedes Länderspiel verschiebt sie. Wer gewinnt, bekommt Punkte vom Verlierer – umso mehr, je stärker der Gegner war, je wichtiger das Spiel und je deutlicher das Ergebnis.
@@ -4656,7 +4663,7 @@ Am Auslosungstag hält die Zeit an und die Show öffnet im Vollbild mit dem **St
 - **Gruppenauslosung:** Die Kugeln füllen unten die Gruppen (feste Plätze); am Ende **Deine Gruppe** (bzw. **Deine Gegner** in der Ligaphase) und **Alle Gruppen** (bzw. **Alle Töpfe**).
 - Wer reduzierte Bewegung im System eingestellt hat, sieht die Ziehung ohne rollende Kugeln.
 - **Einstellungen › Pokalauslosung:** *Immer*, *Mit eigenem Verein* (Standard) oder *Nur Nachricht*. Eine Nachricht mit allen Paarungen kommt in jedem Fall.
-- **Wiederholung:** In *Statistiken › Pokal* und *International* steht an jeder gelosten Runde der Knopf **Auslosung**. Auf dem Startbildschirm führt **Sofort anzeigen** zu Paarungen und Turnierbaum, ohne die Ziehung erneut abzuspielen.
+- **Wiederholung:** In *Statistiken › Nationale Pokale › Landespokal* und im Reiter des Europapokals unter *International* steht an jeder gelosten Runde der Knopf **Auslosung**. Auf dem Startbildschirm führt **Sofort anzeigen** zu Paarungen und Turnierbaum, ohne die Ziehung erneut abzuspielen.
 - Spielstände aus früheren Versionen: Die laufende Saison wird wie bisher direkt nach der Vorrunde gelost; die Show gibt es ab der nächsten Saison.`,
   },
   {
@@ -4703,7 +4710,7 @@ Am Auslosungstag hält die Zeit an und die Show öffnet im Vollbild mit dem **St
     title: 'Europapokal — Die Wettbewerbe',
     keywords: ['europapokal', 'europa', 'landesmeister', 'meisterliga', 'pokalsieger', 'uefa', 'europa-liga', 'konferenz-liga', 'ec', 'cwc', 'international', 'europacup'],
     body: `## Drei Wettbewerbe, die sich wandeln
-Parallel zur Liga und zum Landespokal laufen die europäischen Wettbewerbe der jeweiligen Zeit (Seite **Statistiken › International**):
+Parallel zur Liga und zum Landespokal laufen die europäischen Wettbewerbe der jeweiligen Zeit (Seite **Statistiken › International**, je Wettbewerb der gewählten Saison ein Reiter mit dem Namen der Epoche, danach Europäischer Gipfelpokal, Welt und Fünfjahreswertung; Wettbewerbe, die es in der Saison nicht gibt, fehlen):
 
 | Fach | bis | danach |
 |---|---|---|

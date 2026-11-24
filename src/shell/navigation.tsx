@@ -35,7 +35,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
 // =============================================================================
 // Reihe 1 = 9 Hauptkategorien (Klick öffnet das jeweilige Kategorie-Dashboard),
 // Reihe 2 = Unterpunkte der aktiven Kategorie. Alle Symbole im Set-C-Stil.
-export interface SubItem { screen: Screen; label: string; icon: IconName }
+export interface SubItem { screen: Screen; label: string; icon: IconName; /** lange Beschriftung: bei kleinen Auflösungen enger gesetzt (CSS .tn-sub-item.tight) */ tight?: boolean }
 
 export interface MainCat { key: string; label: string; icon: IconName; dash: Screen; subs: SubItem[] }
 
@@ -108,8 +108,9 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cat-statistiken', label: 'Statistiken', icon: 'stats' },
     { screen: 'table', label: 'Liga', icon: 'stats' },
     { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
-    { screen: 'cup', label: 'Pokal', icon: 'trophy' },
-    { screen: 'supercup', label: 'Gipfelpokal', icon: 'trophy' },
+    // Nationale Pokale (Wunsch Pascal): drittes Menü Landespokal | Gipfelpokal; 'supercup' ist nur
+    // noch Sprungziel (→ Reiter Gipfelpokal, shell/useScreenHistory.ts).
+    { screen: 'cup', label: 'Nationale Pokale', icon: 'trophy', tight: true },
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'nationalteams', label: 'Nationalteams', icon: 'international' },
     { screen: 'halle', label: 'Halle', icon: 'trophy' },
@@ -176,7 +177,7 @@ export function TopNav({ screen, setScreen, dateLabel, onBack, onForward, menu =
           </button>
         </span>
         {activeCat.subs.map((s) => (
-          <button key={s.screen} className={`tn-sub-item ${screen === s.screen ? 'active' : ''}`} onClick={() => setScreen(s.screen)}>
+          <button key={s.screen} className={`tn-sub-item ${screen === s.screen ? 'active' : ''}${s.tight ? ' tight' : ''}`} onClick={() => setScreen(s.screen)}>
             <span>{s.label}</span>
           </button>
         ))}

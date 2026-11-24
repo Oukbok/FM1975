@@ -1,6 +1,9 @@
-// Screenshots Länderwahl (Statistiken › Liga/Pokal) und Masters-Wertung (Statistiken › Halle).
+// Screenshots Länderwahl (Statistiken › Liga/Nationale Pokale), Masters-Wertung (Statistiken › Halle)
+// und Statistiken › International (je Europapokal ein Reiter, Europäischer Gipfelpokal, Welt,
+// Fünfjahreswertung mit Seitenpanel je Verein und Sortierung; Wunsch Pascal).
 //   npm run build && SAVE=… node tests/statsland-shots.mjs [ordner] [präfix]
-//   VIEW=1366x768 für kleine Bildschirme; HALLE=1 nur die Hallen-Seite; LIGA=1 nur die Ligen.
+//   VIEW=1366x768 für kleine Bildschirme; HALLE=1 nur die Hallen-Seite; LIGA=1 nur die Ligen;
+//   INTL=1 nur Nationale Pokale + International + Sprung aus dem Ligensystem.
 //   Hallen-Winter: DUMP=… UNTIL=1990-12-19 node scripts/sim.mjs 15
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -79,7 +82,7 @@ const countrySel = () => page.locator('.cmp-select .sel3').nth(0);
 const compSel = () => page.locator('.cmp-select .sel3').nth(1);
 const seasonSel = () => page.locator('.cmp-select .sel3').nth(2);
 
-if (!process.env.HALLE) {
+if (!process.env.HALLE && !process.env.INTL) {
   await go('Liga');
   await shot('liga_heim');
   // Alle Ligen des Heimatlandes (nach Ebene gruppiert): tiefste Spielklasse mit Tabelle + Unterbau.
@@ -184,7 +187,8 @@ if (!process.env.HALLE) {
   await go('Pokal');
   await shot('pokal_heim');
 }
-if (!process.env.LIGA) {
+if (!process.env.HALLE && !process.env.LIGA) await intlShots();
+if (!process.env.LIGA && !process.env.INTL) {
   await go('Halle');
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${outDir}/${tag}_halle.png` });
@@ -194,6 +198,94 @@ if (!process.env.LIGA) {
     const o = await optionsOf(page, past.first());
     if (o.length > 1) { await pickOption(page, past.first(), o[1].value); await page.screenshot({ path: `${outDir}/${tag}_halle_vorjahr.png` }); console.log("Bild", `${outDir}/${tag}_halle_vorjahr.png`); }
   }
+}
+
+// Statistiken › Nationale Pokale (Landespokal | Gipfelpokal) und International (je Europapokal ein
+// Reiter, Europäischer Gipfelpokal, Welt, Fünfjahreswertung).
+async function intlShots() {
+  const tab = (label) => page.locator(`.app-main .sub3-tabs .tab:has-text("${label}")`).first();
+  const tabs = async () => (await page.locator('.app-main .sub3-tabs .tab').allTextContents()).map((t) => t.trim());
+  const plain = async (n) => { await page.waitForTimeout(300); await page.screenshot({ path: `${outDir}/${tag}_${n}.png` }); console.log('Bild', `${outDir}/${tag}_${n}.png`); };
+  const pageScroll = async (n) => {
+    const over = await page.evaluate(() => { const m = document.querySelector('.app-main'); return m ? Math.max(m.scrollWidth - m.clientWidth, document.documentElement.scrollWidth - innerWidth) : 0; });
+    if (over > 1) errors.push(`${n}: waagerechter Überlauf ${over} px`);
+  };
+  await go('Nationale Pokale');
+  await page.waitForSelector('.app-main .sub3-tabs .tab', { timeout: 5000 }).catch(() => {});
+  const cupTabs = await tabs();
+  console.log('Reiter Nationale Pokale:', cupTabs.join(' | '));
+  if (cupTabs.length < 2) errors.push('Nationale Pokale: weniger als zwei Reiter');
+  if (await page.locator('.tn-sub-item:has-text("Gipfelpokal")').count()) errors.push('Menüpunkt „Gipfelpokal“ gibt es noch');
+  await plain('npokal_landespokal');
+  await page.locator('.app-main .sub3-tabs .tab').nth(1).click();
+  await plain('npokal_gipfel');
+  await go('International');
+  await page.waitForSelector('.app-main .sub3-tabs .tab', { timeout: 5000 }).catch(() => {});
+  const it = await tabs();
+  console.log('Reiter International:', it.join(' | '));
+  if (it.at(-1) !== 'Fünfjahreswertung') errors.push(`International: letzter Reiter „${it.at(-1)}“ statt Fünfjahreswertung`);
+  if (!it.includes('Welt')) errors.push('International: Reiter Welt fehlt');
+  for (const [i, label] of it.entries()) {
+    if (label === 'Fünfjahreswertung') continue;
+    await page.locator('.app-main .sub3-tabs .tab').nth(i).click();
+    await plain(`intl_${i}_${label.replace(/[^A-Za-zÄÖÜäöüß]+/g, '').slice(0, 18)}`);
+    await pageScroll(`International › ${label}`);
+  }
+  // Ältere Saison im ersten Europapokal-Reiter: Reiter folgen den Wettbewerben der Saison.
+  await page.locator('.app-main .sub3-tabs .tab').first().click();
+  const ss = page.locator('.cmp-select .sel3');
+  if (await ss.count()) {
+    const opts = await optionsOf(page, ss.first());
+    const old = opts.find((o) => /^19[78]\d/.test(o.value)) ?? opts[0];
+    if (old) { await pickOption(page, ss.first(), old.value); console.log(`Reiter ${old.value}:`, (await tabs()).join(' | ')); await plain('intl_alt'); await pickOption(page, ss.first(), opts.at(-1).value); }
+  }
+  await tab('Fünfjahreswertung').click();
+  await page.waitForSelector('.cfx-row:not(.cfx-head)', { timeout: 5000 }).catch(() => errors.push('Fünfjahreswertung: keine Zeilen'));
+  await plain('coef');
+  await pageScroll('Fünfjahreswertung');
+  const fit = await page.evaluate(() => {
+    const l = document.querySelector('.cfx-list'), h = document.querySelector('.cfx-head');
+    const box = document.querySelector('.cfx-box')?.getBoundingClientRect();
+    const rows = [...document.querySelectorAll('.cfx-row')].map((r) => r.scrollWidth - r.clientWidth);
+    return { hx: l ? l.scrollWidth - l.clientWidth : -1, vscroll: l ? l.scrollHeight > l.clientHeight : false, rowOver: Math.max(0, ...rows), headTop: h?.getBoundingClientRect().top, boxBottom: box?.bottom, vh: innerHeight };
+  });
+  if (fit.hx > 1 || fit.rowOver > 1) errors.push(`Fünfjahreswertung: waagerecht zu breit (${fit.hx}/${fit.rowOver} px)`);
+  if (fit.boxBottom > fit.vh + 1) errors.push('Fünfjahreswertung: Box ragt unten aus dem Fenster');
+  // Liste ans Ende scrollen: Kopf bleibt stehen.
+  await page.evaluate(() => { const l = document.querySelector('.cfx-list'); if (l) l.scrollTop = l.scrollHeight; });
+  const headAfter = await page.evaluate(() => document.querySelector('.cfx-head')?.getBoundingClientRect().top);
+  if (Math.abs(headAfter - fit.headTop) > 1) errors.push('Fünfjahreswertung: Kopf scrollt mit');
+  await plain('coef_ende');
+  await page.evaluate(() => { const l = document.querySelector('.cfx-list'); if (l) l.scrollTop = 0; });
+  // Sortierung nach laufender Saison.
+  await page.locator('.cfx-head .cfx-live').click();
+  await plain('coef_sort_live');
+  await page.locator('.cfx-head .cfx-sum').click();
+  // Seitenpanel: laufende Saison des eigenen Landes, dann eine ältere Saison (falls im Archiv).
+  const live = page.locator('.cfx-row.me button.cfx-season.cfx-live');
+  if (await live.count()) {
+    await live.click(); await plain('coef_panel_live');
+    if (!await page.locator('.cfx-panel .cfx-prow:not(.cfx-phead)').count()) errors.push('Panel: keine Vereine (laufende Saison)');
+  } else console.log('Laufende Saison ohne Europapokale des eigenen Landes');
+  const past = page.locator('.cfx-list button.cfx-season:not(.cfx-live)').first();
+  if (await past.count()) { await past.click(); await plain('coef_panel_alt'); }
+  else console.log('Keine ältere Saison mit Punkten je Verein im Archiv');
+  const counts = await page.evaluate(() => ({ live: document.querySelectorAll('.cfx-list button.cfx-season.cfx-live').length, past: document.querySelectorAll('.cfx-list button.cfx-season:not(.cfx-live)').length, plain: document.querySelectorAll('.cfx-list span.cfx-season:not(.cfx-live)').length }));
+  console.log('Zellen mit Aufschlüsselung:', JSON.stringify(counts));
+  await page.keyboard.press('Escape');
+  if (await page.locator('.cfx-panel').count()) errors.push('Panel: Escape schließt nicht');
+  // Klick auf das Land → Länderprofil.
+  await page.locator('.cfx-list .cfx-row .cfx-land .cflag-link').first().click();
+  if (!await page.waitForSelector('.cnx-modal', { timeout: 4000 }).then(() => true).catch(() => false)) errors.push('Klick auf Land öffnet kein Länderprofil');
+  else { await page.keyboard.press('Escape'); await page.waitForTimeout(250); }
+  // Ligensystem: Reiter Fünfjahreswertung entfällt, „Ganze Wertung“ springt hierher.
+  await go('Ligensystem');
+  if ((await tabs()).includes('Fünfjahreswertung')) errors.push('Ligensystem: Reiter Fünfjahreswertung gibt es noch');
+  const goBtn = page.locator('.app-main .lp-coef-go');
+  if (await goBtn.count()) {
+    await goBtn.click(); await page.waitForTimeout(500);
+    if (!await page.locator('.cfx-box').count()) errors.push('„Ganze Wertung“ führt nicht zur Fünfjahreswertung');
+  } else errors.push('Ligensystem: Knopf „Ganze Wertung“ fehlt');
 }
 
 console.log(errors.length ? errors.join('\n') : 'keine Fehler');

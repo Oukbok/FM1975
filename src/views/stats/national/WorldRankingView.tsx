@@ -69,7 +69,7 @@ export default function WorldRankingView({ g }: { g: Game }) {
             <div><RankDelta d={wr.delta} wide /><span>zur Ausgabe davor</span></div>
           </div>
           <div className="dsec">Verlauf des Rangs</div>
-          <RankSpark pts={rankHistory(g, me)} of={wr.of} w={520} h={150} />
+          <RankSpark pts={rankHistory(g, me)} of={wr.of} w={520} h={150} cur={{ pts: wr.pts, ed: wr.ed, dPts: rows.find((r) => r.code === me)?.dPts }} />
         </div> : <Empty icon="international">{natName(me)} steht nicht in der Weltrangliste.</Empty>}
       </DashBox>
 

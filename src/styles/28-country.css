@@ -93,4 +93,5 @@
 .cnx-slots span { display: inline-flex; align-items: baseline; gap: 5px; }
 .cnx-slots b { font-size: 16px; color: var(--text); }
 .cnx-slots span.none { opacity: 0.5; }
+.cnx-slots .cnx-coef-go { margin-left: auto; }
 .cnx-slots em { flex-basis: 100%; font-style: normal; font-size: 12.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); }

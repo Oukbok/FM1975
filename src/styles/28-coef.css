@@ -1,0 +1,91 @@
+/* =============================================================================
+   FÜNFJAHRESWERTUNG (Statistiken › International, views/stats/CoefficientPage.tsx) – Präfix .cfx-*
+   Eine Tabelle über die volle Breite, Kopf fest, Liste scrollt intern; Zonen nach Startplätzen
+   dezent getönt (Tokens --green-rgb), dein Land mit Akzent-Kante, Seitenpanel je Verein.
+   ============================================================================= */
+.cfx-box .dbox-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; position: relative; }
+.cfx-wrap { position: relative; height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.cfx-list { flex: 1; min-height: 0; overflow-y: auto; }
+.cfx-row { display: grid; align-items: center; column-gap: 8px; padding: 0 14px 0 16px; height: 34px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.cfx-row > * { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cfx-head { height: 40px; flex: none; font: 600 12.5px var(--font-ui); color: var(--text-3); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.4px; }
+.cfx-n { text-align: right; }
+.cfx-c { text-align: center; }
+.cfx-head button { all: unset; box-sizing: border-box; cursor: pointer; text-align: right; font: inherit; color: inherit; }
+.cfx-head button:disabled { cursor: default; }
+.cfx-head .cfx-sort.on { color: var(--text); }
+.cfx-head .cfx-sort.on::after { content: ''; display: inline-block; margin-left: 4px; vertical-align: 2px; border: 4px solid transparent; border-top-color: currentColor; border-bottom: 0; }
+.cfx-head .cfx-live em { display: block; font-style: normal; font-size: 10.5px; letter-spacing: 0.8px; color: var(--accent); line-height: 1; }
+.cfx-head .cfx-slothead { color: var(--text-2); }
+
+.cfx-rank { font-weight: 700; color: var(--text); }
+.cfx-prev { color: var(--text-3); display: inline-flex; align-items: baseline; justify-content: center; gap: 4px; }
+.cfx-mv { font-style: normal; font-size: 12px; font-weight: 600; }
+.cfx-mv.up { color: var(--pos); }
+.cfx-mv.down { color: var(--neg); }
+.cfx-land { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.cfx-land .cflag-link { cursor: pointer; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.cfx-land .cflag-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cfx-land em { font-style: normal; font: 600 11px var(--font-ui); letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); flex: none; }
+.cfx-teams small { font-size: 12.5px; color: var(--text-3); }
+.cfx-season { color: var(--text-2); }
+button.cfx-season { all: unset; box-sizing: border-box; text-align: right; color: var(--text-2); cursor: pointer; padding: 3px 4px; margin: 0 -4px; border-radius: 4px; }
+button.cfx-season:hover, button.cfx-season.on { background: rgba(var(--ink-rgb), 0.08); color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.cfx-row .cfx-live { background: rgba(var(--accent-rgb), 0.07); color: var(--text); font-weight: 600; }
+button.cfx-season.cfx-live { padding: 3px 4px; }
+.cfx-sum { font-weight: 700; color: var(--accent); }
+.cfx-head .cfx-sum { color: var(--text-3); }
+.cfx-head .cfx-sum.on { color: var(--accent); }
+.cfx-dim { color: var(--text-3); }
+.cfx-slot { font-weight: 700; color: var(--text); }
+.cfx-slot.none { color: var(--text-4); font-weight: 400; }
+.cfx-slot.fixed { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+
+/* Zonen: Gruppen gleicher Startplätze, vorn kräftiger (dezent, nur Tokens) */
+.cfx-row.cfx-z0 { background: rgba(var(--green-rgb), 0.13); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.85); }
+.cfx-row.cfx-z1 { background: rgba(var(--green-rgb), 0.09); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.65); }
+.cfx-row.cfx-z2 { background: rgba(var(--green-rgb), 0.065); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.5); }
+.cfx-row.cfx-z3 { background: rgba(var(--green-rgb), 0.045); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.38); }
+.cfx-row.cfx-z4 { background: rgba(var(--green-rgb), 0.03); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.28); }
+.cfx-row.cfx-z5 { background: rgba(var(--green-rgb), 0.018); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.2); }
+.cfx-row.me { background: var(--accent-soft); box-shadow: inset 5px 0 0 var(--club-accent, var(--accent)); }
+.cfx-row.me .cfx-land { color: var(--club-accent, var(--accent)); }
+
+/* Fuß: Zonen-Legende, Kürzel, Regeln */
+.cfx-foot { flex: none; padding: 8px 14px 9px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.cfx-zones { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; color: var(--text-2); }
+.cfx-ftitle { font: 600 12px var(--font-ui); letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-3); margin-right: 2px; }
+.cfx-zone { display: inline-flex; gap: 6px; align-items: baseline; padding: 2px 8px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+.cfx-zone.cfx-z0 { background: rgba(var(--green-rgb), 0.13); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.85); }
+.cfx-zone.cfx-z1 { background: rgba(var(--green-rgb), 0.09); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.65); }
+.cfx-zone.cfx-z2 { background: rgba(var(--green-rgb), 0.065); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.5); }
+.cfx-zone.cfx-z3 { background: rgba(var(--green-rgb), 0.045); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.38); }
+.cfx-zone.cfx-z4 { background: rgba(var(--green-rgb), 0.03); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.28); }
+.cfx-zone.cfx-z5 { background: rgba(var(--green-rgb), 0.018); box-shadow: inset 3px 0 0 rgba(var(--green-rgb), 0.2); }
+.cfx-zone b { color: var(--text); }
+.cfx-keys { margin-left: auto; display: inline-flex; gap: 12px; color: var(--text-3); }
+.cfx-keys b { color: var(--text-2); }
+.cfx-note { font-size: 12.5px; color: var(--text-3); line-height: 1.35; }
+
+/* Kopf der Box: dein Land */
+.cfx-own { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.cfx-own b { font-weight: 700; }
+.cfx-own span { color: var(--text-3); font-weight: 500; }
+
+/* Seitenpanel: Punkte je Verein */
+.cfx-panel { position: absolute; top: 40px; right: 0; bottom: 0; width: 430px; z-index: 3; display: flex; flex-direction: column; background: var(--panel); border-left: 1px solid var(--border); box-shadow: var(--shadow); }
+.cfx-panel-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--border); font-size: 15px; }
+.cfx-panel-head .cflag-link { font-weight: 700; cursor: pointer; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cfx-panel-head b { margin-left: auto; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cfx-plist { flex: 1; min-height: 0; overflow-y: auto; }
+.cfx-prow { display: grid; grid-template-columns: minmax(0, 1fr) 64px 104px 52px; gap: 8px; align-items: center; padding: 7px 14px 7px 16px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+.cfx-panel:not(:has(.cfx-st)) .cfx-prow { grid-template-columns: minmax(0, 1fr) 90px 52px; }
+.cfx-prow > * { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cfx-phead { font: 600 12px var(--font-ui); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; flex: none; }
+.cfx-prow.me { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+.cfx-st { font-size: 13px; color: var(--text-3); }
+.cfx-st.in { color: var(--pos); }
+.cfx-st.won { color: var(--gold); font-weight: 700; }
+.cfx-psum { flex: none; display: flex; justify-content: space-between; align-items: baseline; padding: 9px 14px 6px 16px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-2); }
+.cfx-psum b { font-size: 17px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cfx-pnote { flex: none; padding: 4px 16px 12px; font-size: 13px; color: var(--text-3); line-height: 1.4; }
