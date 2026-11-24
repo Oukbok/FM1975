@@ -29,6 +29,7 @@ export function retireLibero(g: Game, year: number): void {
     if (p.positionSkill?.train === 'LIB' && p.clubId !== g.managedClubId) delete p.positionSkill.train;
     if (p.naturalPosition !== 'LIB') return;
     p.naturalPosition = 'IV';
+    ((p.history ??= {}).posChanges ??= []).push({ d: g.calendar.currentDate, from: 'LIB', to: 'IV' });
     p.secondaryPositions = [...new Set([...(p.secondaryPositions ?? []).filter((x) => x !== 'IV'), 'LIB' as const])];
     const v = p.positionSkill?.v;
     if (v) v.IV = Math.max(v.IV ?? 0, v.LIB ?? 0);

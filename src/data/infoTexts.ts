@@ -1308,7 +1308,12 @@ export const INFO_TEXTS = {
   },
   spielerentwicklung: {
     title: 'Spielerentwicklung',
-    text: 'Jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen), einmal im Monat zusätzlich alle Fähigkeiten (bis zu zehn Jahre). Oben wählst du die Anzeige (Stärke & Zustand, Stärke, eine Kategorie als Schnitt oder eine einzelne Fähigkeit) und den Zeitraum (letzte 52 Wochen oder gesamte Zeit). „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders in derselben Woche. Die Stärke aller Spieler wird jeden Monat gespeichert (älter als zehn Jahre: ein Wert je Jahr); Fähigkeiten anderer Spieler stammen aus den Bewertungsrunden.',
+    text: 'Jeden Sonntag hält das Spiel für deinen Kader Stärke, Form, Frische, Fitness und Moral fest (bis zu 52 Wochen), einmal im Monat zusätzlich alle Fähigkeiten (bis zu zehn Jahre). Oben wählst du die Anzeige (Stärke & Zustand, Stärke, eine Kategorie als Schnitt oder eine einzelne Fähigkeit) und den Zeitraum (1 J. bis Max). „Kaderschnitt“ zeigt gestrichelt den Mittelwert deines Kaders in derselben Woche. Beim Zeigen siehst du auch das Alter. Symbole auf der Linie markieren große Sprünge (ab 3 Punkten) – Zeigen oder Klick schlüsselt die Ursachen auf (Bewertung mit Gründen und Punkten, Verletzung, Wechsel, Trainingslager, Karrierephase), nur aus festgehaltenen Daten. Schraffiert: Zeit bei einem anderen Verein (nur grobe Werte). Die Stärke aller Spieler wird jeden Monat gespeichert (älter als zehn Jahre: ein Wert je Jahr); Fähigkeiten anderer Spieler stammen aus den Bewertungsrunden.',
+    wiki: 'player-profile',
+  },
+  entwicklungFremd: {
+    title: 'Anderer Verein',
+    text: 'In dieser Zeit spielte er nicht bei dir. Dein Trainerteam hat ihn nicht selbst betreut: Das Spiel hält für ihn dann nur die Stärke einmal im Monat (älter als zehn Jahre: einmal im Jahr) und die Bewertungsrunden fest – ohne Wochenwerte (Form, Frische, Fitness, Moral), ohne monatliche Fähigkeiten und ohne Begründungen der Auf- und Abwertungen. Die gestrichelte Linie ist deshalb nur eine grobe Einordnung von außen, wie ihn auch Beobachter sehen. Genaue Werte und Gründe gibt es erst ab seinem Wechsel zu deinem Verein; kam er als Spieler aus dem Ausland, beginnt die Kurve oft erst mit dem Wechsel.',
     wiki: 'player-profile',
   },
   stationen: {

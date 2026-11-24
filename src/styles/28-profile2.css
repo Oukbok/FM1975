@@ -314,3 +314,60 @@
 /* Teambonus-Schild (components/player/LeaderMark.tsx) */
 .tb-medal { display: inline-flex; margin-right: 6px; vertical-align: -1px; }
 .tb-medal .ldm-svg { width: 12px; height: 14px; }
+
+/* Spielerentwicklung: Alter im Hover, Ereignis-Marker, Zeit bei anderen Vereinen */
+.pp3-tip-age { font-size: 11.5px; color: var(--text-3); margin: -2px 0 4px; white-space: nowrap; }
+.pp3-away {
+  position: absolute; pointer-events: none; z-index: 0;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--text) 7%, transparent) 0 1px, transparent 1px 7px), color-mix(in srgb, var(--text) 4%, transparent);
+  border-left: 1px dashed var(--border); border-right: 1px dashed var(--border);
+}
+.pp3-away-lbl {
+  position: absolute; top: 4px; left: 6px; display: inline-flex; align-items: center; gap: 4px; pointer-events: auto;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.3px; color: var(--text-3); white-space: nowrap;
+  background: var(--panel); border: 1px solid var(--border-soft); border-radius: 4px; padding: 1px 4px 1px 6px;
+}
+.pp3-ev {
+  position: absolute; z-index: 3; width: 20px; height: 20px; margin: 0; padding: 0; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%;
+  background: var(--elevated); border: 1.5px solid var(--text-3); color: var(--text-2);
+  box-shadow: 0 0 0 2px var(--panel), var(--shadow); --icon-base: currentColor; --icon-accent: currentColor;
+  transition: transform 0.12s ease;
+}
+.pp3-ev.up { border-color: var(--pos); color: var(--pos); }
+.pp3-ev.down { border-color: var(--neg); color: var(--neg); }
+.pp3-ev.down.rating .game-icon { transform: scaleY(-1); }
+.pp3-ev:hover, .pp3-ev.on { transform: translate(-50%, -50%) scale(1.18); }
+.pp3-ev:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pp3-evcard {
+  position: fixed; z-index: 10000; width: 380px; transform-origin: top left; pointer-events: none;
+  background: var(--elevated); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; box-shadow: var(--shadow);
+}
+.pp3-evcard.pinned { pointer-events: auto; }
+.pp3-evcard-head { display: flex; align-items: baseline; gap: 8px; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--border-soft); font-size: 13px; color: var(--text-2); }
+.pp3-evcard-head > b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.pp3-evcard-head em { font-style: normal; margin-left: auto; color: var(--text-4); font-size: 11.5px; white-space: nowrap; }
+.pp3-evcard-x { border: 0; background: none; color: var(--text-3); cursor: pointer; padding: 0 0 0 4px; display: inline-flex; }
+.pp3-evcard b.up { color: var(--pos); }
+.pp3-evcard b.down { color: var(--neg); }
+.pp3-evcard b.note { color: var(--text-4); }
+.pp3-evcard-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.pp3-evcard-list > li { display: grid; grid-template-columns: 18px 1fr; gap: 7px; }
+.pp3-evcard-ic { display: inline-flex; padding-top: 1px; color: var(--text-3); --icon-base: currentColor; --icon-accent: currentColor; }
+.pp3-evcard-ic.flip .game-icon { transform: scaleY(-1); }
+.k-injury .pp3-evcard-ic { color: var(--neg); }
+.pp3-evcard-t { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); }
+.pp3-evcard-d { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+.pp3-evcard-why { list-style: none; margin: 4px 0 0; padding: 0; }
+.pp3-evcard-why li { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-2); padding: 1px 0; }
+.pp3-evcard-why b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pp3-evcard-foot { margin-top: 6px; font-size: 11px; color: var(--text-4); }
+.pp3-away-lbl.end { left: auto; right: 6px; }
+/* Kleine Bildschirme (Spielrahmen data-fs): Schrift wie 34-compact-fonts.css anheben – die Karte liegt im Portal außerhalb. */
+.pp3-evcard.lift { width: 520px; }
+.pp3-evcard.lift .pp3-evcard-head, .pp3-evcard.lift .pp3-evcard-t, .pp3-evcard.lift .pp3-evcard-d, .pp3-evcard.lift .pp3-evcard-why li { font-size: 17.6px; }
+.pp3-evcard.lift .pp3-evcard-head > b { font-size: 20px; }
+.pp3-evcard.lift .pp3-evcard-head em, .pp3-evcard.lift .pp3-evcard-foot { font-size: 15.5px; }
+.pp3-evcard.lift .pp3-evcard-list > li { grid-template-columns: 22px 1fr; }
+[data-fs] .pp3-tip-age { font-size: 15.5px; }
+[data-fs] .pp3-away-lbl { font-size: 15px; }

@@ -8,7 +8,9 @@
 // zehn Jahre, game/profileWeeks.ts), Stärke je Bewertungsrunde (`development.abilityHistory`)
 // und Attribut-Momentaufnahmen je Bewertung (`history.attributeSnapshots`) – dazu der heutige
 // Wert. Die x-Achse läuft nach Datum, damit unterschiedlich dichte Quellen zusammenpassen.
-import { useMemo, useState, type PointerEvent } from 'react';
+// Hover zeigt Datum, Alter und Werte; große Sprünge tragen Ereignis-Marker mit Ursachen
+// (devEvents.ts/DevMarkers.tsx), Zeit bei anderen Vereinen ist schattiert („Anderer Verein“).
+import { useId, useMemo, useState, type PointerEvent } from 'react';
 import type { Player, WeekPoint } from '../../types';
 import type { Game } from '../../game/state';
 import { profileWeeksOf } from '../../game/profileWeeks';
@@ -17,6 +19,9 @@ import { ATTR_DE, GROUPS, utcDate, type AttrKey } from './shared';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
 import Select, { type SelectOption } from '../../ui/Select';
 import RangeSeg, { effectiveRange, inRange, spanYears, useChartRange } from '../../ui/RangeSeg';
+import { InfoTip } from '../../ui/InfoTip';
+import { MAX_MARKERS, ageAt, awaySpans, devEvents, unknownAway } from './devEvents';
+import DevMarkers from './DevMarkers';
 
 type Key = 'ov' | 'f' | 'fr' | 'fi' | 'm';
 const SERIES: { k: Key; label: string; color: string }[] = [
@@ -83,6 +88,8 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
   const [on, setOn] = useState(DEFAULT_ON);
   const [avg, setAvg] = useState(false);
   const [hover, setHover] = useState<number | null>(null);
+  const [markOpen, setMarkOpen] = useState(false);
+  const clipId = useId().replace(/:/g, '');
   const today = g?.calendar.currentDate ?? weeks[weeks.length - 1]?.d ?? new Date().toISOString().slice(0, 10);
 
   // Zustand braucht den Wochenverlauf; ohne ihn (fremde Spieler) oder über die gesamte Zeit: Stärke.
@@ -163,6 +170,18 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
   const long = t1 - t0 > 2 * 365 * DAY;
   const tickLabel = (t: number) => long ? String(new Date(t).getUTCFullYear()) : utcDate(new Date(t).toISOString());
   const ticks = [t0, (t0 + t1) / 2, t1];
+  // Ereignis-Marker (große Sprünge der Hauptlinie) und Zeit bei anderen Vereinen.
+  const mainKey = cond ? 'ov' : series[0].k;
+  const away = awaySpans(p, g, today.slice(0, 10))
+    .map((s) => ({ ...s, x0: Math.max(L, s.a ? x(ts(s.a)) : L), x1: Math.min(W - R, x(ts(s.b))) }))
+    .filter((s) => s.x1 - s.x0 > 1);
+  const awayLabel = away.length ? away.reduce((a, b) => (b.x1 - b.x0 > a.x1 - a.x0 ? b : a)) : null;
+  const mainOn = !cond || on.ov;
+  const evs = mainOn ? devEvents(pts.map((pt) => ({ d: pt.d, t: pt.t, val: pt.v[mainKey] })), { p, g, today, weeks: cond ? weeks : undefined, away },
+    { max: MAX_MARKERS[range] ?? 8, xOf: x }) : { events: [], hidden: 0 };
+  const events = evs.events.filter((ev) => !unknownAway(ev, away));
+  const isAway = (pt: Pnt) => away.some((s) => (!s.a || pt.d > s.a) && pt.d <= s.b);
+  const age = (d: string) => ageAt(p.dateOfBirth, d);
   const tipHead = (pt: Pnt) => cond ? `Woche bis ${utcDate(pt.d)}` : pt.d === today.slice(0, 10) ? `Heute, ${utcDate(pt.d)}` : utcDate(pt.d);
 
   return (
@@ -175,11 +194,37 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
           {avg && cond && active.map((s) => (
             <path key={'t' + s.k} d={path((pt) => team.get(pt.d)?.[s.k as Key])} fill="none" stroke={s.color} strokeWidth={1.4} strokeDasharray="4 4" opacity={0.55} vectorEffect="non-scaling-stroke" />
           ))}
-          {active.map((s) => (
-            <path key={s.k} d={path((pt) => pt.v[s.k])} fill="none" stroke={s.color} strokeWidth={s.k === 'ov' || s.k === 'a' ? 2.4 : 1.8} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-          ))}
+          {away.length > 0 && (
+            <defs>
+              <clipPath id={`${clipId}-own`}>
+                {[L, ...away.flatMap((s) => [s.x0, s.x1]), W].reduce<[number, number][]>((acc, v, i, arr) => (i % 2 === 0 && i + 1 < arr.length ? [...acc, [v, arr[i + 1]]] : acc), [])
+                  .map(([a, b], i) => b > a && <rect key={i} x={a} y={0} width={b - a} height={H} />)}
+              </clipPath>
+              <clipPath id={`${clipId}-away`}>
+                {away.map((s, i) => <rect key={i} x={s.x0} y={0} width={s.x1 - s.x0} height={H} />)}
+              </clipPath>
+            </defs>
+          )}
+          {active.map((s) => {
+            const d = path((pt) => pt.v[s.k]);
+            const sw = s.k === 'ov' || s.k === 'a' ? 2.4 : 1.8;
+            if (!away.length) return <path key={s.k} d={d} fill="none" stroke={s.color} strokeWidth={sw} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />;
+            return (
+              <g key={s.k}>
+                <path d={d} clipPath={`url(#${clipId}-own)`} fill="none" stroke={s.color} strokeWidth={sw} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                <path d={d} clipPath={`url(#${clipId}-away)`} fill="none" stroke={s.color} strokeWidth={sw} strokeDasharray="5 4" opacity={0.7} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              </g>
+            );
+          })}
           {hp && <line x1={x(hp.t)} x2={x(hp.t)} y1={T} y2={H - B} className="pp3-cursor" />}
         </svg>
+        {away.map((s, i) => (
+          <div key={i} className="pp3-away" style={{ left: `${(s.x0 / W) * 100}%`, width: `${((s.x1 - s.x0) / W) * 100}%`, top: `${(T / H) * 100}%`, bottom: `${(B / H) * 100}%` }}>
+            {(s === awayLabel || s.x1 - s.x0 >= 120) && (
+              <span className={`pp3-away-lbl${s.x0 > W * 0.6 ? ' end' : ''}`}>Anderer Verein<InfoTip k="entwicklungFremd" /></span>
+            )}
+          </div>
+        ))}
         {/* Achsen als HTML – das SVG wird gestreckt, Schrift bliebe sonst verzerrt */}
         {grid.map((v) => (
           <span key={v} className="pp3-axis pp3-ay" style={{ top: `${(y(v) / H) * 100}%`, right: `${((W - L + 6) / W) * 100}%` }}>{v}</span>
@@ -190,9 +235,14 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
         {hp && active.map((s) => hp.v[s.k] != null && (
           <span key={s.k} className="pp3-dot" style={{ left: `${(x(hp.t) / W) * 100}%`, top: `${(y(hp.v[s.k]!) / H) * 100}%`, background: s.color }} />
         ))}
-        {hp && (
+        {events.length > 0 && (
+          <DevMarkers key={`${view}|${range}`} events={events} onOpen={(o) => { setMarkOpen(o); if (o) setHover(null); }}
+            pos={(ev) => ({ left: (x(pts[ev.i].t) / W) * 100, top: (y(pts[ev.i].v[mainKey]!) / H) * 100 })} />
+        )}
+        {hp && !markOpen && (
           <div className={`pp3-tip${tipLeft > 60 ? ' left' : ''}`} style={{ left: `${tipLeft}%` }}>
             <div className="pp3-tip-d">{tipHead(hp)}</div>
+            {age(hp.d) != null && <div className="pp3-tip-age">Alter {age(hp.d)} Jahre{isAway(hp) ? ' · anderer Verein' : ''}</div>}
             {active.map((s) => (
               <div key={s.k} className="pp3-tip-row">
                 <i style={{ background: s.color }} /><span>{s.label}</span><b>{hp.v[s.k] ?? '–'}</b>
@@ -224,6 +274,7 @@ export default function DevChart({ p, g }: { p: Player; g?: Game }) {
               {view === 'zustand' && !weekly ? 'Form, Frische, Fitness und Moral hält das Spiel nur wöchentlich für deinen Kader fest. '
                 : view === 'zustand' ? 'Form, Frische, Fitness und Moral gibt es für die letzten 52 Wochen (1 J.) – länger zeigt das Diagramm die Stärke. ' : ''}
               {pts.length} Messpunkte{attrView ? ' · eigener Kader monatlich, sonst je Bewertungsrunde' : ''}
+              {evs.hidden > 0 && events.length > 0 ? (events.length === 1 ? ' · der größte Sprung markiert' : ` · die ${events.length} größten Sprünge markiert`) : ''}
             </span>
           </>
         )}

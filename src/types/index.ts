@@ -328,6 +328,8 @@ export interface PlayerHistory {
   months?: MonthPoint[];
   /** Stärke je Monat aller Spieler (game/ovHistory.ts). */
   ovm?: OvMonthly;
+  /** Wechsel der Stammposition (z. B. Libero → IV, game/liberoEra.ts) fürs Entwicklungsdiagramm. */
+  posChanges?: { d: string; from: Position; to: Position }[];
 }
 
 export function createEmptyStats(): PlayerStats {
