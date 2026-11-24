@@ -20,12 +20,12 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
   await page.locator('.hd-gear').click();
   await page.locator('.menu-dd-item:has-text("Wiki")').click();
   await page.waitForSelector('.wiki-search-d');
-  await page.locator('.dchip:has-text("Chronik")').first().click();
-  await page.locator('.dmsg:has-text("Chronik der Epochen")').first().click();
+  await page.locator('.wk-cat-head:has-text("Chronik")').first().click();
+  await page.locator('.wk-art:has-text("Chronik der Epochen")').first().click();
   await page.waitForSelector('.chw');
   await shot('1_kapitel');
   await page.fill('.wiki-search-d', 'Bosman');
-  await page.locator('.dmsg:has-text("Chronik der Epochen")').first().click();
+  await page.locator('.wk-art:has-text("Chronik der Epochen")').first().click();
   await shot('2_suche_bosman');
   const n = await page.locator('.chw .chm-row').count();
   if (n < 1) errors.push(`${w}: Suche „Bosman“ findet keinen Meilenstein`);
@@ -39,7 +39,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     await shot('3_verweis');
   } else errors.push(`${w}: kein Wiki-Verweis beim Bosman-Urteil`);
   await page.fill('.wiki-search-d', '');
-  await page.locator('.dmsg:has-text("Chronik der Epochen")').first().click();
+  await page.locator('.wk-art:has-text("Chronik der Epochen")').first().click();
   await page.locator('.chw .dchip:has-text("Große Chronik")').click();
   await page.waitForSelector('.chm-modal');
   await shot('4_fenster');

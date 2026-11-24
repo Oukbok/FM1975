@@ -134,7 +134,7 @@ await step('wiki', async () => {
   await page.waitForTimeout(600);
   await record('wiki');
   await page.screenshot({ path: `${outDir}/wiki_${vw}.png` });
-  const arts = page.locator('.dmsg');
+  const arts = page.locator('.wk-art');
   if (await arts.count() > 3) { await arts.nth(3).click(); await record('wiki_artikel'); await page.screenshot({ path: `${outDir}/wiki_artikel_${vw}.png` }); }
   await page.keyboard.press('Escape');
 });
