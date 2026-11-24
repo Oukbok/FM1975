@@ -13,7 +13,7 @@ import { COUNTRY_BY_CC } from '../data/world/countries';
 import { identOf } from './worldCompose';
 import { homeCountryOf } from './state';
 import { isLocalClub, localClubName } from './youthComps/localClubs';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { HIST_FOREIGN, HIST_TOP_SCORERS } from '../data/history/finals';
 import { HISTORIC_SEASONS, historicDivisions, historicFinal, type HistFinal } from '../data/history/seasons';
 import { seasonLabel } from '../engine/calendar';
@@ -21,7 +21,7 @@ import type { LeagueGroup } from '../engine/leagues';
 import { seasonStartYear } from '../data/timeline';
 import type { CompTuple } from '../engine/compStats';
 import type { CupState, CupTie, Match } from '../types';
-import { euroCompName, euroFormat } from '../data/euroFormats';
+import { euroCompName, euroFormat, euroCompLabel } from '../data/euroFormats';
 import { groupStandings } from '../engine/euroGroups';
 import type { GroupTable, GroupZone } from '../components/competition/GroupTables';
 import { clubView } from './clubProfile';
@@ -31,6 +31,7 @@ import {
   type ArchCup, type ArchRow, type CupKey, type StatCat,
 } from './leagueArchive';
 import type { Game } from './state';
+import { cupName } from '../data/competitions/overrides';
 
 export type Source = 'history' | 'archive' | 'live';
 export interface SeasonOption { season: string; source: Source }
@@ -109,7 +110,7 @@ export interface CompSnapshot {
   finals?: { season: string; winner: string | null; finalist?: string }[];
 }
 
-const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? 'Landespokal' : euroCompName(k, seasonStartYear(season)) ?? EURO_COMP_NAMES[k]);
+const CUP_LABEL = (k: CupKey, season: string) => (k === 'cup' ? cupName(seasonStartYear(season)) : euroCompName(k, seasonStartYear(season)) ?? euroCompLabel(k));
 
 /** Zonen einer Gruppen-/Ligarunde (Weiterkommen, Zwischenrunde, Wechsel) nach Format der Saison. */
 function zonesFor(k: CupKey, season: string, roundName: string): { zones: GroupZone[]; legs?: number } {

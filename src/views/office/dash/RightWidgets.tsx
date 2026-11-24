@@ -16,10 +16,11 @@ import type { Player } from '../../../types';
 import { Crest, clubShort } from '../press/parts';
 import { ownGames } from './data';
 import { TeamWidget, Widget } from './LeftWidgets';
+import { cupName } from '../../../data/competitions/overrides';
 
 type Go = (s: Screen) => void;
 const stop = (e: { stopPropagation: () => void }) => e.stopPropagation();
-const COMP_LABEL = { Liga: 'Liga', Pokal: 'Landespokal', Europa: 'Europapokal' } as const;
+const COMP_LABEL = (k: 'Liga' | 'Pokal' | 'Europa') => (k === 'Pokal' ? cupName() : k === 'Liga' ? 'Liga' : 'Europapokal');
 
 // ------------------------------------------------------------- Nächstes Spiel
 type Res = 'W' | 'D' | 'L';
@@ -44,7 +45,7 @@ function NextMatchWidget({ g, onGoto }: { g: Game; onGoto: Go }) {
   const me = g.managedClubId;
   const pos = (id: string) => g.table.rows.find((r) => r.clubId === id)?.position;
   return (
-    <Widget title="Nächstes Spiel" to="fixtures" onGoto={onGoto} right={next ? COMP_LABEL[next.comp] : undefined} className="dz-next">
+    <Widget title="Nächstes Spiel" to="fixtures" onGoto={onGoto} right={next ? COMP_LABEL(next.comp) : undefined} className="dz-next">
       {!next ? <div className="dz-empty">Kein Spiel angesetzt.</div> : (
         <>
           <div className="dz-nm">

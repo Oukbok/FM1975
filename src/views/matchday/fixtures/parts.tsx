@@ -86,7 +86,7 @@ export function CompRow({ c }: { c: OwnComp }) {
   const liga = c.key === 'liga';
   return (
     <div className={`fxp-comp s-${c.state}`}>
-      <div className="fxp-trophy"><TrophyImage shape={c.shape} /></div>
+      <div className="fxp-trophy"><TrophyImage shape={c.shape} img={c.img} /></div>
       <div className="fxp-cmain">
         <div className="fxp-cname">{c.name}</div>
         <div className="fxp-cstat"><span className={`fxp-pill s-${c.state}`}>{liga && c.state === 'live' ? 'Läuft' : STATE_DE[c.state]}</span><b>{c.status}</b></div>

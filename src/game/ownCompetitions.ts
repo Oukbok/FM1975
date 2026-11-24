@@ -6,19 +6,23 @@
 // =============================================================================
 import { nOf } from '../engine/textNum';
 import type { CupState, CupTie } from '../types';
-import type { Game } from './state';
+import { homeCountryKey, homeCountryOf, type Game } from './state';
 import { leagueTrophyShape, type TrophyShape } from './trophyCabinet';
 import { euroCompName } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
 import { euroStatus } from './euroFixture';
 import { oppName } from './opponentView';
 import { superCupState, ROUND_DE } from './superCupGame';
+import { compTrophyAt } from '../data/competitions/registry';
+import { cupName } from '../data/competitions/overrides';
 
 export type CompState = 'live' | 'out' | 'won' | 'wait';
 export interface OwnComp {
   key: string;
   name: string;
   shape: TrophyShape;
+  /** Eigenes Trophäenbild aus dem Datensatz (Editor › Wettbewerbe). */
+  img?: string;
   state: CompState;
   /** Stand in Worten: „4. Platz · 21 Punkte“, „Viertelfinale“, „Aus im Achtelfinale“. */
   status: string;
@@ -86,7 +90,7 @@ export function ownCompetitions(g: Game): OwnComp[] {
     key: 'liga', name: pd.name, shape: leagueTrophyShape(pd.tier > 100 ? pd.tier - 100 : pd.tier, pd.tier > 100) ?? 'teller', state: played >= total && total > 0 ? (pos === 0 ? 'won' : 'out') : 'live',
     status: row ? `${pos + 1}. Platz · ${nOf(row.points, 'Punkt', 'Punkte')}` : 'Saison beginnt', steps: total ? { n: total, at: played } : undefined,
   });
-  if (g.cup) { const e = cupEntry(g, g.cup, id, 'cup', 'Landespokal', 'pokal'); if (e) out.push(e); }
+  if (g.cup) { const e = cupEntry(g, g.cup, id, 'cup', cupName(), 'pokal'); if (e) out.push(e); }
   for (const k of ['ec', 'cwc', 'uefa'] as const) {
     const cup = g.euroCups?.[k];
     if (!cup) continue;
@@ -114,6 +118,15 @@ export function ownCompetitions(g: Game): OwnComp[] {
       out.push({ key: `sc-${ev.key}`, name: ev.name, shape: 'pokal', state, status, last: lastLine,
         next: state === 'live' && next ? { opp: oppName(g, next.home === id ? next.away : next.home), oppId: next.home === id ? next.away : next.home, home: next.home === id } : undefined });
     }
+  }
+  // Trophäe aus dem Datensatz (Editor › Wettbewerbe)
+  const home = homeCountryKey(g);
+  for (const e of out) {
+    const cid = e.key === 'liga' ? (pd.tier === 1 ? `league:${homeCountryOf(g)}:1` : pd.tier === 101 ? 'league:gdr:1' : null)
+      : e.key === 'sc-home' ? `super:${home}` : e.key === 'sc-uefa' ? 'uefasuper' : e.key;
+    const t = cid ? compTrophyAt(cid, y) : null;
+    if (t?.shape) e.shape = t.shape;
+    if (t?.img) e.img = t.img;
   }
   return out;
 }

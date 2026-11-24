@@ -21,6 +21,8 @@
 // Prämien in 1975-Basis (× economyScale): grobe Größenordnung der echten Prämien.
 // =============================================================================
 
+import { compNameOr } from '../../competitions/overrides';
+
 export type IcKey = 'wp' | 'cwc' | 'icup' | 'big';
 export type IcFormat = 'legs2' | 'tokyo' | 'cwc2000' | 'six' | 'seven' | 'icup' | 'big32';
 
@@ -37,6 +39,11 @@ export const IC_FORMAT_DE: Record<IcFormat, string> = {
   icup: 'Stufenturnier der Kontinentalsieger, Europas Meister erst im Finale (Dezember)',
   big32: '32 Teams in acht Vierergruppen, Achtelfinale bis Finale (Juli, vor dem Ligastart)',
 };
+
+/** Wettbewerb im Datensatz (Editor › Wettbewerbe) je Schlüssel – gleich den Titelarten. */
+export const IC_COMP_ID: Record<IcKey, string> = { wp: 'weltpokal', cwc: 'klubwm', big: 'klubwm', icup: 'intercup' };
+/** Anzeigename in der Saison (Startjahr) inkl. Datensatz. */
+export const icName = (key: IcKey, y: number): string => compNameOr(IC_COMP_ID[key], y, IC_NAMES[key]);
 
 export interface IcPlan { key: IcKey; format: IcFormat; month: number }
 

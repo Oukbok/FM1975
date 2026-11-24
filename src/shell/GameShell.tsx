@@ -34,6 +34,7 @@ import { ScreenRouter } from './ScreenRouter';
 import { chainFlags, usePopupQueue } from './usePopupQueue';
 import { useScreenHistory } from './useScreenHistory';
 import { CONTRACT_SCREEN_EVENT, ContractOpenReq } from '../screens/contract/contractOpen';
+import { setCompetitionDate } from '../data/competitions/overrides';
 
 /**
  * Automatisierte Oberflächentests (Playwright setzt navigator.webdriver): die Sperre „Weiter“
@@ -69,6 +70,7 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   const [clubEditorOpen, setClubEditorOpen] = useState(false);
 
   const g = game;
+  setCompetitionDate(g.calendar.currentDate); // Namen der Wettbewerbe (Datensatz)
   setCrestDate(g.calendar.currentDate); // spätere Wappen aus dem Datensatz (vor dem Rendern der Kinder)
   setPortraitGame(g); // hochgeladene Spielerbilder aus dem Datensatz (game/playerPortraits.ts)
   useEffect(() => () => setPortraitGame(null), []);

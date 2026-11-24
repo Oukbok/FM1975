@@ -27,6 +27,7 @@ import { makeMessage, pushMessage } from '../../engine/messages';
 import { CHOICE_HANDLERS } from '../eventsGame';
 import { createPick, ownCampaignStrength } from './nationalPick';
 import type { NjPick } from './nationalPick';
+import { natTournamentName } from '../../data/competitions/overrides';
 
 export type { NjPick } from './nationalPick';
 
@@ -81,7 +82,7 @@ const START_TRUST = 60;
 const yearOf = (iso: string) => parseInt(iso.slice(0, 4), 10);
 export const fmtDay = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}`;
 export const tKey = (t: { kind: TournamentKind; year: number }) => `${t.kind} ${t.year}`;
-export const tLong = (t: { kind: TournamentKind; year: number }) => `${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${t.year}`;
+export const tLong = (t: { kind: TournamentKind; year: number }) => `${natTournamentName(t.kind, t.year)} ${t.year}`;
 export const emptyRec = (): NjRec => ({ p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 });
 
 export function nationalJob(g: Game): NationalJob | undefined { return (g as G).nationalJob; }

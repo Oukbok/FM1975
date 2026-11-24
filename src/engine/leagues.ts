@@ -16,6 +16,7 @@
 // -----------------------------------------------------------------------------
 
 import { groupWordOfKey, leagueName } from '../data/leagueNames';
+import { competitionYear, compPeriod } from '../data/competitions/overrides';
 import { Club, Match, LeagueTable, PointSystem, MatchResult } from '../types';
 import { generateFixtures, calculateTable } from './league';
 
@@ -107,6 +108,10 @@ export function divisionTitle(d: { tier: number; group: LeagueGroup; name: strin
 }
 
 export function divisionLabel(tier: number, group: LeagueGroup): string {
+  // Umbenennung im Datensatz (Editor › Wettbewerbe): 1./2. Ebene des Heimatlandes bzw. der DDR.
+  const own = tier === 101 || tier === 102 ? compPeriod(`league:gdr:${tier - 100}`, competitionYear())?.name
+    : tier <= 2 ? compPeriod(`league:${homeCc}:${tier}`, competitionYear())?.name : undefined;
+  if (own) return tier === 2 && group ? `${own} ${homeCc !== 'ger' ? groupWordOfKey(homeCc, group) : groupLabel(group)}`.trim() : own;
   if (tier === 101) return 'DDR-Oberliga';
   if (tier === 102) return 'DDR-Liga';
   if (homeCc !== 'ger' && tier < 100) {

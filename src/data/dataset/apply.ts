@@ -26,6 +26,7 @@ import { POOL_TOWNS } from '../poolTowns';
 import { Dataset, PlayerPhotoSet } from './schema';
 import { isPhotoPose } from '../pressPhotos';
 import { BUILTIN_ID, builtinDataset } from './builtin';
+import { setCompetitionOverrides } from '../competitions/overrides';
 
 let activeId = BUILTIN_ID;
 let activeCosmetics: Pick<Dataset, 'crests' | 'crestEras' | 'kits'> = {};
@@ -88,6 +89,8 @@ export function applyDataset(ds: Dataset | null): void {
   activeId = d.meta?.id ?? BUILTIN_ID;
   activeCosmetics = { crests: d.crests ?? {}, crestEras: d.crestEras ?? {}, kits: d.kits ?? {} };
   activePhotos = cleanPlayerPhotos(d.playerPhotos);
+  // Wettbewerbe: Perioden mit geänderten Namen/Regeln (fehlt = eingebautes Verhalten).
+  setCompetitionOverrides(d.competitions);
 
   replaceArray(CLUB_SEEDS, d.clubs?.tier1, base.clubs.tier1);
   replaceArray(SECOND_LIGA_NORD_SEEDS, d.clubs?.secondNord, base.clubs.secondNord);

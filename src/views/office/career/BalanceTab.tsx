@@ -20,6 +20,7 @@ import { InfoTip } from '../../../ui/InfoTip';
 import type { InfoKey } from '../../../data/infoTexts';
 import { COMP_DE, crestOf, dmy, ppgText, wdlText } from './parts';
 import { RepHistory } from './RepChart';
+import { cupName } from '../../../data/competitions/overrides';
 
 type Tab = 'bilanz' | 'saisons' | 'personen';
 
@@ -99,7 +100,7 @@ export function BalanceTab({ g, d, rep, onTab }: { g: Game; d: CareerData; rep: 
               {(['L', 'P', 'E'] as const).map((k) => {
                 const r = d.totals[k];
                 return (
-                  <tr key={k}><td>{k === 'L' ? 'Liga' : k === 'P' ? 'Landespokal' : 'Europapokal'}</td>
+                  <tr key={k}><td>{k === 'L' ? 'Liga' : k === 'P' ? cupName() : 'Europapokal'}</td>
                     <td>{games(r)}</td><td>{wdlText(r)}</td><td>{r[3]}:{r[4]}</td><td><b>{ppgText(r)}</b></td></tr>
                 );
               })}

@@ -19,10 +19,14 @@ import { seasonsOf, titlesOf, TITLE_DE, type SeasonPlacement, type TitleKind } f
 import { compClubName } from './competitionView';
 import { archivedSeason, type ArchRow, type CupKey } from './leagueArchive';
 import type { Game } from './state';
-import { homeCountryKey } from './state';
+import { homeCountryKey, homeCountryOf } from './state';
 import { icArchiveFor } from './intercontinental';
 import { superCupArchiveFor } from './superCupGame';
 import { indoorState } from './winterShared';
+import { compNameOr, cupName } from '../data/competitions/overrides';
+import { compTrophyAt } from '../data/competitions/registry';
+import { uefaSuperName } from '../data/superCups';
+import { icName } from '../data/world/continents/intercontinental';
 
 export type TrophyCat = 'liga' | 'pokal' | 'kontinental' | 'jugend' | 'andere';
 export const TROPHY_CATS: { key: TrophyCat; label: string }[] = [
@@ -49,6 +53,8 @@ export interface TrophyEntry {
   historic: boolean;
   /** Ebene (Liga-Titel, Aufstieg). */
   tier?: number;
+  /** Eigenes Trophäenbild aus dem Datensatz (Editor › Wettbewerbe), ersetzt Zeichnung/Foto. */
+  img?: string;
 }
 
 export interface TrophyFact { k: string; v: string; club?: string }
@@ -98,24 +104,51 @@ function catOf(kind: TitleKind): TrophyCat {
   if (kind === 'halle') return 'andere';
   return 'jugend';
 }
-function titleName(kind: TitleKind, season: string): string {
+/** Wettbewerb im Datensatz (Editor › Wettbewerbe) zu einer Titelart; null = keiner. */
+export function compIdOfTitle(kind: TitleKind | 'staffel' | 'aufstieg', homeKey: string, homeCc = 'ger'): string | null {
+  switch (kind) {
+    case 'meister': return `league:${homeCc}:1`;
+    case 'ddr': return 'league:gdr:1';
+    case 'pokal': return 'cup';
+    case 'ec': case 'cwc': case 'uefa': case 'halle': case 'uefasuper': case 'weltpokal': case 'klubwm': case 'intercup': return kind;
+    case 'super': case 'ligapokal': return `super:${homeKey}`;
+    case 'jugendA': return 'youth:u19';
+    case 'jugendB': return 'youth:u17';
+    case 'jugendPokal': return 'youth:pokal';
+    case 'jugendDdr': return 'youth:ddr';
+    case 'uyl': return 'youth:uyl';
+    default: return null;
+  }
+}
+
+function titleName(kind: TitleKind, season: string, homeKey: string): string {
   const y = seasonStartYear(season);
   if (kind === 'meister') return 'Deutsche Meisterschaft';
   if (kind === 'ddr') return 'DDR-Meisterschaft';
-  if (kind === 'halle') return 'Hallenfinale';
+  if (kind === 'halle') return compNameOr('halle', y, 'Hallenfinale');
   if (kind === 'ec' || kind === 'cwc' || kind === 'uefa') return euroCompName(kind as EuroCompId, y);
-  return TITLE_DE[kind];
+  if (kind === 'pokal') return cupName(y);
+  if (kind === 'uefasuper') return uefaSuperName(y);
+  if (kind === 'weltpokal') return icName('wp', y);
+  if (kind === 'klubwm') return icName('cwc', y);
+  if (kind === 'intercup') return icName('icup', y);
+  const id = compIdOfTitle(kind, homeKey);
+  return id ? compNameOr(id, y, TITLE_DE[kind]) : TITLE_DE[kind];
 }
 
 /** Alle Titel und Erfolge eines Vereins, neueste zuerst. */
 export function trophiesOf(g: Game, clubId: string): TrophyEntry[] {
   const out: TrophyEntry[] = [];
+  const homeKey = homeCountryKey(g);
   for (const t of titlesOf(g, clubId)) {
     const y = seasonStartYear(t.season);
+    const cid = compIdOfTitle(t.kind, homeKey, homeCountryOf(g));
+    const own = cid ? compTrophyAt(cid, y) : null;
     out.push({
-      id: `${t.kind}:${t.season}`, cat: catOf(t.kind), shape: shapeOf(t.kind, y), season: t.season,
-      title: titleName(t.kind, t.season), kind: t.kind, historic: isHistoric(t.season),
+      id: `${t.kind}:${t.season}`, cat: catOf(t.kind), shape: own?.shape ?? shapeOf(t.kind, y), season: t.season,
+      title: titleName(t.kind, t.season, homeKey), kind: t.kind, historic: isHistoric(t.season),
       tier: t.kind === 'meister' ? 1 : t.kind === 'ddr' ? 101 : undefined,
+      ...(own?.img ? { img: own.img } : {}),
     });
   }
   // Staffelsiege unterhalb der höchsten Ebene + Aufstiege aus den Endplätzen.

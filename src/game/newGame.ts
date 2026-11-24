@@ -84,6 +84,7 @@ import { startShirtNumbers } from './shirtMigration';
 import { FACE_NAME_VERSION } from './faceNameMigration';
 import { migrateCohesion } from './cohesionGame';
 import { ensureCountryPools } from '../engine/world';
+import { setCompetitionDate } from '../data/competitions/overrides';
 
 export function createNewGame(opts: NewGameOptions): Game {
   // Modul-Zustand des vorigen Spiels verwerfen: ein zweites neues Spiel startet wie nach dem Neuladen.
@@ -103,6 +104,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   setTransferDate(startISO);
   setDisplayYear(year);
   setCurrencyDate(startISO);
+  setCompetitionDate(startISO);
   setRegHome(isGer ? 'GER' : (landNation(COUNTRY_BY_CC[home]?.key, year, ORIGINS[countryOrigin(home)]?.nationality) ?? ORIGINS[countryOrigin(home)]?.nationality ?? 'GER'));
   // Anzeige in der Heimatwährung (data/currencies.ts) + Herkunft der Einheimischen; DDR: Mark der DDR, ostdeutsche Namen.
   applyHomeModules(ddrStart ? { ddrHome: true } : { homeCountry: isGer ? undefined : home });

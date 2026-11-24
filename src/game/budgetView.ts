@@ -1,6 +1,7 @@
 // =============================================================================
 // SAISONBUDGET — Anzeigedaten: Saisonziele, Finanzberater, Kontext für die Texte
 // =============================================================================
+import { euroCompLabel } from '../data/euroFormats';
 import { playerLevel } from './state';
 import { Club } from '../types';
 import { DM_PER_EUR, economyScale, yearOf } from '../engine/economy';
@@ -9,13 +10,14 @@ import { tvPoolFor } from '../engine/tvMoney';
 import { monthlyLoanCost } from '../engine/clubBusiness';
 import { hasTransferBan } from '../engine/clubEconomy';
 import { recordFeeEUR } from '../data/transferRecords';
-import { EURO_COMP_NAMES, EuroCompId } from '../data/europe';
+import { EuroCompId } from '../data/europe';
 import { makeName, pickOrigin } from '../data/origins';
 import { mulberry32, hashStr } from '../engine/leagues';
 import { STAFF_BY_ID } from '../data/staff';
 import { BudgetPlan, BudgetSplit, budgetState, planRevenue, plannedReserve, wageRoomFor } from './budgetPlan';
 import { strengthShare, sumIncome } from './budgetForecast';
 import { Game } from './state';
+import { cupName } from '../data/competitions/overrides';
 
 export interface SeasonGoal { kind: 'league' | 'cup' | 'euro'; title: string; goal: string }
 
@@ -30,12 +32,12 @@ export function seasonGoals(g: Game): SeasonGoal[] {
   if (g.cup?.participantIds?.includes(club.id)) {
     const cg = tier >= 2 ? (share > 0.7 ? '2. Runde' : '1. Runde überstehen')
       : share > 0.85 ? 'Halbfinale' : share > 0.6 ? 'Viertelfinale' : share > 0.35 ? 'Achtelfinale' : '2. Runde';
-    out.push({ kind: 'cup', title: 'Landespokal', goal: cg });
+    out.push({ kind: 'cup', title: cupName(), goal: cg });
   }
   for (const comp of ['ec', 'cwc', 'uefa'] as EuroCompId[]) {
     const cup = (g.euroCups as any)?.[comp];
     if (cup?.participantIds?.includes(club.id)) {
-      out.push({ kind: 'euro', title: EURO_COMP_NAMES[comp], goal: share > 0.85 ? 'Viertelfinale' : share > 0.6 ? 'Achtelfinale' : '2. Runde' });
+      out.push({ kind: 'euro', title: euroCompLabel(comp), goal: share > 0.85 ? 'Viertelfinale' : share > 0.6 ? 'Achtelfinale' : '2. Runde' });
     }
   }
   return out;

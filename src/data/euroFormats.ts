@@ -69,6 +69,8 @@
 //   • Fortschreibung nach 2026 = letzter Stand (Ligaphase).
 // =============================================================================
 import type { EuroCompId } from './europe';
+import { EURO_COMP_NAMES } from './europe';
+import { competitionOverrideVersion, competitionYear, compPeriod, type CompPeriod } from './competitions/overrides';
 
 export type StageKind = 'ko' | 'groups' | 'league';
 
@@ -251,9 +253,46 @@ export const EURO_FORMATS: EuroFormat[] = [
       ko('po', 'Play-offs', 2, ['02-13', '02-20'], 'seeded'), ...koFrom16(['03-06', '03-13'], ['04-10', '04-17'], ['05-01', '05-08'], '05-21')] },
 ];
 
-/** Format eines Wettbewerbs in einer Saison (Startjahr); `null` = ruht. */
-export function euroFormat(comp: EuroCompId, startYear: number): EuroFormat | null {
+/** Eingebautes Format (ohne Datensatz); `null` = ruht. */
+export function euroFormatBase(comp: EuroCompId, startYear: number): EuroFormat | null {
   return EURO_FORMATS.find((f) => f.comp === comp && startYear >= f.from && startYear <= f.to) ?? null;
+}
+
+/** MM-TT um `days` Tage verschieben (Termin eines zusätzlichen Hinspiels). */
+function shiftMd(md: string, days: number): string {
+  const d = new Date(Date.UTC(2001, Number(md.slice(0, 2)) - 1, Number(md.slice(3, 5)) + days));
+  return `${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+
+/** Format mit den Änderungen einer Datensatz-Periode (Editor › Wettbewerbe). */
+export function applyEuroPeriod(f: EuroFormat, p: CompPeriod | null): EuroFormat {
+  if (!p || (p.awayGoals === undefined && p.winPts === undefined && !p.legs && !p.stageNames)) return f;
+  const stages = f.stages.map((s) => {
+    let st = s;
+    const nm = p.stageNames?.[s.key];
+    if (nm && nm !== s.name) st = { ...st, name: nm };
+    const l = p.legs?.[s.key];
+    if (s.kind === 'ko' && l && l !== (s.legs ?? 1)) {
+      st = { ...st, legs: l, dates: l === 1 ? [s.dates[s.dates.length - 1]] : [shiftMd(s.dates[0], -14), s.dates[0]] };
+    }
+    return st;
+  });
+  return { ...f, stages, awayGoals: p.awayGoals ?? f.awayGoals, winPts: p.winPts ?? f.winPts };
+}
+
+const fmtMemo = new Map<string, EuroFormat | null>();
+let fmtMemoVer = -1;
+/** Format eines Wettbewerbs in einer Saison (Startjahr) inkl. Datensatz; `null` = ruht. */
+export function euroFormat(comp: EuroCompId, startYear: number): EuroFormat | null {
+  const base = euroFormatBase(comp, startYear);
+  if (!base) return null;
+  const p = compPeriod(comp, startYear);
+  if (!p) return base;
+  if (fmtMemoVer !== competitionOverrideVersion()) { fmtMemo.clear(); fmtMemoVer = competitionOverrideVersion(); }
+  const k = `${comp}|${startYear}`;
+  let f = fmtMemo.get(k);
+  if (f === undefined) { f = applyEuroPeriod(base, p); fmtMemo.set(k, f); }
+  return f;
 }
 
 /** Spielt der Wettbewerb in dieser Saison? */
@@ -261,8 +300,19 @@ export function euroCompActive(comp: EuroCompId, startYear: number): boolean {
   return !!euroFormat(comp, startYear);
 }
 
-/** Anzeigename je Saison. */
+/** Anzeigename je Saison (inkl. Datensatz, Editor › Wettbewerbe). */
 export function euroCompName(comp: EuroCompId, startYear: number): string {
+  return compPeriod(comp, startYear)?.name ?? euroCompNameBase(comp, startYear);
+}
+/**
+ * Name für Stellen, die bisher den festen Namen aus `EURO_COMP_NAMES` zeigten: ohne
+ * Datensatz unverändert, mit Datensatz der Name der Periode.
+ */
+export function euroCompLabel(comp: EuroCompId, startYear = competitionYear()): string {
+  return compPeriod(comp, startYear)?.name ?? EURO_COMP_NAMES[comp];
+}
+/** Eingebauter Anzeigename je Saison. */
+export function euroCompNameBase(comp: EuroCompId, startYear: number): string {
   if (comp === 'ec') return startYear >= 1992 ? 'Meisterliga' : 'Pokal der Landesmeister';
   if (comp === 'cwc') return startYear >= 2021 ? 'Europa-Trophäe' : 'Pokal der Pokalsieger';
   if (startYear < 1971) return 'Messepokal';
@@ -274,6 +324,17 @@ export function euroCompName(comp: EuroCompId, startYear: number): string {
 // -----------------------------------------------------------------------------
 /** Plätze eines Landes (Rang 1-basiert) je Wettbewerb und Saison. Pokalsieger zählt bei `cup` mit. */
 export function accessSlots(startYear: number, rank: number): { ec: number; cwc: number; uefa: number; cupTo: 'cwc' | 'uefa' | 'none' } {
+  const b = accessSlotsBase(startYear, rank);
+  const band = (comp: EuroCompId, n: number) => {
+    const s = compPeriod(comp, startYear)?.slots;
+    if (!s?.length) return n;
+    return (s.find(([upTo]) => rank <= upTo) ?? s[s.length - 1])[1];
+  };
+  const cupTo = compPeriod('cup', startYear)?.cupTo ?? b.cupTo;
+  return { ec: band('ec', b.ec), cwc: band('cwc', b.cwc), uefa: band('uefa', b.uefa), cupTo };
+}
+/** Eingebaute Startplätze (ohne Datensatz). */
+export function accessSlotsBase(startYear: number, rank: number): { ec: number; cwc: number; uefa: number; cupTo: 'cwc' | 'uefa' | 'none' } {
   const y = startYear;
   // Meisterliga
   let ec = 1;
@@ -335,5 +396,10 @@ export function groupBonusEur(comp: EuroCompId, year: number): { win: number; dr
 // „this change was extended to all cup games in 1991“.
 /** Wird ein Unentschieden nach Verlängerung wiederholt? (Saison-Startjahr) */
 export function cupReplay(startYear: number, isFinal: boolean): boolean {
+  const p = compPeriod('cup', startYear);
+  const o = isFinal ? p?.replayFinal : p?.replayRounds;
+  return o ?? cupReplayBase(startYear, isFinal);
+}
+export function cupReplayBase(startYear: number, isFinal: boolean): boolean {
   return isFinal ? startYear <= 1976 : startYear <= 1990;
 }

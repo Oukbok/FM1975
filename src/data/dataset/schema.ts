@@ -23,6 +23,7 @@ import type { HistoryConfig } from '../history';
 import type { LegendDef } from '../legends/types';
 import type { RealClub, SeasonRow } from '../world/types';
 import type { PhotoPose } from '../pressPhotos';
+import type { CompPeriod } from '../competitions/overrides';
 
 export const DATASET_FORMAT = 'fm1975-dataset';
 export const DATASET_VERSION = 1;
@@ -161,6 +162,13 @@ export interface Dataset {
    * `clubs`; geänderte Namen/Farben gelten auch für die Startvereine.
    */
   worldData?: Record<string, { clubs: RealClub[]; seasons: Record<string, SeasonRow> }>;
+  /**
+   * Wettbewerbe (Editor › Wettbewerbe, Wunsch Pascal): je Wettbewerb (`ec`, `cup`, `super:England`,
+   * `league:ger:1` … – Liste in data/competitions/registry.ts) Perioden gleichen Reglements mit
+   * Name, Kurzname, Trophäe, Teilnehmer-Regeln und Format. Fehlt das Feld, ein Wettbewerb, eine
+   * Saison oder ein Feld der Periode, gilt das eingebaute Verhalten (data/competitions/overrides.ts).
+   */
+  competitions?: Record<string, CompPeriod[]>;
   /** Amateur-Pool (data/poolTowns.ts): Städte, aus denen Nachrücker entstehen. Fehlt = eingebaute Liste. */
   poolTowns?: PoolTown[];
   economy: {

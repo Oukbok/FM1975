@@ -51,6 +51,7 @@ import { clearHomeDeepCache } from './homeDeep';
 import { setDisplayYear } from '../ui/format';
 import { clearWorldRosters } from '../engine/euroLight';
 import { clearLeanMemo } from './worldScorers';
+import { setCompetitionDate } from '../data/competitions/overrides';
 
 /** Alle Module auf den Ausgangszustand (wie nach dem Laden der Seite). */
 export function resetModuleState(): void {
@@ -66,7 +67,7 @@ export function resetModuleState(): void {
   resetInjuryRiskHook();       // Verletzungsrisiko-Haken (hing am vorigen Spielstand)
   setPortraitGame(null);       // Spielerbilder: Spielstand der Zuordnung (GameShell setzt den neuen)
   setAttendanceEuphoria(null); // WM-Euphorie
-  setHomeCurrency('ger'); setCurrencyDate(null); setDisplayYear(1975);
+  setHomeCurrency('ger'); setCurrencyDate(null); setDisplayYear(1975); setCompetitionDate(null);
   resetRegistrationState();    // Heimat-Nationalität, Europapokal-Meldelisten
   resetHonourEffects();        // Auszeichnungen/Werbung/Stab-Faktor
   resetClubHonoursState();     // gebundener Spielstand, Spielbeginn

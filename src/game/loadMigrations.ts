@@ -94,6 +94,7 @@ import { worldLiveDaily } from './worldLeagues';
 import { retireFullCountries } from './fullCountries';
 import { ensureCountryPools } from '../engine/world';
 import { migrateTacticsRefs } from './tacticsRefsMigration';
+import { setCompetitionDate } from '../data/competitions/overrides';
 
 /** Bereitet einen gerade gelesenen Spielstand zum Weiterspielen vor (verändert `g`). */
 export function prepareLoadedGame(g: Game): void {
@@ -355,6 +356,7 @@ export function prepareLoadedGame(g: Game): void {
   // Anzeige-Währung auf das aktuelle Spieljahr setzen (DM ≤2001, EUR ≥2002).
   setDisplayYear(yearOf(g.calendar.currentDate));
   setCurrencyDate(g.calendar.currentDate);
+  setCompetitionDate(g.calendar.currentDate);
   ensureYouthTeams(g, g.calendar.currentDate);
   // Manager-KI (SAVE_VERSION 10): Trainer der KI-Vereine nachrüsten.
   try { migrateAiClubs(g); } catch (err) { console.error('Trainer-Nachrüstung fehlgeschlagen:', err); }

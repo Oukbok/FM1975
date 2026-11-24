@@ -1,7 +1,8 @@
+import { euroCompLabel } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
 import { ctClub } from '../data/world/continents';
 import { historicClubInfo, historicClubName } from '../data/history/historicClubs';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { isLeagueClub, lastRevenue } from '../engine/clubEconomy';
 import { divisionTitle, simDisplayName } from '../engine/leagues';
 import { leagueName } from '../data/leagueNames';
@@ -225,7 +226,7 @@ function matchLines(g: Game, clubId: string, year: number): ClubMatchLine[] {
     push(m.date, m.homeClubId, m.awayClubId, done ? m.result!.homeGoals : null, done ? m.result!.awayGoals : null, 'Liga');
   }
   const cups: [string, typeof g.cup | null | undefined][] = [
-    ['Pokal', g.cup], [EURO_COMP_NAMES.ec, g.euroCups?.ec], [EURO_COMP_NAMES.cwc, g.euroCups?.cwc], [EURO_COMP_NAMES.uefa, g.euroCups?.uefa],
+    ['Pokal', g.cup], [euroCompLabel('ec'), g.euroCups?.ec], [euroCompLabel('cwc'), g.euroCups?.cwc], [euroCompLabel('uefa'), g.euroCups?.uefa],
   ];
   for (const [comp, cup] of cups) {
     for (const rd of cup?.rounds ?? []) {

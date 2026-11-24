@@ -21,7 +21,7 @@ const CAT_EMPTY: Record<TrophyCat, string> = {
   andere: 'Hier stehen Hallenfinale und Aufstiege, sobald dein Verein einen davon schafft.',
 };
 
-const Trophy = ({ shape }: { shape: TrophyShape }) => <TrophyImage shape={shape} />;
+const Trophy = ({ shape, img }: { shape: TrophyShape; img?: string }) => <TrophyImage shape={shape} img={img} />;
 
 const seasonLong = (s: string) => { const y = parseInt(s.slice(0, 4), 10); return `${y} / ${y + 1}`; };
 
@@ -82,7 +82,7 @@ export function TrophyCabinet({ g, clubId, className = '' }: { g: Game; clubId: 
               <div className="tro-title">{sel.title}</div>
               {sel.sub && <div className="tro-subline">{sel.sub}</div>}
             </div>
-            <div className="tro-pedestal"><Trophy shape={sel.shape} /></div>
+            <div className="tro-pedestal"><Trophy shape={sel.shape} img={sel.img} /></div>
             <div className="tro-facts">
               {facts.map((f) => (
                 <div key={f.k} className="tro-fact">

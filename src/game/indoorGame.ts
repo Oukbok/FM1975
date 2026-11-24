@@ -36,6 +36,7 @@ import { declinePenalty, indoorName, indoorShort, mastersNews, ownResultMessage,
 
 export { indoorName, indoorShort };
 import { Game, bumpMorale, homeCountryOf } from './state';
+import { compNameOr, competitionYear } from '../data/competitions/overrides';
 import {
   IndoorDecision, IndoorHistoryEntry, IndoorKind, IndoorTournament, IndoorWinter, competitiveDays, daysBetween, indoorState, ownCampDays,
   winterWindow,
@@ -521,7 +522,7 @@ function finishWinter(g: Game, today: string): void {
   let own: string | undefined;
   if (mine.length) {
     const best = mine.map((t) => ({ t, p: t.result!.ranking.indexOf(mid) })).sort((a, b) => a.p - b.p || Number(b.t.kind === 'masters') - Number(a.t.kind === 'masters'))[0];
-    own = `${best.p === 0 ? 'Sieg' : `Platz ${best.p + 1}`} ${best.t.kind === 'masters' ? 'Hallenfinale' : best.t.city}`;
+    own = `${best.p === 0 ? 'Sieg' : `Platz ${best.p + 1}`} ${best.t.kind === 'masters' ? compNameOr('halle', competitionYear(), 'Hallenfinale') : best.t.city}`;
   }
   const entry: IndoorHistoryEntry = { year: cur.winterYear, phase: cur.phase, own, winners: cur.tournaments.filter((t) => t.done).map((t) => t.result!.ranking[0]) };
   const m = cur.masters;

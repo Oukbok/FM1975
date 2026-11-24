@@ -5,7 +5,7 @@
 // =============================================================================
 import { createContext, useContext } from 'react';
 
-export type Sec = 'home' | 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'photos' | 'formations' | 'economy' | 'history' | 'check';
+export type Sec = 'home' | 'general' | 'graphics' | 'changes' | 'clubs' | 'world' | 'pool' | 'europe' | 'competitions' | 'timeline' | 'leagues' | 'facilities' | 'staff' | 'marketing' | 'names' | 'legends' | 'photos' | 'formations' | 'economy' | 'history' | 'check';
 
 // Menü nach Kategorien, ohne Symbole (Wunsch Pascal).
 export const SECTIONS: { key: Sec; label: string; group: string; title: string }[] = [
@@ -19,6 +19,7 @@ export const SECTIONS: { key: Sec; label: string; group: string; title: string }
   { key: 'pool', label: 'Amateur-Pool', group: 'Vereine & Wettbewerbe', title: 'Amateur-Pool: Nachrücker für Auf- und Abstieg' },
   { key: 'leagues', label: 'Ligasystem & Reformen', group: 'Vereine & Wettbewerbe', title: 'Ligasystem & Reformen' },
   { key: 'europe', label: 'Europa & Europapokal', group: 'Vereine & Wettbewerbe', title: 'Europa & Europapokal' },
+  { key: 'competitions', label: 'Wettbewerbe', group: 'Vereine & Wettbewerbe', title: 'Wettbewerbe: Perioden mit Name, Trophäe, Teilnehmern und Format' },
   { key: 'names', label: 'Namen & Herkünfte', group: 'Spieler & Personal', title: 'Namen, Herkünfte & Ethnie' },
   { key: 'legends', label: 'Ausnahmetalente', group: 'Spieler & Personal', title: 'Ausnahmetalente der Fußballgeschichte' },
   { key: 'photos', label: 'Spielerbilder & Fotos', group: 'Spieler & Personal', title: 'Spielerbilder (Porträt) und Fotos für Zeitung und Newscenter' },
@@ -56,7 +57,7 @@ export function secOfArea(area: string): Sec {
   const m: Record<string, Sec> = {
     Allgemein: 'general', 'Amateur-Pool': 'pool', Vereine: 'clubs', 'DDR-Oberliga': 'clubs', 'DDR-Liga': 'clubs', Chronik: 'timeline',
     Ligareformen: 'leagues', Einrichtungen: 'facilities', Mitarbeiter: 'staff', Marketing: 'marketing', Wirtschaft: 'economy',
-    Namen: 'names', Legenden: 'legends', Spielerfotos: 'photos', Aufstellungen: 'formations',
+    Namen: 'names', Legenden: 'legends', Spielerfotos: 'photos', Aufstellungen: 'formations', Wettbewerbe: 'competitions',
   };
   return m[area] ?? 'general';
 }
