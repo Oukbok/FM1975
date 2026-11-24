@@ -62,9 +62,10 @@
 .lu-row .lu-face { margin: -5px 6px -5px 0; }
 /* Aufstellung › Spielfeld/Bank: kleiner Kopf vor dem Nachnamen, Kartengröße bleibt */
 /* Feld: Kopf mittig über der Karte (Karte bleibt gleich groß). Der Kopf gehört zur Karte –
-   Drücken/Ziehen am Kopf verschiebt den Spieler wie an der Karte (Wunsch Pascal). */
+   Drücken/Ziehen am Kopf verschiebt den Spieler wie an der Karte (Wunsch Pascal).
+   Kinn sitzt direkt auf der Namensbox (Wunsch Pascal: kein Spalt) – ragt 6 px in den Rand. */
 .lu-slot .lu-card { position: relative; }
-.lu-card-head { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: -3px; cursor: grab;
+.lu-card-head { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: -6px; cursor: grab;
   filter: drop-shadow(0 2px 4px rgba(var(--shade-rgb), 0.5)); }
 /* Bank: kleiner Kopf vor dem Nachnamen */
 .lu-card-name > .lu-card-face { margin: -4px 4px -4px 0; vertical-align: middle; }

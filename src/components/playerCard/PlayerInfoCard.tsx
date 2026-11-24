@@ -35,6 +35,8 @@ import { CardAttributes, CardPositions } from './PlayerCardParts';
 /** Feste Größe der Karte in UI-Pixeln (wächst nur mit der UI-Skalierung). */
 export const CARD_W = 900;
 export const CARD_H = 560;
+/** Anzeigefaktor der schwebenden Karte (Wunsch Pascal: 75 % größer); Layout bleibt 900 × 560. */
+export const CARD_ZOOM = 1.75;
 
 /** Ansehen in Worten – reine Anzeige aus Stärke und Länderspielen (kein verdeckter Wert). */
 function standing(p: Player): string {

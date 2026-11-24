@@ -4,7 +4,7 @@
 //    Hover/Fokus öffnet die Karte sofort, Verlassen schließt sie, Tippen schaltet um.
 //  - useDelayedPlayerCard(ms, gesperrt): Hover mit Verzögerung (Aufstellung: Karten auf
 //    dem Feld und der Bank nach 2 s); Drücken/Ziehen schließt sofort und öffnet nie.
-// Die Karte hängt per Portal an <body>, wächst mit der UI-Skalierung (ui/floating.ts),
+// Die Karte hängt per Portal an <body>, wächst mit der UI-Skalierung × CARD_ZOOM (ui/floating.ts),
 // liegt neben dem Auslöser und ragt nie aus dem Bildschirm (sonst kleiner skaliert).
 // Sie ist reine Anzeige (`pointer-events: none`), damit sie nie den Hover stört.
 // Immer nur eine Karte offen.
@@ -15,7 +15,7 @@ import type { Player } from '../../types';
 import Icon from '../Icon';
 import { useClubProfile } from '../club/ClubLink';
 import { fitScale, placeBeside } from '../../ui/floating';
-import PlayerInfoCard, { CARD_H, CARD_W } from './PlayerInfoCard';
+import PlayerInfoCard, { CARD_H, CARD_W, CARD_ZOOM } from './PlayerInfoCard';
 
 /** Schließt die gerade offene Karte (nur eine zur Zeit). */
 let closeActive: (() => void) | null = null;
@@ -30,7 +30,7 @@ export function PlayerCardPortal({ p, anchor, onClose }: { p: Player; anchor: HT
   const g = useClubProfile()?.game;
   const [pos, setPos] = useState<{ left: number; top: number; s: number } | null>(null);
   useLayoutEffect(() => {
-    const s = fitScale(CARD_W, CARD_H);
+    const s = fitScale(CARD_W, CARD_H, 8, CARD_ZOOM);
     const { left, top } = placeBeside(anchor.getBoundingClientRect(), CARD_W * s, CARD_H * s);
     setPos({ left, top, s });
   }, [anchor, p.id]);

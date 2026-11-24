@@ -1,7 +1,7 @@
 // Screenshots + Prüfung der Spieler-Infokarte (components/playerCard/):
 //   Hover auf den Info-Knopf in der Kaderliste der Aufstellung (Torwart + Feldspieler),
 //   2 s Hover auf eine Karte auf dem Feld und der Bank, Ziehen öffnet nie, Kader › Übersicht.
-//   Prüft: Karte ganz im Bildschirm, feste Größe, keine JS-Fehler. 1920×1080, 1366×768 und 1280×800.
+//   Prüft: Karte ganz im Bildschirm, feste Größe, Zoom 1,75, Köpfe auf dem Feld ohne Spalt zur Box, keine JS-Fehler. 1920×1080, 1366×768 und 1280×800.
 //   npm run build && node tests/playercard-shots.mjs [ordner]   (SAVE=… Standard public/saves/ddr-1980.txt)
 import { createServer } from 'node:http';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -57,7 +57,10 @@ async function cardBox(page) {
   return page.evaluate(() => {
     const r = document.querySelector('.pc-float').getBoundingClientRect();
     const c = document.querySelector('.pc-card');
-    return { x: r.x, y: r.y, w: r.width, h: r.height, vw: innerWidth, vh: innerHeight, ow: c.offsetWidth, oh: c.offsetHeight,
+    const content = document.querySelector('.display-content'), inner = document.querySelector('.display-inner');
+    const t = inner ? getComputedStyle(inner).transform : 'none';
+    const s = (content ? parseFloat(getComputedStyle(content).zoom || '1') || 1 : 1) * (t && t !== 'none' ? new DOMMatrix(t).a : 1);
+    return { s, x: r.x, y: r.y, w: r.width, h: r.height, vw: innerWidth, vh: innerHeight, ow: c.offsetWidth, oh: c.offsetHeight,
       over: [...document.querySelectorAll('.pc-card *')].filter((e) => e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflow === 'hidden' && !e.matches('.pc-fact > b, .pc-club, .pc-name, .pc-arow > span, .pc-fk > b')).length };
   });
 }
@@ -66,6 +69,9 @@ function inside(b, tag) {
   if (!b) return;
   check(b.x >= 0 && b.y >= 0 && b.x + b.w <= b.vw + 0.5 && b.y + b.h <= b.vh + 0.5, `${tag}: Karte im Bildschirm (${Math.round(b.x)},${Math.round(b.y)} ${Math.round(b.w)}×${Math.round(b.h)})`);
   check(b.ow === 900 && b.oh === 560, `${tag}: feste Größe 900×560 (${b.ow}×${b.oh})`);
+  // Anzeige 1,75 × UI-Skalierung, bei kleinem Fenster so groß wie möglich (eine Seite füllt das Fenster)
+  const full = b.w >= b.vw - 16 - 1 || b.h >= b.vh - 16 - 1;
+  check(Math.abs(b.w / b.ow - b.s * 1.75) < 0.02 || full, `${tag}: Zoom 1,75 × UI ${b.s.toFixed(2)} oder fensterfüllend (${(b.w / b.ow).toFixed(2)})`);
 }
 
 for (const vp of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, { width: 1280, height: 800 }]) {
@@ -84,6 +90,23 @@ for (const vp of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, {
     await page.waitForTimeout(150);
     check(!(await page.locator('.pc-float').count()), `${tag} Liste ${who}: schließt beim Verlassen`);
   }
+
+  // Köpfe auf dem Feld liegen direkt auf der Namensbox (kein Spalt)
+  const gaps = await page.evaluate(() => [...document.querySelectorAll('.lu-slot .lu-card-head')].map((h) => {
+    const img = h.querySelector('img'); const card = h.closest('.lu-card');
+    if (!img || !card || !img.naturalHeight) return null;
+    // unterste deckende Bildzeile messen
+    const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+    let low = -1;
+    try { const d = x.getImageData(0, 0, c.width, c.height).data;
+      for (let y = c.height - 1; y >= 0 && low < 0; y--) for (let i = 0; i < c.width; i++) if (d[(y * c.width + i) * 4 + 3] > 40) { low = y; break; } } catch { return null; }
+    const ir = img.getBoundingClientRect(), cr = card.getBoundingClientRect();
+    return Math.round(cr.top - (ir.top + (low + 1) / c.height * ir.height));
+  }).filter((v) => v != null));
+  check(gaps.length > 0 && gaps.every((g) => g <= 0), `${tag} Feld: Köpfe berühren die Box (Spalt ${gaps.join(',')})`);
+  const fb = await page.locator('.lu-field').boundingBox();
+  await page.screenshot({ path: `${outDir}/${tag}_koepfe.png`, clip: fb });
 
   // 2) 2 s Hover auf einer Feldkarte (Mittelfeld) – vorher nicht offen
   const slot = page.locator('.lu-slot:not([data-pid=""])').nth(6);

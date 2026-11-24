@@ -50,12 +50,18 @@ export function placeBeside(anchor: DOMRect, w: number, h: number, gap = 8, offs
   const left = clampX(anchor.left + anchor.width / 2 - w / 2);
   if (anchor.bottom + offset + h <= vh - gap) return { left, top: anchor.bottom + offset };
   if (anchor.top - offset - h >= gap) return { left, top: anchor.top - offset - h };
-  return { left, top: midY };
+  // Passt nirgends ganz daneben: zur Seite mit mehr Platz rücken (verdeckt den Auslöser so wenig wie möglich)
+  const side = vw - anchor.right >= anchor.left ? clampX(anchor.right + offset) : clampX(anchor.left - offset - w);
+  return { left: side, top: midY };
 }
 
-/** Skalierung, mit der eine Einblendung fester Größe (UI-Pixel) ganz in den Bildschirm passt. */
-export function fitScale(w: number, h: number, gap = 8): number {
-  const s = uiScale();
+/**
+ * Skalierung, mit der eine Einblendung fester Größe (UI-Pixel) ganz in den Bildschirm passt.
+ * `zoom` vergrößert sie zusätzlich zur UI-Skalierung (Spieler-Infokarte: 1,75); passt das nicht,
+ * wird so weit verkleinert, dass sie ganz sichtbar bleibt.
+ */
+export function fitScale(w: number, h: number, gap = 8, zoom = 1): number {
+  const s = uiScale() * zoom;
   const max = Math.min((window.innerWidth - 2 * gap) / w, (window.innerHeight - 2 * gap) / h);
   return Math.max(0.3, Math.min(s, max));
 }
