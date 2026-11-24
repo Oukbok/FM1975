@@ -52,9 +52,31 @@ export function applyMatchFatigue(player: Player, minutes: number): void {
   player.attributes.fitness = clamp100(player.attributes.fitness - loss);
 }
 
+// -----------------------------------------------------------------------------
+// Frische nach dem Spiel aus der tatsächlichen Belastung (Wunsch Pascal, Nov. 2026)
+// -----------------------------------------------------------------------------
 /**
- * Reduziert die Frische (aktuell verfügbare Kraft) nach einem Spiel STARK.
- * Ein voller Einsatz kostet ~25–40 Punkte, leicht gedämpft durch hohe Ausdauer.
+ * Belastung je Spieler aus der Match-Engine (`match/finish.ts` merkt Minuten und Energieverlust),
+ * verbraucht vom folgenden `applyMatchEffects` desselben Vereins. So verliert Frische, wer
+ * wirklich gespielt hat – Einwechselspieler und früh Ausgewechselte weniger, Torhüter deutlich weniger.
+ */
+let matchLoads = new WeakMap<Player, { mins: number; drop: number }>();
+export function noteMatchLoad(p: Player, mins: number, drop: number): void {
+  matchLoads.set(p, { mins, drop: Math.max(0, drop) });
+}
+/** Ausgangszustand (game/resetModuleState.ts). */
+export function resetMatchLoads(): void { matchLoads = new WeakMap(); }
+
+/** Frischeverlust aus Minuten und Energieverlust im Spiel: 12 je 90 Min. + 0,5 × Energieverlust (Feld voll ≈ 33–40, Torwart ≈ 20). */
+export const FRESH_PER_90 = 12;
+export const FRESH_PER_ENERGY = 0.5;
+export function freshnessCostOf(mins: number, drop: number): number {
+  return Math.min(45, (mins / 90) * FRESH_PER_90 + drop * FRESH_PER_ENERGY);
+}
+
+/**
+ * Reduziert die Frische (aktuell verfügbare Kraft) nach einem Spiel STARK (Rückfall ohne
+ * Daten der Match-Engine, z. B. Hintergrundspiele): ~25–40 Punkte, gedämpft durch hohe Ausdauer.
  * Skaliert mit den Einsatzminuten (Einwechslungen kosten anteilig weniger).
  */
 export function applyMatchFreshnessDrain(player: Player, minutes: number, effortFactor = 1): void {
@@ -64,19 +86,49 @@ export function applyMatchFreshnessDrain(player: Player, minutes: number, effort
   player.frische = clamp100(player.frische - drain);
 }
 
+// -----------------------------------------------------------------------------
+// Tägliche Erholung der Frische (Wunsch Pascal, Nov. 2026): je niedriger, desto mehr kommt
+// pro Tag zurück, die letzten Punkte kommen langsamer; abhängig vom Training des Tages.
+// -----------------------------------------------------------------------------
+/** Anteil der Lücke zu 100, der an einem normalen Tag zurückkommt (50 → +20, 80 → +8, 95 → +2). */
+export const RECOVERY_RATE = 0.4;
+/** Mindestens so viel je Tag, damit die letzten Punkte nicht ewig dauern. */
+export const RECOVERY_MIN = 1;
+
 /**
- * Tägliche Frische-Erholung eines Spielers (+8 bis +15/Tag, gedeckelt bei 100).
- * Jüngere und ausdauerndere Spieler regenerieren etwas schneller, sodass ein
- * Spieler nach einem harten Spiel mehrere Tage bis zur vollen Frische braucht.
+ * Trainingsfaktor aus der Tagesbelastung (`dayLoad` in engine/weeklyTraining.ts; ohne Angabe = 1,
+ * z. B. KI-Vereine und Spieltage): Regeneration (−4) ×1,25, frei (0) ×1,15, normal (6–9) ≈ ×1,
+ * hart (12) ×0,85, sehr hart (16+) ×0,75 und weniger.
  */
-export function recoverFreshness(player: Player): void {
-  if (typeof player.frische !== 'number') { player.frische = 100; return; }
-  if (player.frische >= 100) { player.frische = 100; return; }
-  // Ausdauer-Bonus: 50→0, 99→~+2.5. Alters-Bonus: ≤23 +2, ≥32 −1.5.
+export function trainingRecoveryFactor(load: number | undefined): number {
+  if (load == null) return 1;
+  return Math.max(0.6, Math.min(1.3, 1.15 - 0.025 * load));
+}
+/** Sehr hartes Training kostet zusätzlich Frische: je Belastungspunkt über 10 −0,4 (16 → −2,4). */
+export const trainingFreshCost = (load: number | undefined): number => (load == null ? 0 : Math.max(0, load - 10) * 0.4);
+
+/** Ausdauer/Alter wie bisher: Ausdauer 50→0, 99→+2,5; ≤23 +2, ≥32 −1,5 → als Faktor 0,87–1,30. */
+export function personalRecoveryFactor(player: Player): number {
   const staminaBonus = ((player.attributes.stamina - 50) / 50) * 2.5;
   const ageBonus = player.age <= 23 ? 2 : player.age >= 32 ? -1.5 : 0;
-  const rec = 9 + Math.max(-2, Math.min(6, staminaBonus + ageBonus));
-  player.frische = clamp100(player.frische + rec);
+  return 1 + Math.max(-2, Math.min(4.5, staminaBonus + ageBonus)) / 15;
+}
+
+/** Erholung eines Tages bei Frische `fr` (ohne Deckel/Abzug): Lücke × Rate × Training × Person, mind. 1. */
+export function freshnessGain(fr: number, trainF = 1, personF = 1): number {
+  const gap = Math.max(0, 100 - fr);
+  return Math.min(gap, Math.max(RECOVERY_MIN, gap * RECOVERY_RATE * trainF * personF));
+}
+
+/**
+ * Tägliche Frische-Erholung eines Spielers. `load` = Trainingsbelastung des Tages (eigener Verein
+ * über den Wochenplan), fehlt sie, gilt ein normaler Tag.
+ */
+export function recoverFreshness(player: Player, load?: number): void {
+  if (typeof player.frische !== 'number') { player.frische = 100; return; }
+  const fr = clamp100(player.frische);
+  const gain = fr >= 100 ? 0 : freshnessGain(fr, trainingRecoveryFactor(load), personalRecoveryFactor(player));
+  player.frische = clamp100(fr + gain - trainingFreshCost(load));
 }
 
 /**
@@ -97,22 +149,38 @@ export function applyMatchEffects(
   // Einsatz-Regler der Taktik: volle Kraft kostet mehr Frische, schonendes Spiel weniger.
   const effortF = 1 + (((club.tactics?.effort ?? 50) - 50) / 50) * 0.15;
 
+  // Hat die Match-Engine die Belastung gemerkt, zählt sie (wer wie lange und wie müde gespielt hat).
+  const measured = club.playerIds.some((id) => players[id] && matchLoads.has(players[id]));
+
   for (const p of starters) {
     // Individuelle Note 0–10: um 6 herum, beeinflusst von Overall & Ergebnis.
     const base = 5.5 + (side === 'W' ? 0.8 : side === 'L' ? -0.8 : 0);
     const rating = Math.max(1, Math.min(10, base + (Math.random() - 0.45) * 3));
     updatePlayerForm(p, resultDelta, rating);
     applyMatchFatigue(p, 90);
-    applyMatchFreshnessDrain(p, 90, effortF);
+    if (!measured) applyMatchFreshnessDrain(p, 90, effortF);
+  }
+
+  const played = new Set<string>();
+  if (measured) {
+    for (const id of club.playerIds) {
+      const p = players[id];
+      const ld = p && matchLoads.get(p);
+      if (!p || !ld) continue;
+      matchLoads.delete(p);
+      played.add(id);
+      if (typeof p.frische !== 'number') p.frische = 100;
+      p.frische = clamp100(p.frische - freshnessCostOf(ld.mins, ld.drop) * (0.92 + Math.random() * 0.16));
+    }
   }
 
   // Nicht eingesetzte, einsatzfähige Spieler: nur leichte Drift Richtung 50.
   // Ohne Einsatz kaum Frischeverlust (leichte Trainingsbelastung: -2).
   for (const id of club.playerIds) {
     const p = players[id];
-    if (!p || starterIds.has(p.id)) continue;
-    if (p.availability !== 'available') continue;
-    p.form = clamp100(p.form + (50 - p.form) * 0.08 + (Math.random() - 0.5) * 1.5);
+    if (!p || p.availability !== 'available') continue;
+    if (!starterIds.has(p.id)) p.form = clamp100(p.form + (50 - p.form) * 0.08 + (Math.random() - 0.5) * 1.5);
+    if (measured ? played.has(p.id) : starterIds.has(p.id)) continue;
     if (typeof p.frische !== 'number') p.frische = 100;
     p.frische = clamp100(p.frische - 2);
   }

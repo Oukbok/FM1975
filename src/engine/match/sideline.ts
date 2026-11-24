@@ -47,9 +47,13 @@ export function applyWarmBonus(sim: MatchSim, m: MPlayer): void {
   m.warmSince = null;
 }
 
-/** Co-Trainer: ab dieser Energie wärmt er einen Ersatz auf, darunter wechselt er aus (Skala: Feldspieler nach 90 Min. meist 55–75). */
-export const CO_WARM_AT = 70;
-export const CO_SUB_BELOW = 62;
+/**
+ * Co-Trainer: unter dieser Energie wärmt er einen Ersatz auf, darunter wechselt er aus. An der
+ * Leistungskurve (`match/fatigue.ts`) ausgerichtet: unter 65 verliert ein Spieler ≈ 3,5 % je Duell,
+ * unter 55 ≈ 6,7 % und mehr, dazu steigt das Verletzungsrisiko (Feldspieler nach 90 Min. meist 45–62).
+ */
+export const CO_WARM_AT = 65;
+export const CO_SUB_BELOW = 55;
 
 /** Langes Aufwärmen kostet etwas Energie (alle fünf Minuten nach zehn Minuten). */
 export function drainWarmUps(sim: MatchSim, t: TeamState): void {

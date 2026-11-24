@@ -13,6 +13,7 @@ import { mirrorPosition, positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
 import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, tacticsOf, type TeamState } from './state';
 import { energyDrain, ENERGY_FLOOR, makeMPlayer, matchBase, rating, resolveLineup } from './team';
+import { AI_TIRED_BELOW, AI_TIRED_NEED } from './fatigue';
 import { openPlayFoul, maybeInjury, shootoutKick } from './actions';
 import { aerial, attack } from './attack';
 import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refreshSkills, tackleSkill } from './skills';
@@ -77,7 +78,9 @@ const PERIOD_END = [0, 45, 90, 105, 120];
 /** Hintergrund-Zweikämpfe je Minute (dazu kommen die Duelle der Angriffe). */
 const BG_DUELS = 1;
 /** Angriffe ins letzte Drittel je Minute und Team (Grundwert). */
-const ATTACK_PACE = 0.405;
+// (Nov. 2026, Energie Stufe 2: −1,7 %, weil frische Spieler bis Energie 80 nichts mehr verlieren und Schützen
+// gegen den kaum müden Torwart etwas besser abschließen – sonst +3 % Tore und Schüsse.)
+const ATTACK_PACE = 0.398;
 const bgRole = (m: MPlayer) => (m.group === 'MID' ? 1.4 : m.group === 'ATT' ? 1 : 0.9);
 /** Schnelle Auswahl nach Rolle für Hintergrund-Zweikämpfe (ohne Zwischenarrays). */
 function bgPick(ms: MPlayer[], r: number): MPlayer {
@@ -545,7 +548,7 @@ export class MatchSim {
     const keepOne = this.subsLeft(t) === 1 && min < 78;
     if (keepOne) return;
     const cands = onPitch(t).filter((m) => m.group !== 'GK')
-      .map((m) => ({ m, need: (78 - m.energy) / 10 + (m.impact < -0.5 ? 1.2 : 0) + (m.yellow && m.p.attributes.aggression > 65 ? 0.8 : 0)
+      .map((m) => ({ m, need: (AI_TIRED_NEED - m.energy) / 10 + (m.impact < -0.5 ? 1.2 : 0) + (m.yellow && m.p.attributes.aggression > 65 ? 0.8 : 0)
         + (diff < 0 && min > 65 && m.group === 'DEF' ? 0.6 : 0) + (min - 55) / 12 }))
       .sort((x, y) => y.need - x.need);
     let budget = this.era.maxSubs >= 5 && min >= 60 ? 2 : 1;
@@ -555,7 +558,7 @@ export class MatchSim {
       if (!rep) continue;
       const newR = subValue(rep.p, c.m.pos) * rep.cond;
       if (newR < rating(c.m) * 0.72) continue;
-      if (this.substitute(t.side, c.m.id, rep.id, c.m.energy < 62 ? 'muede' : 'taktik')) budget--;
+      if (this.substitute(t.side, c.m.id, rep.id, c.m.energy < AI_TIRED_BELOW ? 'muede' : 'taktik')) budget--;
     }
   }
 }

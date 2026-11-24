@@ -30,6 +30,7 @@ import { resetPositionsState } from '../engine/positions';
 import { refreshSkills } from '../engine/match/skills';
 import { clearPreparedMatches } from '../engine/match';
 import { resetInjuryRiskHook } from '../engine/injuryRisk';
+import { resetMatchLoads } from '../engine/form';
 import { setPortraitGame } from './playerPortraits';
 import { setAttendanceEuphoria } from '../data/history';
 import { setCurrencyDate, setHomeCurrency } from '../engine/economy';
@@ -65,6 +66,7 @@ export function resetModuleState(): void {
   resetGenerateState();        // Startwert/Erzeugungsdatum des Welt-Generators
   resetPositionsState();       // Spieljahr der Positionsgewichte
   resetInjuryRiskHook();       // Verletzungsrisiko-Haken (hing am vorigen Spielstand)
+  resetMatchLoads();           // gemerkte Belastung des letzten Spiels (Frische danach)
   setPortraitGame(null);       // Spielerbilder: Spielstand der Zuordnung (GameShell setzt den neuen)
   setAttendanceEuphoria(null); // WM-Euphorie
   setHomeCurrency('ger'); setCurrencyDate(null); setDisplayYear(1975); setCompetitionDate(null);

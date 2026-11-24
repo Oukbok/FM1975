@@ -675,17 +675,30 @@ Frische ist die **aktuell verfügbare Kraft** eines Spielers (**0–100**) und e
 Ein topfitter Spieler kann trotzdem „platt" (unfrisch) sein, wenn er drei Spiele in einer Woche gemacht hat – das ist der Kern der Rotationslogik.
 
 ## Frische sinkt durch
-- **Spiele (stark):** Ein voller Einsatz (90 Min.) kostet **~25–40 Punkte**, leicht gedämpft durch hohe Ausdauer. Einwechslungen kosten anteilig zur Spielzeit weniger. Formel: \`(minutes/90) * (25 + rand*15) * staminaFaktor\` (\`staminaFaktor\` ≈ 0,8–1,2).
+- **Spiele (stark):** Was ein Spiel kostet, hängt davon ab, wie lange und wie müde jemand gespielt hat: **12 Punkte je 90 Minuten + die Hälfte des Energieverlusts im Spiel** (höchstens 45). Ein Feldspieler über 90 Minuten verliert so meist **33–40**, bei hoher Intensität bis 45, der Torwart etwa **20**; Einwechselspieler und früh Ausgewechselte deutlich weniger.
 - **Nicht eingesetzte Kaderspieler:** nur leichte Trainingsbelastung (**−2**).
+- **Sehr hartes Training:** über 10 Belastungspunkte am Tag kostet jeder Punkt 0,4 Frische (z. B. Vorbereitungswoche mit Extraeinheit ≈ −2,4) – wer nur hart trainiert, pendelt sich bei gut 90 ein.
 
-## Frische regeneriert durch
-- **Tägliche Erholung:** **+8 bis +15 pro Tag**, gedeckelt bei 100 (\`recoverFreshness\` in \`dailyRecovery\`/Wochentraining). Basis +9, plus Ausdauer-Bonus (bis +2,5) und Alters-Bonus (≤23 Jahre +2, ≥32 Jahre −1,5).
+## Frische kommt zurück: je müder, desto schneller
+Jeden Tag kommen **40 % der Lücke zu 100** zurück, mindestens 1 Punkt – je niedriger die Frische, desto mehr; die letzten Punkte kommen langsamer. Das Training des Tages verändert das Tempo (Faktor **1,15 − 0,025 × Tagesbelastung**, zwischen 0,6 und 1,3): Regeneration ×1,25, freier Tag ×1,15, normales Training ≈ ×1, hartes Training ×0,85, sehr hartes ×0,75. Ausdauer und Alter wirken wie bisher (Faktor 0,87–1,30: gute Ausdauer und ≤ 23 Jahre schneller, ab 32 langsamer). Am Spieltag selbst und bei KI-Vereinen gilt ein normaler Tag.
+
+| Frische am Morgen | Regeneration | frei | normal (≈ 6,5) | hart (10) | sehr hart (16) |
+|---|---|---|---|---|---|
+| 40 | +32 | +29 | +25 | +23 | +17 |
+| 50 | +27 | +25 | +21 | +19 | +14 |
+| 60 | +21 | +20 | +17 | +15 | +10 |
+| 70 | +16 | +15 | +13 | +12 | +7 |
+| 80 | +11 | +10 | +8 | +8 | +4 |
+| 90 | +5 | +5 | +4 | +4 | +1 |
+| 95 | +3 | +3 | +2 | +2 | −1 |
+
+(Ausdauer 70, Alter 26.) **Englische Woche** (Sa – Mi – Sa, Standard-Wochenplan): Nach dem Samstagsspiel liegt die Startelf bei rund 60–75, am Mittwoch wieder bei ≈ 95–98, am Samstag danach bei ≈ 90–96 – spielfähig, aber nicht ganz frisch; im Spiel startet die Energie entsprechend etwas tiefer (siehe unten), müde Spieler müssen früher raus.
 - **Rückkehr aus Verletzung:** Frische wird auf **100** zurückgesetzt.
 
-Nach einem harten Spiel braucht ein Spieler damit **mehrere Tage** bis zur vollen Frische → Rotation lohnt sich.
-
 ## Wirkung im Spiel
-Frische fließt als eigener **Frische-Faktor** in die effektive Tagesstärke ein: \`0.7 + frische/100 * 0.3\` (0,7–1,0). Volle Frische = voller Wert; sehr niedrige Frische senkt die physische Leistung spürbar (bis −30 %), aber nicht vernichtend. Effektivstärke = \`Overall * Form * Fitness * Frische\`.
+- **Startenergie:** 75 + 0,25 × Frische (Frische 60 → Energie 90 beim Anpfiff).
+- **Tagesform:** Frische geht leicht in die Tagesstärke ein (\`0,95 + 0,05 × Frische/100\`).
+- **Verletzungsrisiko im Spiel:** wer müde anreist, verletzt sich leichter – Frische ≥ 90 ×1, 80 ×1,1, 70 ×1,2, 60 ×1,35, ≤ 50 ×1,5 (zusätzlich zur Energie im Spiel, siehe Artikel *So rechnet die Match-Engine*).
 
 ## Anzeige (Batterie-Symbol)
 Frische erscheint überall als **Batterie**: Der Füllstand entspricht dem Wert, die Farbe der Stufe – Dunkelgrün ab 90 (voll erholt), Hellgrün 75–89, Gelb 60–74, Orange 45–59, Rot unter 45 (erschöpft). Mit der Maus darüber siehst du den genauen Wert, im Spielerprofil steht er daneben. Im Textmodus zeigt dieselbe Batterie die **Kraft** während des Spiels.
@@ -698,8 +711,8 @@ Save-Version **7**: Altstände ohne Frische werden beim Laden nachgerüstet (\`r
 
 ## Code
 - Feld: \`Player.frische\` (0–100), eigenständig neben \`Player.attributes.fitness\`.
-- \`engine/form.ts\`: \`applyMatchFreshnessDrain\`, \`recoverFreshness\`, Anwendung in \`applyMatchEffects\`.
-- \`engine/match.ts\`: \`frischeFactor\` (in \`effectiveRating\`).
+- \`engine/form.ts\`: \`noteMatchLoad\`/\`freshnessCostOf\` (Belastung aus der Match-Engine), \`applyMatchFreshnessDrain\` (Rückfall), \`recoverFreshness\`/\`freshnessGain\`/\`trainingRecoveryFactor\`, Anwendung in \`applyMatchEffects\`.
+- \`engine/match/team.ts\`: \`conditionFactor\`, \`startEnergy\`; Kurven \`engine/match/fatigue.ts\`.
 - \`engine/training.ts\` & \`engine/weeklyTraining.ts\`: tägliche/wöchentliche Regeneration.
 - \`engine/save.ts\`: \`SAVE_VERSION = 7\`. \`App.tsx\`: \`retrofitFrische\` beim Laden.`,
   },
@@ -1640,7 +1653,7 @@ Wechsel, Umstellungen und Ansprachen laufen über einen eigenen Bildschirm. Er �
 Ein Klick auf das Lauf-Symbol in der Bank schickt einen Ersatzspieler zum Aufwärmen („Alle Spieler aufwärmen“, „Aufwärmen abbrechen“). Nach **drei Minuten** ist er warm: Eingewechselt bringt er etwas mehr Kraft mit (+4) und kommt schneller ins Spiel (+1 % Tagesleistung). Wer länger als zehn Minuten an der Linie läuft, verliert langsam etwas Kraft.
 
 ## Optionen (Knopf „Einstellungen“)
-- **Automatische Auswechslungen:** Dein Co-Trainer wärmt bei nachlassender Energie einen Ersatz auf (ab Energie 70, ausgewechselt wird unter 62) und wechselt Erschöpfte und Verletzte selbst aus; den letzten Wechsel hebt er bis zur Schlussphase auf. Ausrichtung und Taktik bleiben deine Sache.
+- **Automatische Auswechslungen:** Dein Co-Trainer wärmt bei nachlassender Energie einen Ersatz auf (unter Energie 65, ausgewechselt wird unter 55) und wechselt Erschöpfte und Verletzte selbst aus; den letzten Wechsel hebt er bis zur Schlussphase auf. Ausrichtung und Taktik bleiben deine Sache.
 - Ohne Co-Trainer **humpelt ein Verletzter weiter**, bis du ihn auswechselst – das Spiel hält dann immer an. Hast du keinen Wechsel mehr, muss er raus und deine Elf spielt in Unterzahl.
 - **Zur Halbzeit anhalten**, **Bei Auswechslungen anhalten** (Verletzung, Platzverweis, ein Spieler am Ende seiner Kräfte, Wechsel des Co-Trainers), **Zur Schlussphase anhalten** (75. Minute), **Bei Rückstand anhalten**, **Spannungsmomente** und die **Schnelligkeit** (Langsam, Normal, Schnell, Rasant). Alles wird gespeichert und gilt auch beim nächsten Spiel.
 - **Pause** (runder Knopf unten rechts oder Leertaste) und **Vorspulen** bis zur Pause bzw. zum Ende – angehalten wird trotzdem, wenn eine Option greift.
@@ -1658,7 +1671,26 @@ Der Kommentar wird aus einer Grammatik mit vielen ineinander verschachtelten Bau
     title: 'So rechnet die Match-Engine',
     keywords: ['engine', 'simulation', 'stärke', 'position', 'eignung', 'heimvorteil', 'tore', 'xg', 'chance', 'note', 'energie', 'kraft', 'frische', 'epoche', 'attribute', 'schnelligkeit', 'antritt', 'teamwork', 'laufbereitschaft', 'konzentration', 'führung', 'abschlag', 'fangsicherheit', 'kommandos'],
     body: `## Spielerstärke im Spiel
-Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Energie** (Batterie-Symbol): Sie startet je nach Frische bei 90–100 und fällt alle fünf Minuten – schneller bei geringer **Ausdauer**, hohem Pressing/Tempo/Einsatz, laufintensiven Rollen, Hitze und in der Verlängerung; in der Pause kommen 6 Punkte zurück. Nach 90 Minuten bleiben Feldspielern mit mittlerer Ausdauer bei normaler Taktik etwa 60–68, mit guter Ausdauer etwa 68–75, bei hoher Intensität rund 8 Punkte weniger; der **Torwart** verliert deutlich weniger (meist 85–92). Müde Spieler verlieren in jedem Duell bis zu 18 % (bei Energie 60 etwa 7 %), Laufbereitschaft und – leicht – Konzentration lassen nach. Deshalb lohnen sich Wechsel ab etwa der 60. Minute.
+Jeder Spieler bringt seine **Positionsstärke** auf der Position mit, auf der er tatsächlich spielt, dazu die **Tagesform** aus Form, Moral, Fitness und Frische. Während des Spiels sinkt die **Energie** (Batterie-Symbol): Sie startet je nach Frische bei 90–100 und fällt alle fünf Minuten – schneller bei geringer **Ausdauer**, hohem Pressing/Tempo/Einsatz, laufintensiven Rollen, Hitze und in der Verlängerung; in der Pause kommen 6 Punkte zurück. Nach 90 Minuten bleiben Feldspielern bei normaler Taktik mit geringer Ausdauer (unter 60) etwa 45–48, mit mittlerer (60–74) etwa 53–55, mit guter (ab 75) etwa 60–62, bei hoher Intensität rund 10 Punkte weniger (Untergrenze 20); der **Torwart** verliert deutlich weniger (meist 84–85). Deshalb lohnen sich Wechsel ab etwa der 60. Minute.
+
+## Ab welcher Energie spielt ein Spieler schlechter?
+Bis Energie **80** gibt es keinen Verlust, darunter wird es immer steiler (dazwischen linear). Technik leidet weniger als Laufen und Zweikampf:
+
+| Energie | Duelle, Pässe, Tempo | Mannschaftsstärke | Abschluss | Torwart | Verletzungsrisiko |
+|---|---|---|---|---|---|
+| 80–100 | 0 % | 0 % | 0 % | 0 % | ×1 |
+| 75 | −1,1 % | −1,2 % | −0,9 % | −0,6 % | ×1 |
+| 70 | −2,2 % | −2,4 % | −1,8 % | −1,2 % | ×1 |
+| 65 | −3,6 % | −4,0 % | −3,0 % | −2,0 % | ×1,08 |
+| 60 | −5,0 % | −5,6 % | −4,2 % | −2,8 % | ×1,15 |
+| 55 | −6,7 % | −7,4 % | −5,6 % | −3,7 % | ×1,25 |
+| 50 | −8,3 % | −9,2 % | −6,9 % | −4,6 % | ×1,35 |
+| 45 | −9,9 % | −11,0 % | −8,3 % | −5,5 % | ×1,48 |
+| 40 | −11,5 % | −12,8 % | −9,6 % | −6,4 % | ×1,6 |
+| 30 | −14,8 % | −16,4 % | −12,3 % | −8,2 % | ×1,9 |
+| 20 | −18 % | −20 % | −15 % | −10 % | ×2,2 |
+
+Laufbereitschaft folgt der Spalte „Duelle“, die Konzentration der Abwehr sinkt höchstens um 9 % (bei 50 ≈ −4 %). Das Verletzungsrisiko im Spiel gilt zusätzlich zur **Frische vor dem Anpfiff** (≥ 90 ×1, 80 ×1,1, 70 ×1,2, 60 ×1,35, ≤ 50 ×1,5) und zur Verletzungsanfälligkeit. Co-Trainer und KI wärmen unter 65 einen Ersatz auf und wechseln unter 55 aus – dort kostet ein Spieler schon rund 7 % je Duell. Code: \`engine/match/fatigue.ts\`.
 
 ## Jede Aktion ist ein Duell
 Ein Angriff besteht aus mehreren Schritten, und jeder Schritt wird zwischen **zwei konkreten Spielern** mit den passenden Attributen entschieden:

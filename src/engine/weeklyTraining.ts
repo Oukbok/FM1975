@@ -453,8 +453,8 @@ export function applyDailyTraining(
     // --- Fitness anpassen (Grund-Regeneration − Tagesbelastung) ---
     const delta = DAILY_BASE_RECOVERY - totalLoad;
     p.attributes.fitness = Math.max(15, Math.min(100, p.attributes.fitness + delta));
-    // --- Frische erholt sich täglich (unabhängig von der Fitness) ---
-    recoverFreshness(p);
+    // --- Frische erholt sich täglich: je müder, desto mehr; Regeneration/frei mehr, hartes Training weniger ---
+    recoverFreshness(p, totalLoad);
     // Trainingslast steigt mit der Belastung, sinkt bei Erholung.
     p.trainingLoad = Math.max(0, p.trainingLoad + Math.round(totalLoad) - DAILY_BASE_RECOVERY + 5);
 

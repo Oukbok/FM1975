@@ -7,6 +7,7 @@
 // =============================================================================
 import type { MPlayer } from './types';
 import { cachedSuitability } from './team';
+import { fatigueFactor } from './fatigue';
 
 /** Breite der Duell-Kurve: Differenz / DUEL_K = Logit-Vorsprung. */
 export const DUEL_K = 21;
@@ -31,8 +32,8 @@ export function phys(m: MPlayer): number {
   }
   return m.cond * (m.fitF ?? 1) * (m.day ?? 1) * (m.rfit ?? 1);
 }
-/** Energie im Spiel: müde Spieler verlieren bis zu 18 % in jedem Duell (Energie 60 ≈ −7 %). */
-export const energyF = (m: MPlayer): number => 0.82 + 0.18 * m.energy / 100;
+/** Energie im Spiel: ab 80 kein Verlust, darunter bis zu 18 % in jedem Duell (60 ≈ −5 %, 50 ≈ −8 %; Kurve `fatigue.ts`). */
+export const energyF = (m: MPlayer): number => fatigueFactor(m.energy, 'duel');
 
 /**
  * Tagesleistung aus der Konstanz: niedrige Konstanz streut stärker, Erfahrung stabilisiert
@@ -128,7 +129,7 @@ export function finishSkill(m: MPlayer, kind: ShotKind, pressure = 0): number {
     case 'freekick': v = (a.freeKicks ?? 50) * 0.7 + a.shotPower * 0.15 + a.technique * 0.15; break;
     default: v = a.shooting * 0.45 + a.shotPower * 0.12 + a.composure * 0.23 + a.technique * 0.12 + a.firstTouch * 0.08;
   }
-  return v * (m.cond * (m.day ?? 1) * (0.85 + 0.15 * m.energy / 100)) * nerveF(m, pressure);
+  return v * (m.cond * (m.day ?? 1) * fatigueFactor(m.energy, 'finish')) * nerveF(m, pressure);
 }
 /** Wer sich im Strafraum freiläuft und den Ball verarbeitet (flache Hereingabe, Abpraller). */
 const raw_boxSkill = (m: MPlayer) => {
@@ -148,7 +149,7 @@ export function keeperValue(m: MPlayer | undefined, s: KeeperSituation, pressure
   if (!m) return 25;
   if (m.group !== 'GK') return 25 + A(m).agility * 0.15;
   const a = A(m);
-  const f = m.cond * (m.day ?? 1) * (0.9 + 0.1 * m.energy / 100) * nerveF(m, pressure);
+  const f = m.cond * (m.day ?? 1) * fatigueFactor(m.energy, 'keeper') * nerveF(m, pressure);
   switch (s) {
     case 'oneOnOne': return (a.oneOnOnes * 0.45 + a.reflexes * 0.25 + a.positioning * 0.2 + a.composure * 0.1) * f;
     case 'air': return (a.aerialReach * 0.45 + a.handling * 0.2 + a.jumping * 0.15 + a.communication * 0.2) * f;

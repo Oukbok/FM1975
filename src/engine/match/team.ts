@@ -13,6 +13,7 @@ import { getEraYear, getSkillRev, positionSuitability, sideOf } from '../positio
 import type { MPlayer, Mentality, ShoutId, Side } from './types';
 import { NEUTRAL_RF, NEUTRAL_RU } from '../tacticRoles';
 import { SHOUT_FX } from './shouts';
+import { fatigueFactor } from './fatigue';
 
 /** Anzahl zwischengespeicherter Fähigkeiten je Spieler (engine/match/skills.ts). */
 export const SKILL_SLOTS = 13;
@@ -51,16 +52,19 @@ export function startEnergy(p: Player): number {
  * Energieverlust im Spiel je Fünf-Minuten-Takt (Wunsch Pascal: Spieler werden spürbar müde,
  * Torwart deutlich weniger). Feldspieler: Grundwert nach Ausdauer × Taktik (Pressing/Tempo/
  * Einsatz/Ausrichtung, `TacticMods.drain`) × Rolle × Wetter × Verlängerung. Kalibrierung
- * (90 Min. von 100, Pause +6, Vereinstaktik): Ausdauer 72 (Median) ≈ 66, 85 ≈ 73, 55 ≈ 57;
- * hohe Intensität ≈ 8–10 Punkte weniger; Torwart ≈ 88–91. Annahmen: docs/research/match-energy.md.
+ * (90 Min. von 100, Pause +6, Vereinstaktik; Stufe 2, Nov. 2026: im Schnitt 10 Punkte mehr):
+ * Ausdauer < 60 ≈ 45–48, 60–74 ≈ 53–55, ≥ 75 ≈ 60–62; hohe Intensität ≈ 8–10 Punkte weniger;
+ * Torwart ≈ 84–85. Annahmen: docs/research/match-energy.md.
  */
-export const ENERGY_FIELD_K = 2.7;
-export const ENERGY_GK_K = 0.9;
-export const ENERGY_FLOOR = 15;
+export const ENERGY_FIELD_K = 2.62;
+/** Ausdauer-Achse des Feldverlusts: K × (ENERGY_FIELD_A − Ausdauer/100). */
+export const ENERGY_FIELD_A = 1.66;
+export const ENERGY_GK_K = 1.1;
+export const ENERGY_FLOOR = 20;
 export function energyDrain(m: MPlayer, teamDrain: number, heat: number, et: number): number {
   const st = m.p.attributes.stamina ?? 60;
   if (m.group === 'GK') return ENERGY_GK_K * (1.3 - st / 200) * (1 + (teamDrain - 1) * 0.3) * heat * et;
-  return ENERGY_FIELD_K * (1.45 - st / 100) * teamDrain * (m.rd ?? 1) * heat * et;
+  return ENERGY_FIELD_K * (ENERGY_FIELD_A - st / 100) * teamDrain * (m.rd ?? 1) * heat * et;
 }
 
 export function makeMPlayer(p: Player, side: Side, pos: Position, started: boolean, minuteIn: number): MPlayer {
@@ -87,9 +91,9 @@ export function matchBase(p: Player, pos: Position): number {
   return cachedSuitability(p, pos) * 0.82 + Math.min(p.overall, cachedSuitability(p, p.naturalPosition)) * 0.18;
 }
 
-/** Tagesstärke eines Spielers auf seiner Position inkl. Energie. */
+/** Tagesstärke eines Spielers auf seiner Position inkl. Energie (Kurve `fatigue.ts`, bis −20 %). */
 export function rating(m: MPlayer): number {
-  return m.base * m.cond * (0.8 + 0.2 * (m.energy / 100));
+  return m.base * m.cond * fatigueFactor(m.energy, 'rating');
 }
 
 // -----------------------------------------------------------------------------

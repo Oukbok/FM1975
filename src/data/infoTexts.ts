@@ -74,7 +74,7 @@ export const INFO_TEXTS = {
   // ---------------------------------------------------------------- Spieler-Zustand
   frische: {
     title: 'Frische',
-    text: 'Wie ausgeruht ein Spieler gerade ist (0–100). Nach Spielen sinkt sie stark und erholt sich über mehrere Tage; je niedriger sie ist, desto schneller gehen dem Spieler im Spiel die Kräfte aus. Batterie dunkelgrün = voll erholt, rot = erschöpft.',
+    text: 'Wie ausgeruht ein Spieler gerade ist (0–100). Ein Spiel kostet je nach Einsatzzeit und Müdigkeit bis zu 45 Punkte; jeden Tag kommen etwa 40 % der Lücke zu 100 zurück (bei 50 rund +20, bei 80 rund +8, die letzten Punkte langsam) – an Regenerations- und freien Tagen mehr, bei hartem Training weniger. Wer müde anreist, beginnt das Spiel mit weniger Energie und verletzt sich leichter. Batterie dunkelgrün = voll erholt, rot = erschöpft.',
     wiki: 'condition-frische',
   },
   fitness: {
@@ -94,7 +94,7 @@ export const INFO_TEXTS = {
   },
   kraft: {
     title: 'Energie im Spiel',
-    text: 'Verbleibende Energie während der Partie (Batterie). Sie sinkt mit jeder Minute – je nach Ausdauer, Laufarbeit, Taktik und Wetter; wer nicht ausgeruht ist (Frische), beginnt schon mit weniger. Nach 90 Minuten bleiben Feldspielern meist 55–75, dem Torwart etwa 85–90. Müde Spieler verlieren an Tempo und Zweikampfstärke; ab der 60. Minute hilft ein frischer Einwechselspieler.',
+    text: 'Verbleibende Energie während der Partie (Batterie). Sie sinkt mit jeder Minute – je nach Ausdauer, Laufarbeit, Taktik und Wetter; wer nicht ausgeruht ist (Frische), beginnt schon mit weniger. Nach 90 Minuten bleiben Feldspielern meist 45–62, dem Torwart etwa 84–85. Bis 80 spielt ein Spieler voll, darunter immer schlechter: bei 60 etwa −5 % je Duell, bei 50 −8 %, bei 40 −12 %; das Verletzungsrisiko steigt ab 70 (bei 50 ×1,35, bei 40 ×1,6). Ab der 60. Minute hilft ein frischer Einwechselspieler.',
     wiki: 'match-engine',
   },
   konstanz: {

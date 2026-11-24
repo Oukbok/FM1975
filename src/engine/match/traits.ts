@@ -15,6 +15,7 @@
 // =============================================================================
 import type { MPlayer } from './types';
 import { DUEL_K, logistic, paceSkill, phys, energyF, recoverSkill } from './skills';
+import { fatigueFactor } from './fatigue';
 
 export interface TeamTraits {
   /** Ø Teamwork der Feldspieler (Anweisungen umsetzen, Kombinationen, Abseitsfalle). */
@@ -64,7 +65,7 @@ export function computeTraits(pitch: MPlayer[], captainId: string | null): TeamT
     // Laufbereitschaft lässt mit der Energie nach
     work: avg(field.map((m) => (A(m).workRate ?? 60) * energyF(m)), 60) / 0.97,
     // Konzentration lässt mit der Energie leicht nach (frisch ≈ +1,5 %, Energie 60 ≈ −2 %): späte Patzer/Lücken
-    conc: avg(bk.map((m) => (A(m).concentration ?? 60) * (0.91 + 0.09 * m.energy / 100)), 60) / 0.985,
+    conc: avg(bk.map((m) => (A(m).concentration ?? 60) * fatigueFactor(m.energy, 'conc')), 60) / 0.985,
     aggr: avg(field.map((m) => A(m).aggression ?? 60), 60),
     lead: cap ? A(cap).leadership ?? 60 : Math.max(...field.map((m) => A(m).leadership ?? 50)) - 8,
     resist: avg(bk.map((m) => {
@@ -199,7 +200,7 @@ export type WhyPart = [Why, number, number, number];
  * Kommentar wie bisher. Müdigkeit des Verlierers schlägt alles, wenn sie deutlich ist.
  */
 export function whyOf(win: MPlayer, lose: MPlayer, parts: WhyPart[], min = 5): Why | undefined {
-  if (lose.energy < 52 && win.energy - lose.energy > 22) return 'tired';
+  if (lose.energy < 45 && win.energy - lose.energy > 22) return 'tired';
   let best: Why | undefined, bv = min;
   for (const [k, a, b, w] of parts) {
     const v = (a - b) * w;

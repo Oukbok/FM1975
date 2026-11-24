@@ -9,7 +9,8 @@ import { logMatch, recordInjury } from '../history';
 import { addCompStats, compCodeOf } from '../compStats';
 import type { MatchSim } from './sim';
 import type { TeamState } from './state';
-import { rating } from './team';
+import { rating, startEnergy } from './team';
+import { noteMatchLoad } from '../form';
 import { addPositionMinutes } from '../positionSkill';
 import { addExperience } from '../experience';
 import { noteMatch, validCohesion } from '../cohesion';
@@ -276,6 +277,8 @@ function commit(sim: MatchSim, grades: Map<string, number>, opts: FinishOptions)
         stats.ratedMatches++;
         stats.averageRating = stats.ratedMatches > 0 ? stats.ratingSum / stats.ratedMatches : 0;
       }
+      // Belastung für die Frische nach dem Spiel (engine/form.ts `applyMatchEffects`).
+      noteMatchLoad(player, mins, startEnergy(player) - m.energy);
       // Positionsvertrautheit wächst mit Einsatzminuten auf der gespielten Position.
       if (date) addPositionMinutes(player, m.pos, mins, date);
       // Erfahrung wächst mit Pflichtspielen (engine/experience.ts).
