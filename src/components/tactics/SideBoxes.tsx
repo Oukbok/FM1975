@@ -40,13 +40,14 @@ export function CohesionBox({ g, set }: { g: Game; set: (p: Partial<Tactics>) =>
           <b>{verdict(info.total)}</b>
           <span className={eff > 0.05 ? 'pos' : eff < -0.05 ? 'neg' : ''}>{eff > 0 ? '+' : eff < 0 ? '−' : '±'}{Math.abs(eff).toFixed(1).replace('.', ',')} % Mannschaftsstärke{info.total < 80 ? ', mehr Fehler im Aufbau' : ''}</span>
           <div className="txc-bars">
-            {([['Formation', info.formation], ['Anweisungen', info.instructions], ['Stammelf', info.lineup]] as const).map(([l, v]) => (
-              <div key={l} className="txc-bar"><span>{l}</span><i><em style={{ width: `${v}%` }} /></i><b>{v}</b></div>
+            {([['Formation', info.formation, 40], ['Anweisungen', info.instructions, 40], ['Stammelf', info.lineup, 20]] as const).map(([l, v, w]) => (
+              <div key={l} className="txc-bar" title={l === 'Stammelf' ? 'Anteil 20 %: Startelfen der letzten drei Spiele, das letzte zählt 50 %, das vorletzte 30 %, das drittletzte 20 %' : `Anteil ${w} %`}><span>{l}<small>{w} %</small></span><i><em style={{ width: `${v}%` }} /></i><b>{v}</b></div>
             ))}
           </div>
         </div>
       </div>
       <div className="txc-foot">
+        {info.penalty > 0 && <p className="txc-pen">Ein Teil ist der Mannschaft noch fremd (unter 50): −{info.penalty} auf die Eingespieltheit.</p>}
         {info.gaps.length ? (
           <>
             <p>Noch nicht eingeübt ({info.gaps.length}): <b>{info.gaps.map((x) => x.label).join(', ')}</b>.</p>

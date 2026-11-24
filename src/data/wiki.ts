@@ -1525,10 +1525,20 @@ Jede Mannschaft hat eine Taktik „im Kopf“: die Anweisungen, die sie eingeüb
 | Anteil | Gewicht | Was zählt |
 | --- | --- | --- |
 | Formation | 40 % | Vertrautheit mit dem System. Verwandte Formationen helfen: Wer ein 4-4-2 beherrscht, findet sich im 4-4-2 mit Raute schneller zurecht als in einem Libero-System. |
-| Anweisungen | 42 % | Abstand zwischen Verlangtem und Eingeübtem. Schwer wiegen Deckung, die beiden Mentalitäten, Pressing und Abwehrlinie, leichter Tempo und Breite, kaum Flanken und Härte. Der Einsatz muss nicht eingeübt werden. |
-| Stammelf | 18 % | Wie viele aus der Startelf schon im Spiel davor begannen. Viel Rotation kostet Abstimmung. |
+| Anweisungen | 40 % | Abstand zwischen Verlangtem und Eingeübtem. Schwer wiegen Deckung, die beiden Mentalitäten, Pressing und Abwehrlinie, leichter Tempo und Breite, kaum Flanken und Härte. Der Einsatz muss nicht eingeübt werden. |
+| Stammelf | 20 % | Wie viele aus deiner aufgestellten Elf in den **letzten drei Pflichtspielen** begannen. Viel Rotation kostet Abstimmung. |
 
-Ein völlig fremder Teil zieht das Ganze zusätzlich nach unten: Zu rund einem Drittel zählt der schwächste Teil. Wer alle Anweisungen auf einmal umwirft, landet deshalb weit unter 50.
+**Stammelf aus den letzten drei Spielen.** Für jedes der drei Spiele zählt der Anteil deiner Elf, der damals in der Startelf stand – das letzte Spiel mit **50 %**, das vorletzte mit **30 %**, das drittletzte mit **20 %**. Gibt es erst ein oder zwei Spiele, werden deren Gewichte auf 100 % hochgerechnet (zwei Spiele: 62,5 % und 37,5 %). Gemessen wird auf der Taktik-Seite und in der Aufstellung an der Elf, die gerade aufgestellt ist, im Spiel an der Startelf – Einwechslungen ändern den Wert nicht.
+
+| Beispiel | Letztes Spiel | Vorletztes | Drittletztes | Stammelf |
+| --- | --- | --- | --- | --- |
+| Gleiche Elf wie immer | 11 von 11 | 11 von 11 | 11 von 11 | 100 |
+| Elf hat sich nach und nach verändert | 11 von 11 | 8 von 11 | 5 von 11 | 0,5 · 100 + 0,3 · 73 + 0,2 · 45 ≈ 81 |
+| Rückkehr zur alten Elf | 5 von 11 | 11 von 11 | 11 von 11 | 0,5 · 45 + 0,3 · 100 + 0,2 · 100 ≈ 73 |
+
+**So entsteht die Gesamtzahl:** 0,4 · Formation + 0,4 · Anweisungen + 0,2 · Stammelf. Beispiel: Formation 80, Anweisungen 60, Stammelf 50 → 32 + 24 + 10 = **66**.
+
+**Einziger Zusatz – Abzug für einen fremden Teil:** Liegt *Formation* oder *Anweisungen* unter 50, kostet jeder Punkt bis 50 zusätzlich 0,35 Punkte (die Box nennt den Abzug dann unten in Rot). Beispiel: Formation 90, Anweisungen 30, Stammelf 100 → 36 + 12 + 20 = 68, Abzug 0,35 · 20 = 7 → **61**. Wer alle Anweisungen auf einmal umwirft, landet so weit unter 50. Die Stammelf löst den Abzug nie aus. Solange beide Teile bei 50 oder darüber liegen, gilt die Rechnung 40/40/20 genau.
 
 ### Wirkung im Spiel
 - **80 ist neutral.** Darüber spielt die Mannschaft besser (100 ≈ +1,6 % auf Angriff, Kontrolle und Abwehr), darunter schlechter (50 ≈ −2,4 %) und sie macht **mehr Fehler im Aufbau**.

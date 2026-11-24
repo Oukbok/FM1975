@@ -119,8 +119,9 @@ export function refresh(t: TeamState, minute: number): void {
   const sweep = assignRoles(t, tac);
   t.mods = tacticMods(tac, t.mentality, active, active ? t.shoutPower : 0, t.talk);
   // Eingespieltheit (engine/cohesion.ts): 80 = neutral; wenig eingespielt = schwächer und fehleranfälliger.
+  // Stammelf-Anteil aus der Startelf gegen die letzten drei Pflichtspiele (Wechsel ändern ihn nicht).
   const co = t.club?.cohesion;
-  const coh = tac && validCohesion(co) ? cohesionOf(co, tac, t.year, t.formation).total : COHESION_NEUTRAL;
+  const coh = tac && validCohesion(co) ? cohesionOf(co, tac, t.year, t.formation, t.players.filter((m) => m.started).map((m) => m.id)).total : COHESION_NEUTRAL;
   if (coh !== COHESION_NEUTRAL) {
     const cf = cohesionFactor(coh);
     t.mods = { ...t.mods, att: t.mods.att * cf, ctrl: t.mods.ctrl * cf, def: t.mods.def * cf, errors: t.mods.errors * cohesionErrors(coh) };

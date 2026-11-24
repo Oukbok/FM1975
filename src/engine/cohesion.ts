@@ -4,8 +4,12 @@
 // Jede Mannschaft hat eine Taktik „im Kopf“: eingeübte Anweisungen (`p`, gleitende
 // Werte), die Vertrautheit mit Formationen (`f`, 0–100) und eine Stammelf (`s`).
 // Die Eingespieltheit (0–100) ist der Abstand zwischen dem Eingeübten und dem, was
-// der Trainer gerade verlangt:
-//   40 % Formation · 42 % Anweisungen · 18 % Stammelf
+// der Trainer gerade verlangt (Wunsch Pascal, exakt):
+//   40 % Formation · 40 % Anweisungen · 20 % Stammelf
+// Stammelf = gewichteter Anteil der aufgestellten Elf, der in den letzten drei
+// Pflichtspielen begann: letztes Spiel 50 %, vorletztes 30 %, drittletztes 20 %.
+// Einziger Zusatz: Liegt Formation oder Anweisungen unter 50 („fremd“), zieht ein
+// Abzug von 0,35 je fehlendem Punkt bis 50 das Ganze nach unten (`cohesionTotal`).
 // Mit jedem Spiel und jeder taktischen Trainingseinheit rückt das Eingeübte näher
 // an die Vorgabe. Wer ständig umstellt, bleibt dazwischen hängen.
 // Wirkung im Spiel (engine/match/state.ts): 80 = neutral, 100 ≈ +1,6 % auf Angriff,
@@ -30,8 +34,11 @@ export interface Practiced {
 export interface Cohesion {
   p: Practiced;
   f: Record<string, number>;
-  /** Stammelf: gleitender Anteil der Startelf, der schon im Spiel davor begann (0–1). */
+  /** Stammelf-Wert (0–1) des letzten Pflichtspiels; gilt, solange keine Elf bekannt ist bzw. ohne Vorgeschichte. */
   s: number;
+  /** Startelfen der letzten drei Pflichtspiele, neueste zuerst (fehlt in alten Spielständen). */
+  xis?: string[][];
+  /** Alt: nur die Startelf des letzten Spiels – wird beim nächsten Spiel nach `xis` übernommen. */
   xi?: string[];
 }
 
@@ -117,16 +124,52 @@ export function formationFam(co: Cohesion, id: string): number {
   return best;
 }
 
-export interface CohesionView { total: number; formation: number; instructions: number; lineup: number }
-/** Eingespieltheit für eine Taktik (0–100) mit den drei Anteilen. */
-export function cohesionOf(co: Cohesion, t: Tactics, year: number, formation = t.formation): CohesionView {
+// --- Gesamtwert -------------------------------------------------------------------
+/** Anteile am Gesamtwert (Wunsch Pascal). */
+export const COHESION_WEIGHTS = { formation: 0.4, instructions: 0.4, lineup: 0.2 } as const;
+/** Stammelf: Gewicht der letzten drei Spiele, neuestes zuerst (bei kürzerer Vorgeschichte neu normiert). */
+export const LINEUP_GAME_WEIGHTS = [0.5, 0.3, 0.2] as const;
+/** Unter diesem Wert gilt Formation bzw. Anweisungen als fremd … */
+export const FOREIGN_BELOW = 50;
+/** … und jeder fehlende Punkt bis dahin kostet so viel vom Gesamtwert. */
+export const FOREIGN_PENALTY = 0.35;
+
+/** Gespeicherte Startelfen (neueste zuerst); alte Spielstände kennen nur `xi`. */
+export const lineupHistory = (co: Cohesion): string[][] => co.xis ?? (co.xi?.length ? [co.xi] : []);
+
+/** Stammelf-Wert (0–1): gewichteter Anteil von `xi`, der in den gespeicherten Startelfen begann; `null` ohne Vorgeschichte. */
+export function lineupShare(xi: readonly string[], history: readonly (readonly string[])[]): number | null {
+  const h = history.slice(0, LINEUP_GAME_WEIGHTS.length);
+  if (!xi.length || !h.length) return null;
+  let sum = 0, wSum = 0;
+  h.forEach((prev, i) => {
+    const set = new Set(prev);
+    sum += LINEUP_GAME_WEIGHTS[i] * xi.filter((x) => set.has(x)).length / xi.length;
+    wSum += LINEUP_GAME_WEIGHTS[i];
+  });
+  return sum / wSum;
+}
+
+/** Gesamtwert aus den drei Anteilen (je 0–100): 40/40/20 und Abzug für einen fremden Teil. */
+export function cohesionTotal(formation: number, instructions: number, lineup: number): { total: number; linear: number; penalty: number } {
+  const W = COHESION_WEIGHTS;
+  const linear = W.formation * formation + W.instructions * instructions + W.lineup * lineup;
+  const penalty = FOREIGN_PENALTY * Math.max(0, FOREIGN_BELOW - Math.min(formation, instructions));
+  return { total: clamp(linear - penalty, 0, 100), linear, penalty };
+}
+
+export interface CohesionView { total: number; formation: number; instructions: number; lineup: number; penalty: number }
+/**
+ * Eingespieltheit für eine Taktik (0–100) mit den drei Anteilen. `xi` = aufgestellte Elf
+ * (Taktik-Seite: Aufstellung, im Spiel: Startelf); ohne Elf oder Vorgeschichte gilt der
+ * Stammelf-Wert des letzten Spiels (`co.s`).
+ */
+export function cohesionOf(co: Cohesion, t: Tactics, year: number, formation = t.formation, xi?: readonly string[]): CohesionView {
   const fam = formationFam(co, getFormation(formation).id);
   const ins = clamp(1 - instructionGap(co, t, year).total / GAP_FULL, 0, 1) * 100;
-  const lu = clamp((co.s - 0.4) / 0.45, 0, 1) * 100;
-  // Wunsch Pascal: ein völlig fremder Teil zieht das Ganze deutlich nach unten (vorher nie unter ≈ 53).
-  const lin = 0.4 * fam + 0.42 * ins + 0.18 * lu;
-  const weak = Math.min(fam, ins, 0.5 * lu + 50);
-  return { total: Math.round(0.65 * lin + 0.35 * weak), formation: Math.round(fam), instructions: Math.round(ins), lineup: Math.round(lu) };
+  const lu = clamp((xi ? lineupShare(xi, lineupHistory(co)) : null) ?? co.s, 0, 1) * 100;
+  const r = cohesionTotal(fam, ins, lu);
+  return { total: Math.round(r.total), formation: Math.round(fam), instructions: Math.round(ins), lineup: Math.round(lu), penalty: Math.round(r.penalty) };
 }
 
 /** Neutralpunkt: ohne Angabe (Labor, Altbestand) rechnet die Engine mit diesem Wert. */
@@ -154,7 +197,7 @@ export function practice(co: Cohesion, t: Tactics, year: number, rate: number, f
   co.f[id] = Math.min(100, cur + (100 - cur) * clamp(fRate, 0, 1));
 }
 
-/** Nach einem Pflichtspiel: Einüben, andere Formationen verblassen langsam, Stammelf fortschreiben. */
+/** Nach einem Pflichtspiel: Einüben, andere Formationen verblassen langsam; Stammelf-Wert dieses Spiels merken, Elf vorn in die Liste der letzten drei. */
 export function noteMatch(co: Cohesion, t: Tactics, year: number, xi: string[]): void {
   const id = getFormation(t.formation).id;
   for (const k of Object.keys(co.f)) {
@@ -163,12 +206,11 @@ export function noteMatch(co: Cohesion, t: Tactics, year: number, xi: string[]):
     if (co.f[k] < 5) delete co.f[k];
   }
   practice(co, t, year, 0.14, 0.08);
-  if (co.xi?.length) {
-    const prev = new Set(co.xi);
-    const same = xi.filter((x) => prev.has(x)).length / Math.max(1, xi.length);
-    co.s = clamp(co.s * 0.72 + same * 0.28, 0, 1);
-  }
-  co.xi = xi.slice(0, 11);
+  const hist = lineupHistory(co);
+  const now = xi.slice(0, 11);
+  co.s = lineupShare(now, hist) ?? co.s;
+  co.xis = [now, ...hist].slice(0, LINEUP_GAME_WEIGHTS.length);
+  delete co.xi;
 }
 
 /** Die eingeübten Anweisungen als wählbare Stufen/Schalter (Markierung auf der Taktik-Seite, „Eingeübtes wiederherstellen“). */

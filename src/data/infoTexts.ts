@@ -265,7 +265,7 @@ export const INFO_TEXTS = {
   },
   eingespieltheit: {
     title: 'Eingespieltheit',
-    text: 'Wie gut die Mannschaft beherrscht, was du verlangst: Formation, Anweisungen und Stammelf. Jede Umstellung kostet zunächst – Spiele und Taktik-Einheiten im Training üben sie ein. Ab 80 hilft sie, darunter spielt die Elf schwächer und macht mehr Fehler.',
+    text: 'Wie gut die Mannschaft beherrscht, was du verlangst: Formation (40 %), Anweisungen (40 %) und Stammelf (20 %, aus den letzten drei Spielen). Jede Umstellung kostet zunächst – Spiele und Taktik-Einheiten im Training üben sie ein. Ab 80 hilft sie, darunter spielt die Elf schwächer und macht mehr Fehler.',
     wiki: 'tactic-cohesion',
   },
   spielerrollen: {

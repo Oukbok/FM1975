@@ -328,7 +328,7 @@ export default function LineupView({ g, onChange, onGoto }: { g: G; onChange: ()
 
         <DashBox title="Taktik" icon="tactics" right={getFormation(t.formation).label}>
           <TacticHead t={t} formation={formation} onEdit={onGoto ? () => onGoto('tactics') : undefined} xiAvg={xiAvg} suitAvg={suitAvg} familiar={familiar} xiCount={xiRows.length}
-            year={seasonYearOf(g.calendar.currentDate)} cohesion={validCohesion(club.cohesion) ? cohesionOf(club.cohesion, t, seasonYearOf(g.calendar.currentDate)).total : undefined} />
+            year={seasonYearOf(g.calendar.currentDate)} cohesion={validCohesion(club.cohesion) ? cohesionOf(club.cohesion, t, seasonYearOf(g.calendar.currentDate), t.formation, xiPlayers.map((p) => p.id)).total : undefined} />
         </DashBox>
 
         <DashBox title="Kapitän & Standards" info="standards" icon="matchball" right={hints.some((h) => h.level === 'warn') ? <span className="lu-warn-n">{hints.filter((h) => h.level === 'warn').length} Hinweise</span> : undefined}>

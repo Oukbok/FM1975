@@ -9,7 +9,7 @@ import { MatchSim } from '../src/engine/match/sim';
 import { tacticPlan } from '../src/engine/match/tacticPlan';
 import { effectiveTactics, markingOf, stepOf, stepValue, tacticLimits, tacticEraNotes } from '../src/engine/tacticEra';
 import { ROLES, autoRole, baseRole, roleFit, roleFitFactor, roleFor, rolesFor } from '../src/engine/tacticRoles';
-import { cohesionFactor, cohesionOf, formationSimilarity, initCohesion, instructionGap, noteMatch, practice, practicedTactics } from '../src/engine/cohesion';
+import { COHESION_WEIGHTS, cohesionFactor, cohesionOf, cohesionTotal, formationSimilarity, initCohesion, instructionGap, lineupShare, noteMatch, practice, practicedTactics, type Cohesion } from '../src/engine/cohesion';
 import { cohesionInfo, migrateCohesion, ownTacticUnits } from '../src/game/cohesionGame';
 import { coachTactics } from '../src/engine/aiManager';
 import { getFormation } from '../src/data/formations';
@@ -84,6 +84,39 @@ const co4 = JSON.parse(JSON.stringify(co));
 noteMatch(co4, t0, 1985, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k']);
 for (let i = 0; i < 6; i++) noteMatch(co4, t0, 1985, 'lmnopqrstuv'.split('').map((x) => x + i));
 check(cohesionOf(co4, t0, 1985).lineup < 40, `ständig neue Startelf: Stammelf-Anteil ${cohesionOf(co4, t0, 1985).lineup}`);
+// 4b) Nachrechnen mit festen Zahlen (Wunsch Pascal: 40 % Formation, 40 % Anweisungen, 20 % Stammelf;
+//     Stammelf aus den letzten drei Spielen 50/30/20, neuestes zuerst)
+const near = (a: number, b: number) => Math.abs(a - b) < 1e-9;
+check(COHESION_WEIGHTS.formation === 0.4 && COHESION_WEIGHTS.instructions === 0.4 && COHESION_WEIGHTS.lineup === 0.2, 'Gewichte exakt 0,40 / 0,40 / 0,20');
+{
+  const r1 = cohesionTotal(80, 60, 50); // 32 + 24 + 10 = 66, nichts fremd
+  const r2 = cohesionTotal(100, 100, 0); // 40 + 40 + 0 = 80 (Stammelf löst nie einen Abzug aus)
+  const r3 = cohesionTotal(90, 30, 100); // 36 + 12 + 20 = 68, Anweisungen 20 unter 50 → −7 → 61
+  const r4 = cohesionTotal(40, 0, 85); // 16 + 0 + 17 = 33, schwächster Teil 0 → −17,5 → 15,5
+  check(near(r1.total, 66) && near(r1.penalty, 0) && near(r2.total, 80) && near(r2.penalty, 0) && near(r3.linear, 68) && near(r3.penalty, 7) && near(r3.total, 61) && near(r4.total, 15.5),
+    `Gesamt nachgerechnet: 80/60/50 → ${r1.total}, 100/100/0 → ${r2.total}, 90/30/100 → ${r3.linear} − ${r3.penalty} = ${r3.total}, 40/0/85 → ${r4.total}`);
+  const xi = 'abcdefghijk'.split('');
+  const g1 = xi, g2 = 'abcdefghXYZ'.split(''), g3 = 'abcdeVWXYZQ'.split(''); // 11, 8, 5 von 11 gleich
+  const s3 = lineupShare(xi, [g1, g2, g3])!, s2 = lineupShare(xi, [g2, g3])!, s1 = lineupShare(xi, [g3])!;
+  check(near(s3, 0.5 * 1 + 0.3 * 8 / 11 + 0.2 * 5 / 11) && near(s2, (0.5 * 8 / 11 + 0.3 * 5 / 11) / 0.8) && near(s1, 5 / 11) && lineupShare(xi, []) === null
+    && near(lineupShare(xi, [g3, g1, g1])!, 0.5 * 5 / 11 + 0.3 + 0.2) && near(lineupShare(xi, [g1, g2, g3, []])!, s3),
+    `Stammelf 50/30/20: 11/8/5 gleich → ${(s3 * 100).toFixed(1)} (= 80,9), nur zwei Spiele → ${(s2 * 100).toFixed(1)}, eins → ${(s1 * 100).toFixed(1)}, das letzte Spiel zählt am meisten, ein viertes gar nicht`);
+  // Ablauf über noteMatch: Startelfen werden gemerkt (neueste zuerst, höchstens drei) und in cohesionOf verrechnet
+  const c5: Cohesion = initCohesion(t0, 1985, 100, 0.85);
+  noteMatch(c5, t0, 1985, g3); noteMatch(c5, t0, 1985, g2);
+  check(c5.xis!.length === 2 && c5.xis![0].join('') === g2.join('') && near(c5.s, 8 / 11), `noteMatch: Stammelf-Wert des Spiels ${(c5.s * 100).toFixed(1)} (8 von 11 aus dem Spiel davor, a–e und X/Y/Z)`);
+  noteMatch(c5, t0, 1985, g1); noteMatch(c5, t0, 1985, xi.map((x) => x + '9'));
+  check(c5.xis!.length === 3 && c5.xis![1].join('') === g1.join('') && c5.xis![2].join('') === g2.join(''), 'noteMatch: höchstens drei Startelfen, neueste zuerst');
+  const c6: Cohesion = initCohesion(t0, 1985, 100, 0.85); c6.xis = [g1, g2, g3];
+  const v6 = cohesionOf(c6, t0, 1985, t0.formation, xi);
+  const exp6 = 0.4 * 100 + 0.4 * 100 + 0.2 * (100 * s3);
+  check(v6.lineup === Math.round(100 * s3) && v6.formation === 100 && v6.instructions === 100 && v6.total === Math.round(exp6) && v6.penalty === 0,
+    `cohesionOf: Formation 100, Anweisungen 100, Stammelf ${v6.lineup} → ${v6.total} (erwartet ${exp6.toFixed(2)})`);
+  const old: Cohesion = { ...initCohesion(t0, 1985, 100, 0.7), xi: g2 }; // Altstand: nur das letzte Spiel bekannt
+  check(cohesionOf(old, t0, 1985, t0.formation, xi).lineup === Math.round(800 / 11) && cohesionOf(old, t0, 1985).lineup === 70, 'Altstand: co.xi zählt als letztes Spiel, ohne Elf gilt co.s');
+  noteMatch(old, t0, 1985, xi);
+  check(old.xi === undefined && old.xis!.length === 2 && old.xis![1].join('') === g2.join(''), 'Altstand: co.xi wandert beim nächsten Spiel nach co.xis');
+}
 check(cohesionFactor(80) === 1 && cohesionFactor(100) > 1.01 && cohesionFactor(40) < 0.97, 'Wirkung: 80 neutral, 100 knapp +2 %, 40 gut −3 %');
 
 // 5) Wirkung im Spiel

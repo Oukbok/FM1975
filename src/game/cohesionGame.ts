@@ -79,6 +79,12 @@ export function campCohesion(g: Game, club: Club, tacticPoints: number, today: s
   practice(club.cohesion!, club.tactics, year, Math.min(0.55, 0.06 * tacticPoints), Math.min(0.3, 0.03 * tacticPoints));
 }
 
+/** Aufgestellte Elf des Vereins (Aufstellung › Formations-Slots); leer = unbekannt. */
+export const plannedXI = (club: Club): string[] | undefined => {
+  const ids = Object.values(club.tactics?.lineupMap ?? {});
+  return ids.length ? ids : undefined;
+};
+
 export interface CohesionInfo extends CohesionView {
   /** Anweisungen, die vom Eingeübten abweichen (größte zuerst). */
   gaps: { key: string; label: string; gap: number }[];
@@ -91,7 +97,7 @@ export function cohesionInfo(g: Game, club: Club = g.clubs[g.managedClubId]): Co
   const year = seasonYearOf(g.calendar.currentDate);
   ensureCohesion(g, club, year);
   const co = club.cohesion!;
-  const v = cohesionOf(co, club.tactics, year);
+  const v = cohesionOf(co, club.tactics, year, club.tactics.formation, plannedXI(club));
   const gaps = instructionGap(co, club.tactics, year).parts.filter((p) => p.gap >= 0.12).sort((a, b) => b.gap - a.gap);
   return { ...v, gaps, effectPct: Math.round((v.total - 80) * 0.08 * 10) / 10 };
 }
