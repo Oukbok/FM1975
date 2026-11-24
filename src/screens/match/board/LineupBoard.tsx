@@ -20,6 +20,8 @@ import { useState, type PointerEvent as RPE } from 'react';
 import { DndGhost, useDnd, type DndState } from '../useDnd';
 import { applyDraft, initialDraft, swap } from '../changes/draft';
 import PlayerAvatar from '../../../components/PlayerAvatar';
+import { fitProps } from '../../../components/lineup/FitGlow';
+import { positionSuitability } from '../../../engine/positions';
 
 export const fmtGrade = (g: number) => g.toFixed(1).replace('.', ',');
 export const gradeCls = (g: number) => (g <= 2 ? 'g-top' : g <= 3 ? 'g-good' : g <= 4 ? 'g-mid' : 'g-bad');
@@ -54,6 +56,12 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
   });
   const dnd = canDrag ? { drag, down } : undefined;
   const ghost = drag ? sim.players[drag.key] : undefined;
+  // Eignungs-Rahmen beim Ziehen (FitGlow, wie Aufstellung › Aufstellung): Feldzeilen nach Eignung des
+  // gezogenen Spielers für ihre Position, Bankzeilen nach Eignung für die Position des vom Feld gezogenen.
+  const dragged = drag ? t.players.find((x) => x.id === drag.key) : undefined;
+  const srcPos = dragged?.onPitch ? dragged.pos : undefined;
+  const fieldFit = (m: MPlayer) => dragged ? positionSuitability(dragged.p, m.pos) : null;
+  const benchFit = (b: MPlayer) => srcPos ? positionSuitability(b.p, srcPos) : null;
 
   return (
     <div className="tm-lineup">
@@ -62,7 +70,7 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
           <span>Nr</span><span>Pos</span><span>Name</span><span>Note</span><span>Stä</span><span>Kraft</span><span>Fit</span><span />
         </div>
         <div className="tm-lt-body">
-          {field.map((m) => <Row key={m.id} sim={sim} m={m} name={nm(m.p)} early={early} onPlayer={onPlayer} dnd={dnd} />)}
+          {field.map((m) => <Row key={m.id} sim={sim} m={m} name={nm(m.p)} early={early} onPlayer={onPlayer} dnd={dnd} fit={fieldFit(m)} />)}
           <div className="tm-lt-row avg">
             <span /><span /><span>Durchschnitt</span>
             <span>{early ? '–' : fmtGrade(gAvg)}</span>
@@ -74,8 +82,9 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
           {benchList.map((b) => {
             const warming = b.warmSince != null;
             const ready = isWarm(sim, b);
+            const bp = fitProps(benchFit(b));
             return (
-              <div key={b.id} className={`tm-lt-row bench ${warming ? 'warming' : ''} ${dnd ? 'dnd' : ''} ${drag?.over === b.id ? 'over' : ''} ${drag?.key === b.id ? 'dragging' : ''}`}
+              <div key={b.id} className={`tm-lt-row bench ${warming ? 'warming' : ''} ${dnd ? 'dnd' : ''} ${drag?.over === b.id ? 'over' : ''} ${drag?.key === b.id ? 'dragging' : ''} ${bp.cls}`} style={bp.style}
                 {...(dnd ? { 'data-dnd': b.id, onPointerDown: (e: RPE) => down(e, b.id) } : {})}>
                 <span className="tm-nr">{b.p.shirtNumber || ''}</span>
                 <span className={`tm-pos ${posGroupClass(b.p.naturalPosition)}`}>{b.p.naturalPosition}</span>
@@ -113,14 +122,17 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
   );
 }
 
-function Row({ sim, m, name, early, dim, onPlayer, dnd }: {
+function Row({ sim, m, name, early, dim, onPlayer, dnd, fit }: {
   sim: MatchSim; m: MPlayer; name: string; early: boolean; dim?: boolean; onPlayer: (id: string) => void;
   dnd?: { drag: DndState; down: (e: RPE, key: string) => void };
+  /** Eignung des gezogenen Spielers für diese Position (nur beim Ziehen). */
+  fit?: number | null;
 }) {
+  const fp = fitProps(fit);
   const g = grade(sim, m);
   const cap = sim.team(m.side).captainId === m.id;
   return (
-    <div className={`tm-lt-row ${dim ? 'out' : ''} ${m.injured && m.onPitch ? 'hurt' : ''} ${dnd ? 'dnd' : ''} ${dnd?.drag?.over === m.id ? 'over' : ''} ${dnd?.drag?.key === m.id ? 'dragging' : ''}`}
+    <div className={`tm-lt-row ${dim ? 'out' : ''} ${m.injured && m.onPitch ? 'hurt' : ''} ${dnd ? 'dnd' : ''} ${dnd?.drag?.over === m.id ? 'over' : ''} ${dnd?.drag?.key === m.id ? 'dragging' : ''} ${fp.cls}`} style={fp.style}
       {...(dnd ? { 'data-dnd': m.id, onPointerDown: (e: RPE) => dnd.down(e, m.id) } : {})}>
       <span className="tm-nr">{m.p.shirtNumber || ''}</span>
       <span className={`tm-pos ${posGroupClass(m.pos)}`}>{m.pos}</span>

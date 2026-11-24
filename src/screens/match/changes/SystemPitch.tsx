@@ -5,13 +5,14 @@
 // Bankspieler auf einen Slot = Wechsel. Klick ohne Ziehen wählt aus.
 // =============================================================================
 import { LeaderName } from '../../../components/player/LeaderMark';
-import type { PointerEvent as RPE } from 'react';
+import { useMemo, type PointerEvent as RPE } from 'react';
 import type { DndState } from '../useDnd';
 import FaceThumb from '../../../components/FaceThumb';
 import { positionSuitability, suitabilityColor } from '../../../engine/positions';
 import type { Position } from '../../../types';
 import PitchSVG from '../../../components/lineup/PitchSVG';
 import { benchCols } from '../../../components/lineup/PitchBoard';
+import { FitBadge, fitByPlayer, fitByPosition, fitProps } from '../../../components/lineup/FitGlow';
 import { FORMATIONS } from '../../../data/formations';
 import type { MatchSim } from '../../../engine/match/sim';
 import { onPitch } from '../../../engine/match/state';
@@ -49,6 +50,13 @@ export function SystemPitch({ sim, side, d, sel, drag, down, onPick, onFormation
     );
   };
   const benchSize = benchCols(Math.max(benchList.length, 1));
+  // Eignungs-Rahmen beim Ziehen (gemeinsam mit Aufstellung › Aufstellung, FitGlow): Feld nach Eignung des
+  // gezogenen Spielers, Bank nach Eignung für die Position des vom Feld gezogenen Spielers.
+  const dragKey = drag?.key ?? null;
+  const dragged = dragKey ? t.players.find((x) => x.id === dragKey) : undefined;
+  const srcPos = dragged ? d.slots.find((s) => d.map[s.id] === dragged.id)?.position : undefined;
+  const fieldFit = useMemo(() => dragged ? fitByPosition(dragged.p, d.slots.map((s) => s.position)) : null, [dragged, d.slots]);
+  const benchFit = useMemo(() => srcPos ? fitByPlayer(benchList, srcPos) : null, [srcPos, benchList.map((m) => m.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="tm-sys">
@@ -68,11 +76,14 @@ export function SystemPitch({ sim, side, d, sel, drag, down, onPick, onFormation
                 const id = d.map[s.id];
                 const m = id ? t.players.find((x) => x.id === id) : undefined;
                 const key = id ?? `slot:${s.id}`;
+                const f = fieldFit?.[s.position];
+                const fp = fitProps(f);
                 return (
-                  <div key={s.id} className={`lu-slot tm-sys-slot ${s.position === 'TW' ? 'gk' : ''} ${sel === key ? 'sel' : ''} ${drag?.over === key ? 'over' : ''} ${drag && drag.key === key ? 'dragging' : ''}`}
-                    style={{ left: `${s.x}%`, top: `${s.y}%` }} data-dnd={key} onPointerDown={(e) => down(e, key)} onClick={() => onPick(key)}>
+                  <div key={s.id} className={`lu-slot tm-sys-slot ${s.position === 'TW' ? 'gk' : ''} ${sel === key ? 'sel' : ''} ${drag?.over === key ? 'over' : ''} ${drag && drag.key === key ? 'dragging' : ''} ${fp.cls}`}
+                    style={{ left: `${s.x}%`, top: `${s.y}%`, ...fp.style }} data-dnd={key} onPointerDown={(e) => down(e, key)} onClick={() => onPick(key)}>
                     {m ? card(m, s.position, false, key)
                       : <div className="lu-card empty"><div className="lu-card-top"><span className={`lu-card-pos ${posGroupClass(s.position)}`}>{s.position}</span></div><div className="lu-card-name dim">frei</div></div>}
+                    <FitBadge v={f} title={dragged ? `Eignung von ${dragged.p.lastName} auf ${s.position}` : undefined} />
                   </div>
                 );
               })}
@@ -82,12 +93,17 @@ export function SystemPitch({ sim, side, d, sel, drag, down, onPick, onFormation
         <div className={`lu-bench tm-sys-bench ${drag ? 'live' : ''} ${drag?.over === 'bench' && fieldKeys.has(drag.key) ? 'no' : ''}`} data-dnd="bench">
           <div className="lu-bench-head"><span>Ersatzbank</span><span className="lu-sec-n">{benchList.length}</span></div>
           <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchSize}, minmax(0, 1fr))` }}>
-            {benchList.map((m) => (
-              <div key={m.id} className={`lu-bslot tm-sys-b ${sel === m.id ? 'sel' : ''} ${drag?.over === m.id ? 'over' : ''} ${drag?.key === m.id ? 'dragging' : ''}`}
-                data-dnd={m.id} onPointerDown={(e) => down(e, m.id)} onClick={() => onPick(m.id)}>
-                {card(m, m.p.naturalPosition, true, m.id)}
-              </div>
-            ))}
+            {benchList.map((m) => {
+              const bf = benchFit?.[m.id];
+              const bp = fitProps(bf);
+              return (
+                <div key={m.id} className={`lu-bslot tm-sys-b ${sel === m.id ? 'sel' : ''} ${drag?.over === m.id ? 'over' : ''} ${drag?.key === m.id ? 'dragging' : ''} ${bp.cls}`}
+                  style={bp.style} data-dnd={m.id} onPointerDown={(e) => down(e, m.id)} onClick={() => onPick(m.id)}>
+                  {card(m, m.p.naturalPosition, true, m.id)}
+                  <FitBadge v={bf} title={srcPos ? `Eignung von ${m.p.lastName} auf ${srcPos}` : undefined} />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

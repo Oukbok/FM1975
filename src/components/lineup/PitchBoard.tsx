@@ -5,11 +5,12 @@
 // =============================================================================
 import { LeaderName } from '../player/LeaderMark';
 import FaceThumb from '../FaceThumb';
-import { useLayoutEffect, useRef, useState, type PointerEvent as RPE, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as RPE, type ReactNode } from 'react';
 import type { Player, Position } from '../../types';
 import type { Formation } from '../../data/formations';
 import { PITCH_GRID, type GridPoint } from '../../data/pitchGrid';
 import { familiarity, positionSuitability } from '../../engine/positions';
+import { FitBadge, fitByPlayer, fitByPosition, fitProps } from './FitGlow';
 import PitchSVG from './PitchSVG';
 import { useDelayedPlayerCard } from '../playerCard/PlayerCardFloat';
 import { posGroupClass } from '../../ui/positionBadges';
@@ -39,11 +40,13 @@ function Card({ p, pos, captain, small }: { p: Player; pos: Position; captain: b
 /** Ersatzbank: ab 6 Plätzen zwei Reihen (Wunsch Pascal), damit die Karten lesbar bleiben. */
 export const benchCols = (n: number) => (n > 5 ? Math.ceil(n / 2) : Math.max(1, n));
 
-export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, onSlotDown, onPlayerDown, side, wide }: {
+export default function PitchBoard({ formation, map, players, captainId, bench, benchSize, hover, preview, dragSlot, snap, reserveCount, full, note, lifted, dragPid, glowPid, onSlotDown, onPlayerDown, side, wide }: {
   formation: Formation; map: Record<string, string>; players: Record<string, Player>; captainId: string | null;
   bench: Player[]; benchSize: number; hover: string | null; preview: SlotPreview | null; dragSlot: string | null; snap: boolean;
   /** Spieler in der Reserve; full = Ziel beim Ziehen ist voll; note = Hinweis nach abgewiesener Ablage; lifted = gezogene Karte hängt am Zeiger. */
   reserveCount: number; full: 'bench' | 'xi' | null; note: string | null; lifted: boolean; dragPid: string | null;
+  /** Gezogener Spieler (nur bei laufendem Ziehen): alle Feldkarten leuchten in der Farbe seiner Eignung je Position. */
+  glowPid?: string | null;
   onSlotDown: (e: RPE, slotId: string) => void; onPlayerDown: (e: RPE, p: Player) => void;
   /** Spalte rechts neben dem Feld (Formation, Einrasten, Speichern …) */
   side?: ReactNode;
@@ -51,6 +54,12 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
   wide?: boolean;
 }) {
   const showGrid = !!dragSlot && snap;
+  // Eignung des gezogenen Spielers je Position (Wunsch Pascal): einmal beim Start des Ziehens berechnen.
+  const glowP = glowPid ? players[glowPid] : undefined;
+  const fit = useMemo(() => glowP ? fitByPosition(glowP, formation.slots.map((s) => s.position)) : null, [glowP, formation]);
+  // Vom Feld gezogen: Bankkarten nach ihrer Eignung für dessen Position (schneller Ersatz finden).
+  const srcPos = glowP && dragSlot ? formation.slots.find((s) => s.id === dragSlot)?.position : undefined;
+  const benchFit = useMemo(() => srcPos ? fitByPlayer(bench.map((p) => ({ id: p.id, p })), srcPos) : null, [srcPos, bench]);
   // Infokarte nach 2 s Hover über einen aufgestellten Spieler (Wunsch Pascal); beim Ziehen nie.
   const hoverCard = useDelayedPlayerCard(2000, !!dragSlot || !!dragPid || lifted);
   // Breites Feld: Seitenverhältnis der Box messen, das Spielfeld wird entsprechend breiter gezeichnet.
@@ -80,12 +89,15 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
               const moving = dragSlot === s.id && preview && !preview.swapWith;
               const x = moving ? preview!.x : s.x, y = moving ? preview!.y : s.y;
               const pos = moving ? preview!.position : s.position;
+              const f = fit && glowP ? (fit[pos] ?? positionSuitability(glowP, pos)) : null;
+              const fp = fitProps(f);
               return (
-                <div key={s.id} className={`lu-slot ${hover === `slot:${s.id}` ? 'over' : ''} ${dragSlot === s.id ? 'dragging' : ''} ${dragSlot === s.id && lifted ? 'lifted' : ''} ${s.position === 'TW' ? 'gk' : ''}`}
-                  style={{ left: `${x}%`, top: `${y}%` }} data-lu-drop={`slot:${s.id}`} data-slot={s.id} data-pid={pid ?? ""}
+                <div key={s.id} className={`lu-slot ${hover === `slot:${s.id}` ? 'over' : ''} ${dragSlot === s.id ? 'dragging' : ''} ${dragSlot === s.id && lifted ? 'lifted' : ''} ${s.position === 'TW' ? 'gk' : ''} ${fp.cls}`}
+                  style={{ left: `${x}%`, top: `${y}%`, ...fp.style }} data-lu-drop={`slot:${s.id}`} data-slot={s.id} data-pid={pid ?? ""}
                   onPointerDown={(e) => onSlotDown(e, s.id)} {...hoverCard.bind(p)}>
                   {p ? <Card p={p} pos={pos} captain={captainId === p.id} />
                     : <div className="lu-card empty"><div className="lu-card-top"><span className={`lu-card-pos ${posGroupClass(pos)}`}>{pos}</span></div><div className="lu-card-name dim">frei</div></div>}
+                  <FitBadge v={f} title={glowP ? `Eignung von ${glowP.lastName} auf ${pos}` : undefined} />
                   {moving && !snap && <div className="lu-live-pos">{preview!.grid?.label}</div>}
                 </div>
               );
@@ -104,10 +116,13 @@ export default function PitchBoard({ formation, map, players, captainId, bench, 
           <div className="lu-bench-row" style={{ gridTemplateColumns: `repeat(${benchCols(benchSize)}, minmax(0, 1fr))` }}>
             {Array.from({ length: benchSize }, (_, i) => {
               const p = bench[i];
+              const bf = p && benchFit ? benchFit[p.id] : null;
+              const bp = fitProps(bf);
               return (
-                <div key={i} className={`lu-bslot ${hover === `bench:${i}` && full !== 'bench' ? 'over' : ''} ${p ? '' : 'free'} ${p && lifted && p.id === dragPid ? 'lifted' : ''}`} data-lu-drop={`bench:${i}`}
-                  onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id} {...hoverCard.bind(p)}>
+                <div key={i} className={`lu-bslot ${hover === `bench:${i}` && full !== 'bench' ? 'over' : ''} ${p ? '' : 'free'} ${p && lifted && p.id === dragPid ? 'lifted' : ''} ${bp.cls}`} data-lu-drop={`bench:${i}`}
+                  style={bp.style} onPointerDown={p ? (e) => onPlayerDown(e, p) : undefined} data-pid={p?.id} {...hoverCard.bind(p)}>
                   {p ? <Card p={p} pos={p.naturalPosition} captain={false} small /> : <div className="lu-card sm empty"><div className="lu-card-name dim">frei</div></div>}
+                  <FitBadge v={bf} title={p && srcPos ? `Eignung von ${p.lastName} auf ${srcPos}` : undefined} />
                 </div>
               );
             })}

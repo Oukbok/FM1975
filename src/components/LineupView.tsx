@@ -301,7 +301,7 @@ export default function LineupView({ g, onChange, onGoto }: { g: G; onChange: ()
       <DashBox title="Aufstellung" icon="lineup" rows={2} className="lu-box" right={getFormation(t.formation).label}>
         <PitchBoard formation={formation} map={map} players={g.players} captainId={t.captainId} bench={benchPlayers} benchSize={benchSize}
           hover={hover} preview={drag?.preview ?? null} dragSlot={drag?.src.kind === 'slot' ? drag.src.slotId : null} snap={snap}
-          reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid}
+          reserveCount={reserveRows.length} full={drag?.full ?? null} note={note} lifted={!!ghost} dragPid={dragPid} glowPid={drag?.active ? dragPid : null}
           onSlotDown={onSlotDown} onPlayerDown={(e, p) => onPlayerDown(e, p, 'bench')}
           wide />
       </DashBox>

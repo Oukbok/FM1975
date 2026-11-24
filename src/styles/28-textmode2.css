@@ -146,6 +146,8 @@
 .tm-lt-row { display: grid; grid-template-columns: 44px 52px minmax(0, 1fr) 60px 50px 50px 46px 48px; gap: 8px; align-items: center; padding: 5px 18px; font-size: 17px; border-bottom: 1px solid var(--border-soft); }
 .tm-lt-row.head { font-size: 14px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; padding-top: 8px; padding-bottom: 8px; }
 .tm-lt-row > span:nth-child(n+4) { text-align: center; }
+/* Beim Ziehen: Zeile in der Farbe der Eignung (FitGlow, Wunsch Pascal) */
+.tm-lt-row.fit { box-shadow: inset 5px 0 0 var(--fit); background: color-mix(in srgb, var(--fit) 16%, transparent); }
 .tm-lt-row.avg { font-weight: 600; color: var(--text-2); background: var(--bg-2); }
 .tm-lt-row.out, .tm-lt-row.out .tm-plink { color: var(--red); }
 .tm-lt-row.hurt { box-shadow: inset 4px 0 0 var(--red); }

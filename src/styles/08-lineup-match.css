@@ -112,6 +112,14 @@
 .lu-slot { position: absolute; transform: translate(-50%, -50%); width: 104px; z-index: 2; cursor: grab; touch-action: none; }
 .lu-slot.dragging { z-index: 5; }
 .lu-slot.over .lu-card { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* Beim Ziehen: Rahmen in der Farbe der Eignung des gezogenen Spielers auf dieser Position (Wunsch Pascal) */
+:is(.lu-slot, .lu-bslot).fit .lu-card { border-color: var(--fit); box-shadow: 0 0 0 1.5px var(--fit), 0 0 12px 1px color-mix(in srgb, var(--fit) 55%, transparent); transition: box-shadow .12s; }
+.lu-fit-badge {
+  position: absolute; top: -8px; right: -8px; z-index: 1; min-width: 22px; padding: 0 4px; border-radius: 9px; text-align: center;
+  font-size: 11px; font-weight: 800; line-height: 16px; font-variant-numeric: tabular-nums;
+  background: var(--fit); color: var(--accent-ink); box-shadow: 0 1px 3px rgba(var(--shade-rgb), .4); pointer-events: none;
+}
+.lu-bslot > .lu-fit-badge { top: -7px; right: -3px; min-width: 20px; font-size: 10px; line-height: 14px; }
 .lu-live-pos {
   position: absolute; left: 50%; top: calc(100% + 4px); transform: translateX(-50%); white-space: nowrap;
   font-size: 12px; font-weight: 700; color: var(--accent); background: var(--bg); padding: 1px 6px; border-radius: 4px;
@@ -139,7 +147,7 @@
 .lu-bench { min-width: 0; }
 .lu-bench-head { display: flex; align-items: baseline; gap: 10px; min-width: 0; white-space: nowrap; font: 600 14px var(--font-display); text-transform: uppercase; letter-spacing: .6px; color: var(--text-2); margin-bottom: 6px; }
 .lu-bench-row { display: grid; gap: 6px; }
-.lu-bslot { min-width: 0; cursor: grab; touch-action: none; }
+.lu-bslot { position: relative; min-width: 0; cursor: grab; touch-action: none; }
 .lu-bslot.over .lu-card { outline: 2px solid var(--accent); outline-offset: 1px; }
 .lu-card.sm { padding: 3px 6px 4px; }
 .lu-card.sm .lu-card-name { font-size: 13px; }
