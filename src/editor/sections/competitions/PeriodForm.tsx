@@ -118,7 +118,7 @@ export function PeriodForm({ ds, def, p, onSet }: { ds: Dataset; def: CompDef; p
           <div className="ed-comp-box-head"><b>Modus</b><span className="ed-badge good">wirksam</span></div>
           <div className="ed-comp-grid">
             <Pick label="Modus" value={p.superFormat} std={era?.format} onSet={(v) => onSet('superFormat', v)}
-              opts={[['final', 'ein Spiel'], ['legs2', 'Hin- und Rückspiel'], ['four', 'vier Teams (Halbfinale + Finale, Januar)'], ['six', 'sechs Teams (Ligapokal, Juli)']]} />
+              opts={[['final', 'ein Spiel'], ['legs2', 'Hin- und Rückspiel'], ['four', 'vier Teams (Halbfinale + Finale, Januar)'], ['six', 'sechs Teams (Auftaktpokal, Juli)']]} />
             <Pick label="Gegner beim Double" value={p.double} std={era?.double} onSet={(v) => onSet('double', v)} opts={[['cupFinalist', 'Pokalfinalist'], ['runnerUp', 'Vizemeister']]} />
             <Pick label="Heimrecht" value={p.host} std={era?.host} onSet={(v) => onSet('host', v)} opts={[['champion', 'Meister'], ['other', 'Gegner'], ['neutral', 'neutral']]} />
             <label className="ed-field"><span className="ed-label">Monat</span>

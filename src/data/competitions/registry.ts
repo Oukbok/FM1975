@@ -25,8 +25,8 @@ export const COMP_LAST = 2100;
 export const OPEN_END = 9999;
 
 export type CompKind = 'league' | 'cup' | 'super' | 'uefasuper' | 'euro' | 'ic' | 'halle' | 'youth' | 'nat';
-export type CompGroup = 'Ligen' | 'Pokale' | 'Supercups' | 'Europapokale' | 'Weltpokal' | 'Halle & Jugend' | 'Nationalteams';
-export const COMP_GROUPS: CompGroup[] = ['Europapokale', 'Pokale', 'Supercups', 'Weltpokal', 'Ligen', 'Halle & Jugend', 'Nationalteams'];
+export type CompGroup = 'Ligen' | 'Pokale' | 'Gipfelpokale' | 'Europapokale' | 'Weltturniere' | 'Halle & Jugend' | 'Nationalteams';
+export const COMP_GROUPS: CompGroup[] = ['Europapokale', 'Pokale', 'Gipfelpokale', 'Weltturniere', 'Ligen', 'Halle & Jugend', 'Nationalteams'];
 
 export interface CompDef {
   id: string;
@@ -89,12 +89,12 @@ export function competitionDefs(): CompDef[] {
   if (defs) return defs;
   const out: CompDef[] = [];
   for (const e of EURO) out.push({ id: e.id, kind: 'euro', group: 'Europapokale', label: e.label, edits: ['name', 'short', 'trophy', 'slots', 'euroFormat'] });
-  out.push({ id: 'uefasuper', kind: 'uefasuper', group: 'Supercups', label: UEFA_SUPER.name, sub: 'Europa', edits: ['name', 'short', 'trophy'] });
+  out.push({ id: 'uefasuper', kind: 'uefasuper', group: 'Gipfelpokale', label: UEFA_SUPER.name, sub: 'Europa', edits: ['name', 'short', 'trophy'] });
   out.push({ id: 'cup', kind: 'cup', group: 'Pokale', label: 'Landespokal', sub: 'Heimatland', edits: ['name', 'short', 'trophy', 'replay', 'cupTo'] });
   for (const key of Object.keys(SUPER_CUPS)) {
-    out.push({ id: `super:${key}`, kind: 'super', group: 'Supercups', label: 'Gipfelpokal', sub: COUNTRY_BY_KEY[key]?.name ?? key, edits: ['name', 'short', 'trophy', 'held', 'superFormat'] });
+    out.push({ id: `super:${key}`, kind: 'super', group: 'Gipfelpokale', label: 'Gipfelpokal', sub: COUNTRY_BY_KEY[key]?.name ?? key, edits: ['name', 'short', 'trophy', 'held', 'superFormat'] });
   }
-  for (const ic of IC) out.push({ id: ic.id, kind: 'ic', group: 'Weltpokal', label: ic.label, edits: ['name', 'short', 'trophy'] });
+  for (const ic of IC) out.push({ id: ic.id, kind: 'ic', group: 'Weltturniere', label: ic.label, edits: ['name', 'short', 'trophy'] });
   const ccs = ['ger', 'gdr', ...LEAGUE_NAME_CCS().filter((c) => c !== 'ger' && COUNTRY_BY_CC[c])];
   for (const cc of ccs) for (const tier of [1, 2]) {
     const id = leagueCompId(cc, tier);
