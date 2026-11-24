@@ -382,10 +382,12 @@ body { background: var(--paper-page); }
 .cal-box > .dxh { margin-bottom: 0; }
 .cal-box > .dbox-body {
   margin: 10px -15px -22px; /* Wunsch Pascal: kleiner Rand über dem Ringbuch wie unten, unten dafür knapper */
+  padding-top: 12px; /* Wunsch Pascal: weiße Fläche zwischen durchsichtigem Rand unter dem Kopf und dem Ringbuch */
   display: grid;
   grid-template-columns: 7.4% minmax(0, 1fr) 5.4%;
   grid-template-rows: 4% auto auto minmax(0, 1fr) auto 8%;
   background: var(--cal-paper) center / 104.3% 107.4% no-repeat, var(--cal-box-bg);
+  background-origin: content-box; /* nach der Kurzschreibweise: Ringbuch im Inhaltsbereich, Weiß füllt den Abstand */
   overflow: hidden;
 }
 .cal-box { background: var(--cal-box-bg); }
