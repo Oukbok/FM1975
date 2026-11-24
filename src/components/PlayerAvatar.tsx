@@ -5,7 +5,7 @@
 // das deterministische SVG-Gesicht:
 // 20 Gesichter · 10 Hauttöne (nach Herkunft) · 20 Frisuren · Vereinstrikot + Wappen
 // =============================================================================
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Player, Club } from '../types';
 import { faceImageFor, faceFailed, markFaceFailed, type FaceImage } from './faces/faceLookup';
 import { portraitOf, shownFace } from '../game/playerPortraits';
@@ -369,17 +369,96 @@ type FacePerson = Pick<Player, 'id' | 'face' | 'dateOfBirth' | 'age'>;
 /** Schlüssel eines hochgeladenen Spielerbilds (Datensatz, game/playerPortraits.ts). */
 export const OWN_PORTRAIT_KEY = 'own';
 
+// -----------------------------------------------------------------------------
+// Miniaturen (Wunsch Pascal: kleine Köpfe nicht als 512 × 600 dekodieren – ≈ 1,2 MB je Gesicht).
+// images/faces-sm/ hat dieselben Pfade in 128 × 150 (scripts/face-thumbs.mjs, Prüfung test:images).
+// Bis THUMB_MAX_PX Anzeigebreite (bei bis zu 2× Pixeldichte = 128 Bildpunkte) reicht die Miniatur;
+// größere Darstellungen (Profil, Infokarte, Gespräch …) laden weiter das Original.
+// -----------------------------------------------------------------------------
+export const THUMB_W = 128;
+export const THUMB_MAX_PX = 64;
+const FACES = 'assets/faces/';
+const FACES_SM = 'assets/faces-sm/';
+
+/** Reicht die Miniatur für diese Anzeigebreite (CSS-Pixel)? Pixeldichte über 2 zählt mit. */
+export function thumbFits(px: number): boolean {
+  const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+  return px * Math.max(2, dpr) <= THUMB_W;
+}
+
+/** Adresse der Miniatur zu einem Gesichtsbild (Maske ebenso); andere Adressen unverändert. */
+export const thumbSrc = (src: string) => (src.startsWith(FACES) ? FACES_SM + src.slice(FACES.length) : src);
+
+// Eigene Porträts (Data-URL aus dem Datensatz): einmal per Canvas auf 128 × 150 verkleinert und als
+// Blob-Adresse zwischengespeichert. Bis die Miniatur fertig ist, zeigt die Liste das Original.
+const OWN_THUMB_MAX = 200;
+const ownThumbs = new Map<string, string | null>(); // Data-URL → Blob-Adresse (null = in Arbeit/Fehler)
+const ownWaiters = new Map<string, Set<() => void>>(); // Anzeigen, die auf die Miniatur warten
+
+function ownThumbDone(src: string) {
+  const w = ownWaiters.get(src);
+  ownWaiters.delete(src);
+  w?.forEach((f) => f());
+}
+
+function makeOwnThumb(src: string): void {
+  if (ownThumbs.has(src) || typeof document === 'undefined') return;
+  if (ownThumbs.size >= OWN_THUMB_MAX) {
+    const [oldest, url] = ownThumbs.entries().next().value as [string, string | null];
+    ownThumbs.delete(oldest);
+    if (url) URL.revokeObjectURL(url);
+  }
+  ownThumbs.set(src, null);
+  const img = new Image();
+  img.src = src;
+  img.decode().then(() => {
+    let from: CanvasImageSource = img, w = img.naturalWidth, h = img.naturalHeight;
+    const W = THUMB_W, H = Math.round(THUMB_W * 600 / 512);
+    while (w / 2 >= W) { // in Halbierungsschritten (sauber gemittelt)
+      const c = document.createElement('canvas');
+      c.width = Math.round(w / 2); c.height = Math.round(h / 2);
+      const x = c.getContext('2d'); if (!x) return;
+      x.imageSmoothingQuality = 'high'; x.drawImage(from, 0, 0, c.width, c.height);
+      from = c; w = c.width; h = c.height;
+    }
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d'); if (!x) return;
+    // Wie `.pa-photo.own > img` (object-fit: cover, mittig): Ausschnitt im Format 512:600.
+    const s = Math.max(W / w, H / h), dw = w * s, dh = h * s;
+    x.imageSmoothingQuality = 'high'; x.drawImage(from, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    c.toBlob((b) => {
+      if (!b || !ownThumbs.has(src)) return;
+      const url = URL.createObjectURL(b);
+      preloadImage(url, { small: true }).then((ok) => {
+        if (ok && ownThumbs.has(src)) { ownThumbs.set(src, url); ready.add(url); }
+        ownThumbDone(src);
+      });
+    }, 'image/webp', 0.9);
+  }, () => ownWaiters.delete(src)); // Original bleibt
+}
+
 /** Foto-Adresse einer Person oder null (dann gezeichnetes Gesicht). Ein hochgeladenes
- *  Spielerbild aus dem Datensatz hat Vorrang vor den Gesichtsbildern. */
-export function faceSrcOf(player: FacePerson, staff?: boolean, year?: number): FaceImage | null {
+ *  Spielerbild aus dem Datensatz hat Vorrang vor den Gesichtsbildern.
+ *  `small`: Anzeige bis THUMB_MAX_PX – Miniatur statt Original. */
+export function faceSrcOf(player: FacePerson, staff?: boolean, year?: number, small?: boolean): FaceImage | null {
   if (!player.id) return null;
   if (!staff) {
     const own = portraitOf(player.id);
-    if (own) return { src: own, mask: null, key: OWN_PORTRAIT_KEY };
+    if (own) {
+      if (!small) return { src: own, mask: null, key: OWN_PORTRAIT_KEY };
+      const t = ownThumbs.get(own);
+      if (t === undefined) makeOwnThumb(own);
+      return { src: t || own, mask: null, key: OWN_PORTRAIT_KEY };
+    }
   }
   const birthYear = player.dateOfBirth ? Number(player.dateOfBirth.slice(0, 4)) : undefined;
   const img = faceImageFor({ id: player.id, face: staff ? player.face : shownFace(player), birthYear, age: player.age, staff, year });
-  return img && !faceFailed(img.src) ? img : null;
+  if (!img || faceFailed(img.src)) return null;
+  if (!small) return img;
+  const src = thumbSrc(img.src);
+  // Fehlt eine Miniatur (nicht erzeugt), nimmt die Anzeige das Original.
+  if (faceFailed(src)) return img;
+  return { ...img, src, mask: img.mask && thumbSrc(img.mask) };
 }
 
 /** Hat die Person ein Foto? */
@@ -391,13 +470,14 @@ const ready = new Set<string>();
 /**
  * Foto vorab laden UND dekodieren (Blättern im Profil, Kader, Lesebereich der Zentrale – ui/imagePreload.ts):
  * danach erscheint es ohne Platzhalter/Einblenden. Trikotmaske gleich mit. Begrenzter Zwischenspeicher.
+ * `small` = Miniatur (Listen, FaceThumb) statt Original.
  */
-export function preloadFace(player: FacePerson | undefined | null, staff?: boolean, year?: number): Promise<void> {
+export function preloadFace(player: FacePerson | undefined | null, staff?: boolean, year?: number, small?: boolean): Promise<void> {
   if (!player || typeof Image === 'undefined') return Promise.resolve();
-  const img = faceSrcOf(player, staff, year);
+  const img = faceSrcOf(player, staff, year, small);
   if (!img || ready.has(img.src)) return Promise.resolve();
-  if (img.mask) preloadImage(img.mask);
-  return preloadImage(img.src).then((ok) => { if (ok) ready.add(img.src); else markFaceFailed(img.src); });
+  if (img.mask) preloadImage(img.mask, { small });
+  return preloadImage(img.src, { small }).then((ok) => { if (ok) ready.add(img.src); else markFaceFailed(img.src); });
 }
 
 /**
@@ -405,13 +485,26 @@ export function preloadFace(player: FacePerson | undefined | null, staff?: boole
  * Kopf ohne Kasten in fester Box (bis zum Laden ein ruhiger neutraler Umriss, keine
  * Zeichnung). Das <img> hängt per key an der Bildadresse: beim Blättern bleibt nie
  * das Bild des vorigen Spielers stehen. Ohne Foto die Zeichnung.
+ * Bis THUMB_MAX_PX Breite lädt es die Miniatur (gleicher Ausschnitt, gleiche Box).
  */
 export default function PlayerAvatar(props: Props) {
   const { player, club, size = 'medium', className, staff, year, priority, photoOnly } = props;
   const [state, setState] = useState<{ src: string; ok: boolean } | null>(null);
-  const img = faceSrcOf(player, staff, year);
-  if (!img || (state?.src === img.src && !state.ok)) return photoOnly ? null : <DrawnAvatar {...props} />;
   const px = typeof size === 'number' ? size : SIZES[size];
+  const small = thumbFits(px);
+  const img = faceSrcOf(player, staff, year, small);
+  // Eigenes Porträt, Miniatur noch in Arbeit: danach einmal neu zeichnen (dann schon dekodiert, kein Aufblitzen).
+  const waitOwn = small && img?.key === OWN_PORTRAIT_KEY && img.src.startsWith('data:') ? img.src : null;
+  const [, redraw] = useState(0);
+  useEffect(() => {
+    if (!waitOwn) return;
+    const f = () => redraw((n) => n + 1);
+    let set = ownWaiters.get(waitOwn);
+    if (!set) ownWaiters.set(waitOwn, set = new Set());
+    set.add(f);
+    return () => { ownWaiters.get(waitOwn)?.delete(f); };
+  }, [waitOwn]);
+  if (!img || (state?.src === img.src && !state.ok)) return photoOnly ? null : <DrawnAvatar {...props} />;
   const loaded = ready.has(img.src) || (state?.src === img.src && state.ok);
   const primary = club?.colors.primary;
   const prio = priority ? { fetchpriority: 'high' } as Record<string, string> : undefined;

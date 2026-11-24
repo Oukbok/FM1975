@@ -1,7 +1,8 @@
 // Miniatur-Kopf für Listen (Bestenlisten, Aufstellung, Spielbericht …): freigestelltes Foto
 // in fester Box (Breite `size`, Höhe × 600/512 wie die Bilder) – die Zeilenhöhe ändert sich nie. Ohne Foto
 // bleibt die Box leer (ruhiger als eine Zeichnung mit Kasten zwischen freien Köpfen).
-// Lädt lazy; CSS `.fthumb` in 28-faces.css.
+// Lädt lazy; bis 64 px Breite die Miniatur aus images/faces-sm (128 × 150, PlayerAvatar `thumbFits`);
+// CSS `.fthumb` in 28-faces.css.
 import type { Club, Player } from '../types';
 import PlayerAvatar from './PlayerAvatar';
 

@@ -13,6 +13,7 @@
 // =============================================================================
 import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = process.env.FACES_DIR ?? 'images/faces';
 const OUT = process.env.FACES_OUT ?? 'src/data/faceImages.ts';
@@ -106,3 +107,11 @@ const head = src.slice(0, src.indexOf('export const FACE_FILES'));
 const list = (a) => a.map((k) => `  '${k}',`).join('\n') + (a.length ? '\n' : '');
 writeFileSync(OUT, `${head}export const FACE_FILES: string[] = [\n${list(files)}];\n\nexport const FACE_MASKS: string[] = [\n${list(realMasks)}];\n`);
 console.log(`\nRegister geschrieben: ${OUT}`);
+
+// Miniaturen für Listen (images/faces-sm, 128 × 150) gleich mit nachziehen – nur geänderte Bilder.
+// Ohne Playwright-Chromium: später `node scripts/face-thumbs.mjs` (Prüfung in `npm run test:images`).
+try {
+  execFileSync(process.execPath, ['scripts/face-thumbs.mjs'], { stdio: 'inherit' });
+} catch {
+  console.log('Hinweis: Miniaturen nicht erzeugt – `node scripts/face-thumbs.mjs` ausführen.');
+}

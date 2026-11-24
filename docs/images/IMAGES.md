@@ -117,7 +117,7 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 1. Bilder nach den Vorgaben oben erzeugen und als `.webp` speichern (z. B. mit squoosh.app: „WebP“, Qualität 80, Alpha an).
 2. In den passenden Ordner legen, z. B. `images/faces/central-europe/1970/01-25.webp` (Ordner bei Bedarf anlegen).
 3. Optional die Trikotmaske daneben legen: `01-25-mask.webp` (Trikot weiß, alles andere transparent).
-4. Im Projektordner ausführen: `node scripts/faces-register.mjs` – das Skript prüft alle Dateinamen, zeigt eine Übersicht Gruppe × Epoche und schreibt das Register `src/data/faceImages.ts` neu. Hinweise (falscher Name, PNG statt WebP, zu groß, Maske ohne Bild) stehen darunter. Nur prüfen: `node scripts/faces-register.mjs --check`.
+4. Im Projektordner ausführen: `node scripts/faces-register.mjs` – das Skript prüft alle Dateinamen, zeigt eine Übersicht Gruppe × Epoche und schreibt das Register `src/data/faceImages.ts` neu; danach erzeugt es die Miniaturen für Listen (`images/faces-sm/`, 128 × 150, nur geänderte Bilder, `node scripts/face-thumbs.mjs`) – beide Ordner einchecken. Hinweise (falscher Name, PNG statt WebP, zu groß, Maske ohne Bild) stehen darunter. Nur prüfen: `node scripts/faces-register.mjs --check`.
 5. `npm run build` (bzw. `npm run dev`) und ein Spiel laden – die Gesichter erscheinen überall. Kontrolle mit Screenshots: `node tests/faces-shots.mjs test-output/faces` (Profil, Presse, Budget-Berater, Textmodus; meldet fehlende Dateien und Größensprünge).
 6. Bilder **und** `src/data/faceImages.ts` committen. Hinweis: Kommen neue Personen in eine Gruppe, verteilen sich die Spieler dieser Gruppe neu auf die Bilder (die Namen bleiben natürlich gleich).
 

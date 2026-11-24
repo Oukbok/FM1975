@@ -101,7 +101,31 @@ Was läuft:
 - Größe: Bilder, die das Spiel nicht mehr zeigt (früherer Büro-/Stadion-Hintergrund 3,5 + 0,4 MB, Zuschauerfoto 1,9 MB, Trikot 0,7 MB, `menu-bg-3.jpg`), bleiben in `images/`, werden aber nicht mehr nach `dist` kopiert (`NOT_SHIPPED` in `scripts/build.mjs`, tote CSS-Adressen entfernt): `dist/assets` 73 → 66 MB. Hauptmenü-Bild als WebP über `scripts/optimize-images.mjs` (Chromium aus Playwright, keine neue Abhängigkeit; 471 → 243 KB, Original bleibt, Vergleich 1:1 ohne sichtbaren Unterschied, mittlere Abweichung ≈ 2,4/255).
 - Pro Lauf lädt die Probe jetzt 104 statt 50 Bilddateien (6,1 statt 3,2 MB, lokal) – das Vorladen holt Texturen, Kadergesichter und Nachbar-Nachrichten im Voraus.
 
-Offen: Gesichter sind 512 × 600 und werden auch als 26-px-Miniatur in Listen voll dekodiert (≈ 1,2 MB Speicher je Gesicht); eigene Miniaturen (z. B. 128 px) würden Speicher und Dekodierzeit in langen Listen sparen. Wappen sind 256-px-PNG (≈ 90 KB); WebP würde ≈ die Hälfte sparen, Pfade stehen aber auch in Datensätzen.
+Offen: Wappen sind 256-px-PNG (≈ 90 KB); WebP würde ≈ die Hälfte sparen, Pfade stehen aber auch in Datensätzen.
+
+## Gesichts-Miniaturen (Wunsch Pascal: kleine Köpfe nicht als 512 × 600 dekodieren)
+
+Gesichter liegen als 512 × 600 WebP unter `images/faces/`, wurden aber auch als 17–34-px-Kopf in Listen (`FaceThumb`, Statistik-Boxen, Kader, Transfermarkt, Spielbericht, „Unsere Besten“) voll geladen und dekodiert (≈ 1,2 MB Bildspeicher je Gesicht).
+
+- **Miniaturen** `images/faces-sm/` – gleiche Pfade, 128 × 150 (¼, gleicher Ausschnitt, Transparenz), WebP Qualität 0,9, ≈ 6,4 KB je Bild. Erzeugt mit `node scripts/face-thumbs.mjs` (Chromium aus Playwright wie `optimize-images.mjs`, 512 → 256 → 128 in Halbierungsschritten; ≈ 45 s für alle 1215, sonst nur geänderte Quellen: SHA-1 der Quelle in `images/faces-sm/manifest.json`, verwaiste werden gelöscht; `--all` alles neu, `--check` nur prüfen). `scripts/faces-register.mjs` ruft es am Ende mit auf. **Im Repo eingecheckt**, weil der Build auf Cloudflare/GitHub weder Chromium noch PIL hat; der Build kopiert sie wie alle Bilder, das Manifest steht in `NOT_SHIPPED`. `npm run test:images` meldet fehlende, veraltete (Quelle geändert) und verwaiste Miniaturen.
+- **Auswahl** `components/PlayerAvatar.tsx`: `thumbFits(px)` = Anzeigebreite × max(2, Pixeldichte) ≤ 128 → bis 64 px (Retina 2×) die Miniatur (`thumbSrc`: `assets/faces/` → `assets/faces-sm/`, Trikotmaske ebenso), größer (Profil 160, Infokarte 116, Gespräch 146, Newscenter 84/100, Verhandlung 84 …) das Original. Fehlt eine Miniatur (404), fällt die Anzeige auf das Original zurück. Box, Seitenverhältnis und `--face-shift` bleiben gleich – Lage und Größe jeder Gesichts-Box vorher/nachher identisch (Zentrale 3, Kader 25, Statistik 90, Transfermarkt 60 Boxen), Screenshots 2× pixelgleich bis auf Glättung (mittlere Abweichung ≤ 0,03/255, kein Pixel > 16/255).
+- **Eigene Porträts** (Datensatz, Data-URL): in kleinen Darstellungen einmal per Canvas auf 128 × 150 verkleinert (Ausschnitt wie `object-fit: cover`), als Blob-Adresse zwischengespeichert (höchstens 200); bis dahin das Original, danach zeichnet die Anzeige einmal neu (schon dekodiert, kein Aufblitzen). Prüfung in `tests/dataset-lib.mjs` (Kaderliste: Blob, 128 px).
+- **Vorladen**: `preloadFace(…, small)` und `preloadImage(…, { small })` mit eigener Liste `LRU_SMALL_MAX` 240; `warmGameImages`/`warmSquadFaces` laden Kader + Jugend als Miniaturen (Zentrale „Unsere Besten“, Kader-Listen). Newscenter und Profil-Blättern laden weiter Originale.
+- Unverändert groß: Auszeichnungen-Köpfe (`AwardFace`, Box ≈ 55 px, Größe über CSS) – ließen sich später auch umstellen.
+
+Messung `npm run build && node tests/face-thumb-probe.mjs` (`DIST=…` vorher, `RUNS=3`, `SHOTS=…`): Vorlage „Test 3 Jahre“, 1920 × 1080, frischer Kontext; Zentrale → Kader › Kader → Statistiken › Liga → Transfers › Transfermarkt; Bildspeicher über Chromium-Speicherabzug (Tracing „memory-infra“: `discardable` + `cc/image_memory` + Skia). Median aus 3 Läufen:
+
+| | vorher | nachher |
+|---|---|---|
+| Bildspeicher nach dem Laden des Spielstands | 467 MB | 273 MB |
+| Bildspeicher nach den vier Seiten | 662 MB | 285 MB |
+| davon `discardable` / `cc/image_memory` | 448 / 213 MB | 196 / 89 MB |
+| Gesichtsdateien geladen (149 Stück) | 5,9 MB | 1,0 MB (148 Miniaturen) |
+| Gesichter fertig ab Klick: Kader (25) | 169–241 ms | 187–208 ms |
+| Statistiken › Liga (70 sichtbare) | 387–772 ms | 490–559 ms |
+| Transfermarkt (19 sichtbare) | 641–1141 ms | 698–801 ms |
+
+Die Ladezeiten hängen vor allem an der Rechenzeit der Seiten und schwanken unter Last stark (mehrere Läufe, Spannweite der Mediane); die Bilder selbst sind in beiden Fällen im ersten oder zweiten Bild der Seite fertig. Deutlich ist der Speicher: ≈ −190 MB schon nach dem Laden (Kadergesichter werden als Miniaturen vorgewärmt) und ≈ −375 MB nach vier Listen-Seiten. `image-load-probe`: Kader/Zentrale weiter 0 ms Verzögerung, geladene Bilddaten im Lauf 6,1 → 4,5 MB. Paket: `dist` +7,6 MB (1215 Miniaturen; `dist/assets` 67 → 75 MB, Gesichter-Originale 48 MB). Screenshots vorher/nachher `node tests/facethumb-shots.mjs [ordner]` (`DIST=…`, `SCALE=2`, `SWEEP=1` prüft auf allen Unterseiten: Miniatur nie > 64 px, kein Original ≤ 64 px).
 
 ## Was die Optimierungen tun (Ergebnisse unverändert)
 

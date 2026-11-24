@@ -5,7 +5,8 @@
 // erscheint (App.tsx wartet darauf höchstens `WARM_CAP_MS`): Papier-Texturen,
 // zentrierte Wappen der eigenen Liga (ui/crestTrim.ts), Foto + Gesichter der
 // Nachricht, die die Zentrale zuerst zeigt. `warmSquadFaces` lädt danach im
-// Leerlauf die Gesichter des eigenen Kaders/der Jugend (Kader-Seiten, Profil).
+// Leerlauf die Gesichter des eigenen Kaders/der Jugend (Kader-Seiten) als Miniaturen
+// (images/faces-sm, 128 × 150 – components/PlayerAvatar.tsx `thumbSrc`).
 // Begrenzt über ui/imagePreload.ts (LRU), damit nicht hunderte Gesichter im
 // Speicher bleiben. Messung: tests/image-load-probe.mjs.
 // =============================================================================
@@ -34,8 +35,8 @@ export function warmGameImages(g: Game, capMs = WARM_CAP_MS): Promise<void> {
     ...UI_TEXTURES.slice(0, 2).map((t) => preloadImage(t, { keep: true })),
     ...(me ? [me] : []).concat(league).map((c) => warmCrest(resolveCrestImage(c))),
     preloadReader(g, initialMessage(g.messages ?? [])),
-    // Eigener Kader: „Unsere Besten“ in der Zentrale, Kader-Seiten.
-    ...(me?.playerIds ?? []).map((id) => preloadFace(g.players[id])),
+    // Eigener Kader: „Unsere Besten“ in der Zentrale, Kader-Seiten – beides kleine Köpfe → Miniaturen.
+    ...(me?.playerIds ?? []).map((id) => preloadFace(g.players[id], false, undefined, true)),
   ];
   const all = Promise.all(jobs).then(() => undefined, () => undefined);
   return Promise.race([all, new Promise<void>((r) => setTimeout(r, capMs))]);
@@ -43,6 +44,8 @@ export function warmGameImages(g: Game, capMs = WARM_CAP_MS): Promise<void> {
 
 /**
  * Gesichter des eigenen Kaders (zuerst), dann der Jugend – im Leerlauf, einzeln nacheinander.
+ * Als Miniaturen (Listen, Aufstellung, Jugendkader); das Profil lädt seine großen Bilder selbst vor
+ * (PlayerModal: Nachbarn beim Blättern).
  * Rückgabe: Abbruch (beim Verlassen des Spiels).
  */
 export function warmSquadFaces(g: Game): () => void {
@@ -55,7 +58,7 @@ export function warmSquadFaces(g: Game): () => void {
   let i = 0;
   const next = () => {
     if (stop || i >= people.length) return;
-    preloadFace(people[i++]).finally(() => whenIdle(next, 500));
+    preloadFace(people[i++], false, undefined, true).finally(() => whenIdle(next, 500));
   };
   const t = setTimeout(() => whenIdle(next), 300);
   return () => { stop = true; clearTimeout(t); };
