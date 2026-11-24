@@ -13,7 +13,7 @@ das Spiel läuft also auch ohne Bild. Ein Bild wird erst angezeigt, wenn es im j
 1. **Pressefotos 1975** – alle 13 Motive vorhanden (Torjubel erscheint nur nach Siegen). Nächste Epoche: 1985, später 2000 und 2015.
 2. **Gesichter Mitarbeiter** `faces/staff/1970/01..10.webp` – Trainer, Vorstand, Berater (Presse, Budget-Berater, Trainerteam).
 3. **Gesichter 1980** – `mitteleuropa` 20 Personen, dazu `suedeuropa`/`osteuropa`/`balkan` je 10 (ab etwa 1985 brauchen die Spieler die Frisuren der 80er).
-4. **Trophäen** `trophies/<form>.webp` (Abschnitt 4) – Vitrine unter Verein › Erfolge.
+4. **Trophäen** `trophies/<datei>.webp` (Abschnitt 4, englische Dateinamen) – Vitrine unter Verein › Erfolge.
 5. **Korn** `dossier/korn.png` – feines Druckkorn über Kopfleiste und Balken (Feinschliff).
 
 **Entfällt mit dem Look „Akte“:** Hintergrundfotos für die Seiten (Abschnitt 1, `bg/stadion-*`, `bg/buero-*` …) und `press/zeitung-<epoche>` (ersetzt durch `dossier/newspaper.webp`). Nur noch die dunklen Bühnen (Auslosung, Gala, Halle, Textmodus, „Nächstes Spiel“) nutzen Fotos.
@@ -131,8 +131,8 @@ Je mehr Personen eine Gruppe hat, desto seltener sehen zwei Spieler gleich aus (
 ## 4. Wettbewerbe, Auslosung, Ehrungen (B)
 | Datei | Motiv | Größe | Einsatz |
 |---|---|---|---|
-| `trophies/{schale,ddr,teller,pokal,henkel,cwc,konferenz,uefa,halle,jugend,uyl,aufstieg}.webp` | Trophäe frontal, mittig, Licht von links oben, dunkler Schiefersockel, ohne Schrift | 1000×1100, Alpha | Verein › Erfolge, Saisonehrung, Gala |
-| `trophies/goldener-ball.webp` | Goldene Kugel-Trophäe auf schwarzem Sockel | 1000×1100, Alpha | Gala Goldener Ball |
+| `trophies/{league-champions-plate,gdr-champions-cup,division-winners-plate,national-cup,continental-champions-cup,cup-winners-cup,continental-league-cup,europe-trophy,world-club-cup,indoor-cup,youth-cup,youth-champions-cup,promotion-plaque}.webp` (Zuordnung Form → Datei in `src/data/trophyImages.ts`) | Trophäe frontal, mittig, Licht von links oben, dunkler Schiefersockel, ohne Schrift | 1000×1100, Alpha | Verein › Erfolge, Saisonehrung, Gala |
+| `trophies/player-of-the-year.webp` | Goldene Kugel-Trophäe auf schwarzem Sockel | 1000×1100, Alpha | Gala Goldener Ball |
 | `draw/lostopf.webp` | Glaskugeln/Lostopf auf Bühne | 1200×900, Alpha | Auslosung |
 | `awards/podest.webp` | Podest mit Spotlights | 1600×900 | Saisonehrung |
 
