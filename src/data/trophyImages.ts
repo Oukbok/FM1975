@@ -11,7 +11,7 @@
 import type { TrophyShape } from '../game/trophyCabinet';
 
 export const TROPHY_PHOTOS: Partial<Record<TrophyShape, true>> = {
-  // schale: true,
+  schale: true,
 };
 
 export function trophyPhoto(shape: TrophyShape): string | null {
