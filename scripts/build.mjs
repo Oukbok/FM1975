@@ -32,6 +32,7 @@ const NOT_SHIPPED = new Set([
   'images/shirt-base.png',          // alte Kader-Box, nicht mehr im Spiel
   'images/menu-bg-3.jpg',           // nirgends verwendet
   'images/start-grandstand.jpg',    // ersetzt durch start-grandstand.webp
+  'images/faces-sm/manifest.json',  // nur für scripts/face-thumbs.mjs (welche Quelle hatte die Miniatur)
 ]);
 cpSync('images', `${out}/assets`, { recursive: true, filter: (src) => !NOT_SHIPPED.has(src.replaceAll('\\', '/')) });
 writeFileSync(`${out}/version.json`, JSON.stringify({ version, build: buildId }) + '\n');

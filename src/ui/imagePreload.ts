@@ -8,6 +8,7 @@
 // Speicher: UI-Texturen (wenige, oft genutzt) bleiben gehalten; alles andere
 // (Gesichter, Pressefotos) liegt in einer begrenzten Liste `LRU_MAX` – ältere
 // Einträge fallen heraus, der Browser darf ihre dekodierten Bilder dann verwerfen.
+// Gesichts-Miniaturen (`small`, images/faces-sm) haben eine eigene, längere Liste.
 // Messung vorher/nachher: tests/image-load-probe.mjs, Doku docs/research/performance.md.
 // =============================================================================
 
@@ -33,26 +34,30 @@ export const UI_TEXTURES: readonly string[] = [
   'assets/dossier/balance/polaroid.webp',
 ];
 
-/** Höchstzahl gehaltener Gesichter/Fotos (Kader ≈ 30 + Jugend/Stab + Pressefotos). */
+/** Höchstzahl gehaltener Gesichter/Fotos in voller Größe (Profil, Newscenter, Pressefotos). */
 const LRU_MAX = 96;
+/** Höchstzahl gehaltener Gesichts-Miniaturen (128 × 150 ≈ 75 KB dekodiert statt ≈ 1,2 MB): Kader + Jugend + Listen. */
+const LRU_SMALL_MAX = 240;
 
 const keep = new Map<string, HTMLImageElement>();
 const lru = new Map<string, HTMLImageElement>();
+const lruSmall = new Map<string, HTMLImageElement>();
 const jobs = new Map<string, Promise<boolean>>();
 const ready = new Set<string>();
 
 const canLoad = () => typeof Image !== 'undefined';
 
 function touch(src: string) {
-  const el = lru.get(src);
-  if (!el) return;
-  lru.delete(src); lru.set(src, el);
+  for (const m of [lru, lruSmall]) {
+    const el = m.get(src);
+    if (el) { m.delete(src); m.set(src, el); }
+  }
 }
 
-function evict() {
-  while (lru.size > LRU_MAX) {
-    const oldest = lru.keys().next().value as string;
-    lru.delete(oldest); jobs.delete(oldest); ready.delete(oldest);
+function evict(m: Map<string, HTMLImageElement>, max: number) {
+  while (m.size > max) {
+    const oldest = m.keys().next().value as string;
+    m.delete(oldest); jobs.delete(oldest); ready.delete(oldest);
   }
 }
 
@@ -60,7 +65,7 @@ function evict() {
  * Bild laden und dekodieren. Ergebnis: true = fertig, false = Fehler (404 o. Ä.).
  * Mehrfache Aufrufe mit derselben Adresse teilen sich einen Auftrag.
  */
-export function preloadImage(src: string | null | undefined, opts?: { keep?: boolean; low?: boolean }): Promise<boolean> {
+export function preloadImage(src: string | null | undefined, opts?: { keep?: boolean; low?: boolean; small?: boolean }): Promise<boolean> {
   if (!src || !canLoad()) return Promise.resolve(false);
   const hit = jobs.get(src);
   if (hit) { touch(src); return hit; }
@@ -69,10 +74,11 @@ export function preloadImage(src: string | null | undefined, opts?: { keep?: boo
   if (opts?.low) el.setAttribute('fetchpriority', 'low');
   el.src = src;
   const p = el.decode().then(() => true, () => el.complete && el.naturalWidth > 0)
-    .then((ok) => { if (ok && (keep.has(src) || lru.has(src))) ready.add(src); return ok; });
+    .then((ok) => { if (ok && (keep.has(src) || lru.has(src) || lruSmall.has(src))) ready.add(src); return ok; });
   jobs.set(src, p);
   if (opts?.keep) keep.set(src, el);
-  else { lru.set(src, el); evict(); }
+  else if (opts?.small) { lruSmall.set(src, el); evict(lruSmall, LRU_SMALL_MAX); }
+  else { lru.set(src, el); evict(lru, LRU_MAX); }
   return p;
 }
 
@@ -109,5 +115,5 @@ export function preloadUiTextures(): void {
 
 /** Für Tests/`resetModuleState` nicht nötig: reiner Anzeige-Zwischenspeicher ohne Einfluss aufs Spiel. */
 export function preloadStats() {
-  return { kept: keep.size, cached: lru.size, ready: ready.size, max: LRU_MAX };
+  return { kept: keep.size, cached: lru.size, small: lruSmall.size, ready: ready.size, max: LRU_MAX, maxSmall: LRU_SMALL_MAX };
 }

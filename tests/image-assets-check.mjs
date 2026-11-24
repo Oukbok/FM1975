@@ -4,8 +4,11 @@
 // 2. Jede Akten-Textur aus styles/31-dossier.css steht in UI_TEXTURES (ui/imagePreload.ts) – sonst wird
 //    sie nicht vorgeladen und erscheint verzögert.
 // 3. Jede Adresse in UI_TEXTURES existiert; Ziele von scripts/optimize-images.mjs existieren.
+// 4. Gesichts-Miniaturen (images/faces-sm, scripts/face-thumbs.mjs): zu jedem Gesicht in images/faces gibt es
+//    eine Miniatur, sie stammt von der heutigen Quelle (SHA-1 im Manifest) und keine ist verwaist.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { faceThumbStatus } from '../scripts/face-thumbs.mjs';
 
 const errors = [];
 const strip = (u) => u.replace(/[?#].*$/, '');
@@ -36,6 +39,13 @@ for (const [u, f] of cssUrls) {
 const opt = readFileSync('scripts/optimize-images.mjs', 'utf8');
 for (const m of opt.matchAll(/out: '([^']+)'/g)) if (!existsSync(m[1])) errors.push(`optimize-images: ${m[1]} fehlt – node scripts/optimize-images.mjs`);
 
+const thumbs = await faceThumbStatus();
+for (const r of thumbs.missing) errors.push(`faces-sm: Miniatur zu images/faces/${r} fehlt – node scripts/face-thumbs.mjs`);
+for (const r of thumbs.stale) errors.push(`faces-sm: Miniatur zu images/faces/${r} veraltet (Quelle geändert) – node scripts/face-thumbs.mjs`);
+for (const r of thumbs.orphans) errors.push(`faces-sm: ${r} ohne Quelle in images/faces – node scripts/face-thumbs.mjs`);
+if (notShipped.has('images/faces-sm') || notShipped.has('images/faces')) errors.push('faces/faces-sm dürfen nicht in NOT_SHIPPED stehen');
+
+console.log(`Gesichter ${thumbs.srcs.length}, Miniaturen aktuell ${thumbs.srcs.length - thumbs.missing.length - thumbs.stale.length}`);
 console.log(`CSS-Bilder ${cssUrls.size}, vorgeladene Texturen ${textures.size}, nicht ausgeliefert ${notShipped.size}`);
 if (errors.length) { console.log(errors.map((e) => '  FEHLER ' + e).join('\n')); process.exit(1); }
 console.log('OK');

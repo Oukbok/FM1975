@@ -209,6 +209,12 @@ await step('Kader + Spielerprofil', async () => {
   await row.scrollIntoViewIfNeeded();
   await game.waitForTimeout(400);
   if (!await row.locator('.pa-photo.own').count()) fail('Kaderliste: Spielerbild nicht in der Miniatur');
+  // Liste = verkleinerte Fassung (PlayerAvatar: einmal per Canvas auf 128 × 150, Blob-Adresse), Profil = Original.
+  await game.waitForFunction((n) => [...document.querySelectorAll('.dtable tbody tr')].some((tr) => tr.textContent.includes(n)
+    && /^blob:/.test(tr.querySelector('.pa-photo.own img')?.getAttribute('src') ?? '')), prep.player, { timeout: 4000 })
+    .catch(() => fail('Kaderliste: Spielerbild nicht verkleinert (keine Blob-Miniatur)'));
+  const thumbW = await row.locator('.pa-photo.own img').evaluate((i) => i.naturalWidth).catch(() => 0);
+  if (thumbW !== 128) fail(`Kaderliste: Miniatur des Spielerbilds ${thumbW} px breit statt 128`);
   await game.screenshot({ path: `${outDir}/10_kader.png` });
   await row.click();
   await game.waitForSelector('.pp-modal', { timeout: 4000 });
