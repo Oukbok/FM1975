@@ -43,7 +43,7 @@ export const INFO_TEXTS = {
   },
   ligenstruktur: {
     title: 'Ligensystem',
-    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Jeder Kasten zeigt die Trophäe der Liga (Meisterschale, Meisterteller der Staffel, DDR-Meisterpokal) und Auf- und Abstieg: „3 Auf“ = direkte Aufsteiger, „Aufstiegsrunde“ = die Meister spielen weniger Plätze aus, „+1 bester Zweiter“ = der stärkste Zweite steigt mit auf, „3 Ab“ = Absteiger. Relegationsspiele gibt es im Spiel nicht. Gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine. Rechts stehen die Pokale des Landes mit Sieger und der Platz in der Fünfjahreswertung. Oben rechts blätterst du durch die Zeiträume, in denen die Struktur gleich war. Ligen, die es nicht mehr gibt, tragen den Stempel „Archiviert“.',
+    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Jeder Kasten zeigt die Trophäe der Liga (Meisterschale, Meisterteller der Staffel, DDR-Meisterpokal) und Auf- und Abstieg: „3 Auf“ = direkte Aufsteiger, „Aufstiegsrunde“ = die Meister spielen weniger Plätze aus, „+1 bester Zweiter“ = der stärkste Zweite steigt mit auf, „3 Ab“ = Absteiger, „Relegation“/„Play-offs“ = Entscheidungsspiele um einen Platz nach den Regeln des Landes und der Saison. Gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine. Rechts stehen die Pokale des Landes mit Sieger und der Platz in der Fünfjahreswertung. Oben rechts blätterst du durch die Zeiträume, in denen die Struktur gleich war. Ligen, die es nicht mehr gibt, tragen den Stempel „Archiviert“.',
     wiki: 'league-system',
   },
   fuenfjahreswertung: {
@@ -420,6 +420,11 @@ export const INFO_TEXTS = {
     title: 'Weltrangliste',
     text: 'Elo-Punkte wie bei der bekannten Elo-Weltrangliste: Start mit historischen Werten, danach zählt nur, was im Spiel gespielt wird. Ein Sieg bringt umso mehr, je stärker der Gegner, je wichtiger das Spiel (WM-Endrunde 60, EM-Endrunde 50, Qualifikation/Nationenliga 40, Freundschaftsspiel 20) und je höher er ausfällt; der Gastgeber hat 100 Punkte Heimvorteil. Neue Ausgabe am Monatsersten, ± = Plätze seit der Ausgabe davor.',
     wiki: 'world-ranking',
+  },
+  relegation: {
+    title: 'Relegation & Play-offs',
+    text: 'Gelb markierte Plätze spielen nach dem letzten Spieltag um einen Platz in der oberen Liga – nach den Regeln des Landes und der Saison (z. B. 16. gegen 3. der 2. Liga, Hin- und Rückspiel). Die Zahl der Auf- und Absteiger bleibt gleich; die Spiele entscheiden, wer den umkämpften Platz bekommt. Paarungen und Ergebnisse stehen unter der Tabelle.',
+    wiki: 'league-relegation',
   },
   abstiegAmtszeit: {
     title: 'Abstieg aus der untersten Liga',

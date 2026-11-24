@@ -2,7 +2,7 @@
 // Ligatabelle: Gesamt / Heim / Auswärts / Form und Stand nach jedem Spieltag – für jede Saison
 // mit Einzelergebnissen (game/leagueResults.ts), sonst nur die Abschlusstabelle.
 // =============================================================================
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Icon from '../../../components/Icon';
 import type { CompSnapshot, TableRowLite } from '../../../game/competitionView';
 import { tableFrom, type ResTuple, type TableMode } from '../../../game/leagueResults';
@@ -20,7 +20,8 @@ function formTable(rows: TableRowLite[], ptsWin: number): TableRowLite[] {
 
 export interface TableNav { mode: Mode; setMode: (m: Mode) => void; md: number; maxMd: number; playedMd: number; onMd: (n: number) => void; res: ResTuple[] | null; ptsWin: number }
 
-export function LeagueTable({ g, snap, nav: navIn }: { g: Game; snap: CompSnapshot; nav?: TableNav }) {
+/** `relPos` = Plätze mit Relegation (Zone `zone-rg`), `after` = Block unter der Tabelle (Relegation). */
+export function LeagueTable({ g, snap, nav: navIn, relPos, after }: { g: Game; snap: CompSnapshot; nav?: TableNav; relPos?: number[]; after?: ReactNode }) {
   const [ownMode, setOwnMode] = useState<Mode>('all');
   const nav: TableNav = navIn ?? { mode: ownMode, setMode: setOwnMode, md: 0, maxMd: 0, playedMd: 0, onMd: () => {}, res: null, ptsWin: g.pointSystem === '3-point' ? 3 : 2 };
   const rowsAll = snap.table ?? [];
@@ -76,7 +77,7 @@ export function LeagueTable({ g, snap, nav: navIn }: { g: Game; snap: CompSnapsh
               const diff = r.gf - r.ga;
               return (
                 <tr key={r.clubId} className={r.clubId === mid ? 'me' : ''}>
-                  <td className="rl-rank"><span className={`rl-z ${m === 'all' ? (snap.zones ? snap.zones[r.pos - 1] ?? '' : zoneOf(r.pos, snap.tier, rows.length, historic)) : ''}`}>{r.pos}</span></td>
+                  <td className="rl-rank"><span className={`rl-z ${m === 'all' ? (relPos?.includes(r.pos) ? 'zone-rg' : snap.zones ? snap.zones[r.pos - 1] ?? '' : zoneOf(r.pos, snap.tier, rows.length, historic)) : ''}`}>{r.pos}</span></td>
                   <td className="nowrap"><TeamName g={g} id={r.clubId} season={snap.season} size={26} /></td>
                   <td className="num">{r.p}</td><td className="num">{r.w}</td><td className="num">{r.d}</td><td className="num">{r.l}</td>
                   <td className="num muted">{r.gf}:{r.ga}</td>
@@ -88,6 +89,7 @@ export function LeagueTable({ g, snap, nav: navIn }: { g: Game; snap: CompSnapsh
             })}
           </tbody>
         </table>
+        {after}
       </div>
     </div>
   );

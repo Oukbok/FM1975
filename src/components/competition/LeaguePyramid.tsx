@@ -17,6 +17,9 @@ import { type PyrDivision, type PyrFinal, type PyrSystem, type PyramidData, type
 import type { Club } from '../../types';
 import { leagueTrophyShape } from '../../game/trophyCabinet';
 import { TrophyImage } from '../../views/club/trophies/TrophyImage';
+import { hasRelegation, pyrRelInfo, type PyrRel } from '../../game/relegationView';
+import { COUNTRY_BY_KEY } from '../../data/world/countries';
+import { seasonStartYear } from '../../data/timeline';
 
 function findDiv(sys: PyrSystem | undefined, id: string | undefined): PyrDivision | undefined {
   if (!sys) return undefined;
@@ -35,15 +38,17 @@ function headText(d: PyrDivision, past = false): string | null {
 
 /**
  * Auf-/Abstieg als klare Marken (Wunsch Pascal: „2 Auf · 1 Aufstiegsrunde · 3 Ab“). Zahlen wie im Saisonwechsel
- * (game/leaguePyramid.ts westZones/abroadZones/ddrZones); Relegationsspiele gibt es im Spiel nicht.
+ * (game/leaguePyramid.ts westZones/abroadZones/ddrZones); Relegation/Play-offs nach data/relegationRules.ts
+ * (game/relegationView.ts `pyrRelInfo`) – Tooltip mit dem Format, z. B. „16. gegen 3. der 2. Liga“.
  */
-function Moves({ d }: { d: PyrDivision }) {
+function Moves({ d, rel }: { d: PyrDivision; rel?: PyrRel }) {
   if (d.pool || d.struct) return null;
   const marks: { k: string; cls: string; text: string; tip: string }[] = [];
   if (d.up) marks.push({ k: 'up', cls: 'up', text: `${d.up} Auf`, tip: `${d.up === 1 ? 'Der Meister steigt' : `Die ersten ${d.up} steigen`} direkt auf` });
   if (d.upChance) marks.push({ k: 'ch', cls: 'chance', text: '+1 bester Zweiter', tip: 'Der stärkste Zweite aller Staffeln steigt zusätzlich auf' });
   if (d.round) marks.push({ k: 'rd', cls: 'chance', text: d.round.seats > 1 ? 'Aufstiegsrunde ×2' : 'Aufstiegsrunde', tip: `${d.round.seats > 1 ? 'Meister und Vizemeister spielen mit. ' : 'Der Meister spielt mit. '}${d.round.field} Teilnehmer aus allen Staffeln spielen ${d.round.slots} Aufstiegsplätze in Duellen aus` });
   if (d.down) marks.push({ k: 'dn', cls: 'down', text: `${d.down} Ab`, tip: d.downTo ?? 'Abstieg' });
+  for (const [i, m] of (rel?.marks ?? []).entries()) marks.push({ k: `rg${i}`, cls: 'rel', text: m.text, tip: m.tip });
   if (!marks.length) return null;
   return <span className="lp-moves">{marks.map((m) => <span key={m.k} className={`lp-mv ${m.cls}`} title={m.tip}>{m.text}</span>)}</span>;
 }
@@ -87,6 +92,17 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }
   // Heimatland (Weltdaten): Reiter/Flagge nach dem Land der eigenen Liga; DDR nur für Deutschland.
   const homeFlag = data.west.key === 'west' ? 'Deutschland' : data.west.key;
   const isGer = homeFlag === 'Deutschland';
+  // Relegation des gezeigten Landes in der gezeigten Saison (game/relegationView.ts).
+  const relCc = side === 'ddr' ? '' : side === 'abroad' ? COUNTRY_BY_KEY[sys?.key ?? '']?.cc ?? '' : isGer ? 'ger' : COUNTRY_BY_KEY[data.west.key]?.cc ?? '';
+  const relYear = seasonStartYear(sys?.past && sys.stand ? sys.stand : data.season);
+  const relOf = (d: PyrDivision): PyrRel | undefined => {
+    if (!relCc || d.pool || d.struct) return undefined;
+    const lv = sys?.levels.find((l) => l.includes(d)) ?? [];
+    const up = sys?.levels.find((l) => l[0]?.level === d.level - 1);
+    return pyrRelInfo(relCc, relYear, d.level, Math.max(0, lv.indexOf(d)), pyrSize(d), up?.length === 1 ? pyrSize(up[0]) : 0);
+  };
+  const selRel = sel ? relOf(sel) : undefined;
+  const zoneAt = (d: PyrDivision, pos: number) => (selRel?.pos.includes(pos) ? 'zone-rg' : pyrZone(d, pos));
   const cName = side === 'abroad' ? countryInfo(sys?.key ?? '').name : side === 'ddr' ? 'DDR' : isGer ? 'Deutschland (West)' : data.west.title;
   // Alle Länder alphabetisch in EINER Liste (Wunsch Pascal), Heimatland eingereiht; „(Archiv)“ = Liga besteht nicht mehr.
   const opts = [
@@ -127,7 +143,7 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }
             <div className="rl rl-sm lp-rows">
               {sel.clubs.map((c, i) => (
                 <div key={c.id} className={`rl-row ${c.id === mineId ? 'me' : ''}`}>
-                  <span className="rl-rank"><span className={`rl-z ${pyrZone(sel, i + 1)}`}>{i + 1}</span></span>
+                  <span className="rl-rank"><span className={`rl-z ${zoneAt(sel, i + 1)}`}>{i + 1}</span></span>
                   <span className="rl-club">
                     <ClubLink id={c.dotOnly ? null : c.id} className="lp-club">
                       {c.dotOnly
@@ -144,6 +160,7 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }
               {(sel.champion > 0 || sel.up > 0) && <span><i className="zone-cl" />{sel.champion ? 'Meister' : 'Aufstieg'}</span>}
               {(sel.europe > 0 || sel.upChance > 0 || !!sel.round) && <span><i className="zone-po" />{sel.europe ? 'Europapokal' : sel.round ? 'Aufstiegsrunde' : 'Aufstiegschance'}</span>}
               {sel.down > 0 && <span><i className="zone-rel" />{sel.downTo ?? 'Abstieg'}</span>}
+              {!!selRel?.pos.length && <span><i className="zone-rg" />{selRel.kind}</span>}
             </div>
           </> : <div className="lp-empty">{sys?.note}</div>}
         </aside>
@@ -170,7 +187,7 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }
                           <span className="lp-box-name"><b>{d.name}</b><small>{d.struct ?? `${pyrSize(d)} Vereine`}</small></span>
                         </span>
                         {((t) => t && <span className="lp-flow"><em>{t}</em></span>)(headText(d, sys.past))}
-                        <Moves d={d} />
+                        <Moves d={d} rel={relOf(d)} />
                       </button>
                     ))}
                   </div>
@@ -192,7 +209,9 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }
             <span><i className="up" />Auf = direkter Aufstieg</span>
             <span><i className="chance" />Aufstiegsrunde/bester Zweiter = weitere Plätze</span>
             <span><i className="down" />Ab = Abstieg</span>
-            <span className="lp-key-rel">Relegation: keine – im Spiel gibt es keine Relegationsspiele</span>
+            {relCc && hasRelegation(relCc, relYear)
+              ? <span><i className="rel" />Relegation/Play-offs = Entscheidungsspiele um einen Platz (Zeiger auf die Marke zeigt das Format)</span>
+              : <span className="lp-key-rel">Relegation: keine in dieser Saison – direkter Auf- und Abstieg</span>}
           </p>}
         </div>
         {aside}

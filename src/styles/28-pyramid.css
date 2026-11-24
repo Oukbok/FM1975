@@ -39,6 +39,7 @@
 .lp-legend i.zone-cl { box-shadow: inset 4px 0 0 var(--green) !important; }
 .lp-legend i.zone-po { box-shadow: inset 4px 0 0 color-mix(in srgb, var(--pos) 45%, transparent) !important; }
 .lp-legend i.zone-rel { box-shadow: inset 4px 0 0 var(--red) !important; }
+.lp-legend i.zone-rg { box-shadow: inset 4px 0 0 var(--yellow) !important; }
 .lp-empty { padding: 20px; color: var(--text-3); font-size: 16px; line-height: 1.45; }
 .lp-empty.big { margin: auto; max-width: 520px; text-align: center; font-size: 18px; }
 
@@ -175,6 +176,7 @@ button.lp-reform:hover { border-color: var(--text-4); opacity: 1; }
 .lp-mv.up::before { border-bottom: 7px solid var(--green); }
 .lp-mv.down::before { border-top: 7px solid var(--red); }
 .lp-mv.chance::before { width: 8px; height: 8px; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--pos) 60%, transparent); }
+.lp-mv.rel::before { width: 7px; height: 7px; border: 0; transform: rotate(45deg); background: var(--yellow); }
 .lp-boxes:has(> .lp-box:nth-child(4)) .lp-moves { gap: 4px; }
 .lp-boxes:has(> .lp-box:nth-child(4)) .lp-mv { padding: 1px 5px; font-size: 12.5px; gap: 4px; }
 .lp-key { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin: 0; font-size: 13.5px; color: var(--text-3); }
@@ -183,6 +185,7 @@ button.lp-reform:hover { border-color: var(--text-4); opacity: 1; }
 .lp-key i.up { border-bottom: 7px solid var(--green); }
 .lp-key i.down { border-top: 7px solid var(--red); }
 .lp-key i.chance { width: 8px; height: 8px; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--pos) 60%, transparent); }
+.lp-key i.rel { width: 7px; height: 7px; border: 0; transform: rotate(45deg); background: var(--yellow); }
 .lp-key-rel { font-weight: 600; color: var(--text-2); }
 
 /* Pokale des Landes */

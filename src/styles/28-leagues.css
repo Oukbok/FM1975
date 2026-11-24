@@ -159,3 +159,20 @@
 .md-score small { background: rgba(var(--ink-rgb), 0.38); color: var(--navy-ink); font-size: 12px; line-height: 17px; border-radius: 0 0 3px 3px; }
 .md-score b:only-child { border-radius: 3px; }
 .ind-team { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+
+/* ---- Relegation/Play-offs unter der Ligatabelle (views/stats/competition/RelegationStrip.tsx) ---- */
+.rgx { display: flex; flex-direction: column; gap: 10px; padding: 12px 4px 6px; border-top: 1px solid var(--border-soft); margin-top: 6px; }
+.rgx-block { display: flex; flex-direction: column; gap: 4px; }
+.rgx-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; color: var(--text-2); }
+.rgx-head > b { color: var(--text); box-shadow: inset 3px 0 0 var(--yellow); padding-left: 9px; }
+.rgx-sub { color: var(--text-3); font-size: 13px; }
+.rgx-win { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: var(--text-2); font-size: 13.5px; }
+.rgx-note { color: var(--text-3); font-size: 13px; padding-left: 12px; }
+.rgx-tie { display: flex; flex-direction: column; gap: 2px; padding-left: 12px; }
+.rgx-stage { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.rgx-leg { display: grid; grid-template-columns: 52px minmax(0, 1fr) 118px minmax(0, 1fr); align-items: center; gap: 8px; padding: 3px 6px; border: 0; background: transparent; color: var(--text-2); font: inherit; font-size: 13.5px; text-align: left; border-radius: 4px; }
+.rgx-leg.link { cursor: pointer; }
+.rgx-leg.link:hover { background: var(--panel-2); }
+.rgx-leg:disabled { opacity: 1; cursor: default; }
+.rgx-date { color: var(--text-3); font-variant-numeric: tabular-nums; }
+.rgx-score { text-align: center; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }

@@ -899,6 +899,8 @@ tr.me:hover { background: rgba(var(--accent-rgb), 0.16); }
 .zone-cl { background: rgba(var(--green-rgb), 0.18); color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
 .zone-eu { background: rgba(var(--accent-rgb), 0.16); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
 .zone-rel { background: rgba(var(--red-rgb), 0.16); color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+/* Relegationsplatz (Entscheidungsspiele zwischen zwei Ligen, game/relegationView.ts) */
+.zone-rg { background: rgba(var(--yellow-rgb), 0.18); color: var(--yellow); box-shadow: inset 3px 0 0 var(--yellow); }
 
 /* ---------------------------------------------------------------------------
    Formkreise (W/D/L)

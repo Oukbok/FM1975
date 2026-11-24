@@ -29,6 +29,9 @@ import Icon from '../../../components/Icon';
 import Select from '../../../ui/Select';
 import { liveFixtures, resultsFor, winPoints, type TableMode } from '../../../game/leagueResults';
 import { MatchdayBox, fromTuple, type MdGame } from './MatchdayBox';
+import { RelegationStrip } from './RelegationStrip';
+import { relSnapshotInfo } from '../../../game/relegationView';
+import { leanIdxOf } from '../../../game/competitionCountry';
 
 export type CompStart = 'league' | 'cup' | 'euro';
 
@@ -165,11 +168,15 @@ export function CompetitionPage({ g, start, onWatch, onReplayDraw }: {
   const onMd = (n: number) => setMdSel({ key: mdKey, md: n });
   const nav = { mode, setMode, md, maxMd, playedMd, onMd, res, ptsWin: lean?.ptsWin ?? winPoints(g, season) };
 
+  // Relegation/Play-offs zur gezeigten Liga (Zone + Ergebnisse unter der Tabelle, game/relegationView.ts).
+  const rel = snap?.kind === 'league' && !snap.winners && !snap.roster && !snap.placingsOnly && !euroMode
+    ? relSnapshotInfo(g, country, season, country.mode === 'world' ? leanIdxOf(effKey) : -1, snap) : null;
   const main = !snap ? <Empty icon="stats">Für diese Auswahl liegen keine Daten vor.</Empty>
     : snap.winners ? <><Caption snap={snap} /><WinnersList g={g} snap={snap} /></>
     : snap.kind === 'league' && snap.roster ? <><Caption snap={snap} /><RosterList g={g} snap={snap} /></>
     : snap.kind === 'league' && !snap.table?.length && snap.emptyText ? <><Caption snap={snap} /><Empty icon="stats">{snap.emptyText}</Empty></>
-    : snap.kind === 'league' ? <><Caption snap={snap} /><LeagueTable key={`${country.cc}-${season}-${effKey}`} g={g} snap={snap} nav={nav} /></>
+    : snap.kind === 'league' ? <><Caption snap={snap} /><LeagueTable key={`${country.cc}-${season}-${effKey}`} g={g} snap={snap} nav={nav}
+      relPos={rel?.pos} after={rel && (rel.blocks.length || season === g.season) ? <RelegationStrip g={g} season={season} info={rel} onWatch={onWatch} /> : null} /></>
     : <CupRounds g={g} snap={snap} onWatch={onWatch}
       onReplayDraw={onReplayDraw && src === 'live' ? (ri) => onReplayDraw(effKey as 'cup' | EuroCompId, ri) : undefined} />;
 

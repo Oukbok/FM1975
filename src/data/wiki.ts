@@ -16,6 +16,7 @@ import { YOUTH_RECRUIT_EVENTS } from './youthRecruitEvents';
 import { CALENDAR_ERAS } from './matchCalendarRules';
 import { LOAN_SOURCES } from './loanRules';
 import { SIDELINE_WIKI } from './wikiSideline';
+import { RELEGATION_WIKI } from './wikiRelegation';
 
 export interface WikiCategory {
   id: string;
@@ -261,7 +262,7 @@ Die Regionalliga schrumpft von vier auf **zwei Staffeln zu je 18**: **Nord** (No
 Zwischen 2. Liga und Regionalliga wird eine neue, **eingleisige 3. Liga mit 20 Vereinen** eingezogen; die Regionalliga rückt auf **Ebene 4** – mit nur noch **drei Staffeln zu je 18**: **Nord** (Norden und Nordosten), **West** (Nordrhein-Westfalen, Rheinland-Pfalz, Saarland) und **Süd** (Bayern, Hessen, Baden-Württemberg).
 - **Qualifikation:** die **besten zehn** beider bisherigen Regionalliga-Staffeln (2007/08) bilden die 20 Startplätze der 3. Liga (vereinfachte Lizenzprüfung).
 - Die übrigen Vereine bilden nach Region die neue viertklassige Regionalliga. Hat eine Region mehr Vereine als Plätze (z. B. der Nordosten), steigen die Schwächsten in die Amateurligen ab; fehlende Plätze kommen aus den Amateurligen der Region, notfalls fiktive Platzhalter.
-- **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab. Zwischen 2. und 3. Liga steigen vereinfacht drei direkt auf und ab (historisch zwei plus Relegation).
+- **Auf-/Abstieg:** die drei Meister steigen in die 3. Liga auf, drei steigen ab. Zwischen 2. und 3. Liga steigen zwei direkt auf und ab, der Drittletzte der 2. Liga spielt die Relegation gegen den Dritten der 3. Liga (Artikel „Relegation & Play-offs“).
 
 ## Reform 2012/13 – Regionalliga mit fünf Staffeln
 Die Regionalverbände übernehmen die vierte Ebene: **Nord** (Niedersachsen, Bremen, Hamburg, Schleswig-Holstein, 18 Vereine), **Nordost** (Berlin und die neuen Länder, 16), **West** (Nordrhein-Westfalen, 20), **Südwest** (Rheinland-Pfalz, Saarland, Hessen, Baden-Württemberg, 18) und **Bayern** (20).
@@ -922,7 +923,7 @@ Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) sie
 
 Die Seite hat drei Reiter: **Ligensystem**, **Fünfjahreswertung** und **Ligen der Welt**.
 
-- **Kasten:** Trophäe der Liga (Meisterschale der 1. Ebene, Meisterteller einer Staffel darunter, DDR-Meisterpokal), Name, Zahl der Vereine, Meister-/Europapokalplätze und Auf- und Abstieg als Marken: **„3 Auf“** = direkte Aufsteiger, **„Aufstiegsrunde“** = die Staffelmeister (ab 2012/13 auch der Zweite der Regionalliga Südwest) spielen in gelosten Duellen weniger Plätze aus, **„+1 bester Zweiter“** = der stärkste Zweite aller Staffeln steigt mit auf (2. Liga Nord/Süd bis 1980/81), **„3 Ab“** = Absteiger. **Relegationsspiele gibt es im Spiel nicht** – auch nicht zwischen 1. und 2. Liga. Die Zahlen kommen aus derselben Rechnung wie der Saisonwechsel. „Dein Verein“ markiert deine Liga.
+- **Kasten:** Trophäe der Liga (Meisterschale der 1. Ebene, Meisterteller einer Staffel darunter, DDR-Meisterpokal), Name, Zahl der Vereine, Meister-/Europapokalplätze und Auf- und Abstieg als Marken: **„3 Auf“** = direkte Aufsteiger, **„Aufstiegsrunde“** = die Staffelmeister (ab 2012/13 auch der Zweite der Regionalliga Südwest) spielen in gelosten Duellen weniger Plätze aus, **„+1 bester Zweiter“** = der stärkste Zweite aller Staffeln steigt mit auf (2. Liga Nord/Süd bis 1980/81), **„3 Ab“** = Absteiger, **„Relegation“/„Play-offs“** (gelbe Raute) = Entscheidungsspiele um einen Platz nach den Regeln des Landes und der Saison (Zeiger auf die Marke zeigt das Format, Artikel „Relegation & Play-offs“). Die Zahlen kommen aus derselben Rechnung wie der Saisonwechsel. „Dein Verein“ markiert deine Liga.
 - **Pokale des Landes (rechts):** Landespokal (in der DDR FDGB-Pokal), Gipfelpokal bzw. Auftaktpokal und in Deutschland der Junioren-Pokal – je mit Trophäe, Format, Stand der Saison und Sieger (sonst dem letzten bekannten). Darunter der Platz des Landes in der Fünfjahreswertung mit seinen Startplätzen der nächsten Saison; „Ganze Wertung“ springt in den Reiter Fünfjahreswertung. Trophäenfotos erscheinen automatisch, sobald es für eine Trophäe ein Foto gibt – sonst die gezeichnete Trophäe.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
 - **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Zahl der Ebenen, Staffeln und Mannschaften (z. B. Spanien ab 1977 mit einer zusätzlichen dritten Ebene in Staffeln). Die Namen folgen dem Schema in der Landessprache (1. League, 2. Ligue, 3. División …, Artikel „Ligareformen im Ausland“). Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
@@ -1901,6 +1902,7 @@ Höchstens zwei solche Nachrichten je Saison, mindestens 45 Tage auseinander; ei
 ### Alte Spielstände
 Offene Jobangebote, Ultimaten und zugesagte Vereinswechsel aus früheren Versionen werden beim Laden als „hinfällig“ abgelegt und halten „Weiter“ nicht mehr an.`,
   },
+  RELEGATION_WIKI,
   {
     id: 'relegation-end',
     category: 'leagues',

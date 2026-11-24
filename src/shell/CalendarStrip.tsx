@@ -83,8 +83,10 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
       case 'super_cup': {
         // Supercup / Ligapokal: nur mit eigener Beteiligung (game/superCupGame.ts).
         const fx = ownFixtureOn(g, ev);
+        // Relegation ohne eigenen Verein: ein Termin-Hinweis wie ein Spieltag (game/relegationHome.ts).
+        if ((!fx || !fx.opp) && ev.matchId?.startsWith('rl_') && !ev.processed) { consider({ date: ev.date, icon: 'schedule', line: ev.title, accent: undefined, isMatch: false, prio: 38, screen: 'table', kind: 'Liga' }); break; }
         if (!fx || !fx.opp) break;
-        consider({ date: ev.date, icon: 'trophy', line: `${full(fx.opp)} (${fx.home ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 96, clubId: fx.opp, home: fx.home, comp: fx.comp, result: resultOf(fx.match), screen: ev.matchId?.startsWith('ic_') ? 'international' : 'supercup', kind: 'Pokal' });
+        consider({ date: ev.date, icon: 'trophy', line: `${full(fx.opp)} (${fx.home ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 96, clubId: fx.opp, home: fx.home, comp: fx.comp, result: resultOf(fx.match), screen: ev.matchId?.startsWith('ic_') ? 'international' : ev.matchId?.startsWith('rl_') ? 'table' : 'supercup', kind: ev.matchId?.startsWith('rl_') ? 'Liga' : 'Pokal' });
         break;
       }
       case 'cup_matchday': {

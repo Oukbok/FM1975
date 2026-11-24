@@ -72,7 +72,8 @@
 
 /* Platz mit Tabellenzone: Farbkante links an der Nummer */
 .rl-z { display: inline-block; min-width: 26px; padding-left: 8px; line-height: 22px; }
-.rl-z.zone-cl, .rl-z.zone-eu, .rl-z.zone-rel { background: transparent; color: var(--text-3); }
+.rl-z.zone-cl, .rl-z.zone-eu, .rl-z.zone-rel, .rl-z.zone-rg { background: transparent; color: var(--text-3); }
+.rl-z.zone-rg { box-shadow: inset 3px 0 0 var(--yellow); }
 .rl-z.zone-cl { box-shadow: inset 3px 0 0 var(--green); }
 .rl-z.zone-eu { box-shadow: inset 3px 0 0 var(--text-2); }
 .rl-z.zone-rel { box-shadow: inset 3px 0 0 var(--red); }
