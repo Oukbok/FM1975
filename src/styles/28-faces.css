@@ -43,6 +43,11 @@
 
 /* Miniatur-Kopf in Listen (components/FaceThumb.tsx): feste Größe, Zeilenhöhe bleibt */
 .fthumb { display: inline-block; flex: none; vertical-align: middle; line-height: 0; }
+/* Wunsch Pascal: Miniatur-Kopf nie oben abgeschnitten. Hohe Frisuren reichen bis ≈ 2 % an den
+   Bildrand – deshalb in der Miniatur keine Verschiebung nach oben (ganzes Bild in der Box), und
+   Eltern mit Ellipse kappen nur waagerecht (overflow-x: clip), senkrecht ragt der Kopf frei. */
+.fthumb { --face-shift: 0%; }
+:is(.cmp-pname, .tm-name, .mr-nm, .lu-card-name):has(> .fthumb) { overflow: clip visible; }
 
 /* Rahmen-Kästen, die früher hinter dem Gesicht lagen (Kreis/Box mit Fläche):
    mit Foto ohne Fläche/Rahmen – der freigestellte Kopf steht frei. Die Zeichnung
