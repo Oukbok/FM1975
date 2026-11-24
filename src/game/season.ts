@@ -59,6 +59,9 @@ import { withLeanMemo } from './worldScorers';
 import { updateWorldDepths } from '../engine/worldDeep';
 import { worldSeasonAwards } from './worldAwardsGame';
 import { homeExtraAwards, worldExtraAwards } from './extraAwardsGame';
+import { archiveHomeRelegation, finishHomeRelegation, homeRelOutcomes, setupHomeRelegation } from './relegationHome';
+import { applyWorldRelegation } from './relegationWorld';
+import { relSwap } from './relegationCore';
 
 const isGermanHome = (g: Game) => homeCountryOf(g) === 'ger';
 import { sponsorSeasonStart } from './sponsorGame';
@@ -169,6 +172,8 @@ export function startNextSeason(g: Game): void {
   for (const div of g.leagues.otherDivisions) {
     flushDivision(div, g.simClubs, g.pointSystem, g.season);
   }
+  // Relegation/Play-offs im Heimatland: offene Spiele nachholen (game/relegationHome.ts).
+  finishHomeRelegation(g);
 
   const oldPlayerTier = g.leagues.playerDivision.tier;
   // Auslandsligen: Spieltag-Simulation zu Ende spielen (game/worldLeagues.ts); die Endtabellen gehen an engine/world.ts.
@@ -241,8 +246,8 @@ export function startNextSeason(g: Game): void {
     else pooled.push(id);
   }
 
-  const promoted = res.promotedTop;
-  const relegated = res.relegatedTop;
+  let promoted = res.promotedTop;
+  let relegated = res.relegatedTop;
 
   // --- 4) Mitgliedschaften + Spielerliga bestimmen ---
   const membership: Record<string, { ids: string[]; meta: DivisionMeta }> = {};
@@ -252,6 +257,16 @@ export function startNextSeason(g: Game): void {
   // Anderes Heimatland (Weltdaten): Ligagrößen nach der historischen Struktur, keine deutschen Reformen.
   const homeTargets = homePlan ? homePlan.targets : structureForSeason(newSeason);
   if (!isReunify) balanceDivisions(membership, homeTargets, (id) => clubStrengthFor(g, id), g.managedClubId);
+  { // Relegation: Sieger auf die umkämpften Plätze (game/relegationCore.ts), Größen bleiben gleich.
+    const keys = Object.keys(membership).filter((k) => membership[k].meta.tier < 100);
+    if (relSwap(keys.map((k) => membership[k].ids), (i) => membership[keys[i]].meta.tier, homeRelOutcomes(g))) {
+      const top = keys.filter((k) => membership[k].meta.tier === 1).flatMap((k) => membership[k].ids);
+      const oldTop = current.filter((d) => d.tier === 1).flatMap((d) => d.orderedIds);
+      promoted = top.filter((id) => !oldTop.includes(id));
+      relegated = oldTop.filter((id) => !top.includes(id));
+    }
+    archiveHomeRelegation(g);
+  }
   // Auf-/Abstieg zwischen unterster simulierter Liga und Amateurligen (Vereins-Pool).
   if (!res.reform) pooled.push(...poolExchange(g, membership, current, newSeason, g.managedClubId, homePoolSwap));
   // Zweite Mannschaften nach den Regeln der Zeit einordnen (game/reservePyramid.ts).
@@ -419,6 +434,9 @@ export function startNextSeason(g: Game): void {
       if (Object.keys(sc).length) rec.scorers = sc;
     }
     if (rec && rec.season === oldSeason && Object.keys(leanResults.deep).length) rec.deep = leanResults.deep;
+    // Relegation/Play-offs der Auslandsligen: Plätze tauschen, Ergebnisse in die Historie (game/relegationWorld.ts).
+    applyWorldRelegation(g.world, leanResults.rel);
+    if (rec && rec.season === oldSeason && Object.keys(leanResults.rel).length) rec.rel = leanResults.rel;
     g.world.live = undefined;
   }
   // Tiefere Ebenen der Auslandsligen nach Rang der Länderwertung (engine/worldDeep.ts; alte Spielstände bekommen sie hier).
@@ -448,6 +466,7 @@ export function startNextSeason(g: Game): void {
   // Supercups & Ligapokal vor dem Ligastart, übrige Länder ins Archiv (game/superCupGame.ts);
   // danach Weltpokal/Klub-WM (game/intercontinental.ts).
   setupSuperCups(g, scSeeds);
+  setupHomeRelegation(g); // Relegation/Play-offs der neuen Saison: Termine nach dem letzten Spieltag (game/relegationHome.ts)
 
   // --- 8b) Ligareform: Meilenstein-Nachricht + Reform als angewandt vormerken ---
   // Wurde diese Saison eine Struktur-Reform ausgeführt, meldet die Fußball-Chronik

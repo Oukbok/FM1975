@@ -6,6 +6,7 @@ import { cupField } from '../engine/worldReserves';
 import { bindMarketing } from './marketingGame';
 import { recordSeasonBriefing } from './seasonBriefing';
 import { relegationStartNotice } from './relegationGame';
+import { setupHomeRelegation } from './relegationHome';
 import { startPrivateLife } from './private/privateStart';
 import { recordBudgetPlan } from './budgetPlan';
 import { migratePositionSkills } from './positionsGame';
@@ -342,6 +343,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   initLegends(g0, opts.legends !== false); // Ausnahmetalente der Fußballgeschichte (still, game/legendsGame.ts)
   migrateContracts2(g0); // Vertragsbausteine-Zustand von Beginn an (wie beim Laden, game/contractClausesGame.ts)
   harmonizeSeason(g0); // Rahmenterminkalender: Wochenendspiele an Pokal-/Europapokalwochen (game/fixtureWatch.ts)
+  setupHomeRelegation(g0); // Relegation/Play-offs der Saison: Termine nach dem letzten Spieltag (game/relegationHome.ts)
   ensureCountryPools(g0.world, g0.euroClubs, Number(g0.season.slice(0, 4))); // Unterbau der Auslandsligen (engine/world.ts)
   if (g0.world && g0.euroClubs) updateWorldDepths(g0.world, g0.euroClubs, year); // tiefere Ebenen nach Länderrang (engine/worldDeep.ts)
   ensureWorldPool(g0); // Weltspieler aller Vereine ohne vollen Kader (Spielerpool)

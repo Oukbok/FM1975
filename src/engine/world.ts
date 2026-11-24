@@ -278,6 +278,6 @@ export function advanceWorldSeason(
   w.history.push(rec);
   if (w.history.length > 60) w.history.shift();
   for (let i = 0; i < w.history.length - WORLD_DEEP_KEEP; i++) delete w.history[i].deep;
-  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; delete w.history[i].pstats; }
+  for (let i = 0; i < w.history.length - WORLD_TABLES_KEEP; i++) { delete w.history[i].tables; delete w.history[i].divs; delete w.history[i].cups; delete w.history[i].scorers; delete w.history[i].pstats; delete w.history[i].rel; }
   return { notes, participants };
 }

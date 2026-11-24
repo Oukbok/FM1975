@@ -75,6 +75,8 @@ export interface WorldSeasonRecord {
   scorers?: Record<string, [string, string, string, number][]>;
   /** Alle Einzelwertungen (beste zehn) je `Land|Ebene` bzw. `Land|cup` (game/worldScorers.ts packStats). */
   pstats?: Record<string, WorldPackedStats>;
+  /** Relegation/Play-offs der Saison je Land (game/relegationWorld.ts; nur die letzten WORLD_TABLES_KEEP Saisons). */
+  rel?: Record<string, import('../game/relegationCore').RelRecord[]>;
 }
 
 /** Zeile einer Wertung: alt [Name, Verein, Position, Wert, Gesicht, Geburtsjahr], kompakt [Nummer in `p`, Wert]. */
@@ -101,7 +103,11 @@ export interface WorldLiveDiv extends LeanDiv { md: number; n: number }
 export interface LeanCup { ids: string[]; r: string }
 /** Laufender Landespokal: gespielte Runden `rd` von `n`. */
 export interface WorldLiveCup extends LeanCup { rd: number; n: number }
-export interface WorldLive { season: string; divs: Record<string, WorldLiveDiv>; cups?: Record<string, WorldLiveCup> }
+export interface WorldLive {
+  season: string; divs: Record<string, WorldLiveDiv>; cups?: Record<string, WorldLiveCup>;
+  /** Relegation/Play-offs je Land, entschieden nach dem letzten Spieltag (game/relegationWorld.ts); fehlt = noch nicht. */
+  rel?: Record<string, import('../game/relegationCore').RelRecord[]>;
+}
 
 /** So viele Saisons behält die Welt-Historie die Abschluss-Reihenfolge (Spielstand-Größe). */
 export const WORLD_TABLES_KEEP = 10;

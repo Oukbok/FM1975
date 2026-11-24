@@ -21,6 +21,7 @@ import { cupKoRule } from './cupReplay';
 import { forecastWeather } from './matchWeather';
 import { findSuperCupMatch, ownSuperCupDue, ROUND_DE } from './superCupGame';
 import { isIcMatchId, ownIcDue } from './intercontinental';
+import { isRelMatchId, ownRelDue } from './relegationHome';
 import { ensureIcClub } from './intercontinentalPlay';
 import { isContinentalId } from '../data/world/continents';
 import { recordTicker, runNarrated } from './matchTicker';
@@ -94,6 +95,15 @@ function findOwnMatchDueRaw(g: Game): OwnMatchInfo | null {
         kind: 'liga', homeId: m.homeClubId, awayId: m.awayClubId, date: m.date, competition: 'Liga', knockout: false,
         label: `Liga · ${m.matchday}. Spieltag${m.moved?.makeup ? ' (Nachholspiel)' : ''}`, matchId: m.id, side: m.homeClubId === mid ? 'home' : 'away',
       };
+    }
+    if (ev.type === 'super_cup' && isRelMatchId(ev.matchId)) {
+      // Relegation/Play-offs im Heimatland (game/relegationHome.ts) über denselben Weg wie der Supercup.
+      const d = ownRelDue(g, ev.matchId);
+      if (d) return {
+        kind: 'pokal', homeId: d.home, awayId: d.away, date: d.date, competition: 'Pokal', knockout: !!d.ko,
+        label: d.label, matchId: d.id, side: d.home === mid ? 'home' : 'away', ko: d.ko, firstLeg: d.firstLeg, stageNote: d.stageNote, venue: d.venue,
+      };
+      continue;
     }
     if (ev.type === 'super_cup' && isIcMatchId(ev.matchId)) {
       // Weltpokal / Klub-WM / Interkontinentalpokal (game/intercontinental.ts) über denselben Weg.

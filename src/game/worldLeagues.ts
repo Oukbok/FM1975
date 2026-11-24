@@ -33,6 +33,8 @@ import { finishWorldCups, newLeanCup, worldCupsDaily } from './worldCups';
 import { leanCupStats, leanStats, packScorers, packStats, type PackedStats } from './worldScorers';
 import { secondGroups } from '../engine/worldSecond';
 import { deepGroupsOf } from '../engine/worldDeep';
+import { worldRelDaily } from './relegationWorld';
+import type { RelRecord } from './relegationCore';
 
 /**
  * Ligen eines Landes in der schlanken Simulation: Index 0 = 1. Liga, 1… = Staffeln der 2. Ebene
@@ -162,6 +164,7 @@ export function worldLiveDaily(g: Game, today: string): void {
     while (d.md < d.n && dates[d.md] <= today) playMatchday(g, key, d);
   }
   if (live.cups) worldCupsDaily(g, live.season, live.cups, today);
+  worldRelDaily(g, live); // Relegation/Play-offs nach dem letzten Spieltag (game/relegationWorld.ts)
 }
 
 /** Punkte je Sieg im Land in der Saison (data/world/countries.ts `points3From`). */
@@ -231,6 +234,8 @@ export interface WorldLiveEnd {
   pstats: Record<string, PackedStats>;
   /** Tiefere Ebenen je Land: [Ebene 3, Ebene 4] → Staffeln (für `WorldSeasonRecord.deep`). */
   deep: Record<string, LeanDiv[][]>;
+  /** Relegation/Play-offs je Land (game/relegationWorld.ts) – Platztausch nach advanceWorldSeason, dann Historie. */
+  rel: Record<string, RelRecord[]>;
 }
 export function worldLiveResults(g: Game): WorldLiveEnd {
   const fixed: Record<string, FixedCountryResult> = {}, divs: Record<string, (LeanDiv | null)[]> = {};
@@ -238,7 +243,7 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
   const pstats: WorldLiveEnd['pstats'] = {};
   const deep: WorldLiveEnd['deep'] = {};
   const live = ensureWorldLive(g);
-  if (!live) return { fixed, divs, cups: {}, scorers, pstats, deep };
+  if (!live) return { fixed, divs, cups: {}, scorers, pstats, deep, rel: {} };
   for (const [k, d] of Object.entries(live.divs)) {
     while (d.md < d.n) playMatchday(g, k, d);
     const [key, t] = k.split('|');
@@ -261,6 +266,7 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
     const st = leanStats(g, d, live.season, 10);
     if (st.goals.length) { scorers[k] = packScorers(st.goals); pstats[k] = packStats(st); }
   }
+  worldRelDaily(g, live, true); // Relegation aller Länder entscheiden (Ligen sind jetzt fertig)
   // Länder ohne 1. Liga in der schlanken Rechnung (zu wenige Vereine) rechnet die Welt wie bisher.
   for (const key of Object.keys(fixed)) if (!fixed[key].t1.length) { delete fixed[key]; delete divs[key]; }
   // 2. Ebene: alle Staffeln hintereinander (`t2`), einzeln in `t2g` (fehlende Staffel = leer → Welt rechnet sie).
@@ -278,5 +284,6 @@ export function worldLiveResults(g: Game): WorldLiveEnd {
   // Lücken (Staffel ohne Liga) als leere Tabellen: die Welt rechnet sie selbst.
   for (const fx of Object.values(fixed)) if (fx.deep) fx.deep = Array.from(fx.deep, (lv) => Array.from(lv ?? [], (x) => x ?? []));
   for (const [key, lv] of Object.entries(deep)) deep[key] = Array.from(lv, (x) => Array.from(x ?? [], (d) => d ?? { ids: [], r: '' }));
-  return { fixed, divs, cups, scorers, pstats, deep };
+  const rel = Object.fromEntries(Object.entries(live.rel ?? {}).filter(([, v]) => v.length));
+  return { fixed, divs, cups, scorers, pstats, deep, rel };
 }

@@ -28,6 +28,7 @@ import { makeMessage, pushMessage } from '../engine/messages';
 import { addTitleRecord } from './clubRecords';
 import { clubStrength, drawClubName } from './cupDraw';
 import { findIcMatch, icMatchday, isIcMatchId, setupIntercontinental } from './intercontinental';
+import { findRelMatch, isRelMatchId, relMatchday } from './relegationHome';
 
 export type ScStage = 'QF' | 'SF' | 'F' | 'L1' | 'L2';
 export interface ScMatch {
@@ -334,6 +335,7 @@ function finish(g: Game, ev: ScEvent, date: string): void {
 /** Kalender-Ereignis 'super_cup' (day.ts). Rückgabe: Match-ID des eigenen Spiels. */
 export function superCupMatchday(g: Game, matchId: string | undefined, today: string): string | null {
   if (isIcMatchId(matchId)) return icMatchday(g, matchId, today);
+  if (isRelMatchId(matchId)) return relMatchday(g, matchId, today); // Relegation (game/relegationHome.ts)
   const st = superCupState(g);
   for (const ev of st.events) {
     const m = ev.matches.find((x) => x.id === matchId);
@@ -370,7 +372,7 @@ export function ownSuperCupDue(g: Game, matchId: string | undefined): { ev: ScEv
 /** Match-Objekt für den Spielbericht. */
 export function findSuperCupMatch(g: Game, id: string): { match: Match; label: string } | null {
   for (const ev of (g as G).superCup?.events ?? []) for (const m of ev.matches) if (m.match?.id === id) return { match: m.match, label: `${ev.name} · ${ROUND_DE[m.stage]}` };
-  return findIcMatch(g, id);
+  return findIcMatch(g, id) ?? findRelMatch(g, id);
 }
 
 /** Archiv-Eintrag eines Landes/einer Saison mit Beteiligung des Vereins (Trophäenschrank). */

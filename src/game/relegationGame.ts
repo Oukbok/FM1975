@@ -42,6 +42,7 @@ import { isReserveId } from './reserveIds';
 import { bindGameIds } from './resetModuleState';
 import { clubStrengthFor, finalOrder } from './season';
 import { Game, homeCountryOf } from './state';
+import { ownRelOpen } from './relegationHome';
 
 /** Spielende (optionales Feld `game.over`): Karrierebilanz zum Abschluss-Bildschirm. */
 export interface GameOver {
@@ -256,6 +257,7 @@ export function relegationDaily(g: Game, today: string): void {
     return;
   }
   if (c.relegChk === g.season) return;
+  if (ownRelOpen(g)) return; // Relegation des eigenen Vereins noch offen: Stichtag danach (game/relegationHome.ts)
   c.relegChk = g.season;
   const info = ownDropInfo(g);
   if (info.own) seal(g, today, info);

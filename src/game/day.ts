@@ -26,6 +26,7 @@ import { aiClubsDaily } from './aiClubs';
 import { aiContractsDaily } from './aiContracts';
 import { careerDaily } from './careerGame';
 import { relegationDaily } from './relegationGame';
+import { relegationHomeDaily } from './relegationHome';
 import { aiLoansDaily } from './aiLoans';
 import { loanLifeDaily } from './loanLife';
 import { loanMarketDaily } from './loanMarket';
@@ -249,6 +250,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   contractReminders(g, today);
   announceUpcomingRules(g, today);
   aiClubsDaily(g, today);
+  relegationHomeDaily(g, today); // Relegation/Play-offs: Paarungen nach dem letzten Spieltag (game/relegationHome.ts)
   relegationDaily(g, today); // Abstieg aus der untersten Liga = Ende der Amtszeit (game/relegationGame.ts)
   careerDaily(g, today); // Managerkarriere: Trainer-Historie, Vorstandsdruck gegen den Trainer (game/careerGame.ts)
   // Jugendwettbewerbe gibt es nur in Deutschland (Heimatland, Weltdaten).
