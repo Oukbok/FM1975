@@ -86,6 +86,7 @@ import { bindStaffFactor } from './staffGame';
 import { bindCoaching } from './coachingGame';
 import { ensureWorldPool } from './worldPool';
 import { ensureContinents } from './continents';
+import { ensureWorldHeads } from './worldCoaches';
 import { ensureRanking } from './national/ranking';
 import { migrateWorldPlaces } from './worldPlacesSeed';
 import { migrateLeagueResults } from './leagueResults';
@@ -417,6 +418,7 @@ export function prepareLoadedGame(g: Game): void {
   try { migrateWorldStats(g); } catch (err) { console.error('Auslandsstatistik-Umstellung fehlgeschlagen:', err); } // Bestenlisten der Welt-Historie kompakt (game/worldScorers.ts)
   try { ensureRanking(g); } catch (err) { console.error('Weltranglisten-Nachrüstung fehlgeschlagen:', err); } // Elo-Weltrangliste (game/national/ranking.ts)
   try { ensureContinents(g); } catch (err) { console.error('Kontinente-Nachrüstung fehlgeschlagen:', err); } // andere Kontinente (game/continents.ts)
+  try { ensureWorldHeads(g, true); } catch (err) { console.error('Trainer-der-Welt-Nachrüstung fehlgeschlagen:', err); } // Cheftrainer aller Vereine ohne vollen Kader (game/worldCoaches.ts), idempotent
   if (!g.worldPool || g.worldPool.v !== 2) ensureWorldPool(g); // Weltspieler anlegen bzw. auf den EA-FC-Maßstab stauchen (migrateWorldScale)
   // Rückennummern aller Vereine + Weltspieler (game/shirtMigration.ts, nach dem Weltpool).
   try { migrateShirtNumbers(g); } catch (err) { console.error('Rückennummern-Nachrüstung fehlgeschlagen:', err); }

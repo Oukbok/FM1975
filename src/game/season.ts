@@ -70,6 +70,7 @@ import { contractSeasonStart } from './contractClausesGame';
 import { honoursSeasonEnd } from './clubHonours';
 import { worldPoolSeason } from './worldPool';
 import { adoptWorldSquad, dropGuestClubs, squadToWorld } from './worldSquad';
+import { adoptHead, ensureWorldHeads, stashHead } from './worldCoaches';
 import { storeSeasonResults } from './leagueResults';
 import { bindGameIds } from './resetModuleState';
 import { ddrEuroQualifiers, ddrRenameClubs, ddrReunifyHome, isDdrClub, isDdrHome, levelOfTier, mergeQualifiers } from './ddrHome';
@@ -303,6 +304,7 @@ export function startNextSeason(g: Game): void {
       if (sc) {
         g.clubs[id] = buildProClub(sc, g.managedClubId, seasonStart, g.players, g.youthPlayers, levelOfTier(membership[playerDivId].meta.tier));
         adoptWorldSquad(g, g.clubs[id], nextStartYear);
+        adoptHead(g, g.clubs[id]); // Trainer bleibt (game/worldCoaches.ts)
         delete g.simClubs[id];
       }
     }
@@ -325,6 +327,7 @@ export function startNextSeason(g: Game): void {
     const ddrClub = isDdrHome(g) && isDdrClub(g, c.id);
     const dest = divOf[c.id] ?? (ddrClub && ddrSep ? { tier: DDR_POOL_TIER, group: 'nordost' as LeagueGroup } : { tier: 2, group: 'nord' as LeagueGroup });
     g.simClubs[c.id] = simClubFromClub(c, g.players, dest.tier, dest.group);
+    stashHead(g, c); // Trainer bleibt beim Verein, jetzt im Pool der Welt (game/worldCoaches.ts)
     if (ddrClub) g.simClubs[c.id].ddr = true;
     squadToWorld(g, c, g.simClubs[c.id]); // Kader läuft als Weltspieler weiter (game/worldSquad.ts)
     for (const pid of c.playerIds) delete g.players[pid];
@@ -545,6 +548,8 @@ export function startNextSeason(g: Game): void {
   for (const p of Object.values(g.players)) if (!p.isYouth) refreshOverall(p);
   // Weltspieler: Entwicklung, Karriereende, Nachrücker, Wechsel (game/worldPool.ts).
   worldPoolSeason(g);
+  // Cheftrainer aller Vereine ohne vollen Kader: Auf-/Absteiger, neue Vereine (game/worldCoaches.ts).
+  ensureWorldHeads(g);
   // Saison-Briefing („Was ist neu?“) festhalten und zum Anzeigen vormerken.
   settleSeasonPromises(g, promSnap, promDate);
   recordSeasonBriefing(g);

@@ -31,6 +31,7 @@ import { ORIGINS, pickOrigin } from '../data/origins';
 import { coachTactics } from '../engine/aiManager';
 import { fmtPrice } from '../ui/format';
 import { coachClubs, coachSeasonReview, ensureCoaches, weeklyCoachPressure } from './coachCarousel';
+import { worldHeadsDaily, worldHeadsSeasonEnd } from './worldCoaches';
 import { transferPlayer } from './contracts';
 import { sellAbroad } from './aiOffers';
 import { fillSquad, leagueAnchor, MAX_SQUAD, MIN_SQUAD, wageRatioOf } from './squads';
@@ -112,6 +113,7 @@ export function aiClubsDaily(g: Game, today: string, rng: () => number = Math.ra
   initSeason(g, today);
   const m = market(g);
   weeklyCoachPressure(g, today, () => m.sacked, () => { m.sacked++; }, rng);
+  worldHeadsDaily(g, today); // Trainerkarussell der Welt im Winter (game/worldCoaches.ts)
   const md = today.slice(5);
   if (SUMMER_DAYS.has(md)) marketRound(g, today, false, rng);
   else if (WINTER_DAYS.has(md)) marketRound(g, today, true, rng);
@@ -123,6 +125,7 @@ export function aiSeasonEnd(g: Game, rng: () => number = Math.random): void {
   aiLoansSeasonEnd(g, g.calendar.currentDate, rng);
   coachRecordsSeasonEnd(g);
   coachSeasonReview(g, g.calendar.currentDate, rng);
+  worldHeadsSeasonEnd(g, g.calendar.currentDate); // Trainerkarussell aller Vereine ohne vollen Kader
 }
 
 /** Alte Spielstände: Trainer zuweisen (SAVE_VERSION 10). */

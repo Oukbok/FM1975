@@ -14,6 +14,7 @@ import type { Game } from './state';
 import { hashSeed } from './state';
 import { MatchEngine, type KoRule } from '../engine/match';
 import { buildEuroClubFull } from '../data/generate';
+import { attachHead } from './worldCoaches';
 import { bookCupHomeMatch } from '../engine/finances';
 import { applyMatchEffects } from '../engine/form';
 import { economyScale, yearOf } from '../engine/economy';
@@ -90,7 +91,7 @@ export function ensureIcClub(g: Game, id: string): boolean {
   if (g.clubs[id]) return true;
   const eu = g.euroClubs?.[id];
   const start = g.calendar?.seasonStartDate ?? '';
-  if (eu) { g.clubs[id] = buildEuroClubFull(eu, start, g.players); return true; }
+  if (eu) { g.clubs[id] = buildEuroClubFull(eu, start, g.players); attachHead(g, g.clubs[id]); return true; }
   const ct = ctClub(id);
   if (!ct) return false;
   const year = yearOf(g.calendar.currentDate);
@@ -100,6 +101,7 @@ export function ensureIcClub(g: Game, id: string): boolean {
   }, start, g.players);
   c.stadium.name = `Stadion ${ct.club.city}`;
   g.clubs[id] = c;
+  attachHead(g, c); // Cheftrainer aus dem Land des Vereins (game/worldCoaches.ts)
   return true;
 }
 

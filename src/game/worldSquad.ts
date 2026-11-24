@@ -17,6 +17,7 @@
 // Stärkezahl): Attribute entstehen fest aus der ID, die Laufbahn beginnt neu.
 // =============================================================================
 import { buildEuroClubFull } from '../data/generate';
+import { attachHead } from './worldCoaches';
 import { buildAutoTactics } from '../engine/lineupAI';
 import type { SimClub } from '../engine/leagues';
 import type { Club, Player } from '../types';
@@ -60,6 +61,7 @@ export function ensureGuestClub(g: Game, id: string): boolean {
     Object.assign(g.players, tmp);
   }
   club.guest = true;
+  attachHead(g, club); // Cheftrainer des Sim-Vereins (game/worldCoaches.ts), Taktik nach seinem Stil
   ensureSeating(club, Number(g.calendar.currentDate.slice(0, 4))); // sonst rüstet erst das Laden die Platzkategorien nach
   g.clubs[id] = club;
   return true;

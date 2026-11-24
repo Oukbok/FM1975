@@ -149,6 +149,11 @@ const COUNTRY_ORIGIN: Record<string, string> = {
  */
 const GEN_CAP = 84;
 
+/** Herkunft (ID aus data/origins.ts) der Einheimischen eines Landes (Schlüssel/Name wie `EuroClub.country`; andere Kontinente über CT_ORIGIN_BY_KEY). */
+export function originKeyOf(country: string): string {
+  return COUNTRY_ORIGIN[country] ?? COUNTRY_BY_KEY[country]?.origin ?? CT_ORIGIN_BY_KEY[country] ?? 'eng';
+}
+
 // Erzeugungsjahr (1975 beim Spielstart; später für aufsteigende/neue Vereine das aktuelle Jahr).
 let genYear = 1975;
 let genDate = CURRENT_DATE;
@@ -550,7 +555,7 @@ export function buildEuroClubFull(
   const playerIds: string[] = [];
   let shirt = 1;
   SQUAD_TEMPLATE.forEach((pos, idx) => {
-    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[COUNTRY_ORIGIN[euro.country] ?? COUNTRY_BY_KEY[euro.country]?.origin ?? CT_ORIGIN_BY_KEY[euro.country] ?? 'eng'], 88);
+    const p = makePlayer(euro.id, idx, pos, strengthBase, shirt++, ORIGINS[originKeyOf(euro.country)], 88);
     players[p.id] = p;
     playerIds.push(p.id);
   });

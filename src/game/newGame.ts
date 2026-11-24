@@ -68,6 +68,7 @@ import { initSponsorship } from './sponsorGame';
 import { InboxMessage, NewGameOptions, YOUTH_ENTRY_AGE } from '../types';
 import { setDisplayYear } from '../ui/format';
 import { ensureCoaches } from './coachCarousel';
+import { ensureWorldHeads } from './worldCoaches';
 import { migrateYouthInvest } from './youthInvest';
 import { migrateYouthComps } from './youthComps/daily';
 import { FINANCE_LEVEL } from './financeMigration';
@@ -351,6 +352,7 @@ export function createNewGame(opts: NewGameOptions): Game {
   syncNationalities(g0);
   ensureRanking(g0); // Weltrangliste der Nationalmannschaften aus den historischen Stützwerten (game/national/ranking.ts)
   ensureContinents(g0); // andere Kontinente: Meister + Kontinentalpokale im Hintergrund (game/continents.ts)
+  ensureWorldHeads(g0, true); // Cheftrainer aller Vereine ohne vollen Kader (game/worldCoaches.ts)
   startWorldPlaces(g0); // Platzierungs-Historie der Auslandsvereine aus den Weltdaten vor dem Startjahr
   startShirtNumbers(g0); // Rückennummern aller Kader nach Position und Epoche (game/shirtMigration.ts)
   g0.faceNameV = FACE_NAME_VERSION; // neue Spieler: Name passt schon zur Ethnie (data/ethnicity.ts)

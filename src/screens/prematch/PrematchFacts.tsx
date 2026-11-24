@@ -61,6 +61,11 @@ export function PrematchFacts({ d }: { d: PrematchData }) {
         <span className="pm-fr"><Form s={a} right /></span>
         {h.form.length > 0 && a.form.length > 0 && <Split l={formPts(h) + 1} r={formPts(a) + 1} />}
       </div>
+      <div className="pm-frow">
+        <span className="pm-fl pm-coach">{h.coach ?? '–'}</span>
+        <span className="pm-fc">Trainer</span>
+        <span className="pm-fr pm-coach">{a.coach ?? '–'}</span>
+      </div>
       {d.firstLeg && (
         <div className="pm-leg"><span className="pm-leg-l">{d.firstLeg.label}</span><span className="pm-leg-t">{d.firstLeg.text}</span></div>
       )}

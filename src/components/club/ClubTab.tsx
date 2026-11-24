@@ -6,7 +6,7 @@ import { DashBox, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDM, fmtPrice, fmtWage, vColor, wageUnit } from '../../ui/format';
 import { ScoutStars, scoutMid } from '../../views/shared';
 import JerseySVG, { type JerseyPattern } from '../JerseySVG';
-import { ClubTabProps } from './shared';
+import { ClubTabProps, CoachBox } from './shared';
 import PosBadge from '../PosBadge';
 
 const CLASS_DE = ['', 'Spitzengruppe', 'oberes Mittelfeld', 'unteres Mittelfeld', 'Schlussgruppe'];
@@ -41,7 +41,8 @@ export default function ClubTab({ g, d, openPlayer }: ClubTabProps) {
             </div>
           )) : <Empty icon="youth">Keine jungen Spieler im Kader.</Empty>}
         </DashBox>
-        <DashBox title="Trikots" icon="dashVerein" rows={2}>
+        <CoachBox g={g} d={d} rows={2} />
+        <DashBox title="Trikots" icon="dashVerein" span={2}>
           <Kits club={d.crestClub} />
         </DashBox>
       </>

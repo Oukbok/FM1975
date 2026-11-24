@@ -14,6 +14,10 @@ import { headCoachRows } from '../../game/headCoaches';
 import { smoothPath, type Pt } from '../../ui/smoothPath';
 import { useState } from 'react';
 import { leagueName } from '../../data/leagueNames';
+import { coachOfClub } from '../../game/worldCoaches';
+import { staffOfClub } from '../../game/staffWorld';
+import { isLeagueClub } from '../../engine/clubEconomy';
+import { roleLevel, roleName } from '../../engine/staffSkills';
 
 export interface ClubTabProps {
   g: Game;
@@ -37,7 +41,8 @@ export function MatchLine({ m }: { m: ClubMatchLine }) {
 
 // Trainer der KI-Vereine: `Club.coach` / `Club.coachHistory` (game/coachCarousel.ts), Bilanz game/coachRecord.ts,
 // du selbst über game/careerState.ts.
-const coachOf = (club?: Club): ClubCoach | undefined => club?.coach;
+// Vereine ohne vollen Kader (Sim-Vereine, Ausland): Cheftrainer im Pool der Welt (game/worldCoaches.ts).
+const coachOf = (g: Game, d: ClubProfileData): ClubCoach | undefined => d.fullClub?.coach ?? coachOfClub(g, d.clubId);
 const PHIL_DE: Record<string, string> = { jugend: 'Jugend', einkauf: 'Einkauf', ausgewogen: 'Ausgewogen' };
 const REASON_DE: Record<string, string> = { entlassen: 'entlassen', ruhestand: 'Ruhestand', abgeworben: 'abgeworben', vertragsende: 'Vertragsende' };
 
@@ -61,7 +66,7 @@ function Predecessors({ club }: { club?: Club }) {
   </>;
 }
 
-export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
+export function CoachBox({ g, d, rows }: { g: Game; d: ClubProfileData; rows?: 1 | 2 }) {
   const today = g.calendar.currentDate;
   if (d.isPlayerClub) {
     const m = g.manager;
@@ -83,22 +88,27 @@ export function CoachBox({ g, d }: { g: Game; d: ClubProfileData }) {
       </DashBox>
     );
   }
-  const c = coachOf(d.fullClub);
-  const rec = d.fullClub ? coachRecordOf(g, d.fullClub) : null;
+  const c = coachOf(g, d);
+  const league = !!d.fullClub && isLeagueClub(d.fullClub);
+  const rec = league ? coachRecordOf(g, d.fullClub!) : null;
+  const staff = league ? [] : staffOfClub(g, d.clubId);
   return (
-    <DashBox title="Trainer" icon="tactics" info="trainerBilanz" right={c ? `seit ${c.since.slice(0, 4)}` : undefined}>
+    <DashBox title={league || !c ? 'Trainer' : 'Trainer & Stab'} icon="tactics" info="trainerBilanz" rows={rows} right={c ? `seit ${c.since.slice(0, 4)}` : undefined}>
       {c ? <>
         <div className="cmx-coach-name">{c.name}</div>
         <KV k="Alter · Nationalität" v={<span className="kv-flag">{c.age} · <NatFlag nat={c.nationality} height={14} /></span>} />
         <KV k="Stil · Philosophie" v={`${COACH_STYLE_DE[c.style] ?? c.style} · ${PHIL_DE[c.philosophy] ?? c.philosophy}`} />
         {c.preferredFormation && <KV k="Lieblingssystem" v={getFormation(c.preferredFormation).label} />}
         <KV k="Amtszeit" v={tenure(c.since, today)} />
-        <KV k={!c.rec && c.since < `${g.season.slice(0, 4)}-07-01` ? `Ligabilanz ${g.season}` : 'Ligabilanz'} v={rec ? recordText(rec) : '–'} strong />
+        {league && <KV k={!c.rec && c.since < `${g.season.slice(0, 4)}-07-01` ? `Ligabilanz ${g.season}` : 'Ligabilanz'} v={rec ? recordText(rec) : '–'} strong />}
         {!!rec?.titles && <KV k="Meistertitel" v={rec.titles} />}
         <KV k="Ansehen" v={Math.round(c.reputation)} />
         <Meter label="Druck vom Vorstand" value={Math.round(c.pressure)} max={100} text={`${Math.round(c.pressure)} %`}
           color={c.pressure >= 70 ? 'var(--red)' : undefined} />
-        <Predecessors club={d.fullClub} />
+        {league ? <Predecessors club={d.fullClub} /> : staff.length > 0 && <>
+          <div className="dsec">Stab</div>
+          {staff.map((m) => <KV key={m.id} k={`${roleName(m.roleId)} · ${m.name}`} v={roleLevel(m.skills, m.roleId)} />)}
+        </>}
       </> : <Empty icon="tactics">Trainer: unbekannt</Empty>}
     </DashBox>
   );

@@ -8,6 +8,7 @@ import { fmtDateShort, vColor } from '../../ui/format';
 import { FormDots, PlayerRow, ScoutStars } from '../../views/shared';
 import { ClubTabProps, CoachBox, MatchLine, UnitCompare, verdict } from './shared';
 import { LeagueTableBox } from './LeagueTableBox';
+import { coachOfClub, coachStyleText } from '../../game/worldCoaches';
 
 export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
   const own = g.clubs[g.managedClubId];
@@ -79,6 +80,14 @@ export default function OverviewTab({ g, d, openPlayer }: ClubTabProps) {
             <div className="dnote mt8">Für diesen Verein liegt noch kein Kader vor – er entsteht mit dem nächsten Abgleich der Weltspieler.</div>
           </>
         )}
+        {d.foreign && !d.isPlayerClub && (() => {
+          // Auslandsverein: Trainer hier (die dritte Box zeigt die Tabelle); alles Weitere im Reiter „Verein“.
+          const c = coachOfClub(g, d.clubId);
+          return c ? <>
+            <div className="dsec">Trainer</div>
+            <KV k={c.name} v={coachStyleText(c)} />
+          </> : null;
+        })()}
       </DashBox>
 
       <DashBox title="Stärkste Spieler" icon="squad">

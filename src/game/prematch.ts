@@ -24,6 +24,7 @@ import { h2hOf } from './clubRecords';
 import { clubStrengthFor } from './season';
 import { forecastWeather, WEATHER_DE } from './matchWeather';
 import { ensureClubs, type OwnMatchInfo } from './ownMatch';
+import { coachOfClub } from './worldCoaches';
 import type { Game } from './state';
 
 export interface PrematchSide {
@@ -46,6 +47,8 @@ export interface PrematchSide {
   /** Letzte fünf Pflichtspiele, älteste zuerst. */
   form: ('W' | 'D' | 'L')[];
   geo: LatLon | null;
+  /** Cheftrainer (eigener Verein: du; sonst KI-Trainer bzw. Trainer im Pool der Welt, game/worldCoaches.ts). */
+  coach?: string;
 }
 
 export interface H2HRow { season: string; h: string | null; a: string | null }
@@ -98,6 +101,7 @@ function sideOf(g: Game, id: string, ranks: Map<string, number>, rankOf: number)
       })()
       : undefined,
     form,
+    coach: id === g.managedClubId ? g.manager?.name : coachOfClub(g, id)?.name,
     geo: cityGeo(city, country ?? (club && !euro ? 'Deutschland' : undefined))?.geo ?? null,
   };
 }

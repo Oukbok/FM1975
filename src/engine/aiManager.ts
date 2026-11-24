@@ -10,7 +10,7 @@
 import { Club, ClubCoach, CoachPhilosophy, CoachStyle, LeagueTableRow, Player, Position, Tactics, TacticStyle } from '../types';
 import { originNat } from '../data/origins';
 import { decadeOf, FORMATIONS, getFormation, liberoOut } from '../data/formations';
-import { makeName, ORIGINS, pickOrigin } from '../data/origins';
+import { makeName, ORIGINS, pickOrigin, type Origin } from '../data/origins';
 import { assignToFormation, buildAutoTactics, suitabilityMemo } from './lineupAI';
 import { positionSuitability } from './positions';
 import { hash01 } from './transferMarket';
@@ -64,17 +64,28 @@ export function formationsFor(style: CoachStyle, year: number): string[] {
     defensiv: ['5-3-2', '4-4-2'], konter: ['4-2-3-1', '4-4-2', '5-3-2'] }[style];
 }
 
+/** Herkunft ausländischer Trainer eines Vereins im Ausland (game/worldCoaches.ts): die großen Fußballnationen der Epoche. */
+function abroadCoachMix(year: number): Record<string, number> {
+  if (year < 1990) return { ger: 22, aut: 10, yug: 16, hun: 12, ned: 12, eng: 10, ita: 6, cze: 6, sco: 6 };
+  if (year < 2005) return { ger: 16, ned: 14, ita: 12, srb: 8, cro: 8, eng: 8, fra: 8, esp: 8, por: 6, arg: 6, bra: 6 };
+  return { ger: 14, esp: 14, ita: 12, por: 10, ned: 10, fra: 10, arg: 8, eng: 6, cro: 6, sui: 5, aut: 5 };
+}
+
 /**
  * Neuer Trainer. Das Ansehen orientiert sich am Verein (große Vereine holen
  * bekanntere Trainer), Herkunft überwiegend einheimisch, Namen aus der Zeit,
- * in der der Trainer aufgewachsen ist.
+ * in der der Trainer aufgewachsen ist. `home` = Herkunft der Einheimischen eines
+ * Vereins im Ausland (fehlt = Heimatland, Aufrufe ohne `home` unverändert).
  */
-export function makeCoach(year: number, clubRep: number, date: string, rng: () => number): ClubCoach {
+export function makeCoach(year: number, clubRep: number, date: string, rng: () => number, home?: Origin): ClubCoach {
   const age = 34 + Math.floor(rng() * 28);
   const domestic = rng() < (year < 1995 ? 0.8 : 0.68);
   // Auslandstrainer: früher v. a. aus Österreich, Jugoslawien, Ungarn, den Niederlanden.
-  const foreign = weighted(foreignCoachMix(year), rng());
-  const origin = domestic || !ORIGINS[foreign] ? pickOrigin(Math.max(1975, year - age + 20), rng, true) : ORIGINS[foreign];
+  const mix = home ? abroadCoachMix(year) : foreignCoachMix(year);
+  if (home) delete mix[home.id];
+  const foreign = weighted(mix, rng());
+  const origin = home && (domestic || !ORIGINS[foreign]) ? home
+    : domestic || !ORIGINS[foreign] ? pickOrigin(Math.max(1975, year - age + 20), rng, true) : ORIGINS[foreign];
   const n = makeName(origin, rng, year - age);
   const style = weighted(styleWeights(year), rng());
   const philosophy = weighted<CoachPhilosophy>(clubRep >= 80

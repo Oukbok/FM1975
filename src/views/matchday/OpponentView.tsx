@@ -15,6 +15,7 @@ import { COMP_DE } from '../office/career/parts';
 import type { Game } from '../../game/state';
 import type { Screen } from '../../shell/navigation';
 import { absences, h2hSummary, nextOpponent, oppName, oppStrength, unitCompare } from '../../game/opponentView';
+import { coachOfClub } from '../../game/worldCoaches';
 import { DashBox, DashPage, Empty, KV, Kpi, Meter } from '../../ui/DashPage';
 import { fmtDateShort } from '../../ui/format';
 import { InfoTip } from '../../ui/InfoTip';
@@ -32,6 +33,7 @@ export function OpponentView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Scre
   const nx = nextOpponent(g);
   const oppId = nx?.opp ?? null;
   const opp = oppId ? g.clubs[oppId] : undefined;
+  const oppCoach = oppId ? coachOfClub(g, oppId) : undefined; // auch Vereine ohne vollen Kader (game/worldCoaches.ts)
   const full = !!opp && opp.playerIds.length > 0;
   const name = oppId ? oppName(g, oppId) : '';
   const oppRow = oppId ? tableRow(g, oppId) : undefined;
@@ -121,7 +123,7 @@ export function OpponentView({ g, onGoto, onWatch }: { g: Game; onGoto: (s: Scre
       <DashBox title="So spielt der Gegner" info="mentalitaet" className="opx-plays">
         {t ? (
           <>
-            <KV k="Trainer" v={opp?.coach ? opp.coach.name : '–'} strong />
+            <KV k="Trainer" v={oppCoach ? oppCoach.name : '–'} strong />
             <KV k="Ausrichtung" v={TAC_STYLE_DE[t.style] ?? t.style} strong />
             <KV k="Grundordnung" v={getFormation(t.formation).label} strong />
             {dots.length > 0 && <FormationPitch dots={dots} />}

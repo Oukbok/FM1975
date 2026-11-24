@@ -27,6 +27,8 @@ import { applyScheduledTemplate, matchingTemplate, seasonWeeks, setWeekTemplate 
 import { isLeagueClub } from '../src/engine/clubEconomy';
 import { STAFF_BY_ID, staffAvailable } from '../src/data/staff';
 import { staffAiChecks } from './staff-ai-checks';
+import { trackWorldHeads, worldCoachChecks, worldCoachLongChecks } from './world-coaches-checks';
+import { worldHeads } from '../src/game/worldCoaches';
 
 const SEASONS = Number(process.argv[2] ?? 40);
 let seed = 1975;
@@ -303,6 +305,8 @@ if (topQ <= lowQ) fail('große Vereine haben kein besseres Trainerteam');
 // 4b) KI-Stäbe, Ausland, Faktor für alle, Abwerben, KI-Angebote, Laden/Migration (tests/staff-ai-checks.ts)
 // ---------------------------------------------------------------------------
 for (const line of staffAiChecks()) console.log(`KI-Stab: ${line}`);
+// Cheftrainer aller Vereine der Welt (game/worldCoaches.ts, tests/world-coaches-checks.ts)
+for (const line of worldCoachChecks()) console.log(`Trainer der Welt: ${line}`);
 
 // ---------------------------------------------------------------------------
 // 5) Langzeit: viele Saisons
@@ -311,6 +315,8 @@ const sim = fresh();
 (sim as any).simAutoManage = true;
 interface Row { y: number; free: number; emp: number; ex: number; q: number; q90: number; qmax: number; roles: number; promoted: number; exIn: number; out: number; pool: number }
 const rows: Row[] = [];
+const headsStart = JSON.parse(JSON.stringify(worldHeads(sim)?.c ?? {}));
+trackWorldHeads(sim);
 const t0 = Date.now();
 for (let s = 0; s < SEASONS; s++) {
   let guard = 0;
@@ -321,6 +327,7 @@ for (let s = 0; s < SEASONS; s++) {
     if (++guard > 1000) fail('Saison endet nicht');
   }
   startNextSeason(sim);
+  trackWorldHeads(sim);
   const year = Number(sim.season.slice(0, 4));
   const ww = sim.staffWorld!;
   const people = ww.people;
@@ -354,6 +361,7 @@ for (let s = 0; s < SEASONS; s++) {
   if (people.length > 1300 || free.length > 330) fail('Arbeitsmarkt explodiert');
 }
 console.log(`Simulation: ${SEASONS} Saisons in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
+for (const line of worldCoachLongChecks(sim, headsStart, SEASONS)) console.log(`Trainer der Welt (Langlauf): ${line}`);
 
 if (SEASONS >= 10) {
   const late = rows.slice(5);

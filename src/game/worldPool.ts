@@ -30,6 +30,7 @@ import { COUNTRY_BY_KEY } from '../data/world/countries';
 import type { Player, Position } from '../types';
 import type { Game } from './state';
 import { rememberWorldPlayers } from './worldAwardsStore';
+import { noteWorldRetirees } from './worldCoaches';
 import { FIXED_SHIRTS_FROM, numberSquad } from '../engine/shirtNumbers';
 import { worldSummerWindow, worldWinterWindow } from './worldTransfers';
 
@@ -277,6 +278,7 @@ export function worldPoolSeason(g: Game): void {
   for (const w of pool.p) { const l = byClub.get(w[W.club]); if (l) l.push(w); else byClub.set(w[W.club], [w]); }
   const keep: WP[] = [];
   const left: WP[] = [];
+  const retirees: Parameters<typeof noteWorldRetirees>[1] = [];
   for (const [cid, list] of byClub) {
     const club = clubs.get(cid);
     if (!club) { left.push(...list); continue; }
@@ -285,10 +287,12 @@ export function worldPoolSeason(g: Game): void {
       const retire = age >= 36 || (age >= 33 && (w[W.ov] < club.strength - 14 || r() < 0.35)) || (age >= 30 && w[W.ov] < club.strength - 20);
       if (!retire) { keep.push(w); continue; }
       left.push(w);
+      if (age >= 30) retirees.push({ id: w[W.id], name: `${w[W.first]} ${w[W.last]}`.trim(), nat: w[W.nat], born: w[W.born], ov: w[W.ov] });
       keep.push(makeWP(g, pool, club, w[W.pos], club.strength - 18 - r() * 8, 16 + Math.floor(r() * 2), year, true, r));
     }
   }
   pool.p = keep;
+  noteWorldRetirees(g, retirees); // Ex-Profis werden Trainer (game/worldCoaches.ts)
   // Bis 1992/93 tragen die Stammkräfte zur neuen Saison wieder 1–11 nach Position.
   if (year < FIXED_SHIRTS_FROM) for (const w of pool.p) clearShirt(w);
   // Transferfenster der Welt (game/worldTransfers.ts): Leih-Rückkehrer, Wechsel zu stärkeren Vereinen mit

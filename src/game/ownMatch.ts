@@ -9,6 +9,7 @@ import { finishMatch } from '../engine/match/finish';
 import type { MatchOutcome, Side } from '../engine/match/types';
 
 import { buildEuroClubFull } from '../data/generate';
+import { attachHead } from './worldCoaches';
 import type { CupState, CupTie, Match } from '../types';
 import type { Game } from './state';
 import type { KoRule } from '../engine/match/sim';
@@ -205,7 +206,10 @@ export function ensureClubs(g: Game, info: OwnMatchInfo): boolean {
     const euro = g.euroClubs?.[id];
     if (!euro) { if (!ensureGuestClub(g, id)) return false; continue; } // Sim-Verein des eigenen Landes: Kader aus seinen Weltspielern
     g.clubs[id] = buildEuroClubFull(euro, g.calendar?.seasonStartDate ?? '', g.players);
+    attachHead(g, g.clubs[id]); // Cheftrainer + Taktik nach seinem Stil (game/worldCoaches.ts)
   }
+  // Schon früher angelegte Gegner ohne Trainer (ältere Spielstände, Europapokal im alten Modus): nur der Name.
+  for (const id of [info.homeId, info.awayId]) if (g.clubs[id] && !g.clubs[id].coach) attachHead(g, g.clubs[id], false);
   return true;
 }
 

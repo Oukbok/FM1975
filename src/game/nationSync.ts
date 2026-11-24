@@ -101,6 +101,9 @@ export function syncNationalities(g: Game, date = g.calendar.currentDate): numbe
   }
   // Trainer und Mitarbeiter (Anzeige im Vereinsprofil/Stab).
   for (const m of g.staffWorld?.people ?? []) if (m.nat && isEraNation(m.nat)) { const x = homeNation && nationRoot(m.nat) === nationRoot(homeNation) ? homeNation : natAt(m.nat, year, m.id); if (x !== m.nat) { m.nat = x; n++; } }
+  // Cheftrainer und freie Trainer der Welt (game/worldCoaches.ts, Tupel: Nation an Stelle 2).
+  const wh = g.staffWorld?.heads;
+  for (const t of [...Object.values(wh?.c ?? {}), ...(wh?.f ?? [])]) if (t[2] && isEraNation(t[2])) { const x = homeNation && nationRoot(t[2]) === nationRoot(homeNation) ? homeNation : natAt(t[2], year, t[0]); if (x !== t[2]) { t[2] = x; n++; } }
   const coaches = [...(g.coachPool ?? []), ...Object.values(g.clubs).map((c) => c.coach)];
   for (const c of coaches) if (c?.nationality && isEraNation(c.nationality)) { const x = homeNation && nationRoot(c.nationality) === nationRoot(homeNation) ? homeNation : natAt(c.nationality, year, c.id); if (x !== c.nationality) { c.nationality = x; n++; } }
   // Transferbilanz (letzte Fenster): Nationalität zum Datum des Wechsels – wenn möglich die des Spielers selbst.

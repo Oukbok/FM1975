@@ -38,6 +38,7 @@ import {
 } from '../engine/staffGen';
 import { recordBook } from './clubRecords';
 import { aiStaffSeason, ensureAiStaff } from './staffAi';
+import { headMovedTo } from './worldCoaches';
 
 export interface StaffWorldLog { season: string; exPros: number; outsiders: number; promoted: number; retired: number; hires: number }
 export interface StaffWorld {
@@ -50,6 +51,8 @@ export interface StaffWorld {
   cur: StaffWorldLog;
   /** 1 = KI-Vereine haben einen vollen Stab (game/staffAi.ts); fehlt = alter Spielstand, wird beim Laden einmalig besetzt. */
   ai?: 1;
+  /** Cheftrainer aller Vereine ohne vollen Kader + freie Trainer der Welt (game/worldCoaches.ts); fehlt = alter Spielstand. */
+  heads?: import('./worldCoaches').WorldHeads;
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -172,6 +175,8 @@ export function staffMovedTo(g: Game, m: StaffMember, clubId: string, date: stri
   const year = yearOf(date);
   // Cheftrainer zu einem deutschen Verein: über den Trainerpool (dort führt das Trainerkarussell); ins Ausland: direkt angestellt.
   if (m.roleId === 'cheftrainer' && (g.clubs[clubId] || !g.euroClubs?.[clubId])) { (g.coachPool ??= []).push(toClubCoach(m, year, date, rng)); return; }
+  // Ins Ausland: Cheftrainer des Vereins im Pool der Welt (game/worldCoaches.ts).
+  if (m.roleId === 'cheftrainer') { headMovedTo(g, clubId, toClubCoach(m, year, date, rng)); return; }
   const cur = w.people.find((x) => x.clubId === clubId && x.roleId === m.roleId);
   if (cur) freeUp(cur, year);
   const moved: StaffMember = { ...m, coach: m.roleId === 'cheftrainer' ? m.coach : undefined, deal: undefined };

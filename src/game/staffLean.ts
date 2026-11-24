@@ -4,20 +4,18 @@
 // nicht in der Tiefe simuliert werden, sie sollen aber auch Trainer anstellen und
 // sie somit aus dem Pool nehmen.“)
 // -----------------------------------------------------------------------------
-// Nur wenige Schlüsselstellen je Verein (`leanSlots`): Auslandsvereine einen
-// Cheftrainer aus dem Trainerpool und je nach Größe Co-/Torwarttrainer, Sim-Vereine
+// Nur wenige Schlüsselstellen je Verein (`leanSlots`): Auslandsvereine je nach
+// Größe Co-/Torwarttrainer (Cheftrainer jedes Vereins: game/worldCoaches.ts), Sim-Vereine
 // einen Co-Trainer (große auch einen Torwarttrainer). Nicht jede Stelle geht an
 // jemanden aus dem Pool – meist stellen diese Vereine Leute ein, die das Spiel
 // nicht kennt (`LEAN_TAKE`). Keine Wirkung auf Spielstärke oder Entwicklung; die
 // Personen sind dort angestellt zu sehen und lassen sich abwerben.
 // =============================================================================
-import { ClubCoach } from '../types';
 import { STAFF_BY_ID, staffAvailable } from '../data/staff';
 import { isLeagueClub } from '../engine/clubEconomy';
 import { yearOf } from '../engine/economy';
 import type { StaffMember } from '../engine/staffPeople';
 import { demandFactor, roleFit, specialtyOfSkills, syncQuality } from '../engine/staffSkills';
-import { coachAsStaff } from '../engine/staffGen';
 import { freeUp, hireInto, StaffWorld, toClubCoach } from './staffWorld';
 import type { Game } from './state';
 
@@ -25,7 +23,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 /** So viele Auslandsvereine (die stärksten der 1. Ligen) stellen Leute aus dem Pool ein. */
 export const FOREIGN_MAX = 40;
 /** Chance je Saison, dass eine freie Stelle mit jemandem aus dem Pool besetzt wird. */
-const LEAN_TAKE = { foreign: 0.3, sim: 0.45, coach: 0.25 };
+const LEAN_TAKE = { foreign: 0.3, sim: 0.45 };
 
 export interface LeanClub { id: string; name: string; short: string; rep: number; kind: 'sim' | 'foreign'; country?: string }
 
@@ -52,7 +50,8 @@ export function leanClubs(g: Game): LeanClub[] {
 export function leanSlots(c: LeanClub, year: number): string[] {
   const has = (r: string) => !!STAFF_BY_ID[r] && staffAvailable(STAFF_BY_ID[r], year);
   const s = c.kind === 'foreign'
-    ? (c.rep >= 85 ? ['cheftrainer', 'cotrainer', 'torwarttrainer'] : c.rep >= 80 ? ['cheftrainer', 'cotrainer'] : ['cheftrainer'])
+    // Cheftrainer der Auslandsvereine: game/worldCoaches.ts (jeder Verein der Welt hat einen).
+    ? (c.rep >= 85 ? ['cotrainer', 'torwarttrainer'] : c.rep >= 80 ? ['cotrainer'] : [])
     : (c.rep >= 70 ? ['cotrainer', 'torwarttrainer'] : ['cotrainer']);
   return s.filter(has);
 }
@@ -87,17 +86,6 @@ function release(g: Game, w: StaffWorld, m: StaffMember, date: string, rng: () =
   void w;
 }
 
-function pickCoach(g: Game, rep: number, rng: () => number): ClubCoach | null {
-  const pool = g.coachPool ?? [];
-  let best: ClubCoach | null = null, bs = -99;
-  for (const c of pool) {
-    if (c.age >= 66 || c.reputation < rep - 14) continue;
-    const s = c.reputation - Math.abs(c.reputation - rep) * 0.3 + rng() * 10;
-    if (s > bs) { bs = s; best = c; }
-  }
-  return best;
-}
-
 /**
  * Saisonwechsel (und einmalig beim Anlegen): Stellen der schlanken Vereine prüfen –
  * wer dort nicht mehr hingehört (Verein abgestiegen, Stelle zu viel), wird frei; freie
@@ -128,21 +116,7 @@ export function leanSeason(g: Game, w: StaffWorld, date: string, rng: () => numb
     const roles = held.get(c.id) ?? new Set<string>();
     for (const role of leanSlots(c, year)) {
       if (roles.has(role)) continue;
-      const p = role === 'cheftrainer' ? LEAN_TAKE.coach : LEAN_TAKE[c.kind];
-      if (rng() >= p * (initial ? 1.4 : 1)) continue;
-      if (role === 'cheftrainer') {
-        // Der Trainerpool der Liga soll nicht leerlaufen: nur zugreifen, wenn genug Trainer frei sind.
-        if ((g.coachPool?.length ?? 0) <= 3) continue;
-        const cc = pickCoach(g, c.rep, rng);
-        if (!cc) continue;
-        g.coachPool = (g.coachPool ?? []).filter((x) => x !== cc);
-        const m: StaffMember = { ...coachAsStaff(cc, year) };
-        m.salaryFactor = demandFactor(m, c.rep);
-        hireInto(m, c.id, date, 2 + Math.floor(rng() * 2));
-        w.people.push(m);
-        w.cur.hires++;
-        continue;
-      }
+      if (rng() >= LEAN_TAKE[c.kind] * (initial ? 1.4 : 1)) continue;
       const target = clamp(3 + c.rep * 0.13, 5, 17);
       let best: StaffMember | null = null, bs = -99;
       for (const m of w.people) {

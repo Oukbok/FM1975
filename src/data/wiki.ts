@@ -2156,7 +2156,16 @@ Der Stab wirkt bei jedem Verein nach **derselben Formel** wie bei dir (siehe „
 Auslandsvereine im Europapokal haben den Stab, den ein Verein ihrer Größe hätte.
 
 ## Sim-Vereine und Ausland
-Vereine ohne vollen Kader (2. Ebene, DDR-Oberliga) und die rund 40 stärksten Auslandsvereine besetzen nur **wenige Schlüsselstellen**: Auslandsvereine einen Cheftrainer aus dem Trainerpool und je nach Größe Co- und Torwarttrainer, Sim-Vereine einen Co-Trainer. Wer dort arbeitet, ist vom Markt verschwunden – du siehst ihn unter „angestellt“ und kannst ihn abwerben. Eine Wirkung auf die Spielstärke dieser Vereine hat das nicht.`,
+Vereine ohne vollen Kader (2. Ebene, DDR-Oberliga) und die rund 40 stärksten Auslandsvereine besetzen nur **wenige Schlüsselstellen**: Auslandsvereine je nach Größe Co- und Torwarttrainer, Sim-Vereine einen Co-Trainer. Wer dort arbeitet, ist vom Markt verschwunden – du siehst ihn unter „angestellt“ und kannst ihn abwerben. Eine Wirkung auf die Spielstärke dieser Vereine hat das nicht.
+
+## Jeder Verein der Welt hat einen Cheftrainer
+Nicht nur die Vereine deiner Liga: **Jeder Verein** – 2. Liga, DDR-Ligen, Regionalligen, alle Auslandsligen bis in die tieferen Ebenen, Gegner von anderen Kontinenten – hat einen Cheftrainer aus demselben Kreis von Trainern.
+- **Herkunft:** meist ein Einheimischer (Engländer in England, Italiener in Italien …); mit den Jahrzehnten arbeiten mehr Trainer im Ausland.
+- **Ansehen** passend zur Vereinsgröße – große Vereine holen bekannte Trainer.
+- **Trainerkarussell auch im Ausland:** Wer weit hinter den Erwartungen zurückliegt, steht im Dezember und März zur Disposition; zum Saisonende gibt es Entlassungen, Ruhestand und Vertragsenden. Größere Vereine werben erfolgreiche Trainer kleinerer Vereine ihres Landes ab.
+- **Freie Trainer** finden neue Vereine, auch in anderen Ländern; bekannte Auslandstrainer tauchen gelegentlich im Trainerkarussell deiner Liga auf. **Ehemalige Profis** aus aller Welt werden nach dem Karriereende Trainer – berühmt werden sie erst mit Erfolgen auf der Bank.
+- **Auf- und Absteiger** behalten ihren Trainer.
+- Spielst du gegen einen solchen Verein (Europapokal, Pokal, Weltpokal), steht sein Trainer in der Vorschau, auf der Seite **Aufstellung › Gegner** und im Textmodus; die **Spielweise** des Gegners folgt seinem Stil wie bei den Vereinen deiner Liga. Im Vereinsprofil siehst du Trainer und Stab.`,
   },
   {
     id: 'training-philosophy',

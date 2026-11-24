@@ -103,6 +103,8 @@
 .pm-fl { display: flex; align-items: center; gap: 10px; }
 .pm-fr { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 .pm-fl b, .pm-fr b { font-family: var(--font-display); font-weight: 500; font-size: 25px; }
+.pm-coach { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pm-fr.pm-coach { text-align: right; }
 .pm-fc { text-align: center; color: var(--text-2); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.8px; font-size: 18px; display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
 .pm-rank {
   display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 6px;

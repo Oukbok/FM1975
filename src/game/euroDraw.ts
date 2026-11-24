@@ -9,6 +9,7 @@ import { drawRulesFor, drawVenue } from '../data/drawHistory';
 import { euroCompName, euroFormat } from '../data/euroFormats';
 import type { EuroCompId } from '../data/europe';
 import { buildEuroClubFull } from '../data/generate';
+import { attachHead } from './worldCoaches';
 import { ensureGuestClub } from './worldSquad';
 import { CalendarEngine } from '../engine/calendar';
 import { runDraw } from '../engine/cupDrawRules';
@@ -48,7 +49,7 @@ export function materializeOpponents(g: Game, cup: CupState, round: CupRound): v
   for (const id of ids) {
     if (g.clubs[id]) continue;
     const eu = g.euroClubs?.[id];
-    if (eu) g.clubs[id] = buildEuroClubFull(eu, g.calendar?.seasonStartDate ?? '', g.players);
+    if (eu) { g.clubs[id] = buildEuroClubFull(eu, g.calendar?.seasonStartDate ?? '', g.players); attachHead(g, g.clubs[id]); } // Trainer + Taktik (game/worldCoaches.ts)
     else ensureGuestClub(g, id); // Sim-Verein des eigenen Landes (DDR-Start: Bundesligist) mit seinen Weltspielern
   }
   void cup;

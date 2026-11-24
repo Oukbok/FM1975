@@ -464,13 +464,30 @@ if (process.env.AI && aiTotals.seasons) {
 }
 if (process.env.SAVESIZE) saveSize(g);
 function saveSize(g: Game) { const j = JSON.stringify(g); console.log(`Spielstand ${(j.length / 1024 / 1024).toFixed(2)} MB (unkomprimiert)`); for (const [k, v] of Object.entries(g)) { const n = JSON.stringify(v ?? null).length; if (n > 50000) console.log('  ', k, (n / 1024).toFixed(0), 'KB'); } const pl = Object.values(g.players); const hist = pl.reduce((a, p) => a + JSON.stringify(p.history ?? {}).length, 0); console.log('   davon Spieler-Historie', (hist / 1024).toFixed(0), 'KB bei', pl.length, 'Spielern'); }
+/**
+ * Vorlagen/Spielstände tragen einen normalen fiktiven Managernamen statt „Sim“ (Wunsch Pascal: der eigene
+ * Trainer heißt in den Vorlagen nicht „Sim“). Die Simulation selbst läuft unverändert mit „Sim“.
+ */
+const TEMPLATE_MANAGER = 'Felix Morgenroth';
+function renameManager(game: Game): void {
+  const walk = (o: Record<string, unknown>) => {
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if (v === 'Sim') o[k] = TEMPLATE_MANAGER;
+      else if (typeof v === 'string') { if (v.includes(' Sim')) o[k] = v.replace(/(, |\(r\) )Sim([!,])/g, `$1${TEMPLATE_MANAGER}$2`); }
+      else if (v && typeof v === 'object') walk(v as Record<string, unknown>);
+    }
+  };
+  walk(game as unknown as Record<string, unknown>);
+}
 async function writeTemplate(game: Game, file: string): Promise<void> {
   const { compressToUTF16 } = await import('lz-string');
   const { writeFileSync } = await import('node:fs');
   const copy = JSON.parse(JSON.stringify(game));
   delete copy.simAutoManage; // Vorlage: eigener Verein wieder als Spieler
+  renameManager(copy);
   const my = copy.clubs[copy.managedClubId];
-  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: copy.season, gameDate: copy.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
+  const meta = { slot: 'sim', name: 'Simulation', managerName: TEMPLATE_MANAGER, clubName: my.name, clubId: my.id, season: copy.season, gameDate: copy.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
   writeFileSync(file, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: copy })));
   console.log('Vorlage geschrieben:', file, copy.season, copy.calendar.currentDate);
 }
@@ -499,7 +516,8 @@ if (process.env.DUMP) {
     my.commerce!.deals = ds.filter((d, i) => d.slot === 'brust' || d.slot === 'banden' || i % 3 !== 1);
     offerFreeSlots(g);
   }
-  const meta = { slot: 'sim', name: 'Simulation', managerName: 'Sim', clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
+  renameManager(g); // Spielstand für die Oberfläche: fiktiver Managername statt „Sim“
+  const meta = { slot: 'sim', name: 'Simulation', managerName: TEMPLATE_MANAGER, clubName: my.name, clubId: my.id, season: g.season, gameDate: g.calendar.currentDate, savedAt: new Date().toISOString(), version: (await import('../src/engine/save')).SAVE_VERSION };
   writeFileSync(process.env.DUMP, 'LZ1:' + compressToUTF16(JSON.stringify({ meta, game: g })));
   console.log('Spielstand geschrieben:', process.env.DUMP);
 }
