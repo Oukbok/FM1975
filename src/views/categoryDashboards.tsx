@@ -416,7 +416,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
             {around.map((r) => (
               <tr key={r.clubId} className={r.clubId === myId ? 'me' : ''}>
                 <td className="rl-rank">{r.position}</td><td><ClubLink id={r.clubId}><span className="rl-club">{g.clubs[r.clubId] && <ClubCrest club={g.clubs[r.clubId]} size={22} />}<span className="rl-name">{g.clubs[r.clubId]?.name}</span></span></ClubLink></td><td className="num">{r.played}</td>
-                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num rl-main">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
+                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num rl-main rl-pts">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
               </tr>
             ))}
           </tbody>

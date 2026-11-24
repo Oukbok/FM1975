@@ -59,6 +59,8 @@
 .dtable td.rl-rank, .dtable th.rl-rank { width: 60px; text-align: left; text-overflow: clip; }
 .dtable td.rl-rank, .dtable tbody tr.me td.rl-rank { color: var(--text-3); font-weight: 700; }
 .dtable td.rl-main { font-size: calc(var(--rl-fs) + 2px); }
+/* Punkte in Ligatabellen: gleiche Schrift wie die übrigen Spalten, nur fett */
+.dtable td.rl-main.rl-pts, .rl-main.rl-pts { font-family: inherit; font-weight: 700; font-size: inherit; letter-spacing: normal; }
 .dtable td.rl-name { font-weight: 600; }
 .dtable .muted { color: var(--text-3); }
 .dtable tbody tr.me, .dtable tbody tr.mine { background: var(--rl-me-bg); box-shadow: inset 4px 0 0 var(--accent); }
@@ -113,7 +115,7 @@
 .gt-row { min-height: 44px; padding: 7px 14px; font-size: 17px; gap: 10px; }
 .gt-club { gap: 10px; }
 .gt-pos { color: var(--text-3); font-weight: 700; text-align: left; }
-.gt-pts { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--text); }
+.gt-pts { font-family: inherit; font-weight: 700; font-size: inherit; color: var(--text); }
 .gt-row.me { background: var(--rl-me-bg); }
 .gt-row.out .gt-club span { color: var(--text-2); }
 .gt-row.me .gt-club span { color: var(--accent); font-weight: 700; }
@@ -121,7 +123,7 @@
 /* ---- Zentrale: Tabellen-Box (.dxt) – nur Stil, Zeilenhöhen/Boxhöhe unverändert ---- */
 .dxt-row td.dxt-club { font-weight: 500; }
 .dxt-row td.dxt-pos { font-size: 18px; }
-.dxt-row td.dxt-pkt { font-family: var(--font-display); font-weight: 600; font-size: 21px; }
+.dxt-row td.dxt-pkt { font-family: inherit; font-weight: 700; }
 .dxt-row.me { background: var(--rl-me-bg); }
 .dxt-row.me:hover td { background: rgba(var(--ink-rgb), 0.06); }
 .dxt-row:hover td { background: var(--rl-hover); }

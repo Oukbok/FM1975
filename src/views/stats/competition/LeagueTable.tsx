@@ -81,7 +81,7 @@ export function LeagueTable({ g, snap, nav: navIn }: { g: Game; snap: CompSnapsh
                   <td className="num">{r.p}</td><td className="num">{r.w}</td><td className="num">{r.d}</td><td className="num">{r.l}</td>
                   <td className="num muted">{r.gf}:{r.ga}</td>
                   <td className="num">{diff > 0 ? '+' : ''}{diff}</td>
-                  <td className="num rl-main">{r.pts}{r.ded ? <sup className="cmp-ded" title={`${r.ded} Punkte Abzug`}>−{r.ded}</sup> : null}</td>
+                  <td className="num rl-main rl-pts">{r.pts}{r.ded ? <sup className="cmp-ded" title={`${r.ded} Punkte Abzug`}>−{r.ded}</sup> : null}</td>
                   {showForm && <td><FormDots form={(finalView && !can ? r.form ?? [] : formOf(r.clubId)).slice(-5)} /></td>}
                 </tr>
               );
