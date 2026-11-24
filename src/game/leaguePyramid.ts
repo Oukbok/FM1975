@@ -29,6 +29,7 @@ import { worldStructureOfKey } from '../data/world/structure';
 import { secondGroups } from '../engine/worldSecond';
 import { deepGroupsOf, updateWorldDepths } from '../engine/worldDeep';
 import type { WorldCountry } from '../engine/worldTypes';
+import type { WorldStructure } from '../data/world/structure';
 
 export type PyramidSide = 'west' | 'ddr' | 'abroad';
 export type PyrZone = 'zone-cl' | 'zone-po' | 'zone-rel' | '';
@@ -52,7 +53,15 @@ export interface PyrDivision {
   pool?: boolean;
   /** Reine Strukturangabe (Ebene ohne simulierte Vereine, data/leagueTiers.ts): Staffeln/Mannschaften. */
   struct?: string;
+  /** Früherer Zeitraum (game/leaguePeriods.ts): Sollgröße ohne Vereinsliste. */
+  size?: number;
 }
+
+/** Vereinszahl einer Division: Vereinsliste bzw. Sollgröße eines früheren Zeitraums. */
+export const pyrSize = (d: PyrDivision | undefined): number => (d ? d.clubs.length || d.size || 0 : 0);
+
+/** Abschlusstabelle einer Liga eines früheren Zeitraums (Statistiken › Ligensystem); `clubs` fehlt = nicht im Spielstand. */
+export interface PyrFinal { caption: string; clubs?: (PyrClub & { pts?: number })[]; hint?: string }
 
 export interface PyrSystem {
   side: PyramidSide; key: string; title: string;
@@ -61,6 +70,12 @@ export interface PyrSystem {
   note?: string;
   /** Liga besteht in dieser Saison nicht mehr (DDR nach 1991, aufgelöste Länder) – Anzeige „(Archiv)“. */
   archive?: boolean;
+  /** Archiv: erste Saison ohne diese Liga (z. B. „1991/92“) – Stempel „Archiviert“. */
+  since?: string;
+  /** Früherer Zeitraum bzw. letzter Stand einer archivierten Liga (game/leaguePeriods.ts): Struktur ohne Vereine. */
+  past?: boolean;
+  /** Früherer Zeitraum: Saison, deren Struktur gezeigt wird (letzte des Zeitraums). */
+  stand?: string;
 }
 
 export interface PyramidData {
@@ -68,7 +83,8 @@ export interface PyramidData {
   west: PyrSystem;
   ddr: PyrSystem;
   abroad: PyrSystem[];
-  reforms: { season: string; title: string; past: boolean }[];
+  /** `on` = Reform des gewählten Zeitraums (Statistiken › Ligensystem). */
+  reforms: { season: string; title: string; past: boolean; on?: boolean }[];
 }
 
 // -----------------------------------------------------------------------------
@@ -76,7 +92,7 @@ export interface PyramidData {
 // -----------------------------------------------------------------------------
 /** Zone eines Tabellenplatzes in einer Division. */
 export function pyrZone(d: PyrDivision, pos: number): PyrZone {
-  const n = d.clubs.length;
+  const n = pyrSize(d);
   if (d.pool) return '';
   if (pos <= d.champion + d.up) return 'zone-cl';
   if (pos <= d.champion + d.up + d.europe + d.upChance) return 'zone-po';
@@ -85,7 +101,7 @@ export function pyrZone(d: PyrDivision, pos: number): PyrZone {
 }
 
 /** Auf-/Abstiegszahlen der West-Pyramide wie im Saisonwechsel. */
-function westZones(levels: PyrDivision[][], euroChamp: number, euroMore: number): void {
+export function westZones(levels: PyrDivision[][], euroChamp: number, euroMore: number): void {
   levels.forEach((lv, i) => {
     const lower = levels[i + 1];
     const isLast = !lower || lower[0]?.pool;
@@ -115,7 +131,7 @@ function westZones(levels: PyrDivision[][], euroChamp: number, euroMore: number)
 const simToPyr = (s: SimClub, year: number): PyrClub => ({
   id: s.id, name: simDisplayName(s, year), shortName: s.shortName, city: s.city, colors: s.colors, strength: s.strength,
 });
-const div = (id: string, name: string, level: number, group: LeagueGroup, clubs: PyrClub[], order: PyrDivision['order']): PyrDivision => ({
+export const div = (id: string, name: string, level: number, group: LeagueGroup, clubs: PyrClub[], order: PyrDivision['order']): PyrDivision => ({
   id, name, level, group, clubs, order, champion: 0, europe: 0, up: 0, upChance: 0, down: 0,
 });
 const byStrength = (a: PyrClub, b: PyrClub) => b.strength - a.strength || a.name.localeCompare(b.name, 'de');
@@ -126,12 +142,12 @@ function poolDiv(clubs: PyrClub[], level: number, ddr: boolean): PyrDivision {
   return d;
 }
 
-function euroSlots(year: number, rank: number): { champ: number; more: number } {
+export function euroSlots(year: number, rank: number): { champ: number; more: number } {
   const s = accessSlots(year, rank);
   return { champ: 1, more: Math.max(0, s.ec - 1) + s.uefa };
 }
 
-function reformList(season: string): PyramidData['reforms'] {
+export function reformList(season: string): PyramidData['reforms'] {
   const y = seasonStartYear(season);
   return LEAGUE_REFORMS.map((r) => ({ season: r.effectiveSeason, title: r.title.replace('2. 1. Liga', '2. Liga'), past: seasonStartYear(r.effectiveSeason) <= y }));
 }
@@ -151,41 +167,51 @@ function abroadSystems(countries: { name: string; tiers: string[][]; groups?: nu
     const groups = secondGroups(c as WorldCountry);
     const keys = homeGroupKeys(groups.length);
     if (groups.length) lv.push(groups.map((ids, k) => { const l = pyr(ids); return div(`w:${c.name}:${k + 1}`, leagueLabel(cc, 2, { n: groups.length, i: k }), 2, keys[k] ?? null, ordered ? l : l.sort(byStrength), 'strength'); }));
-    // Auf-/Abstieg zur Folgesaison nach der historischen Struktur (data/world/structure.ts), sonst 3 bzw. 2.
-    const st = worldStructureOfKey(c.name, year + 1);
-    const n = st ? st.down : (lv[0]?.[0]?.clubs.length ?? 0) >= 16 ? 3 : 2;
-    const up = st ? st.up : n;
-    if (lv[0]) { lv[0][0].champion = 1; lv[0][0].down = n; lv[0][0].downTo = `Abstieg in die ${leagueName(cc, 2)}`; }
-    const G = lv[1]?.length ?? 1;
-    for (const d of lv[1] ?? []) { d.up = Math.floor(up / G); d.upChance = up % G ? 1 : 0; }
     const pool = pyr(c.pool ?? []);
-    const d2 = st?.down2 != null ? Math.max(1, Math.round(st.down2 / G)) : 2;
     // Tiefere Ebenen (engine/worldDeep.ts): echte Ligen statt Strukturkästen; Zahlen wie im Saisonwechsel.
     const wc = c as WorldCountry, deep = wc.deep ?? [];
-    if (lv[1] && deep.length) for (const d of lv[1]) { d.down = d2; d.downTo = `Abstieg in die ${leagueName(cc, 3)}`; }
     deep.forEach((_, k) => {
       const gs = deepGroupsOf(wc, k), n = gs.length, keysK = homeGroupKeys(n);
-      const size = gs.reduce((a, x) => a + x.length, 0);
-      const aboveN = lv[lv.length - 1].reduce((a, d) => a + d.clubs.length, 0);
-      const upT = k === 0 ? Math.max(n, st?.down2 ?? 2 * G) : Math.max(n, Math.round(aboveN / 6));
-      const last = k === deep.length - 1;
-      const below = last ? 0 : deepGroupsOf(wc, k + 1).length;
-      const down = last ? 2 : Math.max(1, Math.round(Math.max(below, Math.round(size / 6)) / n));
-      lv.push(gs.map((ids, i) => {
-        const d = div(`w:${c.name}:d${k + 3}:${i}`, leagueLabel(cc, k + 3, { n, i, year }), k + 3, keysK[i] ?? null, pyr(ids).sort(byStrength), 'strength');
-        d.up = Math.floor(upT / n); d.upChance = upT % n ? 1 : 0; d.down = down;
-        d.downTo = last ? 'Tausch mit dem Unterbau' : `Abstieg in die ${leagueName(cc, k + 4, year)}`;
-        return d;
-      }));
+      lv.push(gs.map((ids, i) => div(`w:${c.name}:d${k + 3}:${i}`, leagueLabel(cc, k + 3, { n, i, year }), k + 3, keysK[i] ?? null, pyr(ids).sort(byStrength), 'strength')));
     });
+    // Auf-/Abstieg zur Folgesaison nach der historischen Struktur (data/world/structure.ts), sonst 3 bzw. 2.
+    abroadZones(lv, cc, worldStructureOfKey(c.name, year + 1), deep.length, pool.length > 0, year);
     if (pool.length && lv[1]) {
-      if (!deep.length) for (const d of lv[1]) { d.down = d2; d.downTo = 'Tausch mit dem Unterbau'; }
       const pd = div(`w:${c.name}:pool`, 'Unterbau', lv.length + 1, null, pool.sort(byStrength), 'pool');
       pd.pool = true;
       lv.push([pd]);
     }
     return { side: 'abroad' as const, key: c.name, title: c.name, levels: withHistoricTiers(lv, cc, year, true), available: true };
   })];
+}
+
+/**
+ * Zonen einer Auslandspyramide (1. Liga, Staffeln der 2. Ebene, `deepN` tiefere Ebenen ab lv[2]) nach der
+ * Struktur `st` (data/world/structure.ts, sonst 3 bzw. 2) – wie im Saisonwechsel der Hintergrund-Welt.
+ * `pool` = darunter tauscht der Unterbau mit der 2. Ebene. Auch für frühere Zeiträume (Größe statt Vereinen).
+ */
+export function abroadZones(lv: PyrDivision[][], cc: string | undefined, st: WorldStructure | null, deepN: number, pool: boolean, year: number): void {
+  const n = st ? st.down : pyrSize(lv[0]?.[0]) >= 16 ? 3 : 2;
+  const up = st ? st.up : n;
+  if (lv[0]) { lv[0][0].champion = 1; lv[0][0].down = n; lv[0][0].downTo = `Abstieg in die ${leagueName(cc, 2)}`; }
+  const G = lv[1]?.length ?? 1;
+  for (const d of lv[1] ?? []) { d.up = Math.floor(up / G); d.upChance = up % G ? 1 : 0; }
+  const d2 = st?.down2 != null ? Math.max(1, Math.round(st.down2 / G)) : 2;
+  if (lv[1] && deepN) for (const d of lv[1]) { d.down = d2; d.downTo = `Abstieg in die ${leagueName(cc, 3)}`; }
+  for (let k = 0; k < deepN; k++) {
+    const level = lv[2 + k] ?? [], nk = level.length;
+    const size = level.reduce((a, d) => a + pyrSize(d), 0);
+    const aboveN = (lv[1 + k] ?? []).reduce((a, d) => a + pyrSize(d), 0);
+    const upT = k === 0 ? Math.max(nk, st?.down2 ?? 2 * G) : Math.max(nk, Math.round(aboveN / 6));
+    const last = k === deepN - 1;
+    const below = last ? 0 : (lv[3 + k] ?? []).length;
+    const down = last ? 2 : Math.max(1, Math.round(Math.max(below, Math.round(size / 6)) / nk));
+    for (const d of level) {
+      d.up = Math.floor(upT / nk); d.upChance = upT % nk ? 1 : 0; d.down = down;
+      d.downTo = last ? 'Tausch mit dem Unterbau' : `Abstieg in die ${leagueName(cc, k + 4, year)}`;
+    }
+  }
+  if (pool && lv[1] && !deepN) for (const d of lv[1]) { d.down = d2; d.downTo = 'Tausch mit dem Unterbau'; }
 }
 
 // -----------------------------------------------------------------------------
@@ -250,7 +276,7 @@ export function pyramidPreGame(season = '1975/76'): PyramidData {
   };
 }
 
-function ddrZones(lv: PyrDivision[][]): void {
+export function ddrZones(lv: PyrDivision[][]): void {
   const [ober, liga] = [lv[0]?.[0], lv[1]?.[0]];
   if (ober) { ober.champion = 1; ober.down = 2; ober.downTo = 'Abstieg in die DDR-Liga'; }
   if (liga) { liga.up = 2; liga.down = 2; liga.downTo = 'Tausch mit den Bezirksligen'; }

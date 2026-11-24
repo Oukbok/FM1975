@@ -43,7 +43,7 @@ export const INFO_TEXTS = {
   },
   ligenstruktur: {
     title: 'Ligensystem',
-    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen – bei mehreren Staffeln einer Ebene (z. B. 2. Liga Nord und Süd) jede Staffel als eigener Kasten und eigene Liga –, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine.',
+    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen – bei mehreren Staffeln einer Ebene (z. B. 2. Liga Nord und Süd) jede Staffel als eigener Kasten und eigene Liga –, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine. Oben rechts blätterst du durch die Zeiträume, in denen die Struktur gleich war – frühere zeigen links die Abschlusstabelle ihrer letzten Saison. Ligen, die es nicht mehr gibt (DDR, Sowjetunion, Jugoslawien, Tschechoslowakei), tragen den Stempel „Archiviert“ und zeigen ihren letzten Stand.',
     wiki: 'league-system',
   },
   laenderprofil: {

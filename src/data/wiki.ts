@@ -914,15 +914,23 @@ Beim Start erscheint ein Menü mit:
     id: 'league-system',
     category: 'save',
     title: 'Übersicht Ligensystem',
-    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau', 'archiv', 'staffeln', 'ligen der welt'],
+    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau', 'archiv', 'archiviert', 'zeitraum', 'zeiträume', 'abschlusstabelle', 'sowjetunion', 'jugoslawien', 'tschechoslowakei', 'staffeln', 'ligen der welt'],
     body: `## Übersicht Ligensystem
-Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du das Land: **alle Länder alphabetisch in einer Liste**, vorgewählt ist dein Heimatland. Ligen, die es in der Saison nicht mehr gibt (DDR nach der Wiedervereinigung, aufgelöste Staaten), stehen mit **„(Archiv)“** dahinter – ihre alten Tabellen findest du unter Statistiken › Liga, wo die Länderwahl genauso aufgebaut ist.
+Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du das Land: **alle Länder alphabetisch in einer Liste**, vorgewählt ist dein Heimatland. Ligen, die es in der Saison nicht mehr gibt (DDR nach der Wiedervereinigung, aufgelöste Staaten), stehen mit **„(Archiv)“** dahinter (siehe „Archivierte Ligen“) – ihre alten Tabellen findest du unter Statistiken › Liga, wo die Länderwahl genauso aufgebaut ist.
 
 - **Kasten:** Name der Liga, Zahl der Vereine, Meister-/Europapokalplätze, Auf- und Absteiger. „Dein Verein“ markiert deine Liga.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
 - **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Zahl der Ebenen, Staffeln und Mannschaften (z. B. Spanien ab 1977 mit einer zusätzlichen dritten Ebene in Staffeln). Die Namen folgen dem Schema in der Landessprache (1. League, 2. Ligue, 3. División …, Artikel „Ligareformen im Ausland“). Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
 - **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
-- **Ligareformen:** Unten stehen die kommenden Umbauten (z. B. eingleisige 2. Liga, Wiedervereinigung, 3. Liga); vergangene sind blass.
+- **Ligareformen:** Unten stehen die Umbauten (z. B. eingleisige 2. Liga, Wiedervereinigung, 3. Liga); vergangene sind blass, die Reform des gewählten Zeitraums ist hervorgehoben. Ein Klick auf eine vergangene Reform springt in ihren Zeitraum.
+
+### Zeiträume
+Oben rechts im Kopf der Box wählst du – wie die Saison unter Statistiken › Liga – den **Zeitraum**: mit den Pfeilen blätterst du durch, die Liste zeigt alle Abschnitte, in denen die Ligastruktur des Landes gleich war (z. B. „1975/76 – 1977/78“, „1981/82 – 1990/91“, „2012/13 – heute“). Ein neuer Abschnitt beginnt, sobald sich eine Ebene ändert: neue Liga, andere Zahl der Staffeln oder Vereine. Die Abschnitte kommen aus denselben Daten, mit denen das Spiel die Ligen aufbaut (deutsche Ligareformen, historische Struktur je Land) und reichen nur bis zur laufenden Saison – kommende Umbauten verrät die Liste nicht.
+- **Früherer Zeitraum:** Die Pyramide zeigt die Struktur der letzten Saison des Abschnitts (Ligen, Staffeln, Vereinszahl, Auf- und Absteiger). Links steht die **Abschlusstabelle** dieser Saison, soweit sie im Spielstand noch gespeichert ist; ältere Saisons fallen aus dem Archiv, dann steht dort ein Hinweis.
+- **Laufender Zeitraum:** wie bisher die Pyramide der laufenden Saison mit der aktuellen Tabelle.
+
+### Archivierte Ligen
+Ligen, die es nicht mehr gibt – die **DDR** ab 1991/92 sowie **Sowjetunion**, **Jugoslawien** (beide ab 1992/93) und **Tschechoslowakei** (ab 1993/94) –, bleiben in der Länderwahl. Sie zeigen immer ihren **letzten Stand** mit dem roten Stempel **„Archiviert“** und der Zeile „Diese Liga existiert seit … nicht mehr“; frühere Zeiträume dieser Ligen kannst du weiter durchblättern.
 
 Die Zahlen folgen denselben Regeln wie der Saisonwechsel – was hier steht, passiert am Saisonende auch.`,
   },
