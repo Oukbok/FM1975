@@ -31,6 +31,8 @@ import { secondGroups } from '../engine/worldSecond';
 import { deepGroupsOf, updateWorldDepths } from '../engine/worldDeep';
 import type { WorldCountry } from '../engine/worldTypes';
 import type { WorldStructure } from '../data/world/structure';
+import { deepMovesFor } from '../data/deepMoves';
+import { deepLevelsFor } from '../data/world/deepStructure';
 
 export type PyramidSide = 'west' | 'ddr' | 'abroad';
 export type PyrZone = 'zone-cl' | 'zone-po' | 'zone-rel' | '';
@@ -371,6 +373,25 @@ function homeAbroadZones(lv: PyrDivision[][], cc: string, year: number, e: { cha
   abroadZones(simLv, cc, worldStructureFor(cc, year + 1), Math.max(0, simLv.length - 2), pool, year);
   if (simLv.length === 1 && pool) for (const d of simLv[0]) { d.down = poolSwapCount(1); d.downTo = 'Tausch mit dem Unterbau'; }
   for (const d of simLv[0] ?? []) { d.champion = e.champ; d.europe = e.more; }
+  // Historische Zahlen der Ebenen 3/4 wie im Saisonwechsel (data/deepMoves.ts über game/homeStructure.ts).
+  const mv = simLv.length > 2 ? deepMovesFor(cc, year) : null;
+  if (!mv) return;
+  const next = deepLevelsFor(cc, year + 1, 4);
+  for (const k of [2, 3]) {
+    const lv3 = simLv[k], above = simLv[k - 1];
+    const up = k === 2 ? mv.up3 : mv.up4;
+    if (!lv3 || lv3.length !== 1 || above.length !== 1 || up == null) continue;
+    lv3[0].up = up; lv3[0].upChance = 0;
+    // Absteiger der 3. Ebene = Aufsteiger ± Größenänderung (wie normalTransition: geplante Größe nach dem
+    // Wechsel darüber gegen die Sollgröße der neuen Saison).
+    if (k === 3) {
+      const top = simLv[1];
+      const want = next[0]?.groups.length === 1 ? next[0].groups[0] : undefined;
+      const planned = pyrSize(above[0]) - above[0].up + (top.length === 1 ? top[0].down : 0);
+      above[0].down = Math.max(0, up - (want != null ? want - planned : 0));
+    }
+  }
+  if (pool && mv.out != null) for (const d of simLv[simLv.length - 1]) { d.down = mv.out; d.downTo = 'Tausch mit dem Unterbau'; }
 }
 
 function groupRank(gr: LeagueGroup): number {

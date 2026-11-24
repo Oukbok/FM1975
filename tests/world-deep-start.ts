@@ -14,6 +14,7 @@ import { pyramidFromGame } from '../src/game/leaguePyramid';
 import { foreignLive, foreignSeasons } from '../src/game/foreignClub';
 import { worldLiveDiv } from '../src/game/worldLeagues';
 import { deepIdx } from '../src/game/worldLeagues';
+import { deepMovesFor } from '../src/data/deepMoves';
 import type { Game } from '../src/game/state';
 
 const ui: DayUi = { onOwnMatch: () => {}, onRatingCeremony: () => {}, onSeasonEnd: () => {}, onOwnMatchDue: () => {}, onCupDraw: () => false, onCampEnd: () => true, onTransferWindow: () => true, onIndoorShow: () => false };
@@ -27,6 +28,22 @@ const tierSizes = (g: Game) => {
     m.set(d.tier, [...(m.get(d.tier) ?? []), d.n]);
   }
   return [...m.entries()].sort((a, b) => a[0] - b[0]).map(([t, ns]) => `E${t}:${ns.join('/')}`).join(' ');
+};
+
+/** Ebene je Verein (1–4; Unterbau/sonst fehlt). */
+const tierMap = (g: Game) => {
+  const m = new Map<string, number>();
+  for (const r of g.table.rows) m.set(r.clubId, g.leagues.playerDivision.tier);
+  for (const d of g.leagues.otherDivisions) if (d.tier < 100) for (const id of d.clubIds) m.set(id, d.tier);
+  return m;
+};
+/** Wechsel „von>nach“ zwischen zwei Ständen (9 = Unterbau bzw. neu). */
+const moveCounts = (a: Map<string, number>, b: Map<string, number>) => {
+  const n: Record<string, number> = {};
+  const add = (k: string) => { n[k] = (n[k] ?? 0) + 1; };
+  for (const [id, t] of a) { const u = b.get(id) ?? 9; if (u !== t) add(`${t}>${u}`); }
+  for (const [id, u] of b) if (!a.has(id)) add(`9>${u}`);
+  return n;
 };
 
 export async function runStartChecks(): Promise<number> {
@@ -44,9 +61,12 @@ export async function runStartChecks(): Promise<number> {
     const prev = leaguePreview(lg.key, cc, y);
     ok(prev.length >= 16 && prev.every((c) => c.tier === tier), `${tag}: Vorschau ${lg.name} mit ${prev.length} Vereinen`);
     const plan = lowerTierPlan(cc, y).find((d) => d.meta.id === lg.key)!;
-    const pick = prev[Math.floor(prev.length / 2)].id;
+    // Zweitstärkster Verein: ohne Ausnahmetalente (die beim Start in einer unteren Liga alle bei den Gegnern
+    // landen) und weit weg vom Abstieg – als Letzter der untersten Ebene endete das Spiel (Amtszeit vorbei)
+    // und der Saisonwechsel lief nie (früher „0 Vereine gewechselt“).
+    const pick = [...prev].sort((a, b) => a.rank - b.rank)[1].id;
     const t0 = Date.now();
-    const g = createNewGame({ managedClubId: pick, manager: mgr, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: y, country: cc } as any);
+    const g = createNewGame({ managedClubId: pick, manager: mgr, difficulty: 'normal' as any, realisticSquads: true, injuriesEnabled: true, speedMs: 300, startYear: y, country: cc, legends: false } as any);
     const pd = g.leagues.playerDivision;
     ok(pd.tier === tier && pd.id === lg.key, `${tag}: Spielerliga ${pd.name} (${Date.now() - t0} ms)`);
     const ids = g.table.rows.map((r) => r.clubId);
@@ -64,15 +84,38 @@ export async function runStartChecks(): Promise<number> {
     ok(pyr.west.levels.filter((lv) => !lv[0]?.pool && !lv[0]?.struct).length >= 4 || tier === 3 && cc !== 'eng', `${tag}: Pyramide mit echten Ligen bis Ebene 4 (${pyr.west.levels.map((lv) => lv.map((d) => d.name + (d.struct ? '*' : '')).join('+')).join(' | ')})`);
     if (!full) continue;
     const before = tierSizes(g);
+    // Soll je Ebenenpaar aus der Pyramide (dieselben Zahlen wie der Saisonwechsel, game/leaguePyramid.ts).
+    const sim = pyr.west.levels.filter((lv) => !lv[0]?.pool && !lv[0]?.struct);
+    const hasPool = pyr.west.levels.some((lv) => lv[0]?.pool);
+    const tierOf0 = tierMap(g);
     playSeason(g);
     const lastPos = g.table.rows.find((r) => r.clubId === g.managedClubId)!.position;
     const t3old = new Set(g.leagues.otherDivisions.filter((d) => d.tier === 3).flatMap((d) => d.clubIds).concat(pd.tier === 3 ? ids : []));
     startNextSeason(g);
     const after = tierSizes(g);
     ok(before === after, `${tag}: Ligagrößen nach dem Wechsel gleich (${before} → ${after})`);
+    ok(!g.over, `${tag}: Saisonwechsel gelaufen (kein Spielende, eigener Platz ${lastPos})`);
     const t3new = new Set([...g.leagues.otherDivisions.filter((d) => d.tier === 3).flatMap((d) => d.clubIds), ...(g.leagues.playerDivision.tier === 3 ? g.table.rows.map((r) => r.clubId) : [])]);
     const moved = [...t3old].filter((id) => !t3new.has(id)).length;
     ok(moved > 0, `${tag}: Auf-/Abstieg aus der 3. Ebene (${moved} Vereine gewechselt), eigener Platz ${lastPos} → ${g.leagues.playerDivision.name}`);
+    // Wechsel je Ebenenpaar = Soll (Aufsteiger aus der Pyramide; eingleisig genau, mehrgleisig mit „+1 bester Zweiter“).
+    const mv = moveCounts(tierOf0, tierMap(g));
+    const lowest = sim.length;
+    for (let t = 1; t < lowest; t++) {
+      const upper = sim[t - 1], lower = sim[t];
+      const up = lower.reduce((a, d) => a + d.up, 0), chance = lower.reduce((a, d) => a + d.upChance, 0);
+      const isUp = mv[`${t + 1}>${t}`] ?? 0, isDown = mv[`${t}>${t + 1}`] ?? 0;
+      const want = upper.length === 1 ? upper[0].down : null;
+      ok(isUp >= up && isUp <= up + chance && (want == null || isDown === want) && isUp > 0 && isDown > 0,
+        `${tag}: Ebene ${t} ↔ ${t + 1}: ${isUp} auf (Soll ${up}${chance ? `+${chance}` : ''}), ${isDown} ab${want != null ? ` (Soll ${want})` : ''}`);
+    }
+    if (hasPool) {
+      const out = sim[lowest - 1].reduce((a, d) => a + d.down, 0);
+      ok((mv[`${lowest}>9`] ?? 0) === out && (mv[`9>${lowest}`] ?? 0) === out, `${tag}: Ebene ${lowest} ↔ Unterbau: ${mv[`${lowest}>9`] ?? 0} ab, ${mv[`9>${lowest}`] ?? 0} auf (Soll ${out})`);
+    }
+    const dm = deepMovesFor(cc, y);
+    if (dm) ok(sim[2]?.[0]?.up === dm.up3 && (!sim[3] || sim[3][0].up === dm.up4) && (!hasPool || sim[lowest - 1][0].down === dm.out),
+      `${tag}: Pyramide zeigt die historischen Zahlen (3 → 2: ${dm.up3}, 4 → 3: ${dm.up4}, Unterbau: ${dm.out})`);
     const thin = g.table.rows.filter((r) => (g.clubs[r.clubId]?.playerIds.length ?? 0) < 15);
     ok(!thin.length, `${tag}: neue Spielerliga mit vollen Kadern`);
     ok(await saveGame('deep', { name: 'deep', managerName: 'd', clubName: 'd', clubId: g.managedClubId, season: g.season, gameDate: g.calendar.currentDate }, g), `${tag}: Speichern`);

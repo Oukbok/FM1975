@@ -15,6 +15,8 @@
 //    bisherige Staffel, sonst die Staffel mit den meisten freien Plätzen; Staffeln heißen
 //    `tier2-nord`/`tier2-west` (Mitte)/`tier2-sued`. Absteiger aus der 1. Liga kommen über
 //    `regionHint` in die Staffel ihrer Zone;
+//  • Ebenen 3/4 (game/homeDeep.ts): Aufsteiger/Unterbau-Absteiger laut data/deepMoves.ts (England), sonst
+//    wie bisher;
 //  • unterste Ebene ↔ Amateure (Pool): historische Zahl der Absteiger, wächst/schrumpft die
 //    Ebene, rücken entsprechend mehr/weniger nach (Plätze = Platzhalter, die
 //    game/clubPool.ts `absorbPlaceholders` mit Pool-Vereinen besetzt).
@@ -26,6 +28,7 @@ import { makePlaceholder, type DivisionTarget } from '../data/reforms';
 import { seasonStartYear } from '../data/timeline';
 import { worldStructureFor } from '../data/world/structure';
 import { deepLevelsFor } from '../data/world/deepStructure';
+import { deepMovesFor } from '../data/deepMoves';
 import { assignToGroups, dataZoneOf, homeGroupKeys } from '../data/world/secondGroups';
 import { homeDivisionName, leagueLabel } from '../data/leagueNames';
 import type { Region } from '../data/regionGeo';
@@ -89,10 +92,18 @@ export function homeSeasonPlan(cc: string, current: CurrentDivision[], newSeason
     targets.push({ ...named(d), ...(size ? { teamCount: size } : {}) });
   }
   const lowest = Math.max(...divs.map((d) => d.tier));
+  // Historische Auf-/Abstiegszahlen der Ebenen 3/4 (data/deepMoves.ts, Startjahr der gespielten Saison):
+  // Aufsteiger als `upSlots` der eingleisigen oberen Liga (England: 3 aus Ebene 3, 4 aus Ebene 4).
+  const moves = deepMovesFor(cc, y - 1);
+  if (moves) for (const t of [2, 3]) {
+    const up = t === 2 ? moves.up3 : moves.up4;
+    const at = targets.filter((x) => x.tier === t);
+    if (up != null && at.length === 1 && divs.some((d) => d.tier === t + 1)) at[0].upSlots = up;
+  }
   const singleBoth = (st.groups?.length ?? 0) === 1 && (prev?.groups?.length ?? 0) === 1;
   // Mehrere Staffeln in beiden Saisons (gleiche Zahl): Absteiger in den Unterbau je Staffel aus den Daten.
   const multiSame = !!st.groups && st.groups.length > 1 && prev?.groups?.length === st.groups.length && second.length === st.groups.length;
-  const poolOut = lowest === 1 ? st.down : lowest === 2 && singleBoth && st.down2 != null && !merge ? st.down2
+  const poolOut = lowest >= 3 ? moves?.out : lowest === 1 ? st.down : lowest === 2 && singleBoth && st.down2 != null && !merge ? st.down2
     : lowest === 2 && multiSame && st.down2 != null ? Math.round(st.down2 / st.groups!.length) : undefined;
   const transition = regroup ? [...targets.filter((t) => t.tier !== 2), ...second.map(keep)] : undefined;
   return { targets, merge, regroup, transition, poolOut };
