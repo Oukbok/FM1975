@@ -111,6 +111,14 @@ function registerProtocol() {
     if (res.ok && /\.m?js$/.test(file)) {
       return new Response(res.body, { status: 200, headers: { 'Content-Type': 'text/javascript; charset=utf-8' } });
     }
+    // Bilder/Töne/Stücke mit Hash ändern sich nur mit einem Update: im Speicher-Cache der Sitzung ohne
+    // Rückfrage wiederverwenden (keine erneute Dateianfrage beim Seitenwechsel). Kein HTTP-Festplatten-Cache
+    // für app:// – nach einem Steam-Update gibt es also keine veralteten Bilder.
+    if (res.ok && /^\/(assets|chunks)\//.test(rel)) {
+      const headers = new Headers(res.headers);
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+      return new Response(res.body, { status: 200, headers });
+    }
     return res;
   });
 }

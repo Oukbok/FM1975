@@ -16,6 +16,7 @@ import { lazyNamed } from './ui/lazyNamed';
 import { installClickSound } from './ui/clickSound';
 import { installEllipsisTitles } from './ui/ellipsisTitle';
 import { installStableTables } from './ui/stableTables';
+import { preloadUiTextures } from './ui/imagePreload';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
@@ -25,6 +26,8 @@ const GameShell = shell.component;
 const loadShell = shell.preload;
 const loadMigrations = () => import('./game/loadMigrations');
 const loadNewGame = () => import('./game/newGame');
+// Bilder des Spielstands vorwärmen (shell/warmImages.ts): Zentrale erscheint ohne Nachladen.
+const loadWarm = () => import('./shell/warmImages');
 
 // =============================================================================
 // ROOT: Startmenü ⇄ Spiel
@@ -75,6 +78,7 @@ export default function App() {
     const calendar = g0.calendar;
     setDisplayYear(yearOf(calendar.currentDate));
     setCurrencyDate(calendar.currentDate);
+    await (await loadWarm()).warmGameImages(g0).catch(() => {});
     gameRef.current = g0;
     setCurrentSlot(null);
     setInGame(true);
@@ -88,6 +92,7 @@ export default function App() {
     (await loadMigrations()).prepareLoadedGame(s.game);
     // Spieltempo aus den Einstellungen (nicht das im Spielstand gespeicherte).
     s.game.calendar.speedMs = loadSettings().speedMs;
+    await (await loadWarm()).warmGameImages(s.game).catch(() => {});
     gameRef.current = s.game;
     setCurrentSlot(slot);
     setInGame(true);
@@ -114,7 +119,7 @@ export default function App() {
   useEffect(() => {
     applyDisplayMode(settings.displayMode);
     // Spiel-Stücke im Leerlauf vorladen, damit „Neues Spiel“/„Laden“ nicht warten.
-    const t = setTimeout(() => { loadShell().catch(() => {}); loadMigrations().catch(() => {}); loadNewGame().catch(() => {}); preloadNewGameScreen().catch(() => {}); preloadEarlyParts(); }, 400);
+    const t = setTimeout(() => { loadShell().catch(() => {}); loadMigrations().catch(() => {}); loadNewGame().catch(() => {}); preloadNewGameScreen().catch(() => {}); preloadEarlyParts(); loadWarm().catch(() => {}); preloadUiTextures(); }, 400);
     return () => clearTimeout(t);
     // nur einmal beim Mounten
     // eslint-disable-next-line react-hooks/exhaustive-deps

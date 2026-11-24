@@ -20,6 +20,7 @@ import { setWikiOpener } from '../ui/InfoTip';
 import { applyClubAccent } from '../ui/clubAccent';
 import { setCrestDate } from '../data/dataset/apply';
 import { setPortraitGame } from '../game/playerPortraits';
+import { warmSquadFaces } from './warmImages';
 import { fmtDateFull } from '../ui/format';
 import { HeaderBar } from './HeaderBar';
 import { GameOverScreen, preloadEarlyParts, preloadShellParts } from './lazyParts';
@@ -71,6 +72,8 @@ export function GameShell({ game, rerender, currentSlot, setCurrentSlot, setting
   setCrestDate(g.calendar.currentDate); // spätere Wappen aus dem Datensatz (vor dem Rendern der Kinder)
   setPortraitGame(g); // hochgeladene Spielerbilder aus dem Datensatz (game/playerPortraits.ts)
   useEffect(() => () => setPortraitGame(null), []);
+  // Gesichter des eigenen Kaders im Leerlauf vorladen (shell/warmImages.ts, begrenzt).
+  useEffect(() => warmSquadFaces(g), [g]);
   const myClub = g.clubs[g.managedClubId];
   // Look „Akte“: Vereinsfarbe (bzw. Zweitfarbe, wenn nah am Dunkelblau) als Akzent (ui/clubAccent.ts).
   // Ansicht Verein ↔ Nationalteam (shell/viewMode.ts): ohne laufende Amtszeit immer Verein.

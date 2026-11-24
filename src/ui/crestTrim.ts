@@ -63,3 +63,12 @@ export function useCenteredCrest(src: string | undefined): string | undefined {
   }, [src]);
   return out;
 }
+
+/**
+ * Zentrierte Fassung vorab erzeugen (Spielstand laden, ui/imagePreload.ts): Die Seite zeigt das Wappen dann
+ * sofort in der fertigen Fassung statt erst des Originals und danach eines Sprungs auf die zentrierte.
+ */
+export function warmCrest(src: string | undefined): Promise<void> {
+  if (!src || cache.has(src) || typeof Image === 'undefined') return Promise.resolve();
+  return trim(src).then(() => undefined);
+}

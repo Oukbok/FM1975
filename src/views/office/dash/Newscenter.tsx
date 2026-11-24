@@ -9,7 +9,8 @@ import { PlayerMorale } from '../../../components/status';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { openContractScreen } from '../../../screens/contract/contractOpen';
 import { JUMP_DECISION_EVENT, oldestPendingDecision } from '../../../engine/messages';
-import PlayerAvatar from '../../../components/PlayerAvatar';
+import PlayerAvatar, { preloadFace } from '../../../components/PlayerAvatar';
+import { preloadImage } from '../../../ui/imagePreload';
 import { CATEGORY_META, unreadCount } from '../../../engine/messages';
 import type { Game } from '../../../game/state';
 import type { Screen } from '../../../shell/navigation';
@@ -34,10 +35,17 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
 }) {
   const msgs = g.messages ?? [];
   const [filter, setFilter] = useState<InboxFilter>('all');
-  const [selId, setSelId] = useState<string | null>(() => (oldestPendingDecision(msgs) ?? msgs.find((m) => !m.read) ?? msgs[0])?.id ?? null);
+  const [selId, setSelId] = useState<string | null>(() => initialMessage(msgs)?.id ?? null);
   const list = msgs.filter((m) => matchesFilter(m, filter));
   const sel = (selId && msgs.find((m) => m.id === selId)) || list[0] || null;
   const unread = unreadCount(msgs);
+  // Nachbarn der gewählten Nachricht vorladen (Foto + Gesichter): Durchklicken ohne Nachladen.
+  const selIdx = sel ? list.indexOf(sel) : -1;
+  useEffect(() => {
+    if (selIdx < 0) return;
+    const t = setTimeout(() => { for (const d of [1, -1, 2, 3]) preloadReader(g, list[selIdx + d]); }, 60);
+    return () => clearTimeout(t);
+  }, [g, sel?.id, filter]);
   const today = g.calendar.currentDate;
 
   // Roter Brief „Nachrichten“ (GameShell): zur ältesten Nachricht springen, die eine Entscheidung verlangt.
@@ -131,6 +139,30 @@ export function Newscenter({ g, onGoto, onWatch, onChange, openPlayer }: {
   );
 }
 
+/**
+ * Foto im Lesebereich: eigenes Spielerfoto aus dem Datensatz (passende Pose → allgemein) vor dem
+ * generischen Pressefoto; bei offener Entscheidung keins (Text und Wahl sollen ohne Scrollen passen).
+ * Auch fürs Vorladen (`preloadReader`, shell/warmImages.ts).
+ */
+export function readerPhoto(g: Game, m: InboxMessage, game?: ReturnType<typeof ownGames>[number]): { own: { src: string; pid: string } | null; photo: string | null } {
+  const deciding = !!m.choices?.length && !!m.eventRef && !m.eventRef.resolved && !m.resultText;
+  if (deciding) return { own: null, photo: null };
+  const res = game ?? (m.category === 'match' && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined);
+  const won = !!res && res.gf != null && res.ga != null && res.gf > res.ga;
+  const own = messagePlayerPhoto(g, m, (keeper) => messagePoses(m, { won, keeper }));
+  return { own, photo: own?.src ?? pressPhotoFor(m, { won }) };
+}
+
+/** Bilder einer Nachricht vorab laden und dekodieren (Foto + Gesichter), damit der Lesebereich ohne Nachladen wechselt. */
+export function preloadReader(g: Game, m: InboxMessage | null | undefined): Promise<unknown> {
+  if (!m) return Promise.resolve();
+  const faces = msgPlayers(g, m);
+  return Promise.all([preloadImage(readerPhoto(g, m).photo), ...faces.map((f) => preloadFace(f))]);
+}
+
+/** Nachricht, die die Zentrale beim Öffnen zeigt (gleiche Wahl wie `useState` in `Newscenter`). */
+export const initialMessage = (msgs: InboxMessage[]) => oldestPendingDecision(msgs) ?? msgs.find((m) => !m.read) ?? msgs[0];
+
 function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
   g: Game; m: InboxMessage | null; onGoto: (s: Screen) => void; onWatch: (id: string) => void; onChange: () => void; openPlayer: (id: string) => void;
 }) {
@@ -150,13 +182,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
     if (l.tab) presetSubTab(l.tab[0], l.tab[1]);
     if (l.screen) onGoto(l.screen);
   };
-  // Offene Entscheidung: kein Pressefoto – Text und Wahl sollen ohne Scrollen passen.
-  const deciding = !!m.choices?.length && !!m.eventRef && !m.eventRef.resolved && !m.resultText;
-  // Eigenes Spielerfoto aus dem Datensatz (passende Pose → allgemein) vor dem generischen Pressefoto.
-  const res = game ?? (m.category === 'match' && m.relatedId ? ownGames(g).find((x) => x.matchId === m.relatedId) : undefined);
-  const won = !!res && res.gf != null && res.ga != null && res.gf > res.ga;
-  const own = deciding ? null : messagePlayerPhoto(g, m, (keeper) => messagePoses(m, { won, keeper }));
-  const photo = deciding ? null : own?.src ?? pressPhotoFor(m, { won });
+  const { own, photo } = readerPhoto(g, m, game);
   return (
     <article className="dz-read" key={m.id}>
       <div className="dz-rdate"><span>{wd(m.date)}</span> {dmy(m.date)}</div>
@@ -164,7 +190,7 @@ function Reader({ g, m, onGoto, onWatch, onChange, openPlayer }: {
       <div className="dz-rmeta">Von {m.from} · {CATEGORY_META[m.category]?.label}{m.actionRequired && !m.eventRef?.resolved && !m.resultText ? ' · Entscheidung nötig' : ''}</div>
       <div className="dz-rtext">
         {m.shortText && m.shortText !== m.bodyText && <p className="dz-rlead"><LinkedText g={g} text={m.shortText} people={people} /></p>}
-        {photo && <img className={`dz-rphoto${own ? ' own' : ''}`} src={photo} alt={own ? (g.players[own.pid] ?? g.youthPlayers[own.pid])?.fullName ?? '' : ''} loading="lazy" draggable={false} />}
+        {photo && <img className={`dz-rphoto${own ? ' own' : ''}`} src={photo} alt={own ? (g.players[own.pid] ?? g.youthPlayers[own.pid])?.fullName ?? '' : ''} decoding="async" draggable={false} />}
         <p className="dz-rbody"><LinkedText g={g} text={m.bodyText} people={people} /></p>
       </div>
       {/* Entscheidung außerhalb des Textscrollers: immer sichtbar, egal wie lang Text/Foto sind. */}

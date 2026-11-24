@@ -207,8 +207,7 @@
      Platz der Namen mit ausfüllen können. */
   height: 156px;
   background:
-    linear-gradient(180deg, rgba(var(--deep-rgb), 0.34) 0%, rgba(var(--deep-rgb), 0.72) 100%),
-    url('assets/stadium-crowd.jpg?v=1') center / cover no-repeat;
+    linear-gradient(180deg, rgba(var(--deep-rgb), 0.34) 0%, rgba(var(--deep-rgb), 0.72) 100%); /* Foto stadium-crowd.jpg nicht mehr ausgeliefert */
 }
 /* Wappen-Reihe füllt die gesamte Foto-Höhe; jede Seite ist eine Spalte
    (großes Wappen + Name als Bildunterschrift darunter). */
@@ -277,14 +276,13 @@
   width: 152px;
   aspect-ratio: 1024 / 1280;
   background: var(--jc, #cccccc);
-  -webkit-mask: url(assets/shirt-base.png?v=1) center / contain no-repeat;
-  mask: url(assets/shirt-base.png?v=1) center / contain no-repeat;
+  /* Trikot-Foto shirt-base.png wird nicht mehr ausgeliefert (Klasse ohne Verwendung, scripts/build.mjs NOT_SHIPPED). */
 }
 .ckd-jersey-photo::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: url(assets/shirt-base.png?v=1) center / contain no-repeat;
+  background: none;
   mix-blend-mode: multiply;
   pointer-events: none;
 }

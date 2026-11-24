@@ -55,7 +55,7 @@ export function MainMenu({ settings, onNewGame, onLoad, onUpdateSettings }: {
   return (
     <div className="st-start">
       <div className="st-img">
-        <img src="assets/start-grandstand.jpg" alt="" draggable={false} />
+        <img src="assets/start-grandstand.webp" alt="" draggable={false} />
       </div>
       <div className="st-scrim" />
 

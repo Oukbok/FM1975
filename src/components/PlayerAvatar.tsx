@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Player, Club } from '../types';
 import { faceImageFor, faceFailed, markFaceFailed, type FaceImage } from './faces/faceLookup';
 import { portraitOf, shownFace } from '../game/playerPortraits';
+import { preloadImage } from '../ui/imagePreload';
 
 // -----------------------------------------------------------------------------
 // Deterministischer Hash aus String (für stabilen Seed pro Spieler)
@@ -386,19 +387,17 @@ export const hasFacePhoto = (player: FacePerson, staff?: boolean, year?: number)
 
 // Bereits geladene Fotos: beim erneuten Zeigen sofort sichtbar (kein Ausblenden/Einblenden).
 const ready = new Set<string>();
-const pending = new Map<string, HTMLImageElement>();
 
-/** Foto vorab laden (Blättern im Profil, sichtbare Kaderlisten). */
-export function preloadFace(player: FacePerson | undefined | null, staff?: boolean, year?: number): void {
-  if (!player || typeof Image === 'undefined') return;
+/**
+ * Foto vorab laden UND dekodieren (Blättern im Profil, Kader, Lesebereich der Zentrale – ui/imagePreload.ts):
+ * danach erscheint es ohne Platzhalter/Einblenden. Trikotmaske gleich mit. Begrenzter Zwischenspeicher.
+ */
+export function preloadFace(player: FacePerson | undefined | null, staff?: boolean, year?: number): Promise<void> {
+  if (!player || typeof Image === 'undefined') return Promise.resolve();
   const img = faceSrcOf(player, staff, year);
-  if (!img || ready.has(img.src) || pending.has(img.src)) return;
-  const el = new Image();
-  el.decoding = 'async';
-  pending.set(img.src, el);
-  el.onload = () => { pending.delete(img.src); ready.add(img.src); };
-  el.onerror = () => { pending.delete(img.src); markFaceFailed(img.src); };
-  el.src = img.src;
+  if (!img || ready.has(img.src)) return Promise.resolve();
+  if (img.mask) preloadImage(img.mask);
+  return preloadImage(img.src).then((ok) => { if (ok) ready.add(img.src); else markFaceFailed(img.src); });
 }
 
 /**

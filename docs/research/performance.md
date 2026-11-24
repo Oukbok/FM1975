@@ -79,6 +79,30 @@ Wachsende Felder – alle großen Archive haben bereits eine Obergrenze: Welt-Hi
 - `startup-bench` (Vorlage „Test 3 Jahre“, je 2 × 3 Läufe abwechselnd): Hauptmenü ≈ 1,4–1,7 s, Spiel geladen ≈ 1,7–2,1 s vorher wie nachher (Schwankung durch Last größer als jeder Unterschied). Statisch geladenes JS beim Start unverändert 1913 KiB (gemessen über die Importe von `app.js`; der Wert „JS beim Start“ des Skripts schwankt mit dem Vorladen im Leerlauf).
 - `page-bench` mit einem Spielstand nach 20 Jahren (Dezember 1994, `DUMP=… node scripts/sim.mjs 20`): Laden bis zur Spieloberfläche ≈ 1,9–2,3 s. Fast alle Seiten öffnen in unter 60 ms. Die schwersten (warm, mehrere Läufe, unter Last): Transfers › Spielerpool 250–460 ms (29 000 Spieler der Welt mit geschätzten Werten), Transfermarkt 140–300 ms, Beobachtung 125–220 ms, Jugend › Jugendwettbewerbe ≈ 110 ms, Verein › Stadion ≈ 100 ms (Zeichnung). Keine Seite hängt spürbar; der Alt-Spielstand wird im neuen Build ohne Fehler umgestellt.
 
+## Bilder ohne Ladezeit (Wunsch Pascal: Zentrale/Newscenter, Steam-Fassung)
+
+Messung `npm run build && node tests/image-load-probe.mjs` (`RUNS=3`, `CPU=4` gedrosselt, `DIST=…` anderer Build; frischer Browser-Kontext, lokaler Server wie die Desktop-Fassung). Gemessen wird je Bild-Frame, wann das letzte sichtbare Bild der Seite noch fehlte (img nicht geladen, Gesicht ohne `.loaded`, Wappen wechselt noch auf die zentrierte Fassung, CSS-Textur noch unterwegs) – „Verzögerung“ = Zeit vom Erscheinen der Seite bis zum endgültigen Bild. Spielstand Vorlage „Test 3 Jahre“, 1920×1080, Median aus 3 Läufen:
+
+| Verzögerung nach Erscheinen | vorher | nachher | vorher 4× CPU | nachher 4× CPU |
+|---|---|---|---|---|
+| Zentrale nach „Laden“ | 741 ms | 0 ms | 1637 ms | 0 ms |
+| Kader › Kader (25 Gesichter) | 191 ms | 0 ms | 394 ms | 0 ms |
+| Zentrale erneut | 0 ms | 0 ms | 0 ms | 0 ms |
+| Nachricht wechseln (Foto/Gesichter, 24 Nachrichten) | Median 18 / max 123 ms | 3 / 11 ms | 46 / 122 ms | 15 / 30 ms |
+
+Ursachen vorher: Gesichter (Platzhalter bis `onLoad`, dann Einblenden), Wappen erst im Original und ~0,7 s später in der zentrierten Fassung (`ui/crestTrim.ts`), Pressefoto `loading="lazy"`. Die Zentrale erscheint nach „Laden“ unverändert schnell (ungedrosselt 1,8 → 1,7 s ab Klick); gedrosselt wartet das Laden höchstens `WARM_CAP_MS` = 600 ms länger, die Messwerte schwanken dort stark (Erscheinen 5,0–6,7 s je Lauf).
+
+Was läuft:
+- `ui/imagePreload.ts`: `preloadImage` = unsichtbares `<img>` + `decode()`. Akten-Texturen `UI_TEXTURES` (müssen den CSS-Adressen aus `31-dossier.css` exakt entsprechen, Prüfung `npm run test:images`) lädt das Hauptmenü im Leerlauf (`preloadUiTextures` aus App.tsx) und hält sie. Gesichter/Fotos liegen in einer begrenzten Liste (`LRU_MAX` 96) – nicht alle Hunderte Gesichter bleiben im Speicher; was herausfällt, darf der Browser verwerfen.
+- `shell/warmImages.ts`: `warmGameImages` beim Laden/Starten eines Spiels, bevor die Zentrale erscheint (App.tsx, höchstens 600 ms): Texturen, zentrierte Wappen der eigenen Liga (`warmCrest`, ≈ 2,7 ms je Wappen), Gesichter des eigenen Kaders, Foto + Gesichter der ersten Nachricht. `warmSquadFaces` danach im Leerlauf (Kader + Jugend, höchstens 60).
+- Newscenter: `readerPhoto`/`preloadReader` – beim Wählen einer Nachricht werden die Nachbarn (+1, −1, +2, +3) vorgeladen; Pressefoto ohne `lazy`, feste Seitenverhältnisse (`aspect-ratio`) gab es schon (kein Layoutsprung).
+- `PlayerAvatar.preloadFace` dekodiert jetzt vor dem Markieren als fertig und lädt die Trikotmaske mit.
+- Desktop (`desktop/main.cjs`): Spiel kommt weiter lokal über `app://`; Bilder und Stücke unter `assets/`/`chunks/` mit `Cache-Control: immutable` (nur Speicher-Cache der Sitzung, kein Festplatten-Cache für eigene Protokolle → nach einem Steam-Update keine alten Bilder). Web: `public/_headers` (Cloudflare) – `chunks/*` ein Jahr, `assets/*` einen Tag + `stale-while-revalidate` 30 Tage (Namen ohne Hash).
+- Größe: Bilder, die das Spiel nicht mehr zeigt (früherer Büro-/Stadion-Hintergrund 3,5 + 0,4 MB, Zuschauerfoto 1,9 MB, Trikot 0,7 MB, `menu-bg-3.jpg`), bleiben in `images/`, werden aber nicht mehr nach `dist` kopiert (`NOT_SHIPPED` in `scripts/build.mjs`, tote CSS-Adressen entfernt): `dist/assets` 73 → 66 MB. Hauptmenü-Bild als WebP über `scripts/optimize-images.mjs` (Chromium aus Playwright, keine neue Abhängigkeit; 471 → 243 KB, Original bleibt, Vergleich 1:1 ohne sichtbaren Unterschied, mittlere Abweichung ≈ 2,4/255).
+- Pro Lauf lädt die Probe jetzt 104 statt 50 Bilddateien (6,1 statt 3,2 MB, lokal) – das Vorladen holt Texturen, Kadergesichter und Nachbar-Nachrichten im Voraus.
+
+Offen: Gesichter sind 512 × 600 und werden auch als 26-px-Miniatur in Listen voll dekodiert (≈ 1,2 MB Speicher je Gesicht); eigene Miniaturen (z. B. 128 px) würden Speicher und Dekodierzeit in langen Listen sparen. Wappen sind 256-px-PNG (≈ 90 KB); WebP würde ≈ die Hälfte sparen, Pfade stehen aber auch in Datensätzen.
+
 ## Was die Optimierungen tun (Ergebnisse unverändert)
 
 - **Aufgebote der Nationalteams** (`game/national/pool.ts` `pickSquad`): die Wertung (Stärke + Note des Bundestrainers aus `hashStr`) wurde in jedem Vergleich der Sortierung neu gerechnet – jetzt einmal je Kandidat, dann nur die besten 3 Torhüter bzw. Feldspieler ausgewählt (gleiche Reihenfolge wie die stabile Sortierung, Gleichstand → frühere Stelle). Nation je Kürzel und Note je Jahr zwischengespeichert.

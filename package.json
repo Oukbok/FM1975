@@ -17,6 +17,7 @@
     "test:loans": "node scripts/run-ts.mjs tests/loans-test.ts",
     "test:saves": "node scripts/build.mjs && node tests/save-idb.mjs",
     "test:desktop": "node tests/desktop-test.mjs",
+    "test:images": "node tests/image-assets-check.mjs",
     "test:editor": "node scripts/build.mjs && node tests/editor-ui.mjs && node tests/editor-qol.mjs && node tests/dataset-lib.mjs",
     "test:business": "node scripts/run-ts.mjs tests/club-business-test.ts",
     "test:registration": "node scripts/run-ts.mjs tests/registration-test.ts",

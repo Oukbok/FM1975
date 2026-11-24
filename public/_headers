@@ -1,0 +1,8 @@
+# Cloudflare (statische Assets, wrangler.jsonc): Cache-Regeln für die Web-Fassung.
+# Stücke mit Hash im Namen ändern sich nie → ein Jahr, ohne Rückfrage.
+/chunks/*
+  Cache-Control: public, max-age=31536000, immutable
+# Bilder/Töne ohne Hash (gleicher Name kann ersetzt werden): einen Tag frisch, danach bis
+# 30 Tage sofort aus dem Cache zeigen und im Hintergrund prüfen (keine Wartezeit beim Seitenwechsel).
+/assets/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=2592000

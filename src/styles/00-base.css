@@ -272,8 +272,10 @@
   --photo-filter-zentrale: saturate(0.55) contrast(1.06) brightness(0.92);
   --photo-opacity: 1;
   /* Motiv (Pascal reicht eigene Fotos nach; Themes/Test können es tauschen) */
-  --photo-url: url('assets/stadium-background.jpg');
-  --photo-url-zentrale: url('assets/office-background.png?v=2');
+  /* Früher Stadion-/Büro-Foto; der Look „Akte“ (31-dossier.css) zeigt Papier. Die Fotos liegen weiter in
+     images/, werden aber nicht mehr ausgeliefert (scripts/build.mjs NOT_SHIPPED). */
+  --photo-url: none;
+  --photo-url-zentrale: none;
   --photo-pos: center top;
   /* Glas: Deckkraft-Faktor der Boxen über dem Foto (1 = bisherige Deckkraft, 0,6 = deutlich
      durchscheinend) und Filter dahinter (z. B. blur(14px) = Milchglas). Gilt für DashBox,

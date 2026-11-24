@@ -22,7 +22,18 @@ mkdirSync(out, { recursive: true });
 cpSync('public', out, { recursive: true });
 // Alle Bilder liegen im Ordner images/ (Wunsch Pascal: ein Ort zum Finden und als Referenz);
 // im Spiel heißen sie weiter assets/… – deshalb nach dist/assets kopieren.
-cpSync('images', `${out}/assets`, { recursive: true });
+// Nicht mitkopiert (Wunsch Pascal: Originale bleiben in images/ als Referenz): Bilder, die das Spiel nicht
+// (mehr) zeigt bzw. für die es eine verkleinerte Fassung gibt (scripts/optimize-images.mjs). Spart ≈ 7 MB
+// im Desktop-/Steam-Paket. Wer eines davon wieder nutzen will: hier austragen.
+const NOT_SHIPPED = new Set([
+  'images/office-background.png',   // 3,5 MB – früherer Zentrale-Hintergrund, vom Look „Akte“ überdeckt
+  'images/stadium-background.jpg',  // früherer Seitenhintergrund, vom Look „Akte“ überdeckt
+  'images/stadium-crowd.jpg',       // 1,9 MB – alte Zentrale-Box, nicht mehr im Spiel
+  'images/shirt-base.png',          // alte Kader-Box, nicht mehr im Spiel
+  'images/menu-bg-3.jpg',           // nirgends verwendet
+  'images/start-grandstand.jpg',    // ersetzt durch start-grandstand.webp
+]);
+cpSync('images', `${out}/assets`, { recursive: true, filter: (src) => !NOT_SHIPPED.has(src.replaceAll('\\', '/')) });
 writeFileSync(`${out}/version.json`, JSON.stringify({ version, build: buildId }) + '\n');
 writeFileSync(`${out}/index.html`, `<!DOCTYPE html>
 <html lang="de">
