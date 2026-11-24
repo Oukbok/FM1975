@@ -187,12 +187,12 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
   // ---------------------------------------------------------------------------
   {
     season: '2009/10',
-    headline: 'Europa-Liga und Vuvuzelas',
+    headline: 'Kontinental-Liga und Vuvuzelas',
     football: [
-      { topic: 'liga', title: 'Aus Europa-Pokal wird Europa-Liga', text: 'Der zweite Europapokal heißt jetzt Europa-Liga und spielt eine Gruppenphase mit 48 Teams.', inGame: 'Der Europa-Pokal hat eine Gruppenphase mit mehr Spielen und höheren Prämien.' },
+      { topic: 'liga', title: 'Aus Europa-Pokal wird Kontinental-Liga', text: 'Der zweite Europapokal heißt jetzt Kontinental-Liga und spielt eine Gruppenphase mit 48 Teams.', inGame: 'Der Europa-Pokal hat eine Gruppenphase mit mehr Spielen und höheren Prämien.' },
       { topic: 'medien', title: 'Neuer Name im Bezahlfernsehen', text: 'Im Juli 2009 übernimmt ein internationaler Medienkonzern den Bezahlsender und gibt ihm einen neuen Namen. Die Samstags-Sportsendung im öffentlich-rechtlichen Fernsehen zeigt weiter die Zusammenfassungen.' },
       { topic: 'geld', title: 'Neuer TV-Vertrag', text: 'Bis 2013 erhält die Liga gut 400 Mio. Euro pro Saison aus der nationalen Vermarktung.' },
-      { topic: 'regeln', title: 'Torrichter im Test', text: 'In der Europa-Liga stehen versuchsweise zwei zusätzliche Schiedsrichterassistenten an den Torlinien.' },
+      { topic: 'regeln', title: 'Torrichter im Test', text: 'In der Kontinental-Liga stehen versuchsweise zwei zusätzliche Schiedsrichterassistenten an den Torlinien.' },
       { topic: 'liga', title: 'WM in Südafrika', text: 'Im Sommer 2010 findet die WM erstmals in Afrika statt. Der Klang der Vuvuzelas wird zum Markenzeichen.' },
     ],
     society: [
@@ -409,7 +409,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     football: [
       { topic: 'liga', title: 'Zuschauer mit Auflagen', text: 'Mit 2G- und 3G-Regeln dürfen wieder Fans ins Stadion; im Winter wird erneut ohne Publikum gespielt, ab März 2022 füllen sich die Ränge.' },
       { topic: 'liga', title: 'Montagsspiele abgeschafft', text: 'Seit 2021/22 gibt es in der 1. Liga keine Montagsspiele mehr.' },
-      { topic: 'liga', title: 'Konferenz-Liga', text: 'Der Europaverband startet mit der Konferenz-Liga einen dritten Europapokal.' },
+      { topic: 'liga', title: 'Europa-Trophäe', text: 'Der Europaverband startet mit der Europa-Trophäe einen dritten Europapokal.' },
       { topic: 'regeln', title: 'Auswärtstorregel fällt', text: 'In den Europapokalen zählen Auswärtstore bei Gleichstand nicht mehr doppelt.' },
       { topic: 'medien', title: 'Klubs als Medienhäuser', text: 'Foto- und Kurzvideo-Plattformen und eigene Apps werden zu Hauptkanälen; Vereine stellen Social-Media-Redaktionen und Datenwissenschaftler ein.', inGame: 'Neue Fachkräfte für Social Media und Datenwissenschaft im Mitarbeiterstab.' },
     ],
@@ -461,7 +461,7 @@ export const SEASONS_2000: SeasonBriefingEntry[] = [
     season: '2024/25',
     headline: 'Mega-Meisterliga und Neuwahlen',
     football: [
-      { topic: 'liga', title: 'Ligaphase statt Gruppen', text: 'Meisterliga, Europa-Liga und Konferenz-Liga spielen mit 36 Teams in einer großen Ligaphase.', inGame: 'Die Meisterliga hat eine Ligaphase: mehr Spiele, mehr Prämien.' },
+      { topic: 'liga', title: 'Ligaphase statt Gruppen', text: 'Meisterliga, Kontinental-Liga und Europa-Trophäe spielen mit 36 Teams in einer großen Ligaphase.', inGame: 'Die Meisterliga hat eine Ligaphase: mehr Spiele, mehr Prämien.' },
       { topic: 'regeln', title: 'Nur der Kapitän spricht', text: 'Nach dem Vorbild der EM 2024 soll im deutschen Profifußball nur noch der Kapitän mit dem Schiedsrichter diskutieren.' },
       { topic: 'geld', title: 'TV-Poker mit Schiedsgericht', text: 'Nach einem Streit mit einem Streamingdienst vergibt der Ligaverband im Dezember 2024 die Rechte ab 2025/26 neu – im Schnitt rund 1,12 Milliarden Euro pro Saison.' },
       { topic: 'geld', title: 'Polizeikosten bestätigt', text: 'Im Januar 2025 bestätigt das Bundesverfassungsgericht, dass Bremen die Liga an Polizeikosten für Hochrisikospiele beteiligen darf.', inGame: 'Polizeigebühren für Hochrisikospiele steigen ab 2025.' },

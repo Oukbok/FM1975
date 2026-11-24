@@ -103,7 +103,7 @@ if (mode === 'groups') {
   // Andere Wettbewerbe der Saison (Europa-Pokal mit Gruppendritten)
   const sel = page.locator('.cmp-select .sel3').nth(2); // Land | Saison | Wettbewerb
   const opts = (await optionsOf(page, sel)).map((o) => o.label);
-  const other = opts.find((o) => /Europa-Pokal|Europa-Liga/.test(o));
+  const other = opts.find((o) => /Europa-Pokal|Kontinental-Liga/.test(o));
   if (other) {
     await pickOption(page, sel, { label: other }); await page.waitForTimeout(600); await shot('05_europapokal');
     const t2 = page.locator('.cmp-toolbar button:has-text("Turnierbaum")');

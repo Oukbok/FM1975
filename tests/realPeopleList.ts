@@ -126,7 +126,7 @@ export const HISTORIC: string[] = [
 /**
  * Verbände und Wettbewerbe (Wunsch Pascal: „Verbände und Wettbewerbe müssen neutral heißen“) –
  * im Text das Schema aus data/neutralNames.ts (Tabelle in CLAUDE.md): Weltverband, Europaverband,
- * Fußballbund, Ligaverband, Regelgremium, Meisterliga, Europa-Liga, Konferenz-Liga, Europa-Pokal,
+ * Fußballbund, Ligaverband, Regelgremium, Meisterliga, Kontinental-Liga, Europa-Trophäe, Europa-Pokal,
  * Landespokal, 1. Liga/2. Liga, Nationenliga, Transatlantik-Pokal, Klub-Weltturnier, Kontinentalsieger-Pokal,
  * Gipfelpokal, Auftaktpokal, Hallenfinale, Goldener Stern, Torjägerstern. Geprüft in ALLEN Quelltexten
  * (String-Inhalte); reine interne Schlüssel ('UEFA' als Kontinent) sind ausgenommen.
@@ -146,6 +146,8 @@ export const ORGS: string[] = [
   'Sommermärchen\\p{L}*', 'Wembley\\p{L}*',
   // Kampagnen-/Aktionsnamen (Wunsch Pascal: geschützte Namen umschreiben, Ereignisbegriffe wie Bosman-Urteil bleiben)
   'Fridays for Future', 'Ice Bucket', 'One ?Love',
+  // Stufe 3: frühere neutrale Namen, die die Marken „Europa League“/„Conference League“ direkt übersetzen
+  'Europa[- ]Liga\\p{L}*', 'Konferenz[- ]Liga\\p{L}*',
 ];
 
 /** Sprachlich holprig (Wunsch Pascal: „Erstligist“ glätten → „Verein/Klub der 1. Liga“, „Oberhaus-Klub“). */

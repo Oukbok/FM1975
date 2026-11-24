@@ -161,7 +161,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1975, to: 1998, topic: 'liga',
     title: 'Pokal der Pokalsieger',
     then: 'Die nationalen Pokalsieger spielen einen eigenen Europapokal.',
-    today: 'Den Pokal der Pokalsieger gibt es nicht mehr; Pokalsieger spielen in der Europa-Liga.',
+    today: 'Den Pokal der Pokalsieger gibt es nicht mehr; Pokalsieger spielen in der Kontinental-Liga.',
   },
   {
     from: 1975, to: 1996, topic: 'liga',
@@ -179,7 +179,7 @@ export const DIFFERENCES: DifferenceToToday[] = [
     from: 1995, to: 2008, topic: 'liga',
     title: 'Sommerpokal im Sommer',
     then: 'Über den Sommerpokal im Sommer können sich Vereine für den Europa-Pokal qualifizieren.',
-    today: 'Den Sommerpokal gibt es nicht mehr; die Konferenz-Liga ist der dritte Europapokal.',
+    today: 'Den Sommerpokal gibt es nicht mehr; die Europa-Trophäe ist der dritte Europapokal.',
   },
   {
     from: 1997, to: 2007, topic: 'liga',

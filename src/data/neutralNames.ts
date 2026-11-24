@@ -3,11 +3,13 @@
 // neutral heißen“). Angezeigte Texte nennen nie die echten Namen (FIFA, UEFA, DFB, DFL,
 // Bundesliga, Champions League …), sondern das Schema des Spiels – Tabelle in CLAUDE.md:
 //   Weltverband · Europaverband · Fußballbund · Ligaverband · Regelgremium ·
-//   Pokal der Landesmeister → Meisterliga · Pokal der Pokalsieger → Konferenz-Liga ·
-//   Messepokal → Europa-Pokal → Europa-Liga · Landespokal · 1. Liga/2. Liga ·
+//   Pokal der Landesmeister → Meisterliga · Pokal der Pokalsieger → Europa-Trophäe ·
+//   Messepokal → Europa-Pokal → Kontinental-Liga · Landespokal · 1. Liga/2. Liga ·
 //   Transatlantik-Pokal · Klub-Weltturnier · Kontinentalsieger-Pokal · Gipfelpokal · Auftaktpokal ·
 //   Hallenfinale · Goldener Stern · Torjägerstern (Stufe 2, `game.namesV` 2: sprachliche Glättung
-//   „Erstligist“ → „Klub der 1. Liga“ – `RULES_V2` mit den Fällen im Satz).
+//   „Erstligist“ → „Klub der 1. Liga“ – `RULES_V2` mit den Fällen im Satz; Stufe 3, `game.namesV` 3:
+//   frühere Namen „Europa-Liga“/„Konferenz-Liga“ – direkte Übersetzungen der geschützten Marken –
+//   → „Kontinental-Liga“/„Europa-Trophäe“, `RULES_V3`; „Europa-Pokal“ bleibt als Gattungsbegriff).
 // `neutralText` setzt die Regeln auf einen fertigen Text um (Spielstände: game/neutralNamesMigration.ts);
 // neue Texte schreiben die neutralen Namen gleich selbst. Kein neuer Name enthält einen alten
 // (idempotent). Interne Schlüssel ('UEFA' als Kontinent, 'uefa' als Wettbewerb) bleiben.
@@ -42,8 +44,8 @@ const RULES: Rule[] = [
   [/(?:UEFA[- ])?Nations[- ]League/g, 'Nationenliga'],
   [/\bUEFA[- ](?:Pokal|Cup)/g, 'Europa-Pokal'],
   [/(?:UEFA[- ])?Champions[- ]League/g, 'Meisterliga'],
-  [/(?:UEFA[- ])?Europa[- ]League/g, 'Europa-Liga'],
-  [/(?:UEFA[- ])?(?:Europa[- ])?Conference[- ]League/g, 'Konferenz-Liga'],
+  [/(?:UEFA[- ])?Europa[- ]League/g, 'Kontinental-Liga'],
+  [/(?:UEFA[- ])?(?:Europa[- ])?Conference[- ]League/g, 'Europa-Trophäe'],
   [/\b(?:UEFA[- ])?Intertoto(?:[- ]Cup)?\b|\bUI-Cup\b/g, 'Sommerpokal'],
   [/Messestädte-Pokal/g, 'Messepokal'],
   [/\bCopa Libertadores\b/g, 'Südamerika-Pokal der Landesmeister'],
@@ -197,10 +199,21 @@ const RULES_V2: Rule[] = [
   ...ERSTLIGIST,
 ];
 
+/** Stufe 3 (Wunsch Pascal: neue Namen, wo rechtliches Risiko besteht): die früheren neutralen Namen
+ *  „Europa-Liga“ und „Konferenz-Liga“ übersetzen die Marken „Europa League“/„Conference League“ direkt.
+ *  Alle drei Namen sind weiblich – Artikel und Fälle bleiben. Kein neuer Name enthält einen alten. */
+const RULES_V3: Rule[] = [
+  [/Europa[- ]Liga/g, 'Kontinental-Liga'],
+  [/Konferenz[- ]Liga/g, 'Europa-Trophäe'],
+];
+
 /** Schneller Vorfilter: nur Texte mit einem der alten Namen laufen durch alle Regeln. */
 const ANY = /UEFA|FIFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|\bCAF\b|\bAFC\b|\bOFC\b|Bundesligi?|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der|Intertoto|UI-Cup|Messestädte|Libertadores|Ballon d|Premier League|Serie A|LaLiga|La Liga|Ligue 1|Eredivisie|Europäischer? Verband/;
 /** Vorfilter Stufe 2. */
 const ANY_V2 = /Weltpokal|Interkontinental|Intercontinental|(?:Klub|Club)-W|Konföderationen|Confed|Super(?:cup|-Cup| Cup)|Ligapokal|[Mm]asters|Goldene[nmr]? (?:Ball|Schuh)|Sommermärchen|Wembley|(?:Erst|Bundes)ligist/;
+
+/** Vorfilter Stufe 3. */
+const ANY_V3 = /Europa[- ]Liga|Konferenz[- ]Liga/;
 
 /** Interne Schlüssel, die genau so im Spielstand stehen (Kontinent eines Nationalteams, Kürzel). */
 const KEYS = new Set(['UEFA', 'FIFA', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC', 'OFC', 'DFB', 'DFL']);
@@ -211,8 +224,9 @@ export function neutralText(s: string): string {
   let out = s;
   if (ANY.test(out)) for (const [rx, to] of RULES) out = out.replace(rx, to);
   if (ANY_V2.test(out)) for (const [rx, to] of RULES_V2) out = out.replace(rx, to);
+  if (ANY_V3.test(out)) for (const [rx, to] of RULES_V3) out = out.replace(rx, to);
   return out;
 }
 
 /** Enthält der Text noch einen alten Namen? (Prüfung in Tests.) */
-export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && (ANY.test(s) || ANY_V2.test(s));
+export const hasRealOrgName = (s: string): boolean => !KEYS.has(s) && (ANY.test(s) || ANY_V2.test(s) || ANY_V3.test(s));

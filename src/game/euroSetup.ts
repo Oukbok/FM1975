@@ -197,7 +197,7 @@ function cupFinalists(cup: CupState | null | undefined): { winner: string | null
  *   Meisterliga: die ersten N der Tabelle,
  *   Pokalsieger-Wettbewerb (bis 1998): Pokalsieger, sonst Finalist, sonst nächster Platz,
  *   Europa-Pokal: ab 1999 zuerst der Pokalsieger, dann die nächsten Plätze,
- *   Konferenz-Liga (ab 2021): nächster Platz.
+ *   Europa-Trophäe (ab 2021): nächster Platz.
  */
 export function germanQualifiersV2(g: QualSource, startYear: number, rank: number, firstSeason: boolean): Record<EuroCompId, string[]> {
   if (firstSeason) {

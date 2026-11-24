@@ -3,9 +3,9 @@
 // -----------------------------------------------------------------------------
 // Das Spiel kennt drei Wettbewerbs-„Fächer“ (EuroCompId):
 //   ec   = Pokal der Landesmeister, ab 1992/93 Meisterliga (Vorbild Champions League)
-//   cwc  = Pokal der Pokalsieger bis 1998/99, ab 2021/22 Konferenz-Liga (Vorbild
+//   cwc  = Pokal der Pokalsieger bis 1998/99, ab 2021/22 Europa-Trophäe (Vorbild
 //          Conference League); dazwischen ruht das Fach
-//   uefa = Europa-Pokal (Vorbild UEFA-Pokal), ab 2009/10 Europa-Liga (Europa League)
+//   uefa = Europa-Pokal (Vorbild UEFA-Pokal), ab 2009/10 Kontinental-Liga (Europa League)
 //
 // Quellen:
 //   • Auswärtstorregel: 1965/66 im Pokalsieger-Wettbewerb eingeführt, 1966/67 Messe-
@@ -182,12 +182,12 @@ export const EURO_FORMATS: EuroFormat[] = [
       [{ from: 1, to: 2, target: 'af' }, { from: 3, to: 3, target: 'r3', comp: 'uefa' }]),
     ...koFrom16(['02-24', '03-10'], ['03-24', '04-07'], ['04-21', '05-05'], '05-26')] },
   { comp: 'ec', from: 2004, to: 2020, field: 32, weekday: 3, ...A(3, true, 'h2h'),
-    note: 'Acht Vierergruppen, Achtelfinale; die Gruppendritten wechseln ins Sechzehntelfinale des Europa-Pokals bzw. der Europa-Liga.',
+    note: 'Acht Vierergruppen, Achtelfinale; die Gruppendritten wechseln ins Sechzehntelfinale des Europa-Pokals bzw. der Kontinental-Liga.',
     stages: [groups('gs', 'Gruppenphase', 8, 4, 2, ['09-17', '10-01', '10-22', '11-05', '11-26', '12-10'],
       [{ from: 1, to: 2, target: 'af' }, { from: 3, to: 3, target: 'r32', comp: 'uefa', seed: 1.5 }]),
     ...koFrom16(['02-24', '03-10'], ['04-07', '04-14'], ['04-28', '05-05'], '05-28')] },
   { comp: 'ec', from: 2021, to: 2023, field: 32, weekday: 3, ...A(3, false, 'h2h'),
-    note: 'Acht Vierergruppen ohne Auswärtstorregel; die Gruppendritten wechseln in die Zwischenrunde der Europa-Liga.',
+    note: 'Acht Vierergruppen ohne Auswärtstorregel; die Gruppendritten wechseln in die Zwischenrunde der Kontinental-Liga.',
     stages: [groups('gs', 'Gruppenphase', 8, 4, 2, ['09-15', '09-29', '10-20', '11-03', '11-24', '12-08'],
       [{ from: 1, to: 2, target: 'af' }, { from: 3, to: 3, target: 'po', comp: 'uefa', seed: 3 }]),
     ...koFrom16(['02-16', '03-09'], ['04-06', '04-13'], ['04-27', '05-04'], '05-28')] },
@@ -196,12 +196,12 @@ export const EURO_FORMATS: EuroFormat[] = [
     stages: [league(8, 4, ['09-18', '10-01', '10-22', '11-05', '11-26', '12-10', '01-21', '01-29']),
       ko('po', 'Play-offs', 2, ['02-11', '02-18'], 'seeded'), ...koFrom16(['03-04', '03-11'], ['04-08', '04-15'], ['04-29', '05-06'], '05-31')] },
 
-  // ---------------- Pokal der Pokalsieger / Konferenz-Liga ----------------
+  // ---------------- Pokal der Pokalsieger / Europa-Trophäe ----------------
   { comp: 'cwc', from: 1975, to: 1998, field: 16, weekday: 3, ...A(2, true, 'overall'),
     note: 'K.-o.-System mit Hin- und Rückspiel, Endspiel als ein Spiel.',
     stages: [ko('af', 'Achtelfinale', 2, ['10-22', '11-05']), ko('vf', 'Viertelfinale', 2, ['03-03', '03-17']), ko('hf', 'Halbfinale', 2, ['03-31', '04-14']), fin('05-05')] },
   { comp: 'cwc', from: 2021, to: 2023, field: 32, weekday: 4, ...A(3, false, 'h2h'),
-    note: 'Acht Vierergruppen; Sieger ins Achtelfinale, Zweite in die Zwischenrunde gegen die Gruppendritten der Europa-Liga.',
+    note: 'Acht Vierergruppen; Sieger ins Achtelfinale, Zweite in die Zwischenrunde gegen die Gruppendritten der Kontinental-Liga.',
     stages: [groups('gs', 'Gruppenphase', 8, 4, 2, ['09-16', '09-30', '10-21', '11-04', '11-25', '12-09'],
       [{ from: 1, to: 1, target: 'af' }, { from: 2, to: 2, target: 'po' }]),
     ko('po', 'Zwischenrunde', 2, ['02-17', '02-24'], 'seeded'), ...koFrom16(['03-10', '03-17'], ['04-07', '04-14'], ['04-28', '05-05'], '05-25')] },
@@ -210,7 +210,7 @@ export const EURO_FORMATS: EuroFormat[] = [
     stages: [league(6, 6, ['10-03', '10-24', '11-07', '11-28', '12-12', '12-19']),
       ko('po', 'Play-offs', 2, ['02-13', '02-20'], 'seeded'), ...koFrom16(['03-06', '03-13'], ['04-10', '04-17'], ['05-01', '05-08'], '05-28')] },
 
-  // ---------------- Europa-Pokal / Europa-Liga ----------------
+  // ---------------- Europa-Pokal / Kontinental-Liga ----------------
   { comp: 'uefa', from: 1975, to: 1996, field: 32, weekday: 3, ...A(2, true, 'overall'),
     note: 'K.-o.-System mit Hin- und Rückspiel bis einschließlich Finale.',
     stages: [ko('r1', '1. Runde', 2, ['10-22', '11-05']), ko('r2', 'Achtelfinale', 2, ['11-26', '12-10']),
@@ -241,7 +241,7 @@ export const EURO_FORMATS: EuroFormat[] = [
     stages: [groups('gs', 'Gruppenphase', 12, 4, 2, ['09-17', '10-01', '10-22', '11-05', '12-02', '12-17'], [{ from: 1, to: 2, target: 'r32' }]),
       ko('r32', 'Sechzehntelfinale', 2, ['02-18', '02-25'], 'seeded'), ...koFrom16(['03-11', '03-18'], ['04-08', '04-15'], ['04-29', '05-06'], '05-27', 'free')] },
   { comp: 'uefa', from: 2021, to: 2023, field: 32, weekday: 4, ...A(3, false, 'h2h'),
-    note: 'Acht Vierergruppen; Sieger ins Achtelfinale, Zweite gegen die Gruppendritten der Meisterliga, Dritte in die Konferenz-Liga.',
+    note: 'Acht Vierergruppen; Sieger ins Achtelfinale, Zweite gegen die Gruppendritten der Meisterliga, Dritte in die Europa-Trophäe.',
     stages: [groups('gs', 'Gruppenphase', 8, 4, 2, ['09-16', '09-30', '10-21', '11-04', '11-25', '12-09'],
       [{ from: 1, to: 1, target: 'af' }, { from: 2, to: 2, target: 'po' }, { from: 3, to: 3, target: 'po', comp: 'cwc', seed: 3 }]),
     ko('po', 'Zwischenrunde', 2, ['02-17', '02-24'], 'seeded'), ...koFrom16(['03-10', '03-17'], ['04-07', '04-14'], ['04-28', '05-05'], '05-18')] },
@@ -264,9 +264,9 @@ export function euroCompActive(comp: EuroCompId, startYear: number): boolean {
 /** Anzeigename je Saison. */
 export function euroCompName(comp: EuroCompId, startYear: number): string {
   if (comp === 'ec') return startYear >= 1992 ? 'Meisterliga' : 'Pokal der Landesmeister';
-  if (comp === 'cwc') return startYear >= 2021 ? 'Konferenz-Liga' : 'Pokal der Pokalsieger';
+  if (comp === 'cwc') return startYear >= 2021 ? 'Europa-Trophäe' : 'Pokal der Pokalsieger';
   if (startYear < 1971) return 'Messepokal';
-  return startYear >= 2009 ? 'Europa-Liga' : 'Europa-Pokal';
+  return startYear >= 2009 ? 'Kontinental-Liga' : 'Europa-Pokal';
 }
 
 // -----------------------------------------------------------------------------
@@ -280,13 +280,13 @@ export function accessSlots(startYear: number, rank: number): { ec: number; cwc:
   if (y >= 1997 && y <= 1998) ec = rank <= 8 ? 2 : 1;
   else if (y >= 1999 && y <= 2017) ec = rank <= 3 ? 4 : rank <= 6 ? 3 : rank <= 15 ? 2 : 1;
   else if (y >= 2018) ec = rank <= 4 ? 4 : rank <= 6 ? 3 : rank <= 15 ? 2 : 1;
-  // Europa-Pokal / Europa-Liga (inkl. Pokalsieger ab 1999)
+  // Europa-Pokal / Kontinental-Liga (inkl. Pokalsieger ab 1999)
   let uefa: number;
   if (y <= 1998) uefa = rank <= 3 ? 4 : rank <= 8 ? 3 : rank <= 21 ? 2 : 1;
   else if (y <= 2008) uefa = rank <= 6 ? 3 : rank <= 15 ? 2 : 1;
   else if (y <= 2020) uefa = rank <= 6 ? 3 : 2;
   else uefa = 2;
-  // Pokal der Pokalsieger bzw. Konferenz-Liga
+  // Pokal der Pokalsieger bzw. Europa-Trophäe
   const cwc = y <= 1998 ? 1 : y >= 2021 ? 1 : 0;
   const cupTo = y <= 1998 ? 'cwc' : 'uefa';
   return { ec, cwc, uefa, cupTo };

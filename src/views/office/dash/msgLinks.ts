@@ -24,7 +24,7 @@ export interface MsgLink {
 }
 
 const NEG_TAB: [string, string] = ['transfers.verhandlungen', 'uebersicht'];
-const EURO_RE = /Europa|UEFA|Landesmeister|Pokal der Pokalsieger|Meisterliga|Konferenz|Intertoto/;
+const EURO_RE = /Europa|UEFA|Landesmeister|Pokal der Pokalsieger|Meisterliga|Kontinental-Liga|Konferenz|Intertoto/;
 
 function transferLinks(g: Game, m: InboxMessage, faces: Player[]): MsgLink[] {
   const mine = g.managedClubId;

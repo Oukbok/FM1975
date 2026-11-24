@@ -2409,7 +2409,7 @@ Große Vereine mit hoher Auslastung profitieren stärker vom **Eigenbetrieb** (v
 - Die Marke bestimmt die **Reichweite** im Sponsoring (siehe **Sponsoring & Werbung**), multipliziert **Fanartikel** und die **Vermarktung** (Lizenzen). International bekannte Vereine verkaufen außerdem **Fanartikel weltweit** (Lizenzen, Versand): eine echte Weltmarke 2024 bis rund 130 Mio. € im Jahr.
 
 ## Europapokal
-- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Meisterliga kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (München Rot 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im Europa-Pokal ab der Gruppenphase 2004 und der Europa-Liga 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
+- 1975 verdient ein Verein im Europapokal vor allem an den **Heimspielen** (volle Ränge); die Prämien sind klein. Prämien und **Startgelder** wachsen mit der Wirtschaft. Ab 1992 (Meisterliga mit Gruppenphase) steigen die Prämien im Landesmeister-Wettbewerb bis 2000 auf das Fünffache, in den anderen Wettbewerben auf das Doppelte. Mit der Gruppenphase der Meisterliga kommen hohe **Startgelder** dazu: Ein Teilnehmer bekommt 1999/2000 rund 8 Mio. €, heute rund 45 Mio. € schon fürs Dabeisein, international bekannte Vereine über Marktpool und Koeffizient bis knapp das Doppelte (München Rot 2024/25 insgesamt 106 Mio. € bis zum Viertelfinale); im Europa-Pokal ab der Gruppenphase 2004 und der Kontinental-Liga 2009 deutlich weniger. Europäischer Erfolg ist damit der stärkste Hebel für eine Dynastie – garantiert aber nichts.
 
 ## Preisschilder und Kontostand
 - **Gehälter, Marktwerte und das Transferbudget** sind Preisschilder in 1975-Werten und werden mit dem Spieljahr hochgerechnet angezeigt und gebucht. Der **Kontostand** ist nominal.
@@ -3497,7 +3497,7 @@ Unter **Verein → Erfolge → Vereinspokale** steht jeder Titel deines Vereins 
 ## Kategorien
 - **Liga** – Deutsche Meisterschaft (Meisterschale), DDR-Meisterschaft (Deckelpokal) und Staffelsiege in der 2. Liga, Regionalliga, Oberliga oder DDR-Liga (Silberteller).
 - **Pokal** – Landespokal, Gipfelpokal und Auftaktpokal.
-- **Kontinental** – Pokal der Landesmeister (ab 1992 Meisterliga), Pokal der Pokalsieger (ab 2021 Konferenz-Liga) und Europa-Pokal (ab 2009 Europa-Liga) – jeweils unter dem Namen der Saison.
+- **Kontinental** – Pokal der Landesmeister (ab 1992 Meisterliga), Pokal der Pokalsieger (ab 2021 Europa-Trophäe) und Europa-Pokal (ab 2009 Kontinental-Liga) – jeweils unter dem Namen der Saison.
 - **Jugend** – Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, DDR-Juniorenmeister, Jugend-Meisterliga und Staffelsiege der C- bis F-Jugend.
 - **Andere** – Hallenfinale und Aufstiege ohne Staffelsieg (Medaille).
 
@@ -4296,7 +4296,7 @@ Die 2. Liga: ${CALENDAR_ERAS.map((e) => `${e.label}: ${e.league2}`).join(' · ')
 Verteilte Spieltage (Freitag bis Montag) gibt es nur an normalen Wochenenden – rund um englische Wochen sowie am ersten und an den letzten zwei Spieltagen spielen alle am Samstag (bzw. Mittwoch). Simulierte Ligen spielen ihren Spieltag geschlossen am Hauptspieltag.
 
 ## Verlegungen
-- **Europapokal am Donnerstag** (Europa-Pokal ab 1999, Europa-Liga, Konferenz-Liga): Der Verein spielt am folgenden Wochenende **sonntags**. Liegt ein Freitags-, Sonntags- oder Montagsspiel zu dicht an einem Pokal- oder Europapokalspiel, rückt es innerhalb des Wochenendes. Das prüft der Spielausschuss rund zwölf Tage im Voraus – nur für Vereine, die noch im Wettbewerb sind. Du bekommst eine Nachricht „Spielverlegung“.
+- **Europapokal am Donnerstag** (Europa-Pokal ab 1999, Kontinental-Liga, Europa-Trophäe): Der Verein spielt am folgenden Wochenende **sonntags**. Liegt ein Freitags-, Sonntags- oder Montagsspiel zu dicht an einem Pokal- oder Europapokalspiel, rückt es innerhalb des Wochenendes. Das prüft der Spielausschuss rund zwölf Tage im Voraus – nur für Vereine, die noch im Wettbewerb sind. Du bekommst eine Nachricht „Spielverlegung“.
 
 ## Spielabsagen und Nachholspiele
 - Am **Vortag** wird der Platz begangen. Schnee, gefrorener Boden, dichter Nebel oder Dauerregen können ein Ligaspiel absagen. Das Wetter ist dasselbe, das die Vorschau „Nächstes Spiel“ zeigt.
@@ -4577,7 +4577,7 @@ Liegt zwischen zwei Europapokal-Runden die Winterpause, wird Mitte Dezember gelo
 - **Landespokal bis 1981/82:** ein Lostopf, der zuerst gezogene Verein hat Heimrecht.
 - **Landespokal ab 1982/83:** In der 1. Hauptrunde gibt es **zwei Töpfe** (Amateure, Profis); jede Paarung beginnt mit einer Amateurkugel. In allen Runden bis zum Halbfinale hat ein **Amateurverein gegen Profis Heimrecht** – auch wenn die Profikugel zuerst kam.
 - **Europapokal (K.-o.-Runden):** In der ersten Runde sind die stärkeren Vereine **gesetzt** und treffen auf Ungesetzte; je Paarung entscheidet das Los, aus welchem Topf die erste Kugel kommt – der zuerst gezogene Verein hat im Hinspiel Heimrecht. **Länderschutz** in der ersten Runde (im Europa-Pokal bis 2003 auch in der zweiten): Passt die gezogene Kugel nicht, geht sie zurück in den Topf. Nach einer Gruppen- oder Ligaphase sind die **besser Platzierten gesetzt**, spielen zuerst auswärts und haben das Rückspiel daheim; Duelle aus derselben Gruppe oder demselben Land sind ausgeschlossen.
-- **Gruppenauslosung:** Lostöpfe nach Stärke (in der zweiten Gruppenphase 1999–2003: Gruppensieger und Gruppenzweite), aus jedem Topf ein Verein je Gruppe, keine zwei Vereine eines Landes in einer Gruppe. Die Kugel geht in die erste Gruppe, in die sie passen darf. **Ligaphase** (ab 2024/25): Töpfe nach Stärke, jeder Verein bekommt zwei Gegner aus jedem Topf (Konferenz-Liga: einen), keine Gegner aus dem eigenen Land.
+- **Gruppenauslosung:** Lostöpfe nach Stärke (in der zweiten Gruppenphase 1999–2003: Gruppensieger und Gruppenzweite), aus jedem Topf ein Verein je Gruppe, keine zwei Vereine eines Landes in einer Gruppe. Die Kugel geht in die erste Gruppe, in die sie passen darf. **Ligaphase** (ab 2024/25): Töpfe nach Stärke, jeder Verein bekommt zwei Gegner aus jedem Topf (Europa-Trophäe: einen), keine Gegner aus dem eigenen Land.
 
 ## Wie wird gespielt? (Regeln dieser Runde)
 Vor jeder Ziehung zeigt der Startbildschirm die Regeln der Runde – genau so, wie das Spiel sie austrägt, und das ist das historische Vorbild der Saison (*Europapokal — Formate je Epoche*):
@@ -4646,8 +4646,8 @@ Parallel zur Liga und zum Landespokal laufen die europäischen Wettbewerbe der j
 | Fach | bis | danach |
 |---|---|---|
 | Pokal der Landesmeister | 1991/92 | **Meisterliga** (ab 1992/93, Gruppenphase schon ab 1991/92, Ligaphase ab 2024/25) |
-| Pokal der Pokalsieger | 1998/99 | ruht bis 2020/21, ab 2021/22 **Konferenz-Liga** |
-| Europa-Pokal | 2008/09 | **Europa-Liga** (ab 2009/10) |
+| Pokal der Pokalsieger | 1998/99 | ruht bis 2020/21, ab 2021/22 **Europa-Trophäe** |
+| Europa-Pokal | 2008/09 | **Kontinental-Liga** (ab 2009/10) |
 
 Formate, Feldgrößen und Weiterleitungen je Saison: *Europapokal — Formate je Epoche*.
 
@@ -4672,11 +4672,11 @@ Ab 1976/77 werden die deutschen Teilnehmer aus dem Spielstand ermittelt (siehe *
 - Alle K.-o.-Runden mit **Hin- und Rückspiel**; das **Gesamtergebnis** entscheidet. Das Rückspiel hat der Gegner des Hinspiels daheim.
 - **Auswärtstorregel bis 2020/21:** Bei gleichem Gesamtergebnis kommt weiter, wer mehr Tore auswärts erzielt hat – auch Tore in der Verlängerung des Rückspiels zählen. Seit 2021/22 abgeschafft (Beschluss des Europaverbands vom 24.06.2021).
 - **Verlängerung und Elfmeterschießen nur im Rückspiel**, das Hinspiel endet nach 90 Minuten.
-- **Endspiele** als ein Spiel (Landesmeister/Meisterliga, Pokalsieger, Konferenz-Liga); das **Europa-Pokal-Finale bis 1996/97 mit Hin- und Rückspiel**, ab 1997/98 ein Spiel.
+- **Endspiele** als ein Spiel (Landesmeister/Meisterliga, Pokalsieger, Europa-Trophäe); das **Europa-Pokal-Finale bis 1996/97 mit Hin- und Rückspiel**, ab 1997/98 ein Spiel.
 - Im Textmodus steht beim Rückspiel unter dem Spielstand **Hinspiel, Gesamtstand** und wer gerade (auch durch Auswärtstore) vorn liegt.
 
 ## Formate im Spiel
-| Saison | Meisterliga / Landesmeister | Europa-Pokal / Europa-Liga | Pokalsieger / Konferenz-Liga |
+| Saison | Meisterliga / Landesmeister | Europa-Pokal / Kontinental-Liga | Pokalsieger / Europa-Trophäe |
 |---|---|---|---|
 | 1975/76–1990/91 | 16 Teams, K.-o. ab Achtelfinale | 32 Teams, K.-o., Finale Hin/Rück (bis 1996/97) | 16 Teams, K.-o. |
 | 1991/92–1992/93 | 2. Runde (16), zwei Vierergruppen, Gruppensieger ins Finale | wie oben | wie oben |
@@ -4687,7 +4687,7 @@ Ab 1976/77 werden die deutschen Teilnehmer aus dem Spielstand ermittelt (siehe *
 | 2003/04 | acht Gruppen, Achtelfinale, Dritte → 3. Runde Europa-Pokal | wie oben (3. Runde im Februar) | – |
 | 2004/05–2008/09 | acht Gruppen, Achtelfinale, Dritte → Sechzehntelfinale | acht Fünfergruppen (4 Spiele), Platz 1–3 + 8 Dritte → Sechzehntelfinale | – |
 | 2009/10–2020/21 | wie oben | zwölf Vierergruppen, Platz 1–2 + 8 Dritte → Sechzehntelfinale | – |
-| 2021/22–2023/24 | acht Gruppen, Dritte → Zwischenrunde Europa-Liga | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen CL-Dritte, Dritte → Konferenz-Liga | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen EL-Dritte |
+| 2021/22–2023/24 | acht Gruppen, Dritte → Zwischenrunde Kontinental-Liga | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen Dritte der Meisterliga, Dritte → Europa-Trophäe | acht Gruppen: Sieger → Achtelfinale, Zweite → Zwischenrunde gegen Dritte der Kontinental-Liga |
 | ab 2024/25 | Ligaphase 36 Teams, 8 Spiele; 1–8 Achtelfinale, 9–24 Play-offs | Ligaphase 36 Teams, 8 Spiele | Ligaphase 36 Teams, 6 Spiele |
 
 Nach 2026 bleibt das letzte Format bestehen.
@@ -4695,7 +4695,7 @@ Nach 2026 bleibt das letzte Format bestehen.
 ## Gruppen und Ligaphase
 - **Punkte:** Sieg 2 Punkte bis 1994/95, danach 3. Unentschieden 1 Punkt.
 - **Wertung bei Punktgleichheit:** bis 1998/99 Tordifferenz, Tore, Auswärtstore; 1999/00–2023/24 zuerst der **direkte Vergleich** (Punkte, Tordifferenz, Tore, Auswärtstore), dann Tordifferenz und Tore; in der Ligaphase Tordifferenz, Tore, Auswärtstore, Siege, Auswärtssiege. Zuletzt entscheidet im Spiel die Stärke (statt Koeffizient/Los).
-- Spieltage liegen im Kalender (meist Mittwoch, Europa-Liga und Konferenz-Liga donnerstags), kollisionsfrei zu Liga und Landespokal.
+- Spieltage liegen im Kalender (meist Mittwoch, Kontinental-Liga und Europa-Trophäe donnerstags), kollisionsfrei zu Liga und Landespokal.
 - In *Statistiken › International* zeigt die Ansicht **Gruppen** bzw. **Ligaphase** alle Tabellen: grün = weiter, gedämpft grün = Zwischenrunde/Play-offs, grau = Wechsel in einen anderen Wettbewerb. Unter **Runden** stehen die Spiele je Spieltag.
 
 ## Vereinfachungen
@@ -4711,7 +4711,7 @@ Nach 2026 bleibt das letzte Format bestehen.
     body: `## Deutsche Startplätze (ab 1976/77)
 Wie viele deutsche Vereine starten, hängt vom **Rang Deutschlands** in der Fünfjahreswertung des Spiels ab (siehe *Europa im Hintergrund*):
 
-| Saison | Meisterliga | Europa-Pokal / Europa-Liga (inkl. Pokalsieger ab 1999) | Pokalsieger / Konferenz-Liga |
+| Saison | Meisterliga | Europa-Pokal / Kontinental-Liga (inkl. Pokalsieger ab 1999) | Pokalsieger / Europa-Trophäe |
 |---|---|---|---|
 | bis 1996/97 | 1 (Meister) | Rang 1–3: 4, Rang 4–8: 3, sonst 2 | 1 (Pokalsieger) |
 | 1997/98–1998/99 | Rang 1–8: 2 | wie oben | 1 |
@@ -4719,11 +4719,11 @@ Wie viele deutsche Vereine starten, hängt vom **Rang Deutschlands** in der Fün
 | ab 2018/19 | Rang 1–4: 4 | 2 (ab 2021/22) | 1 (ab 2021/22) |
 
 - **Meisterliga:** die ersten Plätze der 1. Liga.
-- **Pokalsieger-Pokal (bis 1998/99):** der Landespokalsieger; ist er schon in der Meisterliga, der Pokalfinalist, sonst der nächste Ligaplatz. Ab 1999/00 spielt der Pokalsieger im Europa-Pokal bzw. in der Europa-Liga.
-- **Europa-Pokal / Europa-Liga, Konferenz-Liga:** die nächsten Ligaplätze. Kein Verein ist doppelt qualifiziert; die Plätze kaskadieren nach unten.
+- **Pokalsieger-Pokal (bis 1998/99):** der Landespokalsieger; ist er schon in der Meisterliga, der Pokalfinalist, sonst der nächste Ligaplatz. Ab 1999/00 spielt der Pokalsieger im Europa-Pokal bzw. in der Kontinental-Liga.
+- **Europa-Pokal / Kontinental-Liga, Europa-Trophäe:** die nächsten Ligaplätze. Kein Verein ist doppelt qualifiziert; die Plätze kaskadieren nach unten.
 
 ## Wechsel zwischen den Wettbewerben
-Gruppendritte der Meisterliga spielen 1999/00–2023/24 im Europa-Pokal bzw. in der Europa-Liga weiter, Gruppendritte der Europa-Liga 2021/22–2023/24 in der Konferenz-Liga (Tabelle in *Formate je Epoche*). Ab 2024/25 gibt es keinen Wechsel mehr.`,
+Gruppendritte der Meisterliga spielen 1999/00–2023/24 im Europa-Pokal bzw. in der Kontinental-Liga weiter, Gruppendritte der Kontinental-Liga 2021/22–2023/24 in der Europa-Trophäe (Tabelle in *Formate je Epoche*). Ab 2024/25 gibt es keinen Wechsel mehr.`,
   },
   {
     id: 'euro-simulation',
@@ -4739,7 +4739,7 @@ Gruppendritte der Meisterliga spielen 1999/00–2023/24 im Europa-Pokal bzw. in 
 - **Jedes Heimspiel** bringt Einnahmen (Eintritt je Platzkategorie, Fanartikel, Catering, TV) – im K.-o.-Modus also zwei Spiele je Runde, in der Gruppe drei Heimspiele. Das gilt für alle deutschen Vereine.
 - **Startgeld** zu Saisonbeginn (stark steigend mit Meisterliga und Ligaphase, siehe Finanzen).
 - **Prämie je gewonnener K.-o.-Runde** (DM von 1975 × Wirtschaftsskala; Finale 120.000, Halbfinale 60.000, Viertelfinale 30.000, Achtelfinale 15.000, davor 10.000 bzw. 8.000 – in den anderen Wettbewerben 80 %; ab 1992 in der Meisterliga bis zum Fünffachen).
-- **Prämie je Sieg/Unentschieden in Gruppe und Ligaphase** nach den Verteilungen des Verbands: Meisterliga 2005/06 321.000/161.000 €, 2009/10 800.000/400.000 €, 2016/17 1,5 Mio./500.000 €, 2024/25 2,1 Mio./700.000 €; Europa-Liga 2010/11 140.000/70.000 €, 2018/19 570.000/190.000 €, ab 2024/25 450.000/150.000 €; Konferenz-Liga 400.000/133.000 €. Davor im Spiel zurückgerechnet (Annahme).
+- **Prämie je Sieg/Unentschieden in Gruppe und Ligaphase** nach den Verteilungen des Verbands: Meisterliga 2005/06 321.000/161.000 €, 2009/10 800.000/400.000 €, 2016/17 1,5 Mio./500.000 €, 2024/25 2,1 Mio./700.000 €; Kontinental-Liga 2010/11 140.000/70.000 €, 2018/19 570.000/190.000 €, ab 2024/25 450.000/150.000 €; Europa-Trophäe 400.000/133.000 €. Davor im Spiel zurückgerechnet (Annahme).
 
 ## Belastung
 Jedes Europapokalspiel kostet Frische und bewegt die Form – bei dir wie bei den KI-Vereinen. Mit Hin- und Rückspiel und sechs bis acht Gruppenspielen kommen deutlich mehr englische Wochen zusammen als früher.

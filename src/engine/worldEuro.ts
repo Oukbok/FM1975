@@ -79,9 +79,9 @@ export function euroParticipants(w: WorldState, euroClubs: Record<string, EuroCl
       if (id) { out.ec.push(id); taken.add(id); }
     });
   }
-  // Pokalsieger-Wettbewerb (bis 1998) bzw. Konferenz-Liga (ab 2021).
+  // Pokalsieger-Wettbewerb (bis 1998) bzw. Europa-Trophäe (ab 2021).
   if (cap('cwc') > 0) {
-    // Konferenz-Liga: mehrere Durchgänge (je Land ein weiterer Verein), damit das Feld aus
+    // Europa-Trophäe: mehrere Durchgänge (je Land ein weiterer Verein), damit das Feld aus
     // vielen Ländern kommt wie im Vorbild.
     for (let pass = 0; pass < (year <= 1998 ? 1 : 4) && out.cwc.length < cap('cwc'); pass++) {
       for (const c of rank) {

@@ -25,7 +25,7 @@ export const HARD = new Set(['Grammatik', 'Genus', 'Platzhalter', 'undefined/NaN
   'Leerzeichen', 'Satzzeichen', 'Umlaut als ae/oe/ue', 'Epoche', 'Inhalt', 'Währung']);
 
 /** Echte Verbands-/Wettbewerbsnamen (Liste wie tests/realPeopleList.ts ORGS, Kurzform). */
-const REAL_ORG = /(?<![\p{L}\p{N}])(?:FIFA|UEFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|Bundesligi?\p{L}*|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der (?:Landesmeister|Pokalsieger)|Intertoto|UI-Cup|Premier League|Serie [A-D]|LaLiga|Ligue 1|Eredivisie|Weltpokal\p{L}*|(?:Klub|Club)-W(?:M|eltmeister)\p{L}*|Interkontinental-?[Pp]okal\p{L}*|Super(?:cup|-Cup| Cup)\p{L}*|Ligapokal\p{L}*|Hallen-?[Mm]asters|Masters-\p{L}+|Goldene[nrm]? (?:Ball|Schuh)\p{L}*|Confed-Cup|Sommermärchen|Wembley)(?![\p{L}\p{N}])/u;
+const REAL_ORG = /(?<![\p{L}\p{N}])(?:FIFA|UEFA|DFB|DFL|IFAB|NOFV|CONMEBOL|CONCACAF|Bundesligi?\p{L}*|Champions[- ]League|Europa[- ]League|Conference[- ]League|Nations[- ]League|Youth[- ]League|Europapokals? der (?:Landesmeister|Pokalsieger)|Intertoto|UI-Cup|Premier League|Serie [A-D]|LaLiga|Ligue 1|Eredivisie|Weltpokal\p{L}*|(?:Klub|Club)-W(?:M|eltmeister)\p{L}*|Interkontinental-?[Pp]okal\p{L}*|Super(?:cup|-Cup| Cup)\p{L}*|Ligapokal\p{L}*|Hallen-?[Mm]asters|Masters-\p{L}+|Goldene[nrm]? (?:Ball|Schuh)\p{L}*|Confed-Cup|Sommermärchen|Wembley|Europa[- ]Liga\p{L}*|Konferenz[- ]Liga\p{L}*)(?![\p{L}\p{N}])/u;
 
 // --------------------------------------------------------------- Epochen
 interface EraRule { re: RegExp; from?: number; to?: number; only?: Src[]; skip?: Src[]; label: string }
@@ -39,8 +39,8 @@ export const ERA_RULES: EraRule[] = [
   { re: /Torlinientechnik/, from: 2015, skip: ['brief'], label: 'Torlinientechnik' },
   { re: /Freistoßspray/, from: 2014, skip: ['brief'], label: 'Freistoßspray' },
   { re: /Meisterliga|Königsklasse/, from: 1992, skip: ['brief'], label: 'Meisterliga' },
-  { re: /Europa-Liga/, from: 2009, skip: ['brief'], label: 'Europa-Liga' },
-  { re: /Konferenz-Liga/, from: 2021, skip: ['brief'], label: 'Konferenz-Liga' },
+  { re: /Kontinental-Liga/, from: 2009, skip: ['brief'], label: 'Kontinental-Liga' },
+  { re: /Europa-Trophäe/, from: 2021, skip: ['brief'], label: 'Europa-Trophäe' },
   { re: /Europa-Pokal(?!-Platz)/, to: 2009, skip: ['brief'], label: 'Europa-Pokal' },
   { re: /\bLibero/, to: 2001, skip: ['brief'], label: 'Libero' },
   { re: /Manndeck/, to: 2005, skip: ['brief'], label: 'Manndeckung' },

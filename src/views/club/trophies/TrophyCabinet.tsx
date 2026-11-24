@@ -17,7 +17,7 @@ const CAT_SHAPE: Record<TrophyCat, TrophyShape> = { liga: 'schale', pokal: 'poka
 const CAT_EMPTY: Record<TrophyCat, string> = {
   liga: 'Noch keine Meisterschaft und kein Staffelsieg. Jede gewonnene Liga – auch 2. Liga, Regionalliga oder DDR-Oberliga – landet hier.',
   pokal: 'Der Landespokal fehlt noch in der Vitrine. Sechs Runden, ein Finale – und die Trophäe steht hier.',
-  kontinental: 'Noch kein Europapokal. Landesmeister, Pokalsieger und Europa-Pokal (später Meisterliga, Europa-Liga, Konferenz-Liga) erscheinen hier.',
+  kontinental: 'Noch kein Europapokal. Landesmeister, Pokalsieger und Europa-Pokal (später Meisterliga, Kontinental-Liga, Europa-Trophäe) erscheinen hier.',
   jugend: 'Noch keine Jugendtitel. Deutsche A-/B-Jugend-Meisterschaft, Junioren-Pokal, Staffelsiege und die Jugend-Meisterliga zählen hier.',
   andere: 'Hier stehen Hallenfinale und Aufstiege, sobald dein Verein einen davon schafft.',
 };

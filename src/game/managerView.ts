@@ -97,7 +97,7 @@ const EURO_KEYS: EuroCompId[] = ['ec', 'cwc', 'uefa'];
 export function euroShort(k: EuroCompId, season: string): string {
   const y = seasonStartYear(season);
   if (k === 'ec') return y >= 1992 ? 'Meisterliga' : 'Landesmeister-Cup';
-  if (k === 'cwc') return y >= 2021 ? 'Konferenz-Liga' : 'Pokalsieger-Cup';
+  if (k === 'cwc') return y >= 2021 ? 'Europa-Trophäe' : 'Pokalsieger-Cup';
   return euroCompName(k, y);
 }
 const EURO_SHORT = euroShort;

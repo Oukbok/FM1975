@@ -172,7 +172,7 @@ for (const Y of YEARS) {
   if (Y >= 2021 && Y <= 2023) {
     check(inUefa('po').filter((id) => ecIds.has(id)).length === 8, `${Y}: 8 CL-Dritte in der Zwischenrunde`);
     const uIds = new Set(g.euroCups?.uefa?.participantIds ?? []);
-    check((g.euroCups?.cwc?.rounds.find((r) => r.key === 'po')?.entrants ?? []).filter((id) => uIds.has(id)).length === 8, `${Y}: 8 EL-Dritte in der Konferenz-Liga`);
+    check((g.euroCups?.cwc?.rounds.find((r) => r.key === 'po')?.entrants ?? []).filter((id) => uIds.has(id)).length === 8, `${Y}: 8 EL-Dritte in der Europa-Trophäe`);
   }
   if (Y >= 2024) check(inUefa('af').every((id) => !ecIds.has(id)), `${Y}: Ligaphase ohne Wechsel`);
   // Archiv: Gruppen/Hin-Rückspiel kompakt, Bestenliste aus allen Spielen.
@@ -187,7 +187,7 @@ for (const Y of YEARS) {
 // Endspiel-Modus
 check(euroFormat('uefa', 1985)!.stages.at(-1)!.legs === 2 && euroFormat('uefa', 1997)!.stages.at(-1)!.legs === 1, 'UEFA-Pokal-Finale bis 1996/97 mit Rückspiel');
 check(euroFormat('ec', 1985)!.awayGoals && !euroFormat('ec', 2021)!.awayGoals, 'Auswärtstorregel bis 2020/21');
-check(!euroFormat('cwc', 1999) && !euroFormat('cwc', 2020) && !!euroFormat('cwc', 2021), 'Pokal der Pokalsieger bis 1998/99, Konferenz-Liga ab 2021/22');
+check(!euroFormat('cwc', 1999) && !euroFormat('cwc', 2020) && !!euroFormat('cwc', 2021), 'Pokal der Pokalsieger bis 1998/99, Europa-Trophäe ab 2021/22');
 check(euroFormat('ec', 2030)!.stages[0].kind === 'league', 'Fortschreibung nach 2026: Ligaphase');
 
 // --- Landespokal: Wiederholungsspiele ---

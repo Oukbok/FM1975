@@ -31,7 +31,7 @@ export function compCup(g: Game, comp: DrawComp): CupState | null {
 export function drawCompName(comp: DrawComp): string {
   return comp === 'cup' ? 'Landespokal' : EURO_COMP_NAMES[comp as EuroCompId];
 }
-/** Name je Saison (Meisterliga, Europa-Liga, Konferenz-Liga …). */
+/** Name je Saison (Meisterliga, Kontinental-Liga, Europa-Trophäe …). */
 export function drawCompLabel(comp: DrawComp, cup: CupState): string {
   return comp === 'cup' ? 'Landespokal' : euroCompName(comp, Number(cup.season.slice(0, 4)));
 }

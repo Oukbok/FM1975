@@ -13,7 +13,7 @@ Stand 11/2026 (Stufe 2: 22.11.2026). Entscheidungen von Pascal:
 ## 1. Verbände und Wettbewerbe – umbenannt
 
 Verbände und Ligen vermarkten ihre Namen und Logos als eingetragene Marken (UEFA Champions League, Bundesliga, DFB-Pokal, Premier League, Serie A, LaLiga …). Sportspiele zahlen für diese Namen Lizenzen. Ohne Lizenz könnte das Spiel den Eindruck einer offiziellen Partnerschaft erwecken. Deshalb heißen sie im Spiel durchgehend neutral (Schema-Tabelle in `CLAUDE.md`, Regeln in `src/data/neutralNames.ts`):
-Weltverband, Europaverband, Fußballbund, Ligaverband, Regelgremium, 1. Liga/2. Liga, Landespokal, Pokal der Landesmeister → Meisterliga, Pokal der Pokalsieger → Konferenz-Liga, Messepokal → Europa-Pokal → Europa-Liga, Jugend-Meisterliga, Nationenliga, Sommerpokal.
+Weltverband, Europaverband, Fußballbund, Ligaverband, Regelgremium, 1. Liga/2. Liga, Landespokal, Pokal der Landesmeister → Meisterliga, Pokal der Pokalsieger → Europa-Trophäe, Messepokal → Europa-Pokal → Kontinental-Liga, Jugend-Meisterliga (Stufe 3: die früheren Namen „Europa-Liga“ und „Konferenz-Liga“ waren direkte Übersetzungen der Marken „Europa League“/„Conference League“ und wurden ersetzt; „Europa-Pokal“/„Europapokal“ bleibt als allgemeiner historischer Begriff), Nationenliga, Sommerpokal.
 
 ### Stufe 2 (Entscheidung 4, Spielstände `game.namesV` 2)
 
@@ -34,7 +34,7 @@ Auch Namen, die nur die eingeführte deutsche Übersetzung eines geschützten We
 | Wembley (Stadion, Arena) | London, Arena im Londoner Nordwesten | Wembley ist eine geschützte Marke des Stadionbetreibers |
 | „Sommermärchen“ (Titel des WM-Films 2006) | Heim-WM, WM-Sommer, Fußballsommer | |
 
-Bleiben, weil es reine Gattungs- oder Ortsbegriffe sind: Weltmeisterschaft/WM und Europameisterschaft/EM (der Bundesgerichtshof hat 2006 die Wortmarke „FUSSBALL WM 2006“ mangels Unterscheidungskraft weitgehend gelöscht; Jahres-Marken wie „EURO 2024“ werden trotzdem nicht benutzt), Europapokal (als Oberbegriff), Hallenpokal, Fünfjahreswertung, Trainer des Jahres, (Europas) Fußballer des Jahres, Meisterschale, Spielorte wie Westfalenhalle oder Olympiahalle und Olympia als historisches Ereignis (nur Nennung, kein Wettbewerb im Spiel). Grenzfälle sind die eigenen Übersetzungen Europa-Pokal, Europa-Liga und Konferenz-Liga aus Stufe 1. Sie bleiben vorerst, sollten aber vor der Veröffentlichung noch einmal geprüft werden.
+Bleiben, weil es reine Gattungs- oder Ortsbegriffe sind: Weltmeisterschaft/WM und Europameisterschaft/EM (der Bundesgerichtshof hat 2006 die Wortmarke „FUSSBALL WM 2006“ mangels Unterscheidungskraft weitgehend gelöscht; Jahres-Marken wie „EURO 2024“ werden trotzdem nicht benutzt), Europapokal (als Oberbegriff), Hallenpokal, Fünfjahreswertung, Trainer des Jahres, (Europas) Fußballer des Jahres, Meisterschale, Spielorte wie Westfalenhalle oder Olympiahalle und Olympia als historisches Ereignis (nur Nennung, kein Wettbewerb im Spiel). Grenzfälle sind die eigenen Übersetzungen Europa-Pokal, Kontinental-Liga und Europa-Trophäe aus Stufe 1. Sie bleiben vorerst, sollten aber vor der Veröffentlichung noch einmal geprüft werden.
 
 **Sprache:** „Erstligist“ heißt in Texten „Verein der 1. Liga“, „Klub der 1. Liga“ oder „Oberhaus-Klub“, je nach Satz. Die Migration alter Spielstände setzt „Klub der 1. Liga“ mit dem passenden Fall ein (Begleiter davor entscheidet über Einzahl/Mehrzahl). Wortverbindungen wie „Erstligaspiel“ oder „Erstliga-Profis“ bleiben.
 

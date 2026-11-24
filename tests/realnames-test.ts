@@ -192,8 +192,9 @@ const ORG_KEYS = /^(?:UEFA|FIFA|CONMEBOL|CONCACAF|CAF|AFC|OFC|DFB|DFL)$/;
 const orgHit = (s: string) => ORG_RULES.find(([, r]) => r.test(s));
 const orgMust = ['die UEFA', 'Champions League', 'DFB-Pokal', 'Bundesligist', '2. Bundesliga', 'Serie A', 'FIFA-Regel', 'NOFV-Oberliga', 'Fridays for Future',
   'Weltpokal', 'Klub-WM', 'Klub-Weltmeisterschaft', 'Interkontinentalpokal', 'Supercup', 'Europäischer Supercup', 'Ligapokal', 'Hallen-Masters', 'zum Masters',
-  'Masters-Sieger', 'Goldener Ball', 'Goldenen Schuh', 'Confed-Cup', 'Sommermärchen', 'in Wembley', 'Erstligist', 'Erstligisten'];
-const orgFree = ['Meisterliga', 'Europa-Liga', 'Konferenz-Liga', 'Weltverband', 'Europaverband', 'Fußballbund', 'Ligaverband', 'Landespokal',
+  'Masters-Sieger', 'Goldener Ball', 'Goldenen Schuh', 'Confed-Cup', 'Sommermärchen', 'in Wembley', 'Erstligist', 'Erstligisten',
+  'Europa-Liga', 'Europa Liga', 'der Konferenz-Liga'];
+const orgFree = ['Meisterliga', 'Kontinental-Liga', 'Europa-Trophäe', 'Weltverband', 'Europaverband', 'Fußballbund', 'Ligaverband', 'Landespokal',
   '1. Liga', 'Europa-Pokal', 'Pokal der Landesmeister', 'Goldener Stern', 'Torjägerstern', 'Nationenliga', 'Sommerpokal', 'Oberliga Nordost', 'Hartz IV',
   'Bosman-Urteil', 'Orkan Kyrill', 'Stuttgart 21', 'Bundesanstalt für Arbeit', 'Bundestrainer', 'Café am Markt', 'Transatlantik-Pokal', 'Klub-Weltturnier',
   'Kontinentalsieger-Pokal', 'Gipfelpokal', 'Europäischer Gipfelpokal', 'Auftaktpokal', 'Hallenfinale', 'Hallenpokal', 'Erstliga-Profis', 'Verein der 1. Liga',
