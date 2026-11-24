@@ -19,7 +19,7 @@
 .opx-strip-club { display: inline-flex; align-items: center; gap: 16px; min-width: 0; max-width: 100%; font-size: 32px; line-height: 1.1; color: var(--text); }
 .opx-strip-club > :first-child { flex: none; }
 .opx-strip-club b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.opx-strip-vs { font-family: var(--font-display); font-size: 32px; line-height: 1.1; font-weight: 600; color: var(--text-3); text-align: center; }
+.opx-strip-vs { font-family: var(--font-display); font-size: 32px; line-height: 1.1; font-weight: 600; color: var(--text); text-align: center; }
 .opx-strip-sep { flex: none; width: 1px; align-self: stretch; margin: 18px 0; background: var(--border); }
 .opx-strip-info { flex: none; display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; color: var(--text); white-space: nowrap; }
 .opx-strip-info svg { color: var(--club-accent, var(--accent)); }
@@ -30,7 +30,7 @@
 .opx-vs { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 4px; }
 .opx-side { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; }
 .opx-side b { font-family: var(--font-ui); font-size: 22px; font-weight: 800; color: var(--text); }
-.opx-vs-mid { display: flex; align-items: center; gap: 14px; width: 100%; font-family: var(--font-display); font-size: 24px; color: var(--text-3); }
+.opx-vs-mid { display: flex; align-items: center; gap: 14px; width: 100%; font-family: var(--font-display); font-size: 24px; color: var(--text); }
 .opx-vs-mid i { flex: 1 1 auto; height: 1px; background: var(--border); }
 .opx-where { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 22px; font-size: 15px; color: var(--text-2); padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
 .opx-where span { display: inline-flex; align-items: center; gap: 8px; }
