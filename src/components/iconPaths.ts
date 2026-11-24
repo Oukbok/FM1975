@@ -633,6 +633,8 @@ export const RAW: Record<string, string> = {
   medCross: '<rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v9M7.5 12h9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
   // Spieler-Infokarte (Listen: Knopf zwischen Gesicht und Name) – einfarbig
   info: '<circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="7.9" r="1.35" fill="currentColor"/><path d="M12 11v6.2" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>',
+  // Warnung (Textmodus: Grund der Spielunterbrechung) – einfarbig
+  warn: '<path d="M12 3.6 21.2 19.6H2.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.6v4.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/>',
   // Würfel (Neues Spiel: anderes Gesicht)
   dice: '<rect x="4" y="4" width="16" height="16" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="8.6" cy="8.6" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="15.4" cy="15.4" r="1.4" fill="currentColor"/>',
 };

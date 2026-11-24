@@ -131,6 +131,7 @@
   --neg: var(--red);
   --car-live-bg: rgba(70, 120, 200, 0.16); /* laufende Saison (Karriere › Saisons) */
   --warn: var(--yellow);
+  --warn-ink: #241405; /* dunkle Schrift auf Warnflächen */
 
   /* --- Zustands-Skala (Frische/Form/Moral als Symbole, components/status/):
      5 = sehr gut … 1 = schlecht. Gedämpft, aber eindeutig unterscheidbar. --- */
