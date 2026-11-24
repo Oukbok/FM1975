@@ -69,7 +69,7 @@ export const FORMATIONS: Formation[] = [
   },
   {
     id: '3-5-2', label: '3-5-2', libero: false, eras: [1990, 2000, 2010],
-    desc: 'Fünf im Mittelfeld sorgen für Überzahl, die Außen schieben mit. Kraftraubend.',
+    desc: 'Fünf im Mittelfeld sorgen für Überzahl, die Außen schieben mit. Kostet viel Energie.',
     slots: [
       S('s1', 'TW', 50, 90),
       S('s2', 'IV', 30, 72), S('s3', 'IV', 50, 74), S('s4', 'IV', 70, 72),

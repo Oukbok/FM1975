@@ -106,7 +106,7 @@ export function tacticHints(club: Club, players: Record<string, Player>, year: n
   if (tempo > 0.2 && f.pass >= HI) add('aufbau', 'good', 'Das zügige Spiel passt zu unseren Passgebern.', passers());
   if (long && f.pass >= HI && f.aerial < HI) add('aufbau', 'idea', 'Unsere Passgeber würden auch flach und schnell nach vorn spielen können – der lange Ball nutzt sie kaum.', passers());
   if (!risky && f.pass <= LO) add('aufbau', 'good', 'Das ruhige Kurzpassspiel schützt uns vor Ballverlusten.');
-  if (press > 0.2 && f.engine >= HI) add('pressing', 'good', 'Das Pressing passt – die Mannschaft hat die Kraft dafür.');
+  if (press > 0.2 && f.engine >= HI) add('pressing', 'good', 'Das Pressing passt – die Mannschaft hat die Energie dafür.');
   if (line > 0.2 && f.pace >= HI) add('linie', 'good', 'Die hohe Linie halten unsere schnellen Verteidiger gut.');
   if (line < -0.2 && f.pace <= LO) add('linie', 'good', 'Tief zu stehen schützt unsere eher langsame Abwehr.');
   if ((tempo > 0.2 || t.style === 'attacking') && f.dribble >= HI) add('dribbling', 'good', 'Das Tempo liegt unseren Dribblern.');

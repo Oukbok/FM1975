@@ -28,7 +28,7 @@ const GK = 'Zählt für die Torwartstärke – und die steht jedem Schuss des Ge
 
 export const ATTR_INFO: Record<AttrInfoKey, AttrInfo> = {
   fitness: { text: 'Grundkondition. Geht als Faktor in die Tagesstärke ein: Fitness 100 = volle Stärke, 0 = rund 10 % weniger.', uses: ['Tagesstärke in jedem Spiel', 'sinkt durch Einsätze, baut sich im Training wieder auf', 'hartes Training bei niedriger Fitness drückt die Form'] },
-  stamina: { text: 'Wie lange ein Spieler durchhält.', uses: ['Kraftverlust im Spiel, Minute für Minute', 'Wirkung eines hohen Pressings', 'Frische- und Fitnessverlust nach dem Spiel', 'schnellere Erholung der Frische', 'Laufleistung in der Spielstatistik', 'Wirkung eines hohen Pressings'] },
+  stamina: { text: 'Wie lange ein Spieler durchhält.', uses: ['Energieverlust im Spiel, Minute für Minute', 'Wirkung eines hohen Pressings', 'Frische- und Fitnessverlust nach dem Spiel', 'schnellere Erholung der Frische', 'Laufleistung in der Spielstatistik', 'Wirkung eines hohen Pressings'] },
   speed: { text: 'Grundschnelligkeit über längere Wege.', uses: ['Verteidiger: wie gut eine hohe Abwehrlinie hält'] },
   acceleration: { text: 'Antritt auf den ersten Metern.', uses: ['Hallenfußball (Technikwert)', 'Verteidiger: wie gut eine hohe Abwehrlinie hält', 'Angreifer: Dribblings bei hohem Tempo'] },
   strength: { text: 'Körperliche Robustheit im Duell.', uses: ['Kopfballduelle (15 % des Luftwerts)', 'Zweikämpfe (25 % des Zweikampfwerts)', 'Kopfball-Abschluss (15 %)', 'gewonnene Zweikämpfe in der Statistik'] },

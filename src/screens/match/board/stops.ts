@@ -28,7 +28,7 @@ export function makeStopCheck(sim: MatchSim, side: Side, opts: () => StopOpts): 
     const t = sim.team(side);
     if (!why && o.stopSubs && !o.autoSubs && sim.subsLeft(t) > 0 && sim.phase === 'play') {
       const done = onPitch(t).find((m) => m.group !== 'GK' && m.energy < 55 && !tired.has(m.id));
-      if (done) { tired.add(done.id); why = `${done.p.lastName} ist am Ende seiner Kräfte`; }
+      if (done) { tired.add(done.id); why = `${done.p.lastName} hat kaum noch Energie`; }
     }
     const diff = sim.effDiff(side);
     if (!why && o.stopBehind && diff < 0 && diff < prevDiff) why = 'Deine Elf liegt zurück';

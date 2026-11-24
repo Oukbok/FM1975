@@ -158,9 +158,9 @@ ok(mHard.duel > 1.05 && mSoft.duel < 0.95 && mHard.foul > mSoft.foul, 'Zweikampf
 const eHi = tacticMods({ ...base, effort: 100 }, 0, null, 0, 1);
 const eLo = tacticMods({ ...base, effort: 0 }, 0, null, 0, 1);
 ok(eHi.duel > eLo.duel && eHi.drain > eLo.drain && eHi.injury > eLo.injury && eHi.cards > eLo.cards, 'Einsatz-Regler wirkt nicht');
-console.log(`Einsatz 100/0: Zweikampf ${eHi.duel.toFixed(2)}/${eLo.duel.toFixed(2)}, Kraft ${eHi.drain.toFixed(2)}/${eLo.drain.toFixed(2)}, Verletzung ${eHi.injury.toFixed(2)}/${eLo.injury.toFixed(2)}`);
+console.log(`Einsatz 100/0: Zweikampf ${eHi.duel.toFixed(2)}/${eLo.duel.toFixed(2)}, Energieverbrauch ${eHi.drain.toFixed(2)}/${eLo.drain.toFixed(2)}, Verletzung ${eHi.injury.toFixed(2)}/${eLo.injury.toFixed(2)}`);
 
-// Spiele: Einsatz 100 gegen 0 (sonst gleiche Mannschaft): mehr Zweikämpfe gewonnen, weniger Kraft
+// Spiele: Einsatz 100 gegen 0 (sonst gleiche Mannschaft): mehr Zweikämpfe gewonnen, weniger Energie
 function duelShare(effH: number, effA: number) {
   let won = 0, tot = 0, enH = 0, enA = 0;
   for (let s = 0; s < 300; s++) {
@@ -174,9 +174,9 @@ function duelShare(effH: number, effA: number) {
   return { share: won / tot, enH, enA };
 }
 const ds = duelShare(100, 0);
-console.log(`Spiele Einsatz 100 vs 0: Zweikampfquote ${(ds.share * 100).toFixed(1)} %, Kraft am Ende ${(ds.enH / 3300).toFixed(1)} vs ${(ds.enA / 3300).toFixed(1)}`);
+console.log(`Spiele Einsatz 100 vs 0: Zweikampfquote ${(ds.share * 100).toFixed(1)} %, Energie am Ende ${(ds.enH / 3300).toFixed(1)} vs ${(ds.enA / 3300).toFixed(1)}`);
 ok(ds.share > 0.53, 'Einsatz gewinnt keine Zweikämpfe');
-ok(ds.enH < ds.enA, 'Einsatz kostet keine Kraft');
+ok(ds.enH < ds.enA, 'Einsatz kostet keine Energie');
 
 
 // 8) Positionen 2.0: Seiten, Fuß, Raster, Migration alter Spielstände

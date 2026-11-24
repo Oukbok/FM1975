@@ -159,10 +159,10 @@ const zoneT = { ...tA, marking: 'zone' as const };
 const zGood = kick({ ...base11, tactics: zoneT, cohesion: initCohesion(zoneT, 1995, 100, 0.95) }).plan, zBad = kick({ ...base11, tactics: zoneT, cohesion: initCohesion(strange, 1995, 100, 0.5) }).plan, zMan = kick({ ...base11, tactics: tA, cohesion: initCohesion(tA, 1995, 100, 0.95) }).plan;
 check(zMan.zone === 0 && zGood.zone > 0.9 && zBad.zone < 0.4 && zGood.pressBias > zMan.pressBias && zBad.pressBias < zMan.pressBias && zGood.tackleBias < zMan.tackleBias,
   `Raumdeckung: eingespielt Güte ${zGood.zone.toFixed(2)} (fängt mehr Pässe ab), fremd ${zBad.zone.toFixed(2)} (schlechter als Manndeckung), im Zweikampf weniger eng`);
-// Gegenpressing: Konter des Gegners werden gestoppt, kostet Kraft
+// Gegenpressing: Konter des Gegners werden gestoppt, kostet Energie
 const cp = kick({ ...base11, tactics: { ...tA, counterPress: true } }), noCp = kick({ ...base11, tactics: { ...tA, counterPress: false } });
 const cp10 = new MatchSim({ ...base11, tactics: { ...tA, counterPress: true } }, B, P, { year: 2010, seed: 5, humanClubIds: [A.id] }).home, no10 = new MatchSim({ ...base11, tactics: { ...tA, counterPress: false } }, B, P, { year: 2010, seed: 5, humanClubIds: [A.id] }).home;
-check(cp.mods.exposed === noCp.mods.exposed && cp10.mods.exposed < no10.mods.exposed * 0.9 && cp10.mods.drain > no10.mods.drain, 'Gegenpressing: 1995 ohne Wirkung, 2010 weniger Konter des Gegners und mehr Kraftverbrauch');
+check(cp.mods.exposed === noCp.mods.exposed && cp10.mods.exposed < no10.mods.exposed * 0.9 && cp10.mods.drain > no10.mods.drain, 'Gegenpressing: 1995 ohne Wirkung, 2010 weniger Konter des Gegners und mehr Energieverbrauch');
 
 // 6) Spielablauf
 migrateCohesion(g);

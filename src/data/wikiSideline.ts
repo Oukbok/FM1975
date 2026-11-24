@@ -42,7 +42,7 @@ ${shoutLines}
 Nur in der Pause, wirkt die ganze zweite Hälfte (und eine Verlängerung) auf **Angriff, Abwehr und Spielkontrolle**, dazu ein Zufall von ±1 %:
 - **Loben:** bei Führung +2 %, bei Unentschieden +1 %, bei Rückstand −1,5 %.
 - **Ruhig analysieren:** immer +1,2 %.
-- **Kabinenpredigt:** bei Rückstand +3,5 %, bei Unentschieden +1 %, bei Führung −2 %; dazu bekommt jeder Spieler 2 Punkte Kraft zurück.
+- **Kabinenpredigt:** bei Rückstand +3,5 %, bei Unentschieden +1 %, bei Führung −2 %; dazu bekommt jeder Spieler 2 Punkte Energie zurück.
 
 ## Einzelgespräche
 Einmal je Halbzeit und Spieler; die Wirkung trifft seine **Tagesleistung** (Zufall ±0,3 %). Die Note ist die Live-Note (1 = sehr gut):
@@ -51,5 +51,5 @@ Einmal je Halbzeit und Spieler; die Wirkung trifft seine **Tagesleistung** (Zufa
 - **Beruhigen:** verwarnte oder nervenschwache Spieler (Nervenstärke unter 50) und alle in einer heißen Phase +1,2 %, sonst +0,2 %.
 
 ## Aufwärmen
-Nach **${WARM_MINUTES} Minuten** ist ein Ersatzspieler warm: Eingewechselt bringt er **+${WARM_ENERGY} Kraft** und **+${pct(WARM_DAY - 1)} Tagesleistung** mit. Wer länger als zehn Minuten an der Linie läuft, verliert alle fünf Minuten 0,6 Punkte Kraft (nicht unter 70).`,
+Nach **${WARM_MINUTES} Minuten** ist ein Ersatzspieler warm: Eingewechselt bringt er **+${WARM_ENERGY} Energie** und **+${pct(WARM_DAY - 1)} Tagesleistung** mit. Wer länger als zehn Minuten an der Linie läuft, verliert alle fünf Minuten 0,6 Punkte Energie (nicht unter 70).`,
 };

@@ -12,7 +12,7 @@ import { POSITION_GROUPS } from '../../types';
 import { mirrorPosition, positionSuitability } from '../positions';
 import { eraRules, seasonYearOf, type EraRules } from './era';
 import { bench, emptyStats, fieldPlayers, initRefs, lineupChanged, onPitch, refresh, tacticsOf, type TeamState } from './state';
-import { makeMPlayer, matchBase, rating, resolveLineup } from './team';
+import { energyDrain, ENERGY_FLOOR, makeMPlayer, matchBase, rating, resolveLineup } from './team';
 import { openPlayFoul, maybeInjury, shootoutKick } from './actions';
 import { aerial, attack } from './attack';
 import { aerialSkill, countDuel, dayForm, dribbleSkill, duelP, duelSkill, refreshSkills, tackleSkill } from './skills';
@@ -374,8 +374,9 @@ export class MatchSim {
     // --- Angriffe ---
     const pace = ATTACK_PACE * (this.year < 1990 ? 1.04 : this.year < 2005 ? 0.97 : this.year < 2015 ? 0.93 : this.year < 2020 ? 0.92 : 0.94);
     // Mehr Tore nach der Pause (Daten 1994–2026: 54–58 %): Müdigkeit, Wechsel, Risiko in der Schlussphase
-    const late = this.period >= 2 ? (this.minute > 75 ? 1.17 : 1.08) : 0.96;
-    // Laufbereitschaft (× Kraft): mehr Spieler gehen mit nach vorn (engine/match/traits.ts)
+    // (2026: nach stärkerem Energieverlust – weniger Laufbereitschaft auf beiden Seiten – leicht nachgezogen)
+    const late = this.period >= 2 ? (this.minute > 75 ? 1.2 : 1.09) : 0.95;
+    // Laufbereitschaft (× Energie): mehr Spieler gehen mit nach vorn (engine/match/traits.ts)
     // Unentschieden in der Schlussphase: beide gehen weniger Risiko (Remis 1985–94: 29 %, sonst 24–26 %)
     const level = this.minute > 60 && this.effDiff('home') === 0 ? (this.year >= 1985 && this.year < 1995 ? 0.7 : 0.9) : 1;
     const rateH = pace * H.mods.rate * (0.75 + 0.5 * ph) * late * level * workRateF(H.tr);
@@ -409,12 +410,7 @@ export class MatchSim {
     if (t.human) drainWarmUps(this, t);
     const heat = this.weather === 'hitze' ? 1.18 : 1;
     const et = this.period >= 3 ? 1.15 : 1;
-    for (const m of t.players) {
-      if (!m.onPitch) continue;
-      const st = m.p.attributes.stamina ?? 60;
-      const base = m.group === 'GK' ? 0.08 : 0.42 * (1.45 - st / 100);
-      m.energy = Math.max(15, m.energy - 5 * base * t.mods.drain * (m.rd ?? 1) * heat * et);
-    }
+    for (const m of t.players) if (m.onPitch) m.energy = Math.max(ENERGY_FLOOR, m.energy - energyDrain(m, t.mods.drain, heat, et));
   }
 
   private passStats(t: TeamState, share: number): void {
@@ -549,7 +545,7 @@ export class MatchSim {
     const keepOne = this.subsLeft(t) === 1 && min < 78;
     if (keepOne) return;
     const cands = onPitch(t).filter((m) => m.group !== 'GK')
-      .map((m) => ({ m, need: (84 - m.energy) / 10 + (m.impact < -0.5 ? 1.2 : 0) + (m.yellow && m.p.attributes.aggression > 65 ? 0.8 : 0)
+      .map((m) => ({ m, need: (78 - m.energy) / 10 + (m.impact < -0.5 ? 1.2 : 0) + (m.yellow && m.p.attributes.aggression > 65 ? 0.8 : 0)
         + (diff < 0 && min > 65 && m.group === 'DEF' ? 0.6 : 0) + (min - 55) / 12 }))
       .sort((x, y) => y.need - x.need);
     let budget = this.era.maxSubs >= 5 && min >= 60 ? 2 : 1;
@@ -559,7 +555,7 @@ export class MatchSim {
       if (!rep) continue;
       const newR = subValue(rep.p, c.m.pos) * rep.cond;
       if (newR < rating(c.m) * 0.72) continue;
-      if (this.substitute(t.side, c.m.id, rep.id, c.m.energy < 60 ? 'muede' : 'taktik')) budget--;
+      if (this.substitute(t.side, c.m.id, rep.id, c.m.energy < 62 ? 'muede' : 'taktik')) budget--;
     }
   }
 }

@@ -7,7 +7,7 @@
 //    Flügel, Flügelabwehr, Luft, Luftabwehr – genutzt in engine/match/attack.ts),
 //  - wie stark der Spieler zu Angriff/Kontrolle/Abwehr der Mannschaft zählt (`ru`,
 //    engine/match/team.ts computeUnits) und
-//  - wie viel Kraft er verbraucht (`rd`).
+//  - wie viel Energie er verbraucht (`rd`).
 // Wie gut eine Rolle zum Spieler passt (`roleFit`: Schlüsselattribute gegen seine
 // Stärke auf der Position), gibt bis +2,5 % bzw. −4 % auf seine Leistung.
 // Rollen hängen an den Plätzen der Formation (`Tactics.roles`: Slot-ID → Rolle);
@@ -39,7 +39,7 @@ export interface RoleDef {
   rf?: Partial<Record<keyof typeof RF, number>>;
   /** Faktoren auf den Anteil an Angriff / Kontrolle / Abwehr der Mannschaft. */
   ru?: [number, number, number];
-  /** Kraftverbrauch. */
+  /** Energieverbrauch. */
   rd?: number;
   /** Torwart läuft Steilpässe ab (Logit-Vorteil im Laufduell). */
   sweep?: number;
@@ -75,7 +75,7 @@ export const ROLES: RoleDef[] = [
     text: 'Bleibt hinten und macht seine Seite dicht. Nach vorn kommt von ihm wenig.',
     keys: { tackling: 1, marking: 0.9, positioning: 0.8, speed: 0.5, concentration: 0.5 } },
   { id: 'av_off', label: 'Offensiver Außenverteidiger', positions: WIDE_DEF, rf: { wide: 1.5, att: 1.6, wideDef: 0.82 }, ru: [1.5, 1.05, 0.9], rd: 1.08,
-    text: 'Läuft die Linie rauf und runter und flankt. Kostet Kraft und öffnet seine Seite für Konter.',
+    text: 'Läuft die Linie rauf und runter und flankt. Kostet Energie und öffnet seine Seite für Konter.',
     keys: { crossing: 1, speed: 0.9, stamina: 0.9, workRate: 0.6, dribbling: 0.5 } },
   // --- Defensives Mittelfeld ---
   { id: 'dm', label: 'Sechser', positions: ['DM'], base: true, text: 'Hält die Mitte vor der Abwehr.', keys: {} },
@@ -91,7 +91,7 @@ export const ROLES: RoleDef[] = [
     text: 'Über ihn läuft das Spiel. Seine Pässe prägen jeden Angriff – nach hinten arbeitet er wenig.',
     keys: { passing: 1, vision: 1, technique: 0.7, decisions: 0.7, composure: 0.5 } },
   { id: 'zm_antr', label: 'Antreiber', positions: ['ZM'], rf: { att: 1.3, def: 1.2 }, ru: [1.15, 0.95, 1.15], rd: 1.12,
-    text: 'Von Strafraum zu Strafraum: hilft hinten und stößt vorn nach. Verbraucht sehr viel Kraft.',
+    text: 'Von Strafraum zu Strafraum: hilft hinten und stößt vorn nach. Verbraucht sehr viel Energie.',
     keys: { stamina: 1, workRate: 1, tackling: 0.5, passing: 0.5, shooting: 0.4, strength: 0.4 } },
   { id: 'zm_wasser', label: 'Wasserträger', positions: ['ZM'], rf: { def: 1.3, att: 0.55, pass: 0.85 }, ru: [0.6, 0.95, 1.3],
     text: 'Läuft und arbeitet für die Künstler neben ihm. Vor dem Tor taucht er selten auf.',

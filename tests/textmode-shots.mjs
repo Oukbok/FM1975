@@ -1,5 +1,5 @@
 // Screenshots des Textmodus (Ereignisliste, Chancen-Meter, Reiter, Wechsel-Bildschirm,
-// Halbzeit) aus einem Spielstand; prüft waagerechte Überläufe bei 1920×1080 und 1366×768.
+// Halbzeit, Schlussphase ~80. Min. mit Energie-Spalte) aus einem Spielstand; prüft waagerechte Überläufe bei 1920×1080 und 1366×768.
 //   npm run build && node tests/textmode-shots.mjs [ausgabeordner] [präfix]
 //   SAVE=… (Standard: public/saves/test-3-jahre.txt, Vorlage „Test 3 Jahre“)
 //   späte Epoche: CLUB=fra DUMP=<pfad> UNTIL=2012-09-01 node scripts/sim.mjs 37 → SAVE=<pfad>
@@ -53,13 +53,14 @@ const closeModals = async () => {
     if (await b.isVisible().catch(() => false)) await b.click().catch(() => {});
   }
 };
-for (let i = 0; i < 160; i++) {
+for (let i = 0; i < Number(process.env.ITER ?? 160); i++) {
   if (await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false)) break;
   await closeModals();
-  const w = page.getByRole('button', { name: /weiter/i }).first();
+  const w = page.getByRole('button', { name: /weiter|nächstes spiel/i }).first();
   if (await w.isVisible().catch(() => false)) await w.click().catch(() => {});
   await page.waitForTimeout(700);
 }
+if (!(await page.locator('button:has-text("Textmodus")').isVisible().catch(() => false))) await page.screenshot({ path: `${outDir}/${prefix}_00_haengt.png` });
 await page.click('button:has-text("Textmodus")');
 await page.waitForTimeout(1200);
 // Tempo rasant
@@ -107,6 +108,22 @@ await shot('07_halbzeit_1366');
 await page.click('.tm-cs-ok').catch(() => {});
 await page.waitForTimeout(800);
 await shot('08_spiel_1366');
+// Schlussphase (~80. Minute): Energie-Spalte im Reiter Team und im Wechsel-Bildschirm
+await page.setViewportSize({ width: 1920, height: 1080 });
+for (let i = 0; i < 1200; i++) {
+  await confirmStop();
+  const min = await page.locator('.tm-clock-txt b').innerText().catch(() => '0');
+  if (parseInt(min, 10) >= 79) break;
+  await page.waitForTimeout(80);
+}
+await page.click('.tm-rbtn >> nth=0').catch(() => {});
+await page.click('.tm-rpanel .tm-tabs >> text=Team').catch(() => {});
+await page.waitForTimeout(300);
+await shot('09_spiel_80min');
+await page.locator('.tm-right').screenshot({ path: `${outDir}/${prefix}_10_team_80min.png` }).catch(() => {});
+await page.click('.tm-change-btn').catch(() => {});
+await page.waitForTimeout(500);
+await shot('11_wechsel_80min');
 console.log(errors.length ? errors.join('\n') : 'Keine JS-Fehler.');
 await browser.close();
 server.close();

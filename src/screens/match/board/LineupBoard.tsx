@@ -1,6 +1,6 @@
 // =============================================================================
 // „Aufstellung“ im laufenden Spiel: eigene Elf (oder Gegner) als Tabelle mit
-// Live-Note, Stärke, Kraft, Fitness und Status; darunter die Bank mit
+// Live-Note, Stärke, Energie, Fitness und Status; darunter die Bank mit
 // Aufwärmen per Klick und den verbleibenden Wechseln. Eigene Elf: Ziehen &
 // Ablegen (Wunsch Pascal) – Bankspieler auf Feldspieler = Wechsel, Feldspieler
 // auf Feldspieler = Positionstausch; gilt sofort (wie „Bestätigen“).
@@ -67,7 +67,7 @@ export function LineupBoard({ sim, mySide, view, act, onPlayer }: {
     <div className="tm-lineup">
       <div className="tm-lt">
         <div className="tm-lt-row head">
-          <span>Nr</span><span>Pos</span><span>Name</span><span>Note</span><span>Stä</span><span>Kraft</span><span>Fit</span><span />
+          <span>Nr</span><span>Pos</span><span>Name</span><span>Note</span><span>Stä</span><span>Energie</span><span>Fit</span><span />
         </div>
         <div className="tm-lt-body">
           {field.map((m) => <Row key={m.id} sim={sim} m={m} name={nm(m.p)} early={early} onPlayer={onPlayer} dnd={dnd} fit={fieldFit(m)} />)}

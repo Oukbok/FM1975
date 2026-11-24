@@ -7,7 +7,7 @@
 //   Form     `Player.form`     0–100 (50 = Durchschnitt; driftet zur Mitte)
 //   Moral    `Player.morale`   5 Stufen (very_low … excellent) → 10/30/50/70/90
 //   Fitness  `Player.attributes.fitness` 0–100 (Grundkondition, Hantel)
-//   Kraft    `MPlayer.energy`  0–100 im Textmodus (wie Frische angezeigt)
+//   Energie  `MPlayer.energy`  0–100 im Textmodus (Batterie wie die Frische; Schlüssel bleibt `kraft`)
 // Daraus folgt eine von 5 Stufen (1 = schlecht/rot … 5 = sehr gut/dunkelgrün),
 // Farbe über die Tokens `--st-1 … --st-5` in `styles/00-base.css`. Form ist die
 // Ausnahme: Daumen immer hoch, nur Grünstufen `--fg-1 … --fg-5` (kein Rot).
@@ -35,7 +35,7 @@ export const playerMorale100 = (p: Pick<Player, 'morale' | 'moraleScore'>) => Ma
  */
 export function statusLevel(kind: StatusKind, v: number): StatusLevel {
   if (kind === 'frische') return v >= 90 ? 5 : v >= 75 ? 4 : v >= 60 ? 3 : v >= 45 ? 2 : 1;
-  // Kraft im Spiel startet bei 85–100 und fällt bis Schlusspfiff meist auf 55–75
+  // Energie im Spiel startet bei 90–100 und fällt bis zum Schlusspfiff meist auf 55–75 (Torwart ≈ 85–92)
   if (kind === 'kraft') return v >= 85 ? 5 : v >= 70 ? 4 : v >= 55 ? 3 : v >= 40 ? 2 : 1;
   if (kind === 'form') return v >= 68 ? 5 : v >= 56 ? 4 : v >= 44 ? 3 : v >= 32 ? 2 : 1;
   // Fitness: neu erzeugte Spieler 88–100, ein Spiel kostet 14–22, Training baut wieder auf
@@ -43,7 +43,7 @@ export function statusLevel(kind: StatusKind, v: number): StatusLevel {
   return v >= 85 ? 5 : v >= 65 ? 4 : v >= 45 ? 3 : v >= 25 ? 2 : 1;
 }
 
-export const STATUS_TITLE: Record<StatusKind, string> = { frische: 'Frische', form: 'Form', moral: 'Moral', kraft: 'Kraft', fitness: 'Fitness' };
+export const STATUS_TITLE: Record<StatusKind, string> = { frische: 'Frische', form: 'Form', moral: 'Moral', kraft: 'Energie', fitness: 'Fitness' };
 
 const WORDS: Record<StatusKind, [string, string, string, string, string]> = {
   frische: ['erschöpft', 'müde', 'leicht müde', 'gut erholt', 'voll erholt'],

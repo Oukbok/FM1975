@@ -89,7 +89,7 @@ check(wide.crosses > mid.crosses * 2, `Flanken je Spiel: Mitte ${mid.crosses.toF
 check(wide.longShots < mid.longShots, `Distanzschüsse: Mitte ${mid.longShots.toFixed(1)}, Flügel ${wide.longShots.toFixed(1)}`);
 const press = labRun(club, mirrorOf(club), P, { ...base, pressing: 100 }, 1995, 60);
 const calm = labRun(club, mirrorOf(club), P, { ...base, pressing: 0 }, 1995, 60);
-check(press.counters > calm.counters && press.energy < calm.energy, `Pressing: Konter ${calm.counters.toFixed(2)} → ${press.counters.toFixed(2)}, Kraft ${calm.energy.toFixed(0)} → ${press.energy.toFixed(0)}`);
+check(press.counters > calm.counters && press.energy < calm.energy, `Pressing: Konter ${calm.counters.toFixed(2)} → ${press.counters.toFixed(2)}, Energie ${calm.energy.toFixed(0)} → ${press.energy.toFixed(0)}`);
 
 // 6) Konstanz: gleiche Mitte, unterschiedliche Streuung; Nervenstärke unter Druck
 const pl = P[club.playerIds[1]];

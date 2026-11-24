@@ -93,8 +93,8 @@ export const INFO_TEXTS = {
     wiki: 'condition-form',
   },
   kraft: {
-    title: 'Kraft im Spiel',
-    text: 'Verbleibende Kraft während der Partie. Sie sinkt mit jeder Minute – je nach Ausdauer, Laufarbeit und Taktik. Müde Spieler verlieren an Tempo und Zweikampfstärke; ein frischer Einwechselspieler hilft.',
+    title: 'Energie im Spiel',
+    text: 'Verbleibende Energie während der Partie (Batterie). Sie sinkt mit jeder Minute – je nach Ausdauer, Laufarbeit, Taktik und Wetter; wer nicht ausgeruht ist (Frische), beginnt schon mit weniger. Nach 90 Minuten bleiben Feldspielern meist 55–75, dem Torwart etwa 85–90. Müde Spieler verlieren an Tempo und Zweikampfstärke; ab der 60. Minute hilft ein frischer Einwechselspieler.',
     wiki: 'match-engine',
   },
   konstanz: {
@@ -285,12 +285,12 @@ export const INFO_TEXTS = {
   },
   mitBall: {
     title: 'Mit Ball',
-    text: 'Tempo, Breite und Aufbauspiel bestimmen, wie deine Mannschaft angreift. Hohes Tempo und langes Spiel sind direkter, kosten aber mehr Ballverluste und Kraft.',
+    text: 'Tempo, Breite und Aufbauspiel bestimmen, wie deine Mannschaft angreift. Hohes Tempo und langes Spiel sind direkter, kosten aber mehr Ballverluste und Energie.',
     wiki: 'tactic-options',
   },
   gegenBall: {
     title: 'Gegen den Ball',
-    text: 'Pressinghöhe, Abwehrlinie und Zweikampfhärte. Hohes Pressing erobert Bälle weit vorn, verbraucht aber viel Kraft; eine hohe Linie ist anfällig für Steilpässe, harte Zweikämpfe bringen Karten.',
+    text: 'Pressinghöhe, Abwehrlinie und Zweikampfhärte. Hohes Pressing erobert Bälle weit vorn, verbraucht aber viel Energie; eine hohe Linie ist anfällig für Steilpässe, harte Zweikämpfe bringen Karten.',
     wiki: 'tactic-options',
   },
   flankenart: {
@@ -845,7 +845,7 @@ export const INFO_TEXTS = {
   },
   mannschaftsstaerke: {
     title: 'Mannschaftsstärke',
-    text: 'Durchschnitt der Tagesstärke deiner Elf auf ihren Positionen – mit Form, Moral, Frische und der Kraft im Spiel. Fehlt ein Spieler (Platzverweis), zählt sein Platz mit null.',
+    text: 'Durchschnitt der Tagesstärke deiner Elf auf ihren Positionen – mit Form, Moral, Frische und der Energie im Spiel. Fehlt ein Spieler (Platzverweis), zählt sein Platz mit null.',
     wiki: 'match',
   },
   schiedsrichter: {

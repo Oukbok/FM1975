@@ -18,7 +18,7 @@ import { posGroupClass } from '../../../ui/positionBadges';
 const TALKS: [TeamTalk, string, string][] = [
   ['loben', 'Loben', 'Bestärkt bei Führung, kann bei Rückstand zu bequem machen.'],
   ['analyse', 'Ruhig analysieren', 'Sachlich, kleiner Effekt, kaum Risiko.'],
-  ['predigt', 'Kabinenpredigt', 'Weckt bei Rückstand auf, verunsichert bei Führung. Gibt etwas Kraft zurück.'],
+  ['predigt', 'Kabinenpredigt', 'Weckt bei Rückstand auf, verunsichert bei Führung. Gibt etwas Energie zurück.'],
 ];
 
 export function HalftimeTalk({ sim, side, d, onChange }: { sim: MatchSim; side: Side; d: Draft; onChange: (t: TeamTalk | null) => void }) {

@@ -14,7 +14,7 @@ import type { MatchSim } from './sim';
 
 /** Ab so vielen Minuten Aufwärmen gilt ein Ersatzspieler als „warm“. */
 export const WARM_MINUTES = 3;
-/** Kraft-Vorteil eines aufgewärmten Einwechselspielers. */
+/** Energie-Vorteil eines aufgewärmten Einwechselspielers. */
 export const WARM_ENERGY = 4;
 /** Tagesleistungs-Vorteil (kommt schneller ins Spiel). */
 export const WARM_DAY = 1.01;
@@ -47,7 +47,11 @@ export function applyWarmBonus(sim: MatchSim, m: MPlayer): void {
   m.warmSince = null;
 }
 
-/** Langes Aufwärmen kostet etwas Kraft (alle fünf Minuten nach zehn Minuten). */
+/** Co-Trainer: ab dieser Energie wärmt er einen Ersatz auf, darunter wechselt er aus (Skala: Feldspieler nach 90 Min. meist 55–75). */
+export const CO_WARM_AT = 70;
+export const CO_SUB_BELOW = 62;
+
+/** Langes Aufwärmen kostet etwas Energie (alle fünf Minuten nach zehn Minuten). */
 export function drainWarmUps(sim: MatchSim, t: TeamState): void {
   for (const m of t.players) {
     if (m.onPitch || m.warmSince == null) continue;
@@ -57,14 +61,14 @@ export function drainWarmUps(sim: MatchSim, t: TeamState): void {
 
 /**
  * Co-Trainer des menschlichen Trainers (Option „Automatische Auswechslungen“):
- * wärmt bei nachlassender Kraft einen Ersatz auf und wechselt Erschöpfte bzw.
+ * wärmt bei nachlassender Energie einen Ersatz auf und wechselt Erschöpfte bzw.
  * angeschlagen Weiterspielende aus. Ausrichtung und Taktik bleiben unangetastet.
  */
 export function assistantCoach(sim: MatchSim, t: TeamState): void {
   const min = sim.minute;
   if (sim.stoppage || min < 46 || min % 2 !== 0 || sim.subsLeft(t) <= 0) return;
   const cands = onPitch(t).filter((m) => m.group !== 'GK' || m.injured)
-    .map((m) => ({ m, need: m.injured ? 9 : (64 - m.energy) / 6 + (min >= 75 ? 0.3 : 0) }))
+    .map((m) => ({ m, need: m.injured ? 9 : (CO_WARM_AT - m.energy) / 6 + (min >= 75 ? 0.3 : 0) }))
     .sort((a, b) => b.need - a.need);
   const c = cands[0];
   if (!c || c.need <= 0) return;
@@ -72,7 +76,7 @@ export function assistantCoach(sim: MatchSim, t: TeamState): void {
   if (!rep) return;
   // Letzten Wechsel bis zur Schlussphase für Notfälle aufheben
   if (!c.m.injured && sim.subsLeft(t) === 1 && min < 80) return;
-  if (!c.m.injured && c.m.energy >= 58) {
+  if (!c.m.injured && c.m.energy >= CO_SUB_BELOW) {
     if (rep.warmSince == null) warmUp(sim, t.side, rep.id, true);
     return;
   }

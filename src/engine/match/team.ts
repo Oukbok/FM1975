@@ -41,10 +41,26 @@ export function conditionFactor(p: Player): number {
   return form * morale * fit * frische;
 }
 
-/** Startkraft aus der Frische: müde Spieler bauen früher ab. */
+/** Startenergie aus der Frische: wer nicht ausgeruht ist, beginnt schon mit weniger (Frische 60 → 90). */
 export function startEnergy(p: Player): number {
   const fr = typeof p.frische === 'number' ? p.frische : 100;
-  return 85 + clamp(fr, 0, 100) * 0.15;
+  return 75 + clamp(fr, 0, 100) * 0.25;
+}
+
+/**
+ * Energieverlust im Spiel je Fünf-Minuten-Takt (Wunsch Pascal: Spieler werden spürbar müde,
+ * Torwart deutlich weniger). Feldspieler: Grundwert nach Ausdauer × Taktik (Pressing/Tempo/
+ * Einsatz/Ausrichtung, `TacticMods.drain`) × Rolle × Wetter × Verlängerung. Kalibrierung
+ * (90 Min. von 100, Pause +6, Vereinstaktik): Ausdauer 72 (Median) ≈ 66, 85 ≈ 73, 55 ≈ 57;
+ * hohe Intensität ≈ 8–10 Punkte weniger; Torwart ≈ 88–91. Annahmen: docs/research/match-energy.md.
+ */
+export const ENERGY_FIELD_K = 2.7;
+export const ENERGY_GK_K = 0.9;
+export const ENERGY_FLOOR = 15;
+export function energyDrain(m: MPlayer, teamDrain: number, heat: number, et: number): number {
+  const st = m.p.attributes.stamina ?? 60;
+  if (m.group === 'GK') return ENERGY_GK_K * (1.3 - st / 200) * (1 + (teamDrain - 1) * 0.3) * heat * et;
+  return ENERGY_FIELD_K * (1.45 - st / 100) * teamDrain * (m.rd ?? 1) * heat * et;
 }
 
 export function makeMPlayer(p: Player, side: Side, pos: Position, started: boolean, minuteIn: number): MPlayer {
@@ -71,7 +87,7 @@ export function matchBase(p: Player, pos: Position): number {
   return cachedSuitability(p, pos) * 0.82 + Math.min(p.overall, cachedSuitability(p, p.naturalPosition)) * 0.18;
 }
 
-/** Tagesstärke eines Spielers auf seiner Position inkl. Kraft. */
+/** Tagesstärke eines Spielers auf seiner Position inkl. Energie. */
 export function rating(m: MPlayer): number {
   return m.base * m.cond * (0.8 + 0.2 * (m.energy / 100));
 }
@@ -287,7 +303,7 @@ export interface TacticMods {
   rate: number;
   /** Fouls/Härte. */
   foul: number;
-  /** Kraftverbrauch. */
+  /** Energieverbrauch. */
   drain: number;
   /** Anteil Flankenspiel. */
   cross: number;
@@ -330,27 +346,27 @@ export function tacticMods(t: Tactics | undefined, mentality: Mentality, shout: 
   m.ctrl *= 1 + press * 0.04 + (t?.buildup === 'short' ? 0.02 : -0.01);
   m.def *= 1 + press * 0.02;
   m.exposed *= 1 + line * 0.18 + press * 0.06;
-  m.drain *= 1 + press * 0.25 + tempo * 0.15;
+  m.drain *= 1 + press * 0.12 + tempo * 0.07;
   m.foul *= 1 + hard * 0.2 + press * 0.06;
   m.cards *= 1 + hard * 0.3;
   // Härte gewinnt Zweikämpfe (Balleroberung, Abwehr) – auf Kosten von Fouls und Karten.
   m.duel *= 1 + hard * 0.08;
   m.def *= 1 + hard * 0.02;
   m.ctrl *= 1 + hard * 0.01;
-  // Einsatz: mehr Zweikämpfe/Pressing/Wucht, aber schnellerer Kraftverlust, mehr Verletzungen und Karten.
+  // Einsatz: mehr Zweikämpfe/Pressing/Wucht, aber schnellerer Energieverlust, mehr Verletzungen und Karten.
   const eff = norm(t?.effort);
   m.duel *= 1 + eff * 0.07;
   m.def *= 1 + eff * 0.02;
   m.ctrl *= 1 + eff * 0.015;
   m.att *= 1 + eff * 0.015;
   m.rate *= 1 + eff * 0.03;
-  m.drain *= 1 + eff * 0.3;
+  m.drain *= 1 + eff * 0.13;
   m.foul *= 1 + eff * 0.1;
   m.cards *= 1 + eff * 0.08;
   m.injury *= 1 + eff * 0.3;
   m.cross *= 1 + width * 0.35 + (t?.buildup === 'long' ? 0.15 : 0);
   m.trap = t?.offsideTrap ? 1 : 0;
-  // Gegenpressing (ab 2008, engine/tacticEra.ts): Konter des Gegners werden früh gestoppt – das kostet Kraft.
+  // Gegenpressing (ab 2008, engine/tacticEra.ts): Konter des Gegners werden früh gestoppt – das kostet Energie.
   if (t?.counterPress) { m.exposed *= 0.82; m.drain *= 1.07; m.ctrl *= 1.01; }
   // Ausrichtung im Spiel
   m.att *= 1 + mentality * 0.045;

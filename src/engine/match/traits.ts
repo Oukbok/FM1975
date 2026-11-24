@@ -19,7 +19,7 @@ import { DUEL_K, logistic, paceSkill, phys, energyF, recoverSkill } from './skil
 export interface TeamTraits {
   /** Ø Teamwork der Feldspieler (Anweisungen umsetzen, Kombinationen, Abseitsfalle). */
   teamwork: number;
-  /** Ø Laufbereitschaft × Kraft (Pressing, Zurückeilen nach Ballverlust, Läufe in den Strafraum). */
+  /** Ø Laufbereitschaft × Energie (Pressing, Zurückeilen nach Ballverlust, Läufe in den Strafraum). */
   work: number;
   /** Ø Konzentration von Abwehr und Mittelfeld (Patzer, besonders spät). */
   conc: number;
@@ -61,9 +61,10 @@ export function computeTraits(pitch: MPlayer[], captainId: string | null): TeamT
   const bk = back.length ? back : field;
   return {
     teamwork: avg(field.map((m) => A(m).teamwork ?? 60), 60),
-    // Laufbereitschaft lässt mit der Kraft nach
+    // Laufbereitschaft lässt mit der Energie nach
     work: avg(field.map((m) => (A(m).workRate ?? 60) * energyF(m)), 60) / 0.97,
-    conc: avg(bk.map((m) => A(m).concentration ?? 60), 60),
+    // Konzentration lässt mit der Energie leicht nach (frisch ≈ +1,5 %, Energie 60 ≈ −2 %): späte Patzer/Lücken
+    conc: avg(bk.map((m) => (A(m).concentration ?? 60) * (0.91 + 0.09 * m.energy / 100)), 60) / 0.985,
     aggr: avg(field.map((m) => A(m).aggression ?? 60), 60),
     lead: cap ? A(cap).leadership ?? 60 : Math.max(...field.map((m) => A(m).leadership ?? 50)) - 8,
     resist: avg(bk.map((m) => {

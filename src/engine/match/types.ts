@@ -29,7 +29,7 @@ export interface MPlayer {
   base: number;
   /** Tagesform-Faktor (Form, Moral, Fitness, Frische), ~0.85–1.08. */
   cond: number;
-  /** Kraft im Spiel (100 = frisch). */
+  /** Energie im Spiel (100 = frisch; Anzeige „Energie“). */
   energy: number;
   onPitch: boolean;
   started: boolean;
@@ -88,7 +88,7 @@ export interface MPlayer {
   rf?: readonly number[];
   /** Faktoren auf den Anteil an Angriff/Kontrolle/Abwehr der Mannschaft. */
   ru?: readonly number[];
-  /** Kraftverbrauch der Rolle und Leistungsfaktor aus der Passung. */
+  /** Energieverbrauch der Rolle und Leistungsfaktor aus der Passung. */
   rd?: number;
   rfit?: number;
   /** Ergebnis des letzten Spielergesprächs (Anzeige im Wechsel-Bildschirm): Art, Wirkung, Leistung in %. */
