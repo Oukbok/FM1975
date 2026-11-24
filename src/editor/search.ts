@@ -5,6 +5,7 @@
 // =============================================================================
 import { Dataset } from '../data/dataset/schema';
 import { rowKey, Sec, Target } from './nav';
+import { compDef } from '../data/competitions/registry';
 
 export type Path = (string | number)[];
 
@@ -13,7 +14,7 @@ export interface Hit { sec: Sec; target: Target; path: Path; value: string; labe
 const TOP: Record<string, Sec> = {
   meta: 'general', clubs: 'clubs', crests: 'clubs', kits: 'clubs', crestEras: 'clubs', europe: 'europe', timeline: 'timeline',
   leagues: 'leagues', facilities: 'facilities', staff: 'staff', marketing: 'marketing', names: 'names', legendsV2: 'legends', playerPhotos: 'photos',
-  worldData: 'world', poolTowns: 'pool', economy: 'economy', history: 'history',
+  worldData: 'world', poolTowns: 'pool', economy: 'economy', history: 'history', competitions: 'competitions',
 };
 
 /** Wert am Pfad (Zahlen = Listenindex). */
@@ -47,6 +48,11 @@ export function targetFor(ds: Dataset, path: Path, text?: string): { sec: Sec; t
     t.tab = tabs[String(a)] ?? 'countries';
     if (a === 'countries' && typeof b === 'number') t.id = (at(ds, ['europe', 'countries', b, 'name']) as string) ?? t.id;
   }
+  if (top === 'competitions') {
+    t.id = String(a);
+    const from = at(ds, ['competitions', a, b, 'from']);
+    if (typeof b === 'number' && typeof from === 'number') t.year = from;
+  }
   if (top === 'names') t.tab = a === 'mix' ? 'mix' : a === 'blocked' ? 'blocked' : 'origins';
   return { sec, target: t };
 }
@@ -55,7 +61,7 @@ const WORDS: Record<string, string> = {
   clubs: 'Vereine', tier1: '1. Liga 1975', secondNord: '2. Liga Nord 1975', secondSued: '2. Liga Süd 1975', ddrOberliga: 'DDR-Oberliga 1975', ddrLiga: 'DDR-Liga 1975',
   worldData: 'Weltdaten', seasons: 'Saisons', europe: 'Europa', countries: 'Länder', timeline: 'Chronik', leagues: 'Ligasystem', reforms: 'Reformen',
   facilities: 'Einrichtungen', staff: 'Mitarbeiter', marketing: 'Marketing', names: 'Namen', origins: 'Herkünfte', legendsV2: 'Ausnahmetalente', playerPhotos: 'Spielerbilder & Fotos', photos: 'Fotos', portrait: 'Spielerbild', pose: 'Art', legendId: 'Legenden-ID', born: 'Geburtsjahr',
-  poolTowns: 'Amateur-Pool', economy: 'Wirtschaft', history: 'Zeitabschnitte', crests: 'Wappen', crestEras: 'Spätere Wappen', kits: 'Trikots',
+  poolTowns: 'Amateur-Pool', competitions: 'Wettbewerbe', trophy: 'Trophäe', trophyImg: 'Trophäenbild', slots: 'Startplätze', legs: 'Hin/Rück', stageNames: 'Rundennamen', from: 'von', to: 'bis', held: 'ausgetragen', economy: 'Wirtschaft', history: 'Zeitabschnitte', crests: 'Wappen', crestEras: 'Spätere Wappen', kits: 'Trikots',
   name: 'Name', shortName: 'Kürzel', short: 'Kürzel', city: 'Stadt', primary: 'Farbe 1', secondary: 'Farbe 2', colors: 'Farben', strength: 'Stärke',
   reputation: 'Ansehen', capacity: 'Plätze', stadium: 'Stadion', founded: 'Gegründet', title: 'Titel', year: 'Jahr', season: 'Saison',
   firstName: 'Vorname', lastName: 'Nachname', potential: 'Potenzial', first: 'Vornamen', last: 'Nachnamen', town: 'Stadt', group: 'Region',
@@ -66,6 +72,11 @@ export function pathLabel(ds: Dataset, path: Path): string {
   const parts: string[] = [];
   for (let i = 0; i < path.length; i++) {
     const k = path[i];
+    if (path[0] === 'competitions' && i === 1) { const d = compDef(String(k)); parts.push(d ? `${d.label}${d.sub ? ` (${d.sub})` : ''}` : String(k)); continue; }
+    if (path[0] === 'competitions' && typeof k === 'number') {
+      const o = at(ds, path.slice(0, i + 1)) as { from?: number; to?: number } | undefined;
+      if (o?.from != null) { parts.push(`${o.from}–${o.to != null && o.to < 9999 ? o.to : 'offen'}`); continue; }
+    }
     if (typeof k === 'number') {
       const o = at(ds, path.slice(0, i + 1)) as Record<string, unknown> | undefined;
       const nm = o && typeof o === 'object' ? (o.name ?? o.title ?? (o.firstName ? `${o.firstName} ${o.lastName ?? ''}` : undefined)) : undefined;

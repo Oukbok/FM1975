@@ -8,6 +8,7 @@ import { HomeSection, type Msg } from './sections/Home';
 import { checkDataset, Issue } from './validate';
 import { ClubsSection } from './sections/Clubs';
 import { EuropeSection } from './sections/Europe';
+import { CompetitionsSection } from './sections/Competitions';
 import { FacilitiesSection, LeaguesSection, MarketingSection, StaffSection, TimelineSection } from './sections/Rules';
 import { EconomySection, GeneralSection, HistorySection, NamesSection } from './sections/People';
 import { CheckSection } from './sections/Check';
@@ -200,7 +201,7 @@ export default function EditorApp() {
   const ids = clubIds(ds);
   const navApi = { target: nav.target, goto };
   const body: Record<Sec, ReactNode> = {
-    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, graphics: <GraphicsSection {...p} />, europe: <EuropeSection {...p} />,
+    general: <GeneralSection {...p} />, clubs: <ClubsSection {...p} />, world: <WorldSection {...p} />, pool: <PoolSection {...p} />, graphics: <GraphicsSection {...p} />, europe: <EuropeSection {...p} />, competitions: <CompetitionsSection {...p} />,
     changes: <ChangesSection {...p} />, timeline: <TimelineSection {...p} />, leagues: <LeaguesSection {...p} />, facilities: <FacilitiesSection {...p} />,
     staff: <StaffSection {...p} />, marketing: <MarketingSection {...p} />, names: <NamesSection {...p} />, legends: <LegendsSection {...p} />, photos: <PhotosSection {...p} />, formations: <FormationsSection {...p} />,
     economy: <EconomySection {...p} />, history: <HistorySection {...p} />,

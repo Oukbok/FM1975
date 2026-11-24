@@ -16,6 +16,7 @@ import { POOL_TOWNS } from '../data/poolTowns';
 import { POOL_COLORS } from './clubPool';
 import { POOL_TIER } from '../data/history/historicClubs';
 import { seasonStartYear } from '../data/timeline';
+import { compPeriod } from '../data/competitions/overrides';
 import { accessSlots } from '../data/euroFormats';
 import type { EuroCompId } from '../data/europe';
 import { buildDivision, hashStr, LeagueGroup, mulberry32, SimClub } from '../engine/leagues';
@@ -145,7 +146,7 @@ export function startEuroQualifiers(g: Pick<Game, 'clubs' | 'simClubs'>, home: s
       const c = EURO_MAP[k];
       for (const id of ids ?? []) if (exists(id) && !out.ec.includes(id) && !out.cwc.includes(id) && !out.uefa.includes(id)) out[c].push(id);
     }
-    if (out.ec.length + out.cwc.length + out.uefa.length) return out;
+    if (out.ec.length + out.cwc.length + out.uefa.length) return withDatasetSlots(g, out, home, year, comp);
   }
   const slots = accessSlots(year, startCountryRank(home, year));
   const t1 = (comp?.tier1.map((s) => s.id) ?? Object.keys(g.clubs)).filter((id) => g.clubs[id] && !id.startsWith('am'));
@@ -154,6 +155,26 @@ export function startEuroQualifiers(g: Pick<Game, 'clubs' | 'simClubs'>, home: s
   out.ec = take(slots.ec);
   out.cwc = take(slots.cwc);
   out.uefa = take(slots.uefa);
+  return out;
+}
+
+/**
+ * Startplätze aus dem Datensatz (Editor › Wettbewerbe) auch für die echten Starter der
+ * Startsaison: je Wettbewerb mit eigener Periode werden überzählige Starter gestrichen bzw.
+ * fehlende nach Ansehen aus der 1. Liga ergänzt. Ohne Datensatz-Periode unverändert.
+ */
+function withDatasetSlots(g: Pick<Game, 'clubs' | 'simClubs'>, out: Record<EuroCompId, string[]>, home: string, year: number, comp: ComposedHome | null): Record<EuroCompId, string[]> {
+  const own = (['ec', 'cwc', 'uefa'] as const).filter((c) => compPeriod(c, year)?.slots);
+  if (!own.length) return out;
+  const slots = accessSlots(year, startCountryRank(home, year));
+  const used = new Set([...out.ec, ...out.cwc, ...out.uefa]);
+  const t1 = (comp?.tier1.map((s) => s.id) ?? Object.keys(g.clubs)).filter((id) => (g.clubs[id] || g.simClubs[id]) && !id.startsWith('am'));
+  const rep = (id: string) => g.clubs[id]?.reputation ?? (g.simClubs[id] as { strength?: number } | undefined)?.strength ?? 0;
+  const free = t1.filter((id) => !used.has(id)).sort((a, b) => rep(b) - rep(a));
+  for (const c of own) {
+    while (out[c].length > slots[c]) free.unshift(out[c].pop()!);
+    while (out[c].length < slots[c] && free.length) out[c].push(free.shift()!);
+  }
   return out;
 }
 

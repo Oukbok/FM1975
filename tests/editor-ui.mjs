@@ -130,6 +130,61 @@ await page.click('.ed-nav-item[data-sec="photos"]');
 await page.waitForTimeout(150);
 if (await page.locator('.ed-table tbody tr').count() !== 2) fail('Spielerfotos: Legenden-Eintrag fehlt in der Liste');
 
+// Wettbewerbe (Wunsch Pascal): Periode wählen, umbenennen, teilen, Trophäe, Startplätze, Runde; Grenzen verschieben.
+await page.click('.ed-nav-item[data-sec="competitions"]');
+await page.waitForSelector('.ed-comp-main[data-comp="ec"]');
+const nPer = await page.locator('.ed-comp-seg').count();
+if (nPer < 6) fail(`Wettbewerbe: nur ${nPer} Standard-Perioden für den Landesmeister-Wettbewerb`);
+await page.screenshot({ path: `${outDir}/competitions.png` });
+// Periode 1975–1990 (Pokal der Landesmeister, K.-o.) über die Auswahl wählen.
+const opt = await page.locator('.ed-comp-pick option').evaluateAll((els) => els.findIndex((o) => o.textContent.startsWith('1975/76')));
+if (opt < 0) fail('Wettbewerbe: keine Periode ab 1975/76');
+await page.locator('.ed-comp-pick').selectOption({ index: Math.max(0, opt) });
+await page.locator('.ed-comp-form [data-field="name"]').fill('Meistercup');
+await page.locator('.ed-comp-form [data-field="name"]').press('Enter');
+await page.waitForTimeout(150);
+await page.locator('[data-part="trophy"] select').selectOption('welt');
+await page.click('[data-act="slots-edit"]');
+await page.locator('.ed-comp-slots tbody tr').first().locator('input').nth(1).fill('2');
+await page.locator('.ed-comp-slots tbody tr').first().locator('input').nth(1).press('Tab');
+await page.locator('.ed-comp-stages tr[data-stage="hf"] select').selectOption('1');
+await page.waitForTimeout(150);
+await page.screenshot({ path: `${outDir}/competitions-edited.png` });
+// Teilen ab 1985, dann den Beginn der zweiten Hälfte auf 1986 verschieben.
+await page.locator('.ed-comp-acts label:has-text("teilen ab") input').fill('1985');
+await page.click('[data-act="split-period"]');
+await page.waitForTimeout(150);
+let lab = await page.locator('.ed-comp-pick').evaluate((s) => s.options[s.selectedIndex].textContent);
+if (!lab.startsWith('1985/86')) fail(`Wettbewerbe: nach dem Teilen gewählt ${lab}`);
+await page.locator('.ed-comp-acts label:has-text("von") input').fill('1986');
+await page.locator('.ed-comp-acts label:has-text("von") input').press('Enter');
+await page.waitForTimeout(150);
+lab = await page.locator('.ed-comp-pick').evaluate((s) => s.options[s.selectedIndex].textContent);
+if (!lab.startsWith('1986/87') || !lab.includes('Meistercup')) fail(`Wettbewerbe: Grenze nicht verschoben (${lab})`);
+await page.screenshot({ path: `${outDir}/competitions-split.png` });
+// Gipfelpokal England: Modus Hin/Rück; Landespokal: Wiederholungen aus.
+await page.locator('.ed-comp-list input').fill('Gipfelpokal');
+await page.locator('.ed-comp-item:has-text("England")').click();
+await page.locator('.ed-comp-pick').selectOption({ index: await page.locator('.ed-comp-pick option').evaluateAll((els) => Math.max(0, els.findIndex((o) => o.textContent.startsWith('1975/76')))) });
+await page.locator('[data-part="super"] .ed-field:has-text("Modus") select').selectOption('legs2');
+await page.locator('.ed-comp-list input').fill('');
+await page.locator('.ed-comp-item[data-rowid="cup"]').click();
+await page.locator('[data-part="cup"] .ed-field:has-text("in den Runden") select').selectOption('n');
+await page.screenshot({ path: `${outDir}/competitions-cup.png` });
+// Eigenes Trophäenbild (Landespokal)
+{
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click('[data-act="trophy-upload"]')]);
+  await fc.setFiles({ name: 't.png', mimeType: 'image/png', buffer: await page.screenshot({ clip: { x: 0, y: 0, width: 120, height: 140 } }) });
+  await page.waitForSelector('.ed-comp-trophy img', { timeout: 4000 }).catch(() => fail('Wettbewerbe: Trophäenbild nicht hochgeladen'));
+}
+await page.locator('.ed-comp-main').screenshot({ path: `${outDir}/competitions-trophy.png` });
+// Änderungsübersicht zeigt den Bereich.
+await page.click('.ed-nav-item[data-sec="changes"]');
+await page.waitForTimeout(200);
+if (!await page.locator('[data-chg="competitions"]').count()) fail('Änderungen: Bereich „Wettbewerbe“ fehlt');
+await page.click('[data-chg="competitions"]');
+await page.screenshot({ path: `${outDir}/competitions-changes.png` });
+
 // Meta-ID setzen, prüfen, exportieren.
 await page.click('.ed-nav-item[data-sec="general"]');
 await page.locator('.ed-field').first().locator('input').fill('testsatz');
@@ -147,6 +202,12 @@ if (dl.suggestedFilename() !== 'testsatz.fm1975') fail(`Dateiname: ${dl.suggeste
 if (json.clubs.tier1[0].name !== 'Testhausen 75') fail('Export enthält die Umbenennung nicht');
 const kit = json.kits?.[json.clubs.tier1[0].id];
 if (!kit?.home || !kit?.away || kit.home.pattern !== 'hoops') fail('Export enthält das Trikot nicht vollständig');
+const ec = json.competitions?.ec ?? [];
+const ecP = ec.find((p) => p.name === 'Meistercup' && p.from === 1986);
+if (!ecP || ecP.from !== 1986 || ecP.trophy !== 'welt' || ecP.slots?.[0]?.[1] !== 2 || ecP.legs?.hf !== 1) fail(`Export: Wettbewerbe unvollständig (${JSON.stringify(ec.map((p) => [p.from, p.to, p.name]))})`);
+if (json.competitions?.['super:England']?.find((p) => p.from <= 1985 && p.to >= 1985)?.superFormat !== 'legs2') fail('Export: Gipfelpokal England fehlt');
+const cupP = json.competitions?.cup?.find((p) => p.replayRounds === false);
+if (!cupP || !/^data:image\/(webp|jpeg);base64,/.test(cupP.trophyImg ?? '')) fail('Export: Landespokal (Wiederholung/Bild) fehlt');
 const pp = json.playerPhotos ?? [];
 if (pp.length !== 2 || pp[0].photos.length !== 2 || pp[0].photos[1].pose !== 'torjubel' || !pp[1].legendId || pp[1].photos[0].pose !== 'verletzung') fail(`Export: Spielerfotos unvollständig (${JSON.stringify(pp.map((x) => [x.name, x.legendId, x.photos.map((f) => f.pose)]))})`);
 

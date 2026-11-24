@@ -145,6 +145,7 @@ export function leagueLabel(cc: string | undefined, tier: number, o: LeagueLabel
  * folgen dem Schema.
  */
 export function structTierName(cc: string | undefined, tier: number, year: number): string {
+  if (tier <= 2) { const p = compPeriod(leagueCompId(cc, tier), year); if (p?.name) return p.name; }
   const row = cc ? historicTiers(cc, year)?.[tier - 1] : undefined;
   if (!cc || cc === 'ger') return row?.name ?? leagueName(cc, tier, year);
   if (row && row.teams == null) return row.name;

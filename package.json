@@ -9,7 +9,7 @@
     "check": "tsc --noEmit -p .",
     "test:ui": "node scripts/build.mjs && node tests/ui-smoke.mjs test-output 25",
     "sim": "node scripts/sim.mjs",
-    "test:dataset": "node scripts/run-ts.mjs tests/dataset-test.ts",
+    "test:dataset": "node scripts/run-ts.mjs tests/dataset-test.ts && node scripts/run-ts.mjs tests/dataset-competitions.ts",
     "test:contracts": "node scripts/run-ts.mjs tests/contracts-test.ts",
     "test:contracts2": "node scripts/run-ts.mjs tests/contracts2-test.ts",
     "test:marketing": "node scripts/run-ts.mjs tests/marketing-test.ts",

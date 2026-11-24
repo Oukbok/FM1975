@@ -147,7 +147,7 @@ export function baseValues(def: CompDef, y: number): CompValues {
     case 'cup': return {
       held: true, name: 'Landespokal', short: 'Pokal', trophy: 'pokal',
       replayRounds: cupReplayBase(y, false), replayFinal: cupReplayBase(y, true), cupTo: accessSlotsBase(y, 1).cupTo,
-      info: ['K.-o.-System mit einem Spiel je Runde, Freilose und Amateure laut Ligasystem.'],
+      info: ['K.-o.-System mit einem Spiel je Runde.'],
     };
     case 'super': {
       const key = def.id.slice(6);

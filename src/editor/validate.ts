@@ -8,6 +8,8 @@ import { FORMATION_DECADES, FORMATIONS } from '../data/formations';
 import { ALL_POSITIONS } from '../types';
 import { BUILTIN_LEGENDS } from '../data/legends';
 import { isPhotoPose } from '../data/pressPhotos';
+import { compDef, baseValues } from '../data/competitions/registry';
+import { periodProblems } from './sections/competitions/model';
 
 /** `find` = ID/Text zum Hinspringen, `year` = Saison (Weltdaten). */
 export interface Issue { level: 'error' | 'warn'; area: string; text: string; find?: string; year?: number }
@@ -245,5 +247,40 @@ export function checkDataset(d: Dataset): Issue[] {
     ['Mitarbeiter', d.staff], ['Marketing', d.marketing],
   ];
   for (const [area, list] of empties) if (!list.length) warn(area, 'Leere Liste – das Spiel verwendet dafür die Einträge des Standards.');
+  checkCompetitions(d, err, warn);
   return out;
+}
+
+type Report = (area: string, text: string, find?: string, year?: number) => void;
+const IMG_URL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/;
+
+/** Wettbewerbe (Editor › Wettbewerbe): Perioden lückenlos und ohne Überschneidung, gültige Werte. */
+function checkCompetitions(d: Dataset, err: Report, warn: Report): void {
+  for (const [id, list] of Object.entries(d.competitions ?? {})) {
+    const def = compDef(id);
+    if (!def) { warn('Wettbewerbe', `Unbekannter Wettbewerb „${id}“ – wird im Spiel ignoriert.`, id); continue; }
+    const nm = `${def.label}${def.sub ? ` (${def.sub})` : ''}`;
+    if (!Array.isArray(list)) { err('Wettbewerbe', `${nm}: Perioden fehlen.`, id); continue; }
+    for (const t of periodProblems(list)) err('Wettbewerbe', `${nm}: ${t}.`, id, list[0]?.from);
+    for (const p of list) {
+      const y = p.from;
+      if (p.name !== undefined && !String(p.name).trim()) warn('Wettbewerbe', `${nm} ab ${y}: leerer Name – es gilt der Standard.`, id, y);
+      if (p.trophyImg && !IMG_URL.test(p.trophyImg)) err('Wettbewerbe', `${nm} ab ${y}: Trophäenbild ist kein gültiges Bild.`, id, y);
+      if (p.slots) {
+        if (!p.slots.length) warn('Wettbewerbe', `${nm} ab ${y}: leere Startplatz-Liste – es gilt der Standard.`, id, y);
+        const ups = p.slots.map((b) => b[0]);
+        if (new Set(ups).size !== ups.length) err('Wettbewerbe', `${nm} ab ${y}: Startplätze – ein Rang steht doppelt.`, id, y);
+        if (p.slots.some((b) => b[1] < 0 || b[1] > 8)) err('Wettbewerbe', `${nm} ab ${y}: Startplätze je Land 0–8.`, id, y);
+        if (p.slots.some((b, i) => i > 0 && b[1] > p.slots![i - 1][1])) warn('Wettbewerbe', `${nm} ab ${y}: ein schlechter platziertes Land bekommt mehr Startplätze.`, id, y);
+      }
+      if (p.legs || p.stageNames) {
+        const f = baseValues(def, y).euro;
+        const keys = new Set(f?.stages.map((s) => s.key) ?? []);
+        for (const k of [...Object.keys(p.legs ?? {}), ...Object.keys(p.stageNames ?? {})]) {
+          if (!keys.has(k)) warn('Wettbewerbe', `${nm} ab ${y}: Runde „${k}“ gibt es in dieser Saison nicht – die Angabe wirkt nur in Saisons mit dieser Runde.`, id, y);
+        }
+      }
+      if (p.month !== undefined && (!Number.isInteger(p.month) || p.month < 1 || p.month > 12)) err('Wettbewerbe', `${nm} ab ${y}: Monat 1–12.`, id, y);
+    }
+  }
 }
