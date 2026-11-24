@@ -11,8 +11,7 @@ import { CalendarEngine } from '../../../engine/calendar';
 import type { Game } from '../../../game/state';
 import { oppName, type NextOpp } from '../../../game/opponentView';
 import type { OwnComp } from '../../../game/ownCompetitions';
-import { TrophyArt } from '../../club/trophies/TrophyArt';
-import { trophyPhoto } from '../../../data/trophyImages';
+import { TrophyImage } from '../../club/trophies/TrophyImage';
 
 /** Gezeichnete Fankurve (Rückfall ohne Foto): Köpfe/Schultern in Reihen, nur Grautöne. */
 function CrowdArt() {
@@ -82,13 +81,12 @@ const STATE_DE: Record<OwnComp['state'], string> = { live: 'Im Rennen', out: 'Au
 
 /** Eine Zeile „Wettbewerbe dieser Saison“: Trophäe | Name + Stand + Runden | letztes/nächstes Spiel. */
 export function CompRow({ c }: { c: OwnComp }) {
-  const photo = trophyPhoto(c.shape);
   const n = c.steps?.n ?? 0;
   const at = c.steps?.at ?? 0;
   const liga = c.key === 'liga';
   return (
     <div className={`fxp-comp s-${c.state}`}>
-      <div className="fxp-trophy">{photo ? <img src={photo} alt="" /> : <TrophyArt shape={c.shape} />}</div>
+      <div className="fxp-trophy"><TrophyImage shape={c.shape} /></div>
       <div className="fxp-cmain">
         <div className="fxp-cname">{c.name}</div>
         <div className="fxp-cstat"><span className={`fxp-pill s-${c.state}`}>{liga && c.state === 'live' ? 'Läuft' : STATE_DE[c.state]}</span><b>{c.status}</b></div>

@@ -43,7 +43,12 @@ export const INFO_TEXTS = {
   },
   ligenstruktur: {
     title: 'Ligensystem',
-    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Volle Kästen laufen im Spiel mit Vereinen – bei mehreren Staffeln einer Ebene (z. B. 2. Liga Nord und Süd) jede Staffel als eigener Kasten und eigene Liga –, gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine. Oben rechts blätterst du durch die Zeiträume, in denen die Struktur gleich war – frühere zeigen links die Abschlusstabelle ihrer letzten Saison. Ligen, die es nicht mehr gibt (DDR, Sowjetunion, Jugoslawien, Tschechoslowakei), tragen den Stempel „Archiviert“ und zeigen ihren letzten Stand.',
+    text: 'Die Pyramide zeigt die Ligen des Landes in dieser Saison bis zur 4. Ebene, mit den historischen Namen, Staffeln und Mannschaftszahlen. Jeder Kasten zeigt die Trophäe der Liga (Meisterschale, Meisterteller der Staffel, DDR-Meisterpokal) und Auf- und Abstieg: „3 Auf“ = direkte Aufsteiger, „Aufstiegsrunde“ = die Meister spielen weniger Plätze aus, „+1 bester Zweiter“ = der stärkste Zweite steigt mit auf, „3 Ab“ = Absteiger. Relegationsspiele gibt es im Spiel nicht. Gestrichelte Kästen sind nur Struktur und werden nicht simuliert. Ein Klick auf einen Kasten zeigt links die Vereine. Rechts stehen die Pokale des Landes mit Sieger und der Platz in der Fünfjahreswertung. Oben rechts blätterst du durch die Zeiträume, in denen die Struktur gleich war. Ligen, die es nicht mehr gibt, tragen den Stempel „Archiviert“.',
+    wiki: 'league-system',
+  },
+  fuenfjahreswertung: {
+    title: 'Fünfjahreswertung',
+    text: 'Die Länderwertung des Europapokals: Je Saison bekommt ein Land den Durchschnitt der Punkte seiner Starter (1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis). Die Summe der letzten fünf Saisons ergibt den Rang, der Rang die Startplätze der nächsten Saison in jedem Wettbewerb. Für dein Land stehen sie damit fest; die anderen Länder werden beim Saisonwechsel mit der laufenden Saison neu gereiht.',
     wiki: 'league-system',
   },
   laenderprofil: {

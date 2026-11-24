@@ -111,3 +111,21 @@
 .dkv-v > .itip:last-child::after { right: 0; }
 /* Mitarbeiter-Profil: Gründe für/gegen einen Wechsel nur im großen Layout (Platz für den Verhandeln-Knopf) */
 [data-ui] .sf-reasons { display: none; }
+/* Ligensystem mit Pokal-Spalte (Statistiken › Ligensystem): Pyramide und Pokale passen ohne Bildlauf */
+[data-ui] .lp-main.has-aside { grid-template-columns: 340px minmax(0, 1fr) 330px; gap: 14px; }
+[data-ui] .lp-level { padding: 7px 0; }
+[data-ui] .lp-levels { padding: 4px 0; }
+[data-ui] .lp-box { padding: 9px 12px 8px; gap: 2px; }
+[data-ui] .lp-level:first-child .lp-box-tro { width: 46px; height: 50px; }
+[data-ui] .lp-box-tro { width: 38px; height: 42px; }
+[data-ui] .lp-moves { margin-top: 3px; }
+[data-ui] .lp-stage { gap: 8px; }
+[data-ui] .lp-reforms { padding-top: 6px; gap: 6px 8px; }
+[data-ui] .lp-cup { grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 9px 12px; }
+[data-ui] .lp-cup-tro { width: 54px; height: 60px; }
+[data-ui] .lp-cup-note { display: none; }
+[data-ui] .lp-coef { padding: 10px 12px; gap: 4px; }
+[data-ui] .lp-reform { padding: 2px 7px; }
+[data-ui] .lp-key { gap: 4px 14px; }
+/* Länderprofil › Übersicht: Punkte je Saison nur auf großen Flächen, Platz + Punkte + Startplätze bleiben */
+[data-ui] .cnx-coef-seasons { display: none; }

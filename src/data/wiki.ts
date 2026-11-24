@@ -914,11 +914,14 @@ Beim Start erscheint ein Menü mit:
     id: 'league-system',
     category: 'save',
     title: 'Übersicht Ligensystem',
-    keywords: ['ligensystem', 'pyramide', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau', 'archiv', 'archiviert', 'zeitraum', 'zeiträume', 'abschlusstabelle', 'sowjetunion', 'jugoslawien', 'tschechoslowakei', 'staffeln', 'ligen der welt'],
+    keywords: ['ligensystem', 'pyramide', 'fünfjahreswertung', 'koeffizient', 'startplätze', 'relegation', 'aufstiegsrunde', 'pokale', 'trophäe', 'landespokal', 'gipfelpokal', 'ebene', 'aufstieg', 'abstieg', 'amateurligen', 'pool', 'ddr', 'ausland', 'ligareform', 'unterbau', 'archiv', 'archiviert', 'zeitraum', 'zeiträume', 'abschlusstabelle', 'sowjetunion', 'jugoslawien', 'tschechoslowakei', 'staffeln', 'ligen der welt'],
     body: `## Übersicht Ligensystem
 Unter **Statistiken › Ligensystem** (und im Assistenten „Neues Spiel“) siehst du die Ligapyramide der laufenden Saison als klickbare Kästen. Oben wählst du das Land: **alle Länder alphabetisch in einer Liste**, vorgewählt ist dein Heimatland. Ligen, die es in der Saison nicht mehr gibt (DDR nach der Wiedervereinigung, aufgelöste Staaten), stehen mit **„(Archiv)“** dahinter (siehe „Archivierte Ligen“) – ihre alten Tabellen findest du unter Statistiken › Liga, wo die Länderwahl genauso aufgebaut ist.
 
-- **Kasten:** Name der Liga, Zahl der Vereine, Meister-/Europapokalplätze, Auf- und Absteiger. „Dein Verein“ markiert deine Liga.
+Die Seite hat drei Reiter: **Ligensystem**, **Fünfjahreswertung** und **Ligen der Welt**.
+
+- **Kasten:** Trophäe der Liga (Meisterschale der 1. Ebene, Meisterteller einer Staffel darunter, DDR-Meisterpokal), Name, Zahl der Vereine, Meister-/Europapokalplätze und Auf- und Abstieg als Marken: **„3 Auf“** = direkte Aufsteiger, **„Aufstiegsrunde“** = die Staffelmeister (ab 2012/13 auch der Zweite der Regionalliga Südwest) spielen in gelosten Duellen weniger Plätze aus, **„+1 bester Zweiter“** = der stärkste Zweite aller Staffeln steigt mit auf (2. Liga Nord/Süd bis 1980/81), **„3 Ab“** = Absteiger. **Relegationsspiele gibt es im Spiel nicht** – auch nicht zwischen 1. und 2. Liga. Die Zahlen kommen aus derselben Rechnung wie der Saisonwechsel. „Dein Verein“ markiert deine Liga.
+- **Pokale des Landes (rechts):** Landespokal (in der DDR FDGB-Pokal), Gipfelpokal bzw. Auftaktpokal und in Deutschland der Junioren-Pokal – je mit Trophäe, Format, Stand der Saison und Sieger (sonst dem letzten bekannten). Darunter der Platz des Landes in der Fünfjahreswertung mit seinen Startplätzen der nächsten Saison; „Ganze Wertung“ springt in den Reiter Fünfjahreswertung. Trophäenfotos erscheinen automatisch, sobald es für eine Trophäe ein Foto gibt – sonst die gezeichnete Trophäe.
 - **Liste links:** die Vereine der gewählten Liga – während der Saison als aktuelle Tabelle, vor dem Start als Prognose nach Stärke. Farbkanten zeigen die Zonen: Meister/Aufstieg, Europapokal/Aufstiegschance, Abstieg.
 - **Bis zur 4. Ebene:** Für England, Spanien, Italien, Frankreich und Deutschland zeigt die Pyramide die Ligen historisch korrekt je Saison – Zahl der Ebenen, Staffeln und Mannschaften (z. B. Spanien ab 1977 mit einer zusätzlichen dritten Ebene in Staffeln). Die Namen folgen dem Schema in der Landessprache (1. League, 2. Ligue, 3. División …, Artikel „Ligareformen im Ausland“). Ebenen, die im Spiel nicht mit Vereinen laufen, sind **gestrichelt** und reine Strukturangabe („nicht simuliert“).
 - **Unterbau:** Die Amateurligen spielen nicht selbst; ihre besten Vereine rücken im Tausch mit den Absteigern der untersten Liga nach.
@@ -931,6 +934,12 @@ Oben rechts im Kopf der Box wählst du – wie die Saison unter Statistiken › 
 
 ### Archivierte Ligen
 Ligen, die es nicht mehr gibt – die **DDR** ab 1991/92 sowie **Sowjetunion**, **Jugoslawien** (beide ab 1992/93) und **Tschechoslowakei** (ab 1993/94) –, bleiben in der Länderwahl. Sie zeigen immer ihren **letzten Stand** mit dem roten Stempel **„Archiviert“** und der Zeile „Diese Liga existiert seit … nicht mehr“; frühere Zeiträume dieser Ligen kannst du weiter durchblättern.
+
+### Fünfjahreswertung
+Der Reiter zeigt die Länderwertung des Europapokals: **Rang**, **Land**, die **Punkte der letzten fünf Saisons** einzeln, die **Summe** und die **Startplätze der nächsten Saison** je Wettbewerb (Namen der Epoche, z. B. Pokal der Landesmeister/Meisterliga, Pokal der Pokalsieger/Europa-Trophäe, Europa-Pokal/Kontinental-Liga). Dein Land ist hervorgehoben. Punkte je Saison = Durchschnitt aller Starter eines Landes: 1 je Teilnahme, 2 je gewonnene Runde und für den Titel, in Gruppen 1 je Sieg und ½ je Remis. Rechts steht, welcher Rang wie viele Plätze bringt. Für dein Land stehen Rang und Plätze schon fest (so rechnet der Saisonwechsel); die anderen Länder werden beim Saisonwechsel mit den Punkten der laufenden Saison neu gereiht. Dieselben Angaben stehen kompakt im Länderprofil auf der ersten Seite.
+
+### Ligen der Welt
+Stand der höchsten Liga jedes anderen Landes: Spieltag, Tabellenführer und Ligaruf ± Vorsaison; ein Klick öffnet Tabelle und Begegnungen unter Statistiken › Liga.
 
 Die Zahlen folgen denselben Regeln wie der Saisonwechsel – was hier steht, passiert am Saisonende auch.`,
   },

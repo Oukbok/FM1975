@@ -150,3 +150,103 @@ button.lp-reform:hover { border-color: var(--text-4); opacity: 1; }
 .lp-stamp small { font: 700 15px var(--font-ui); letter-spacing: 3px; text-transform: uppercase; }
 @keyframes lp-stamp { from { opacity: 0; transform: rotate(-11deg) scale(1.6); } to { opacity: 0.9; transform: rotate(-11deg) scale(1); } }
 .lp-stage.archived .lp-levels { filter: grayscale(0.55); }
+
+/* =============================================================================
+   Kästen mit Trophäe + Auf-/Abstiegsmarken, Spalte „Pokale des Landes“, Reiter
+   Fünfjahreswertung und Ligen der Welt (Wunsch Pascal, Statistiken › Ligensystem)
+   ============================================================================= */
+.lp-main.has-aside { grid-template-columns: 400px minmax(0, 1fr) 380px; }
+.lp-box-head { display: flex; align-items: center; justify-content: center; gap: 12px; min-width: 0; max-width: 100%; }
+.lp-box-name { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.lp-box-name b { line-height: 1.05; }
+.lp-box-tro { flex: none; width: 46px; height: 52px; display: inline-flex; align-items: center; justify-content: center; }
+.lp-box-tro .tro-art, .lp-box-tro .tro-wrap, .lp-box-tro .tro-wrap svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+.lp-level:first-child .lp-box-tro { width: 58px; height: 64px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box-head { flex-direction: column; gap: 4px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-box-tro { width: 30px; height: 34px; }
+.lp-box-name b, .lp-box-name small { max-width: 100%; overflow-wrap: anywhere; }
+.lp-moves { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 6px; margin-top: 6px; }
+.lp-mv {
+  display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 3px;
+  border: 1px solid var(--border-soft); background: rgba(var(--bg-rgb), 0.5);
+  font: 600 13.5px var(--font-ui); color: var(--text-2); white-space: nowrap;
+}
+.lp-mv::before { content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; }
+.lp-mv.up::before { border-bottom: 7px solid var(--green); }
+.lp-mv.down::before { border-top: 7px solid var(--red); }
+.lp-mv.chance::before { width: 8px; height: 8px; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--pos) 60%, transparent); }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-moves { gap: 4px; }
+.lp-boxes:has(> .lp-box:nth-child(4)) .lp-mv { padding: 1px 5px; font-size: 12.5px; gap: 4px; }
+.lp-key { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin: 0; font-size: 13.5px; color: var(--text-3); }
+.lp-key span { display: inline-flex; align-items: center; gap: 7px; }
+.lp-key i { display: inline-block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; }
+.lp-key i.up { border-bottom: 7px solid var(--green); }
+.lp-key i.down { border-top: 7px solid var(--red); }
+.lp-key i.chance { width: 8px; height: 8px; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--pos) 60%, transparent); }
+.lp-key-rel { font-weight: 600; color: var(--text-2); }
+
+/* Pokale des Landes */
+.lp-cups { min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 6px; background: rgba(var(--bg-rgb), 0.45); }
+.lp-cups-title { flex: none; padding: 12px 14px 10px; border-bottom: 1px solid var(--border-soft); font: 500 22px var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
+.lp-cups-list { flex: 1; min-height: 0; overflow-y: auto; }
+.lp-cup { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border-bottom: 1px solid var(--border-soft); }
+.lp-cup-tro { width: 74px; height: 82px; display: flex; align-items: center; justify-content: center; }
+.lp-cup-tro .tro-art, .lp-cup-tro .tro-wrap, .lp-cup-tro .tro-wrap svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+.lp-cup-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.lp-cup-name { font: 500 19px var(--font-display); letter-spacing: 0.8px; text-transform: uppercase; color: var(--text); }
+.lp-cup-fmt { font-size: 14px; color: var(--text-2); }
+.lp-cup-state { align-self: flex-start; padding: 1px 7px; border-radius: 3px; background: var(--accent-soft); color: var(--text); font: 600 12.5px var(--font-ui); letter-spacing: 0.4px; }
+.lp-cup-holder { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; min-width: 0; }
+.lp-cup-holder small { font-size: 12.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); }
+.lp-cup-holder > *:not(small) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lp-cup-note { font-size: 13px; color: var(--text-3); }
+.lp-coef { flex: none; padding: 12px 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.lp-coef-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; font: 500 17px var(--font-display); letter-spacing: 1px; text-transform: uppercase; }
+.lp-coef-go { flex: none; }
+.lp-coef-rank { display: flex; align-items: baseline; gap: 8px; font-size: 15px; color: var(--text-2); }
+.lp-coef-rank b { font: 500 30px var(--font-display); color: var(--text); }
+.lp-coef-rank span { margin-left: auto; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.lp-coef-sub { font-size: 12.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-4); }
+.lp-coef-slots { display: flex; flex-direction: column; gap: 4px; }
+.lp-slot { display: flex; align-items: baseline; gap: 10px; font-size: 14.5px; color: var(--text-2); }
+.lp-slot b { min-width: 22px; text-align: right; font-size: 17px; color: var(--text); font-variant-numeric: tabular-nums; }
+.lp-slot.none { opacity: 0.5; }
+.lp-coef-note { font-size: 14px; color: var(--text-3); line-height: 1.4; }
+
+/* Reiter Fünfjahreswertung (views/stats/CoefficientPage.tsx) */
+.cf-box .dbox-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.cf-wrap { height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.cf-list { flex: 1; min-height: 0; overflow-y: auto; }
+.cf-row { display: grid; align-items: center; column-gap: 10px; padding: 0 14px; height: 38px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
+.cf-row > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cf-head { height: 36px; flex: none; font: 600 12.5px var(--font-ui); color: var(--text-3); border-bottom: 1px solid var(--border); }
+.cf-head .cf-comp { white-space: normal; line-height: 1.1; }
+.cf-row.me { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--club-accent, var(--accent)); }
+.cf-rank { font-variant-numeric: tabular-nums; color: var(--text-3); }
+.cf-land { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.cf-land em { font-style: normal; font: 600 11.5px var(--font-ui); letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); }
+.cf-num { text-align: right; font-variant-numeric: tabular-nums; }
+.cf-season { color: var(--text-2); }
+.cf-sum { font-weight: 700; color: var(--text); }
+.cf-slot { font-weight: 700; color: var(--text); }
+.cf-slot.none { color: var(--text-4); font-weight: 400; }
+.cf-foot { flex: none; padding: 8px 14px; border-top: 1px solid var(--border-soft); font-size: 12.5px; color: var(--text-3); }
+.cf-side .dbox-body { overflow-y: auto; }
+.cf-own { display: flex; align-items: center; gap: 12px; padding: 4px 0 12px; border-bottom: 1px solid var(--border-soft); margin-bottom: 8px; }
+.cf-own div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cf-own b { font: 500 20px var(--font-display); letter-spacing: 0.8px; text-transform: uppercase; }
+.cf-own span { font-size: 14px; color: var(--text-2); }
+.cf-band { display: grid; align-items: center; column-gap: 8px; padding: 6px 8px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.cf-band > * { text-align: center; }
+.cf-band > span:first-child { text-align: left; color: var(--text-2); }
+.cf-band-head { font: 600 12.5px var(--font-ui); color: var(--text-3); border-bottom: 1px solid var(--border); }
+.cf-band.me { background: var(--accent-soft); }
+.cf-rules { margin: 6px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-2); line-height: 1.4; }
+
+/* Reiter Ligen der Welt über die volle Breite */
+.lsv-box .lsv-row { grid-template-columns: 220px 260px 110px minmax(0, 1fr); }
+.lsv-box .lsv-row.rep { grid-template-columns: 220px 260px 110px minmax(0, 1fr) 120px; }
+/* Reformleiste + Zeichenerklärung stehen immer; nur die Ebenen blättern bei Platzmangel. */
+.lp-box-page .lp-stage { overflow: hidden; }
+.lp-box-page .lp-levels { min-height: 0; overflow-y: auto; justify-content: safe center; }
+.lp-box-page .lp-reforms, .lp-box-page .lp-key, .lp-box-page .lp-note, .lp-box-page .lp-archived { flex: none; }

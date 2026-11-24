@@ -6,6 +6,7 @@ import {
 } from '../../game/countryProfile';
 import { DashBox, Empty, KV, Meter } from '../../ui/DashPage';
 import { vColor } from '../../ui/format';
+import { fmtCoef } from '../../game/coefficients';
 import { TeamName } from '../../views/stats/competition/parts';
 import { NatRow, type CountryTabProps } from './parts';
 import { CtChampBox, CtClubsBox, CtCupBox } from './ContinentBoxes';
@@ -46,9 +47,12 @@ export default function OverviewTab({ g, c, pyramid }: CountryTabProps) {
             text={<>{rep.rep.toFixed(0)}{rep.delta != null && <small className={`cnx-delta ${Math.abs(rep.delta) < 0.5 ? '' : rep.delta > 0 ? 'up' : 'down'}`}> {sign(rep.delta)} zur Vorsaison</small>}</>} />
           {rep.live && <KV k="Historisch um diese Zeit" v={rep.hist.toFixed(0)} />}
           {!rep.live && <div className="dnote">{c.kind === 'home' ? 'Dein Heimatland wird nicht gesteuert – seine Stärke kommt aus den echten Kadern.' : c.kind === 'ddr' ? 'Die DDR läuft mit deinem Spielstand; ihr Ruf ist nur ein Richtwert.' : 'Dieser Spielstand stammt aus einer Version ohne Ligaruf – angezeigt wird der historische Richtwert.'}</div>}
-          <KV k="Fünfjahreswertung" v={rep.rank ? `${rep.rank}. von ${rep.of}${rep.coef != null ? ` · ${rep.coef.toFixed(1).replace('.', ',')} Punkte` : ''}` : 'keine Daten'} strong />
-          <div className="dsec">Startplätze Europapokal {g.season}</div>
-          {rep.slots.length ? rep.slots.map((s) => <KV key={s.label} k={s.label} v={s.n} />) : <div className="dnote">Keine Daten – das Land steht nicht in der Wertung.</div>}
+          <KV k="Fünfjahreswertung" info="fuenfjahreswertung" v={rep.rank ? `${rep.rank}. von ${rep.of}${rep.coef != null ? ` · ${fmtCoef(rep.coef)} Punkte` : ''}` : 'keine Daten'} strong />
+          {rep.rank != null && <div className="cnx-coef-seasons" title="Punkte der letzten fünf Saisons">
+            {rep.seasonLabels.map((l, i) => <span key={l}><small>{l.slice(2)}</small><b>{fmtCoef(rep.seasons[i] ?? null)}</b></span>)}
+          </div>}
+          {rep.slots.length ? <div className="cnx-slots"><em>Startplätze {rep.next}</em>{rep.slots.map((s) => <span key={s.label} className={s.n ? '' : 'none'}><b>{s.n}</b>{s.label}</span>)}</div>
+            : <div className="dnote">Keine Daten – das Land steht nicht in der Wertung.</div>}
         </> : <Empty icon="international">{c.kind === 'none' ? 'Keine Liga im Spiel – deshalb kein Ligaruf und keine Fünfjahreswertung.' : `${c.name} besteht in dieser Saison nicht – kein Ligaruf, keine Fünfjahreswertung.`}</Empty>}
       </DashBox>}
 

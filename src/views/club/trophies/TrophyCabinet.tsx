@@ -7,11 +7,10 @@
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import { ClubLink } from '../../../components/club/ClubLink';
-import { trophyPhoto } from '../../../data/trophyImages';
 import type { Game } from '../../../game/state';
 import { TROPHY_CATS, trophiesOf, trophyFacts, trophyTally, type TrophyCat, type TrophyEntry, type TrophyShape } from '../../../game/trophyCabinet';
 import { InfoTip } from '../../../ui/InfoTip';
-import { TrophyArt } from './TrophyArt';
+import { TrophyImage } from './TrophyImage';
 
 const CAT_SHAPE: Record<TrophyCat, TrophyShape> = { liga: 'schale', pokal: 'pokal', kontinental: 'henkel', jugend: 'jugend', andere: 'halle' };
 const CAT_EMPTY: Record<TrophyCat, string> = {
@@ -22,13 +21,7 @@ const CAT_EMPTY: Record<TrophyCat, string> = {
   andere: 'Hier stehen Hallenfinale und Aufstiege, sobald dein Verein einen davon schafft.',
 };
 
-function Trophy({ shape }: { shape: TrophyShape }) {
-  const src = trophyPhoto(shape);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [shape]);
-  if (src && !failed) return <img className="tro-art tro-photo" src={src} alt="" onError={() => setFailed(true)} />;
-  return <TrophyArt shape={shape} />;
-}
+const Trophy = ({ shape }: { shape: TrophyShape }) => <TrophyImage shape={shape} />;
 
 const seasonLong = (s: string) => { const y = parseInt(s.slice(0, 4), 10); return `${y} / ${y + 1}`; };
 
@@ -104,7 +97,7 @@ export function TrophyCabinet({ g, clubId, className = '' }: { g: Game; clubId: 
         ) : (
           <div className="tro-show tro-ghost" key={`empty-${cat}`}>
             <div className="tro-head"><div className="tro-kicker">{label}</div><div className="tro-title">Noch leer</div></div>
-            <div className="tro-pedestal"><TrophyArt shape={CAT_SHAPE[cat]} /></div>
+            <div className="tro-pedestal"><TrophyImage shape={CAT_SHAPE[cat]} /></div>
           </div>
         )}
       </section>

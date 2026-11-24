@@ -18,9 +18,8 @@ import { worldSeason, worldYears } from '../data/world/index';
 import { seasonLabelOf } from '../data/world/countries';
 import { NATION_BY_CODE, confLabel, confOf, nationExists, type NationDef } from '../data/nationalTeams';
 import { repTargetAt } from '../data/leagueReputation';
-import { accessSlots, euroCompName } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
-import { coefSum, countryRanking, germanRank } from '../engine/world';
+import { coefRowOf, coefTable } from './coefficients';
 import { leagueArchive } from './leagueArchive';
 import { leagueRepInfo, leagueRepLabel } from './leagueRepGame';
 import { homeCountryOf, type Game } from './state';
@@ -121,7 +120,12 @@ export interface CountryRep {
   rank: number | null;
   of: number;
   coef: number | null;
+  /** Startplätze der Folgesaison `next` je Wettbewerb (Namen der Epoche). */
   slots: { label: string; n: number }[];
+  /** Punkte der letzten fünf Saisons (älteste zuerst) und deren Saisons. */
+  seasons: (number | null)[];
+  seasonLabels: string[];
+  next: string;
 }
 
 export function countryRep(g: Game, ref: CountryRef): CountryRep | null {
@@ -130,30 +134,15 @@ export function countryRep(g: Game, ref: CountryRef): CountryRep | null {
   const w = g.world;
   const info = ref.kind === 'world' ? leagueRepInfo(g, ref.key, y) : null;
   const hist = repTargetAt(ref.key, y);
-  let rank: number | null = null, coef: number | null = null, of = 0;
-  if (w) {
-    const list = countryRanking(w, y);
-    of = list.length + (w.countries[ref.key] ? 0 : 1);
-    if (ref.kind === 'home') { rank = germanRank(w, y); coef = coefSum(w.germanCoef); }
-    else if (ref.kind === 'world') {
-      const i = list.findIndex((c) => c.name === ref.key);
-      if (i >= 0) {
-        coef = coefSum(list[i].coef);
-        rank = 1 + list.filter((c) => coefSum(c.coef) > coef!).length + (coefSum(w.germanCoef) > coef ? 1 : 0);
-        of = list.length + 1;
-      }
-    }
-  }
-  const slots: CountryRep['slots'] = [];
-  if (rank != null) {
-    const s = accessSlots(y, rank);
-    slots.push({ label: euroCompName('ec', y), n: s.ec });
-    slots.push({ label: euroCompName('uefa', y), n: s.uefa });
-    if (s.cwc) slots.push({ label: euroCompName('cwc', y), n: s.cwc });
-  }
+  // Fünfjahreswertung aus derselben Quelle wie Statistiken › Ligensystem (game/coefficients.ts).
+  const t = w ? coefTable(g) : null;
+  const row = t ? coefRowOf(t, ref.kind === 'home' ? (t.rows.find((r) => r.home)?.key ?? ref.key) : ref.key) : null;
+  const rank = row?.rank ?? null, of = t?.rows.length ?? 0, coef = row?.total ?? null;
+  const slots: CountryRep['slots'] = row && t ? t.comps.map((c) => ({ label: c.name, n: row.slots[c.id] })) : [];
   return {
     rep: info?.rep ?? hist, hist, delta: info?.delta ?? null, live: !!info,
     mode: leagueRepLabel(g.leagueRepMode), rank, of, coef: coef == null ? null : Math.round(coef * 10) / 10, slots,
+    seasons: row?.seasons ?? [], seasonLabels: t?.seasons ?? [], next: t?.next ?? g.season,
   };
 }
 

@@ -57,7 +57,8 @@ export interface TrophyFact { k: string; v: string; club?: string }
 const POOL_TIERS = new Set([9, 109]);
 const isHistoric = (s: string) => seasonStartYear(s) < 1975 && !!historicDivisions(s).length;
 
-function shapeOf(kind: TitleKind, year: number): TrophyShape {
+/** Form der Trophäe eines Titels (Vitrine, Statistiken › Ligensystem › Pokale des Landes). */
+export function shapeOf(kind: TitleKind, year: number): TrophyShape {
   switch (kind) {
     case 'meister': return 'schale';
     case 'ddr': return 'ddr';
@@ -72,6 +73,23 @@ function shapeOf(kind: TitleKind, year: number): TrophyShape {
     default: return 'jugend';
   }
 }
+/**
+ * Trophäe einer Liga (Statistiken › Ligensystem, Spielplan „Wettbewerbe dieser Saison“, Vitrine):
+ * höchste Ebene = Meisterschale, DDR-Oberliga = DDR-Meisterpokal, darunter Staffelmeister-Teller;
+ * Unterbau/Pool = keine. Eine Stelle für alle Anzeigen – neue Fotos (data/trophyImages.ts) erscheinen überall.
+ */
+export function leagueTrophyShape(level: number, ddr = false): TrophyShape | null {
+  if (level === 1) return ddr ? 'ddr' : 'schale';
+  return level > 1 ? 'teller' : null;
+}
+
+/** Anzeigename der Trophäe (Titel/Tooltip). */
+export const TROPHY_LABEL: Record<TrophyShape, string> = {
+  schale: 'Meisterschale', ddr: 'DDR-Meisterpokal', teller: 'Meisterteller der Staffel', pokal: 'Pokal', henkel: 'Henkelpokal',
+  cwc: 'Pokal der Pokalsieger', konferenz: 'Europa-Trophäe', uefa: 'Europa-Pokal', halle: 'Hallenpokal', jugend: 'Jugendpokal',
+  uyl: 'Jugend-Meisterliga', aufstieg: 'Aufstiegsmedaille', welt: 'Weltkugel-Trophäe',
+};
+
 function catOf(kind: TitleKind): TrophyCat {
   if (kind === 'meister' || kind === 'ddr') return 'liga';
   if (kind === 'pokal' || kind === 'super' || kind === 'ligapokal') return 'pokal';

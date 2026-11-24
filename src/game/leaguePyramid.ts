@@ -20,12 +20,13 @@ import { groupOrder } from '../data/regionGeo';
 import { seasonStartYear } from '../data/timeline';
 import { LeagueGroup, SimClub, simDisplayName } from '../engine/leagues';
 import { germanRank, initWorld } from '../engine/world';
+import { poolSwapCount } from './clubPool';
 import { homeCountryOf, type Game } from './state';
 import { COUNTRY_BY_CC, COUNTRY_BY_KEY } from '../data/world/countries';
 import { historicTiers, tierText } from '../data/leagueTiers';
 import { homeGroupKeys } from '../data/world/secondGroups';
 import { leagueLabel, leagueName, structTierName } from '../data/leagueNames';
-import { worldStructureOfKey } from '../data/world/structure';
+import { worldStructureFor, worldStructureOfKey } from '../data/world/structure';
 import { secondGroups } from '../engine/worldSecond';
 import { deepGroupsOf, updateWorldDepths } from '../engine/worldDeep';
 import type { WorldCountry } from '../engine/worldTypes';
@@ -55,6 +56,8 @@ export interface PyrDivision {
   struct?: string;
   /** Früherer Zeitraum (game/leaguePeriods.ts): Sollgröße ohne Vereinsliste. */
   size?: number;
+  /** Aufstiegsrunde (Deutschland: weniger Plätze als Staffeln): `slots` Plätze für `field` Teilnehmer, `seats` davon aus dieser Staffel. */
+  round?: { slots: number; field: number; seats: number };
 }
 
 /** Vereinszahl einer Division: Vereinsliste bzw. Sollgröße eines früheren Zeitraums. */
@@ -95,31 +98,54 @@ export function pyrZone(d: PyrDivision, pos: number): PyrZone {
   const n = pyrSize(d);
   if (d.pool) return '';
   if (pos <= d.champion + d.up) return 'zone-cl';
+  if (d.round && pos <= d.round.seats) return 'zone-po';
   if (pos <= d.champion + d.up + d.europe + d.upChance) return 'zone-po';
   if (d.down > 0 && pos > n - d.down) return 'zone-rel';
   return '';
 }
 
-/** Auf-/Abstiegszahlen der West-Pyramide wie im Saisonwechsel. */
-export function westZones(levels: PyrDivision[][], euroChamp: number, euroMore: number): void {
+/**
+ * Auf-/Abstiegszahlen der deutschen Pyramide – dieselbe Rechnung wie der Saisonwechsel
+ * (data/reformTransition.ts `normalTransition` + `promotionPlayoff`, game/clubPool.ts `poolSwapCount`):
+ * Aufsteiger P = `upSlots` der oberen Liga laut Struktur der Saison, sonst Staffeln ≥ 3 ? Staffeln : 3;
+ * weniger Plätze als Staffeln = Aufstiegsrunde der Meister (+ Vizemeister markierter Staffeln);
+ * mehr Plätze als Staffeln: eine Staffel → die nächsten Plätze, mehrere → die Zweiten (alle bzw. der
+ * stärkste = „Chance“); Absteiger = Aufsteiger ± Größenänderung. Relegationsspiele gibt es im Spiel nicht.
+ * `season` = Saison, deren Struktur gilt (laufende bzw. letzte Saison eines früheren Zeitraums).
+ */
+export function westZones(levels: PyrDivision[][], euroChamp: number, euroMore: number, season?: string): void {
+  const targets = season ? structureForSeason(season) : [];
+  const sim = (lv: PyrDivision[] | undefined) => !!lv?.length && !lv[0].pool && !lv[0].struct;
   levels.forEach((lv, i) => {
+    if (!sim(lv)) return;
+    for (const d of lv) if (i === 0) { d.champion = euroChamp; d.europe = euroMore; }
     const lower = levels[i + 1];
-    const isLast = !lower || lower[0]?.pool;
-    for (const d of lv) {
-      if (d.pool) continue;
-      if (i === 0) { d.champion = euroChamp; d.europe = euroMore; }
-      if (lower && !isLast) {
-        const G = lower.length;
-        d.down = G >= 3 ? G : 3;
-        d.downTo = `Abstieg in die ${lower[0].name.replace(/ (Nord|Süd|Nordost|West)$/, '')}`;
-      } else {
-        d.down = lv.length >= 3 ? 2 : lv.length === 2 ? 4 : 3;
-        d.downTo = 'Tausch mit dem Amateur-Pool';
-      }
-      if (i > 0) {
-        const G = lv.length;
-        d.up = G === 1 ? 3 : 1;
-        d.upChance = G === 2 ? 1 : 0; // bester Zweiter beider Staffeln steigt auf
+    if (!sim(lower)) {
+      // Unterste simulierte Ebene ↔ Amateur-Pool (game/clubPool.ts poolExchange).
+      for (const d of lv) { d.down = poolSwapCount(lv.length); d.downTo = 'Tausch mit dem Amateur-Pool'; }
+      return;
+    }
+    const G = lower.length;
+    const upper = lv[0];
+    const upT = targets.find((t) => t.tier === upper.level && t.group == null);
+    const size = pyrSize(upper);
+    const grow = upT && lv.length === 1 && size ? upT.teamCount - size : 0;
+    let P = upT?.upSlots ?? (G >= 3 ? G : 3);
+    if (P - grow < 0) P = grow;
+    if (lv.length === 1) {
+      upper.down = Math.max(0, P - grow);
+      upper.downTo = `Abstieg in die ${lower[0].name.replace(/ (Nord|Süd|Nordost|West|Südwest|Bayern)$/, '')}`;
+    }
+    if (P < G) {
+      // Aufstiegsrunde (promotionPlayoff): Meister + Vizemeister markierter Staffeln um P Plätze.
+      const runnerUp = (d: PyrDivision) => !!targets.find((t) => t.tier === d.level && t.group === d.group)?.playoffRunnerUp;
+      const field = G + lower.filter(runnerUp).length;
+      for (const d of lower) d.round = { slots: P, field, seats: runnerUp(d) ? 2 : 1 };
+    } else {
+      const extra = P - G;
+      for (const d of lower) {
+        d.up = G === 1 ? P : 1 + (extra >= G ? 1 : 0);
+        d.upChance = G > 1 && extra > 0 && extra < G ? 1 : 0; // stärkster Zweiter (nach Stärke) steigt auf
       }
     }
   });
@@ -143,8 +169,10 @@ function poolDiv(clubs: PyrClub[], level: number, ddr: boolean): PyrDivision {
 }
 
 export function euroSlots(year: number, rank: number): { champ: number; more: number } {
+  // Plätze über die Liga wie germanQualifiersV2 (game/euroSetup.ts): ab 1999 zählt der Pokalsieger im
+  // Europa-Pokal mit, ab 2021 kommt der nächste Platz für die Europa-Trophäe dazu.
   const s = accessSlots(year, rank);
-  return { champ: 1, more: Math.max(0, s.ec - 1) + s.uefa };
+  return { champ: 1, more: Math.max(0, s.ec - 1) + s.uefa - (year >= 1999 ? 1 : 0) + (year >= 2021 ? s.cwc : 0) };
 }
 
 export function reformList(season: string): PyramidData['reforms'] {
@@ -257,7 +285,7 @@ export function pyramidPreGame(season = '1975/76'): PyramidData {
     [poolDiv(westPoolSeeds().map((s) => simToPyr(s, year)), 3, false)],
   ];
   const e = euroSlots(year, germanRank(undefined, year));
-  westZones(westLv, e.champ, e.more);
+  westZones(westLv, e.champ, e.more, season);
   const ddrLv: PyrDivision[][] = [
     [div(DDR_OBERLIGA_ID, 'DDR-Oberliga', 1, 'nordost', DDR_OBERLIGA_SEEDS.map((s) => simToPyr(s, year)).sort(byStrength), 'strength')],
     [div(DDR_LIGA_ID, 'DDR-Liga', 2, 'nordost', DDR_LIGA_SEEDS.map((s) => simToPyr(s, year)).sort(byStrength), 'strength')],
@@ -312,8 +340,10 @@ export function pyramidFromGame(g: Game): PyramidData {
   const westLv = build((t) => t < 100, 0);
   const westPool = Object.values(g.simClubs).filter((s) => s.tier === POOL_TIER).map((s) => simToPyr(s, year));
   if (westPool.length) westLv.push([poolDiv(westPool, westLv.length + 1, false)]);
-  const e = euroSlots(year, germanRank(g.world, year));
-  westZones(westLv, e.champ, e.more);
+  // Europapokal der Folgesaison: Rang und Plätze wie beim Saisonwechsel (engine/euro.ts, Jahr + 1).
+  const e = euroSlots(year + 1, germanRank(g.world, year + 1));
+  if (homeCountryOf(g) === 'ger') westZones(westLv, e.champ, e.more, season);
+  else homeAbroadZones(westLv, homeCountryOf(g), year, e);
   const ddrLv = build((t) => t > 100 && t < 109, 100);
   const ddrOpen = ddrLv.length > 0;
   const ddrPool = Object.values(g.simClubs).filter((s) => s.tier === DDR_POOL_TIER).map((s) => simToPyr(s, year));
@@ -329,6 +359,18 @@ export function pyramidFromGame(g: Game): PyramidData {
     abroad: abroadSystems(countries, (g.euroClubs ?? {}) as never, false, year),
     reforms: homeCountryOf(g) === 'ger' ? reformList(season) : [],
   };
+}
+
+/**
+ * Heimatland ≠ Deutschland: Auf-/Abstieg nach der historischen Struktur des Landes (data/world/structure.ts),
+ * wie game/homeStructure.ts sie dem Saisonwechsel vorgibt; Europapokal-Plätze wie bei der Heimat.
+ */
+function homeAbroadZones(lv: PyrDivision[][], cc: string, year: number, e: { champ: number; more: number }): void {
+  const simLv = lv.filter((x) => !x[0]?.pool);
+  const pool = simLv.length < lv.length;
+  abroadZones(simLv, cc, worldStructureFor(cc, year + 1), Math.max(0, simLv.length - 2), pool, year);
+  if (simLv.length === 1 && pool) for (const d of simLv[0]) { d.down = poolSwapCount(1); d.downTo = 'Tausch mit dem Unterbau'; }
+  for (const d of simLv[0] ?? []) { d.champion = e.champ; d.europe = e.more; }
 }
 
 function groupRank(gr: LeagueGroup): number {

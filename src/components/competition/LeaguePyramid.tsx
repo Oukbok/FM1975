@@ -7,7 +7,7 @@
 // (vor dem Start aus den Stammdaten, im Spiel aus dem Spielstand). Genutzt im
 // Assistenten „Neues Spiel“, unter Statistiken › Ligensystem und im Länderprofil.
 // =============================================================================
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import ClubCrest from '../ClubCrest';
 import { ClubLink } from '../club/ClubLink';
 import { CountryFlag } from './CountryFlag';
@@ -15,6 +15,8 @@ import { countryInfo } from '../../data/countryFlags';
 import Select from '../../ui/Select';
 import { type PyrDivision, type PyrFinal, type PyrSystem, type PyramidData, type PyramidSide, pyrSize, pyrZone } from '../../game/leaguePyramid';
 import type { Club } from '../../types';
+import { leagueTrophyShape } from '../../game/trophyCabinet';
+import { TrophyImage } from '../../views/club/trophies/TrophyImage';
 
 function findDiv(sys: PyrSystem | undefined, id: string | undefined): PyrDivision | undefined {
   if (!sys) return undefined;
@@ -23,14 +25,27 @@ function findDiv(sys: PyrSystem | undefined, id: string | undefined): PyrDivisio
 }
 
 
-function flowText(d: PyrDivision, past = false): string[] {
-  const out: string[] = [];
-  if (d.pool) return ['Vereine ohne Liga im Spiel', 'die Besten rücken nach'];
-  if (d.struct) return past ? [] : ['nicht simuliert'];
-  if (d.champion) out.push(d.europe ? `Meister + ${d.europe} Europapokal` : 'Meister');
-  if (d.up) out.push(`${d.up} Aufsteiger${d.upChance ? ' + 1 Chance' : ''}`);
-  if (d.down) out.push(`${d.down} Absteiger`);
-  return out;
+/** Kurze Zeile unter dem Namen: Meister/Europapokal (1. Ebene) bzw. Hinweis bei Pool/Strukturkasten. */
+function headText(d: PyrDivision, past = false): string | null {
+  if (d.pool) return 'Vereine ohne Liga im Spiel – die Besten rücken nach';
+  if (d.struct) return past ? null : 'nicht simuliert';
+  if (d.champion) return d.europe ? `Meister + ${d.europe} Europapokal` : 'Meister';
+  return null;
+}
+
+/**
+ * Auf-/Abstieg als klare Marken (Wunsch Pascal: „2 Auf · 1 Aufstiegsrunde · 3 Ab“). Zahlen wie im Saisonwechsel
+ * (game/leaguePyramid.ts westZones/abroadZones/ddrZones); Relegationsspiele gibt es im Spiel nicht.
+ */
+function Moves({ d }: { d: PyrDivision }) {
+  if (d.pool || d.struct) return null;
+  const marks: { k: string; cls: string; text: string; tip: string }[] = [];
+  if (d.up) marks.push({ k: 'up', cls: 'up', text: `${d.up} Auf`, tip: `${d.up === 1 ? 'Der Meister steigt' : `Die ersten ${d.up} steigen`} direkt auf` });
+  if (d.upChance) marks.push({ k: 'ch', cls: 'chance', text: '+1 bester Zweiter', tip: 'Der stärkste Zweite aller Staffeln steigt zusätzlich auf' });
+  if (d.round) marks.push({ k: 'rd', cls: 'chance', text: d.round.seats > 1 ? 'Aufstiegsrunde ×2' : 'Aufstiegsrunde', tip: `${d.round.seats > 1 ? 'Meister und Vizemeister spielen mit. ' : 'Der Meister spielt mit. '}${d.round.field} Teilnehmer aus allen Staffeln spielen ${d.round.slots} Aufstiegsplätze in Duellen aus` });
+  if (d.down) marks.push({ k: 'dn', cls: 'down', text: `${d.down} Ab`, tip: d.downTo ?? 'Abstieg' });
+  if (!marks.length) return null;
+  return <span className="lp-moves">{marks.map((m) => <span key={m.k} className={`lp-mv ${m.cls}`} title={m.tip}>{m.text}</span>)}</span>;
 }
 
 /**
@@ -49,7 +64,7 @@ export interface PyramidCtl {
   onReform?: (season: string) => void;
 }
 
-export function LeaguePyramid({ data, mineId, className = '', lock, ctl }: { data: PyramidData; mineId?: string; className?: string; lock?: { side: PyramidSide; country?: string }; ctl?: PyramidCtl }) {
+export function LeaguePyramid({ data, mineId, className = '', lock, ctl, aside }: { data: PyramidData; mineId?: string; className?: string; lock?: { side: PyramidSide; country?: string }; ctl?: PyramidCtl; /** dritte Spalte rechts (Statistiken › Ligensystem: Pokale des Landes) */ aside?: ReactNode }) {
   // Dein Verein in der DDR (DDR-Start, game/ddrHome.ts) → DDR-Pyramide vorgewählt.
   const mineInDdr = !!mineId && !!data.ddr.available && data.ddr.levels.flat().some((d) => d.clubs.some((c) => c.id === mineId));
   const [sideState, setSide] = useState<PyramidSide>(lock?.side ?? (mineInDdr ? 'ddr' : 'west'));
@@ -93,7 +108,7 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl }: { dat
         <span className={`lp-season ${sys?.past ? 'past' : ''}`}>{sys?.past ? `Stand: Saison ${sys.stand ?? ''}` : `Saison ${data.season}`}</span>
       </div>
 
-      <div className="lp-main">
+      <div className={`lp-main ${aside ? 'has-aside' : ''}`}>
         <aside className="lp-list">
           {sel?.struct ? <>
             <div className="lp-list-head">
@@ -127,7 +142,7 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl }: { dat
             </div>
             <div className="lp-legend">
               {(sel.champion > 0 || sel.up > 0) && <span><i className="zone-cl" />{sel.champion ? 'Meister' : 'Aufstieg'}</span>}
-              {(sel.europe > 0 || sel.upChance > 0) && <span><i className="zone-po" />{sel.europe ? 'Europapokal' : 'Aufstiegschance'}</span>}
+              {(sel.europe > 0 || sel.upChance > 0 || !!sel.round) && <span><i className="zone-po" />{sel.europe ? 'Europapokal' : sel.round ? 'Aufstiegsrunde' : 'Aufstiegschance'}</span>}
               {sel.down > 0 && <span><i className="zone-rel" />{sel.downTo ?? 'Abstieg'}</span>}
             </div>
           </> : <div className="lp-empty">{sys?.note}</div>}
@@ -150,9 +165,12 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl }: { dat
                     {lv.map((d) => (
                       <button key={d.id} className={`lp-box ${d.id === sel?.id ? 'on' : ''} ${d.clubs.some((c) => c.id === mineId) ? 'mine' : ''} ${d.pool ? 'pool' : ''} ${d.struct ? 'struct' : ''}`}
                         onClick={() => setSelId(d.id)}>
-                        <b>{d.name}</b>
-                        <small>{d.struct ?? `${pyrSize(d)} Vereine`}</small>
-                        <span className="lp-flow">{flowText(d, sys.past).map((t) => <em key={t}>{t}</em>)}</span>
+                        <span className="lp-box-head">
+                          {!d.pool && !d.struct && ((shape) => shape && <span className="lp-box-tro"><TrophyImage shape={shape} title /></span>)(leagueTrophyShape(i + 1, side === 'ddr'))}
+                          <span className="lp-box-name"><b>{d.name}</b><small>{d.struct ?? `${pyrSize(d)} Vereine`}</small></span>
+                        </span>
+                        {((t) => t && <span className="lp-flow"><em>{t}</em></span>)(headText(d, sys.past))}
+                        <Moves d={d} />
                       </button>
                     ))}
                   </div>
@@ -170,7 +188,14 @@ export function LeaguePyramid({ data, mineId, className = '', lock, ctl }: { dat
               ))}
             </div>
           )}
+          {sys?.available !== false && !!sys?.levels.length && <p className="lp-key">
+            <span><i className="up" />Auf = direkter Aufstieg</span>
+            <span><i className="chance" />Aufstiegsrunde/bester Zweiter = weitere Plätze</span>
+            <span><i className="down" />Ab = Abstieg</span>
+            <span className="lp-key-rel">Relegation: keine – im Spiel gibt es keine Relegationsspiele</span>
+          </p>}
         </div>
+        {aside}
       </div>
     </div>
   );
@@ -203,7 +228,7 @@ function PastList({ sel, final, cName, flag, mineId }: { sel: PyrDivision; final
       </div>
       <div className="lp-legend">
         {(sel.champion > 0 || sel.up > 0) && <span><i className="zone-cl" />{sel.champion ? 'Meister' : 'Aufstieg'}</span>}
-        {(sel.europe > 0 || sel.upChance > 0) && <span><i className="zone-po" />{sel.europe ? 'Europapokal' : 'Aufstiegschance'}</span>}
+        {(sel.europe > 0 || sel.upChance > 0 || !!sel.round) && <span><i className="zone-po" />{sel.europe ? 'Europapokal' : sel.round ? 'Aufstiegsrunde' : 'Aufstiegschance'}</span>}
         {sel.down > 0 && <span><i className="zone-rel" />{sel.downTo ?? 'Abstieg'}</span>}
       </div>
     </> : <div className="lp-empty">{final?.hint ?? (sel.struct ? `${sel.struct}. Diese Ebene lief im Spiel nicht mit.` : 'Für diese Liga liegt keine Abschlusstabelle vor.')}</div>}

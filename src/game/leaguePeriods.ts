@@ -129,7 +129,7 @@ function gerLevels(y: number): PyrDivision[][] {
   const tiers = [...new Set(sim.map((t) => t.tier))].sort((a, b) => a - b);
   const lv = tiers.map((t) => sim.filter((x) => x.tier === t).map((x) => sized(div(x.id, x.name, t, x.group, [], 'table'), x.teamCount)));
   const e = euroSlots(y, germanRank(undefined, y));
-  westZones(lv, e.champ, e.more);
+  westZones(lv, e.champ, e.more, seasonLabelOf(y));
   // Unterste simulierte Ebene: Absteiger in die erste Strukturebene (withHistoricTiers), sonst „Amateurligen“.
   for (const d of lv[lv.length - 1] ?? []) d.downTo = 'Abstieg in die Amateurligen';
   return withHistoricTiers(lv, 'ger', y, true);

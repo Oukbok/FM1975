@@ -1,5 +1,6 @@
 // Screenshots Statistiken › Ligensystem mit Zeiträumen (Wunsch Pascal): aktueller Zeitraum, erster
-// Zeitraum (1975er), archivierte Liga (DDR, aufgelöste Staaten) mit Stempel „Archiviert“.
+// Zeitraum (1975er), archivierte Liga (DDR, aufgelöste Staaten) mit Stempel „Archiviert“; Pokale des
+// Landes neben der Pyramide (Trophäe + Auf/Ab je Liga), Reiter Fünfjahreswertung und Ligen der Welt.
 //   npm run build && SAVE=public/saves/test-60-jahre.txt node tests/leaguehist-shots.mjs [ordner] [präfix]
 //   VIEW=1366x768 für kleine Bildschirme. Prüft Kopf-Überlauf, feste Boxgröße und JS-Fehler.
 import { createServer } from 'node:http';
@@ -31,17 +32,29 @@ const tag = `${prefix}_${vw}`;
 let baseSize = '';
 const shot = async (n) => {
   await page.waitForTimeout(700);
-  const { over, size, scroll } = await page.evaluate(() => {
+  const { over, size, scroll, boxOut, markOut, cupsOut, cupsN, tro } = await page.evaluate(() => {
     const box = document.querySelector('.lp-box-page');
     const h = box?.querySelector('.dxh');
     const r = h?.getBoundingClientRect();
     const b = box?.getBoundingClientRect();
+    // Pyramiden-Kästen dürfen nicht aus der Bühne ragen, Marken nicht aus ihrem Kasten, die Pokal-Spalte nicht aus der Box.
+    const stage = box?.querySelector('.lp-stage')?.getBoundingClientRect();
+    const boxOut = stage ? [...box.querySelectorAll('.lp-box')].filter((x) => { const q = x.getBoundingClientRect(); return q.left < stage.left - 1 || q.right > stage.right + 1; }).length : 0;
+    const markOut = [...(box?.querySelectorAll('.lp-box') ?? [])].filter((x) => { const q = x.getBoundingClientRect(); return [...x.querySelectorAll('.lp-mv, .lp-box-head')].some((m) => { const z = m.getBoundingClientRect(); return z.left < q.left - 1 || z.right > q.right + 1; }); }).length;
+    const cups = box?.querySelector('.lp-cups')?.getBoundingClientRect();
+    const cupsOut = cups && b ? cups.bottom > b.bottom + 1 || cups.right > b.right + 1 : false;
     return {
       over: r ? Math.max(0, ...[...h.querySelectorAll('*')].map((e) => e.getBoundingClientRect().right - r.right)) : 0,
       size: b ? `${Math.round(b.width)}x${Math.round(b.height)}` : '',
       scroll: document.scrollingElement.scrollHeight > window.innerHeight + 2,
+      boxOut, markOut, cupsOut, cupsN: box?.querySelectorAll('.lp-cup').length ?? 0, tro: box?.querySelectorAll('.lp-box-tro').length ?? 0,
     };
   });
+  if (boxOut) errors.push(`${n}: ${boxOut} Liga-Kästen ragen aus der Pyramide`);
+  if (markOut) errors.push(`${n}: ${markOut} Kästen mit überlaufenden Marken`);
+  if (cupsOut) errors.push(`${n}: Pokal-Spalte ragt aus der Box`);
+  if (!tro) errors.push(`${n}: keine Trophäe in den Liga-Kästen`);
+  console.log(`${n}: ${cupsN} Pokale, ${tro} Trophäen`);
   if (over > 1) errors.push(`${n}: Kopfleiste läuft ${Math.round(over)} px über`);
   baseSize ||= size; if (size !== baseSize) errors.push(`${n}: Box ${size} statt ${baseSize}`);
   if (scroll) errors.push(`${n}: Seite scrollt`);
@@ -93,6 +106,25 @@ for (const [v, n] of [['ddr', 'ddr'], ['a:Sowjetunion', 'urs'], ['a:Tschechoslow
   await shot(n);
   if (n === 'eng' && ps.length > 2) { await pickOption(page, periodSel(), { index: 0 }); await shot('eng_erster'); }
 }
+// Reiter Fünfjahreswertung und Ligen der Welt (drittes Menü).
+const tabShot = async (label, n, sel) => {
+  await page.locator(`.app-main .sub3-tabs .tab:has-text("${label}")`).first().click();
+  await page.waitForTimeout(700);
+  const r = await page.evaluate((s) => {
+    const rows = document.querySelectorAll(s).length;
+    const bad = [...document.querySelectorAll('.app-main .dbox')].filter((b) => b.scrollHeight > b.clientHeight + 2 && !b.querySelector('.cf-list, .lsv-list')).length;
+    return { rows, bad, scroll: document.scrollingElement.scrollHeight > window.innerHeight + 2, me: document.querySelectorAll('.cf-row.me').length };
+  }, sel);
+  if (!r.rows) errors.push(`${n}: keine Zeilen`);
+  if (r.scroll) errors.push(`${n}: Seite scrollt`);
+  console.log(`${n}: ${r.rows} Zeilen${n === 'wertung' ? `, eigenes Land markiert: ${r.me}` : ''}`);
+  if (n === 'wertung' && r.me !== 1) errors.push('wertung: eigenes Land nicht genau einmal hervorgehoben');
+  await page.screenshot({ path: `${outDir}/${tag}_${n}.png` });
+  console.log('Bild', `${outDir}/${tag}_${n}.png`);
+};
+await tabShot('Fünfjahreswertung', 'wertung', '.cf-list .cf-row');
+await tabShot('Ligen der Welt', 'welt', '.lsv-list .lsv-row');
+await page.locator('.app-main .sub3-tabs .tab:has-text("Ligensystem")').first().click();
 console.log(errors.length ? errors.join('\n') : 'Keine Fehler.');
 await browser.close();
 server.close();

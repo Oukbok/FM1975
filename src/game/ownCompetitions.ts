@@ -7,7 +7,7 @@
 import { nOf } from '../engine/textNum';
 import type { CupState, CupTie } from '../types';
 import type { Game } from './state';
-import type { TrophyShape } from './trophyCabinet';
+import { leagueTrophyShape, type TrophyShape } from './trophyCabinet';
 import { euroCompName } from '../data/euroFormats';
 import { seasonStartYear } from '../data/timeline';
 import { euroStatus } from './euroFixture';
@@ -83,7 +83,7 @@ export function ownCompetitions(g: Game): OwnComp[] {
   const played = g.fixtures.filter((m) => m.involvesPlayerClub && m.status === 'finished').length;
   const total = g.fixtures.filter((m) => m.involvesPlayerClub).length;
   out.push({
-    key: 'liga', name: pd.name, shape: pd.tier === 1 || pd.tier === 101 ? 'schale' : 'teller', state: played >= total && total > 0 ? (pos === 0 ? 'won' : 'out') : 'live',
+    key: 'liga', name: pd.name, shape: leagueTrophyShape(pd.tier > 100 ? pd.tier - 100 : pd.tier, pd.tier > 100) ?? 'teller', state: played >= total && total > 0 ? (pos === 0 ? 'won' : 'out') : 'live',
     status: row ? `${pos + 1}. Platz · ${nOf(row.points, 'Punkt', 'Punkte')}` : 'Saison beginnt', steps: total ? { n: total, at: played } : undefined,
   });
   if (g.cup) { const e = cupEntry(g, g.cup, id, 'cup', 'Landespokal', 'pokal'); if (e) out.push(e); }
