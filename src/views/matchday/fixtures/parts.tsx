@@ -82,7 +82,7 @@ const STATE_DE: Record<OwnComp['state'], string> = { live: 'Im Rennen', out: 'Au
 
 /** Eine Zeile „Wettbewerbe dieser Saison“: Trophäe | Name + Stand + Runden | letztes/nächstes Spiel. */
 export function CompRow({ c }: { c: OwnComp }) {
-  const photo = trophyPhoto(c.shape);
+  const photo = c.img ?? trophyPhoto(c.shape);
   const n = c.steps?.n ?? 0;
   const at = c.steps?.at ?? 0;
   const liga = c.key === 'liga';

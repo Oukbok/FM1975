@@ -24,7 +24,7 @@ import { hashStr, mulberry32 } from '../engine/leagues';
 import { makeMessage, pushMessage } from '../engine/messages';
 import type { KoRule } from '../engine/match';
 import { CONTINENTS, ctClub, ctClubActive, CT_BY_CC, CT_COUNTRIES, ctConfOf, isContinentalId, type ContinentKey } from '../data/world/continents';
-import { IC_NAMES, IC_PRIZE, WP_DECLINE, cwcHost, icPlansFor, icVenue, type IcFormat, type IcKey, type IcPlan } from '../data/world/continents/intercontinental';
+import { icName, IC_PRIZE, WP_DECLINE, cwcHost, icPlansFor, icVenue, type IcFormat, type IcKey, type IcPlan } from '../data/world/continents/intercontinental';
 import { continentalWinner, ctStrengthAt, nationalRanking } from './continents';
 import { addTitleRecord, type TitleKind } from './clubRecords';
 import { clubStrength, drawClubName } from './cupDraw';
@@ -272,7 +272,7 @@ export function setupIntercontinental(g: Game, s: IcSeeds): void {
   for (const plan of icPlansFor(y)) {
     const b = plan.key === 'wp' ? buildWp(g, s, y, plan) : plan.key === 'icup' ? buildIcup(g, s, y) : plan.key === 'big' ? buildBig(g, s, y) : buildCwc(g, s, y, plan);
     if (!b) continue;
-    const name = IC_NAMES[plan.key];
+    const name = icName(plan.key, y);
     if (!b.teams.length) { st.archive.push({ season: g.season, key: plan.key, name, format: plan.format, winner: '', runnerUp: '', score: '–', note: b.note }); continue; }
     const tag = `ic_${y}_${plan.key}`;
     const ev: IcEvent = { key: plan.key, name, season: g.season, format: plan.format, teams: b.teams, groups: b.groups, note: b.note, matches: b.matches.map((m, i) => ({ ...m, id: `${tag}_${i}` })) };

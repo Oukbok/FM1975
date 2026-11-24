@@ -1,3 +1,4 @@
+import { euroCompLabel } from '../data/euroFormats';
 import type { NationalState } from '../game/national/nationalGame';
 import { abroadReturns } from '../game/scoutAbroad';
 import { campDates } from '../game/youthCamps';
@@ -9,7 +10,7 @@ import { ownCampDays, ownIndoorDays } from '../game/winterShared';
 import { ACTIVITY_DEFS, addDaysUTC } from '../data/activities';
 import { Game } from '../game/state';
 import type { Match, MessageCategory } from '../types';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { ownFixtureOn } from '../game/euroFixture';
 import { CalendarEngine } from '../engine/calendar';
 import { gbEra } from '../engine/goldenBall';
@@ -17,6 +18,8 @@ import { GB_DAY } from '../game/goldenBallGame';
 import { youthCompsOf } from '../game/youthComps/daily';
 import { compClubName } from '../game/competitionView';
 import type { Screen } from './navigation';
+import { cupName, compNameOr, competitionYear } from '../data/competitions/overrides';
+import { compShortAt } from '../data/competitions/registry';
 
 // Ereignisse je Kalendertag (früher: Kalenderstreifen oben auf jeder Seite; heute
 // Datenquelle für das Kalender-Overlay `CalendarOverlay.tsx` und die Kalenderseite).
@@ -93,7 +96,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
           break;
         }
         const round = ev.cupRoundIndex != null ? g.cup?.rounds[ev.cupRoundIndex] : undefined;
-        let line = 'Landespokal';
+        let line = cupName();
         let extra: Partial<StripEvent> = {};
         if (round?.drawn) {
           const tie = round.ties.find((t) => t.homeClubId === me || t.awayClubId === me);
@@ -108,7 +111,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
         } else if (round) {
           line = `Pokal: ${round.name}`;
         }
-        consider({ date: ev.date, icon: 'trophy', line, accent: 'gold', isMatch: true, prio: 95, comp: `Pokal${round ? ' · ' + round.name : ''}`, screen: 'cup', kind: 'Pokal', ...extra });
+        consider({ date: ev.date, icon: 'trophy', line, accent: 'gold', isMatch: true, prio: 95, comp: `${compShortAt('cup', competitionYear())}${round ? ' · ' + round.name : ''}`, screen: 'cup', kind: 'Pokal', ...extra });
         break;
       }
       case 'euro_matchday': {
@@ -125,13 +128,13 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
         if (!round || !tie) break;
         const heim = tie.homeClubId === me;
         const opp = heim ? tie.awayClubId : tie.homeClubId;
-        consider({ date: ev.date, icon: 'trophy', line: `${full(opp)} (${heim ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 97, clubId: opp, home: heim, comp: `${ev.euroComp ? EURO_COMP_NAMES[ev.euroComp] : 'Europapokal'} · ${round.name}`, result: resultOf(tie.match), screen: 'international', kind: 'Europapokal' });
+        consider({ date: ev.date, icon: 'trophy', line: `${full(opp)} (${heim ? 'H' : 'A'})`, accent: 'gold', isMatch: true, prio: 97, clubId: opp, home: heim, comp: `${ev.euroComp ? compShortAt(ev.euroComp, competitionYear()) : 'Europapokal'} · ${round.name}`, result: resultOf(tie.match), screen: 'international', kind: 'Europapokal' });
         break;
       }
       case 'cup_draw': {
         // Wettbewerb aus dem Titel („Auslosung Achtelfinale — Landespokal“ o. ä.), sonst Pokal/Europapokal.
         const comp = ev.title.replace(/^Auslosung\s*/, '') || undefined;
-        consider({ date: ev.date, icon: 'trophy', line: ev.euroComp ? `Auslosung ${EURO_COMP_NAMES[ev.euroComp]}` : 'Auslosung Pokal', accent: undefined, isMatch: false, prio: 35, comp, screen: ev.euroComp ? 'international' : 'cup', kind: 'Auslosung' });
+        consider({ date: ev.date, icon: 'trophy', line: ev.euroComp ? `Auslosung ${euroCompLabel(ev.euroComp)}` : 'Auslosung Pokal', accent: undefined, isMatch: false, prio: 35, comp, screen: ev.euroComp ? 'international' : 'cup', kind: 'Auslosung' });
         break;
       }
       case 'transfer_window_open':
@@ -180,7 +183,7 @@ export function buildDayEventsMap(g: Game): Map<string, StripEvent[]> {
 
   // Quelle C — Winter: eigene Hallenturniere und Trainingslager (game/winterShared.ts).
   for (const [date, t] of ownIndoorDays(g)) {
-    consider({ date, icon: 'trophy', line: t.kind === 'masters' ? 'Hallenfinale' : `Halle ${t.city}`, accent: 'gold', isMatch: false, prio: 60, screen: 'halle', kind: 'Halle' });
+    consider({ date, icon: 'trophy', line: t.kind === 'masters' ? compNameOr('halle', competitionYear(), 'Hallenfinale') : `Halle ${t.city}`, accent: 'gold', isMatch: false, prio: 60, screen: 'halle', kind: 'Halle' });
   }
   for (const [date, b] of ownCampDays(g)) {
     const last = date === b.end;

@@ -7,14 +7,14 @@ import { CalendarEngine } from '../engine/calendar';
 import { createMatchSim, hasPreparedMatch, registerPreparedMatch, type MatchSim } from '../engine/match';
 import { finishMatch } from '../engine/match/finish';
 import type { MatchOutcome, Side } from '../engine/match/types';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { buildEuroClubFull } from '../data/generate';
 import type { CupState, CupTie, Match } from '../types';
 import type { Game } from './state';
 import type { KoRule } from '../engine/match/sim';
 import type { EuroCompId } from '../data/europe';
 import { withEuroSink } from '../engine/compStats';
-import { euroCompName } from '../data/euroFormats';
+import { euroCompName, euroCompLabel } from '../data/euroFormats';
 import { isV2, cupStartYear } from './euroSetup';
 import { legKoRule } from './euroFlow';
 import { cupKoRule } from './cupReplay';
@@ -177,7 +177,7 @@ function findOwnMatchDueRaw(g: Game): OwnMatchInfo | null {
       const cup = g.euroCups?.[ev.euroComp];
       const round = cup?.rounds[ev.cupRoundIndex];
       const tie = round?.drawn ? round.ties.find((t) => (t.homeClubId === mid || t.awayClubId === mid) && !t.played) : undefined;
-      if (cup && tie) return tieInfo(g, 'euro', cup, ev.cupRoundIndex, tie, EURO_COMP_NAMES[ev.euroComp] ?? 'Europapokal');
+      if (cup && tie) return tieInfo(g, 'euro', cup, ev.cupRoundIndex, tie, euroCompLabel(ev.euroComp) ?? 'Europapokal');
     }
   }
   return null;
@@ -236,7 +236,7 @@ export function findMatch(g: Game, id: string): { match: Match; label: string } 
   const f = g.fixtures.find((x) => x.id === id);
   if (f) return { match: f, label: `Liga · ${f.matchday}. Spieltag` };
   const cups: [CupState | null | undefined, string][] = [[g.cup, 'Pokal']];
-  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<Game['euroCups']>)[]) cups.push([g.euroCups[k], EURO_COMP_NAMES[k] ?? 'Europapokal']);
+  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<Game['euroCups']>)[]) cups.push([g.euroCups[k], euroCompLabel(k) ?? 'Europapokal']);
   for (const [cup, name] of cups) {
     if (!cup) continue;
     for (const r of cup.rounds) {

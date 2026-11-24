@@ -1,4 +1,5 @@
-import { EURO_COMP_NAMES, EURO_FOREIGN_COUNT, EuroClub, EuroCompId } from '../data/europe';
+import { euroCompLabel } from '../data/euroFormats';
+import { EURO_FOREIGN_COUNT, EuroClub, EuroCompId } from '../data/europe';
 import { CalendarEngine } from '../engine/calendar';
 import { decisionBadge } from '../engine/cup';
 import { createEuroCup } from '../engine/euro';
@@ -66,8 +67,8 @@ export function addEuroCalendarEvents(calendar: GameCalendar, comp: EuroCompId, 
       id: `euroev_${comp}_${round.index}`,
       date: round.date,
       type: 'euro_matchday',
-      title: `${EURO_COMP_NAMES[comp]}: ${round.name}`,
-      description: `${round.name} im ${EURO_COMP_NAMES[comp]} ${cup.season}.`,
+      title: `${euroCompLabel(comp)}: ${round.name}`,
+      description: `${round.name} im ${euroCompLabel(comp)} ${cup.season}.`,
       cupRoundIndex: round.index,
       euroComp: comp,
       processed: false,
@@ -163,7 +164,7 @@ export function euroDrawMessage(
   const name = (id: string) => clubs[id]?.name ?? euroClubs[id]?.name ?? id;
   const heim = myTie.homeClubId === managedClubId;
   const gegner = heim ? name(myTie.awayClubId) : name(myTie.homeClubId);
-  const compName = EURO_COMP_NAMES[comp];
+  const compName = euroCompLabel(comp);
   return makeMessage({
     date,
     category: 'cup',
@@ -191,7 +192,7 @@ export function euroResultMessage(
   const badge = decisionBadge(tie);
   const scoreLine = `${tie.homeGoals}:${tie.awayGoals}${badge ? ' ' + badge : ''}${tie.penalties ? ` (Elfmeter ${tie.penalties.home}:${tie.penalties.away})` : ''}`;
   const hName = name(tie.homeClubId); const aName = name(tie.awayClubId);
-  const compName = EURO_COMP_NAMES[comp];
+  const compName = euroCompLabel(comp);
   let subject: string; let shortText: string; let body: string;
   if (isFinal && advanced) {
     subject = `Europapokalsieger! ${compName} ${cup.season}`;
@@ -219,7 +220,7 @@ export function euroWinnerChronicle(
 ): InboxMessage {
   const winner = cup.winnerClubId;
   const wname = winner ? (clubs[winner]?.name ?? euroClubs[winner]?.name ?? winner) : '';
-  const compName = EURO_COMP_NAMES[comp];
+  const compName = euroCompLabel(comp);
   return makeMessage({
     date, category: 'media', from: 'Europapokal-Chronik',
     subject: `${compName} ${cup.season}: ${wname}`,

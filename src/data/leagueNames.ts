@@ -17,6 +17,7 @@
 // =============================================================================
 import type { LeagueGroup } from '../engine/leagues';
 import { historicTiers } from './leagueTiers';
+import { competitionYear, compPeriod } from './competitions/overrides';
 
 /** Staffel-Zusätze einer Sprache: Nord, Süd, Mitte, Wort für „Staffel n“. */
 interface GroupWords { n: string; s: string; m: string; g: string }
@@ -74,8 +75,24 @@ const entry = (cc: string | undefined) => (cc && BY_CC[cc]) || BY_CC.ger;
 /** Ligawort des Landes („League“, „Ligue“ …; Standard „Liga“). */
 export const leagueWord = (cc: string | undefined): string => entry(cc).word;
 
-/** Name der Ebene ohne Staffel: „1. League“, „3. Divisie“; Deutschland/DDR wie im Spiel. */
+/**
+ * Name der Ebene ohne Staffel: „1. League“, „3. Divisie“; Deutschland/DDR wie im Spiel.
+ * 1. und 2. Ebene können im Datensatz umbenannt werden (Editor › Wettbewerbe, `league:<cc>:<ebene>`).
+ */
 export function leagueName(cc: string | undefined, tier: number, year?: number): string {
+  if (tier <= 2) {
+    const p = compPeriod(leagueCompId(cc, tier), year ?? competitionYear());
+    if (p?.name) return p.name;
+  }
+  return leagueNameBase(cc, tier, year);
+}
+/** Schlüssel einer Liga im Datensatz (`league:ger:1`). */
+export const leagueCompId = (cc: string | undefined, tier: number): string => `league:${cc || 'ger'}:${tier}`;
+/** Ländercodes mit eigenem Ligawort (Reihenfolge der Liste im Editor). */
+export const LEAGUE_NAME_CCS = (): string[] => Object.keys(BY_CC);
+
+/** Eingebauter Name (ohne Datensatz). */
+export function leagueNameBase(cc: string | undefined, tier: number, year?: number): string {
   if (cc === 'gdr') return tier <= 1 ? 'DDR-Oberliga' : tier === 2 ? 'DDR-Liga' : tier === 3 ? 'Bezirksliga' : `${tier}. Liga`;
   if (!cc || cc === 'ger') {
     // Hintergrund-Deutschland ab Ebene 3: Ebenen laut data/leagueTiers.ts („Regionalligen“ → eine Liga).

@@ -9,7 +9,7 @@ import type { Game } from '../../game/state';
 import { homeCountryKey } from '../../game/state';
 import { ROUND_DE, superCupState, type ScEvent, type ScMatch } from '../../game/superCupGame';
 import { compClubName } from '../../game/competitionView';
-import { SUPER_CUPS, SUPER_PRIZE, superEra, type SuperEra } from '../../data/superCups';
+import { SUPER_CUPS, SUPER_PRIZE, superEra, uefaSuperName, type SuperEra } from '../../data/superCups';
 import { COUNTRY_BY_KEY } from '../../data/world/countries';
 import { DashBox, DashPage, Empty, KV } from '../../ui/DashPage';
 import { ClubLink } from '../../components/club/ClubLink';
@@ -94,7 +94,7 @@ export function SuperCupView({ g }: { g: Game }) {
         ) : <div className="dnote">Kein Gipfelpokal in dieser Saison.{next ? ` Ab ${next.from}: ${next.name}.` : ''}</div>}
       </DashBox>
 
-      <DashBox title="Europäischer Gipfelpokal">
+      <DashBox title={uefaSuperName(year)}>
         {uefa ? <EventBox g={g} ev={uefa} /> : <div className="dnote">Landesmeister-Sieger gegen {year <= 1999 ? 'Pokalsieger-Sieger' : 'Europa-Pokal-Sieger'}, ein Spiel Ende August.</div>}
         {euWinners.length > 0 && <div className="dsec">Bisherige Sieger</div>}
         <div className="nt-list">

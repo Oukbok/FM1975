@@ -3,6 +3,7 @@
 // TV-Gelder verteilen, Lizenz/Fairplay prüfen, KI-Haushalte führen.
 // Aufgerufen aus game/season.ts (startNextSeason) und game/newGame.ts.
 // =============================================================================
+import { euroCompLabel } from '../data/euroFormats';
 import { playerLevel } from './state';
 import { Game } from './state';
 import { Club } from '../types';
@@ -13,7 +14,7 @@ import {
 import { seasonEuroPoints } from '../engine/world';
 import { book, WAGE_OVERHEAD } from '../engine/finances';
 import { makeMessage, pushMessage } from '../engine/messages';
-import { EuroCompId, EURO_COMP_NAMES } from '../data/europe';
+import { EuroCompId } from '../data/europe';
 import { formatMoney } from '../engine/economy';
 import { boardBudgetShare } from '../engine/environment';
 import { seasonClubBusiness } from './clubBusiness';
@@ -109,7 +110,7 @@ export function openFinancialSeason(g: Game, newSeason: string, date: string, pr
       // Vereine bis knapp das Doppelte (FC Bayern 2024/25: 106 Mio. € bis zum Viertelfinale).
       const pillar = comp === 'ec' && year >= 2000 ? 1 + 0.8 * (c.brand?.international ?? 0) / 100 : 1;
       const fee = Math.round(START_FEE[comp] * economyScale(year) * euroMoneyFactor(comp, year) * euroStartFactor(comp, year) * pillar);
-      book(c.finances, date, fee, 'prize_money', `${EURO_COMP_NAMES[comp]} - Startgeld`, c.id === g.managedClubId);
+      book(c.finances, date, fee, 'prize_money', `${euroCompLabel(comp)} - Startgeld`, c.id === g.managedClubId);
     }
   }
 

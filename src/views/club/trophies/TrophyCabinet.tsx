@@ -22,10 +22,10 @@ const CAT_EMPTY: Record<TrophyCat, string> = {
   andere: 'Hier stehen Hallenfinale und Aufstiege, sobald dein Verein einen davon schafft.',
 };
 
-function Trophy({ shape }: { shape: TrophyShape }) {
-  const src = trophyPhoto(shape);
+function Trophy({ shape, img }: { shape: TrophyShape; img?: string }) {
+  const src = img ?? trophyPhoto(shape);
   const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [shape]);
+  useEffect(() => setFailed(false), [shape, img]);
   if (src && !failed) return <img className="tro-art tro-photo" src={src} alt="" onError={() => setFailed(true)} />;
   return <TrophyArt shape={shape} />;
 }
@@ -89,7 +89,7 @@ export function TrophyCabinet({ g, clubId, className = '' }: { g: Game; clubId: 
               <div className="tro-title">{sel.title}</div>
               {sel.sub && <div className="tro-subline">{sel.sub}</div>}
             </div>
-            <div className="tro-pedestal"><Trophy shape={sel.shape} /></div>
+            <div className="tro-pedestal"><Trophy shape={sel.shape} img={sel.img} /></div>
             <div className="tro-facts">
               {facts.map((f) => (
                 <div key={f.k} className="tro-fact">

@@ -25,6 +25,7 @@ import { cupNextDrawMessage, cupResultMessage } from './competitions';
 import { hasScheduledDraw } from './cupDraw';
 import { hashSeed, type Game } from './state';
 import { noteCupAppearances, ownAmrId, ownReserveCupMessage, withOwnReserveCup } from './reserveCup';
+import { cupName } from '../data/competitions/overrides';
 
 const startYearOf = (cup: CupState) => Number(cup.season.slice(0, 4));
 /** Keine Wiederholungsspiele über die Feiertage (21.12.–6.1.). */
@@ -65,8 +66,8 @@ export function enableCupReplays(cup: CupState, calendar: GameCalendar, avoid?: 
     busy.add(d);
     r.dates = [r.date, d];
     calendar.events.push({
-      id: `cupev_${i}_1`, date: d, type: 'cup_matchday', title: `Landespokal: ${r.name} (Wiederholungsspiele)`,
-      description: `Wiederholungsspiele ${r.name}, Landespokal ${cup.season} – nur bei Unentschieden nach Verlängerung.`,
+      id: `cupev_${i}_1`, date: d, type: 'cup_matchday', title: `${cupName()}: ${r.name} (Wiederholungsspiele)`,
+      description: `Wiederholungsspiele ${r.name}, ${cupName()} ${cup.season} – nur bei Unentschieden nach Verlängerung.`,
       cupRoundIndex: i, leg: 1, processed: false, requiresAction: false,
     });
   });
@@ -133,7 +134,7 @@ export function cupMatchdayV2(g: Game, ri: number, slot: number, today: string):
           date, category: 'cup', from: 'Spielbericht Pokal', relatedId: match.id,
           subject: `Pokal: ${g.clubs[home]?.name} ${o.result.homeGoals}:${o.result.awayGoals} n.V. ${g.clubs[away]?.name}`,
           shortText: `Unentschieden – Wiederholungsspiel am ${CalendarEngine.formatDate(tie.legs[1].date)}.`,
-          bodyText: `${round.name}, Landespokal ${cup.season}: Auch nach Verlängerung steht es ${o.result.homeGoals}:${o.result.awayGoals}.\n\n`
+          bodyText: `${round.name}, ${cupName()} ${cup.season}: Auch nach Verlängerung steht es ${o.result.homeGoals}:${o.result.awayGoals}.\n\n`
             + `Nach den Regeln dieser Zeit gibt es kein Elfmeterschießen: Das Spiel wird am ${CalendarEngine.formatDate(tie.legs[1].date)} wiederholt – mit getauschtem Heimrecht ${home === mid ? 'bei' : 'gegen'} ${opp}.`,
         }));
       }
@@ -173,10 +174,10 @@ export function cupMatchdayV2(g: Game, ri: number, slot: number, today: string):
       const w = cup.winnerClubId;
       if (w && w !== mid) {
         pushMessage(g.messages, makeMessage({
-          date: today, category: 'cup', from: 'Landespokal-Kommission',
-          subject: `Landespokalsieger ${cup.season}: ${g.clubs[w]?.name ?? ''}`,
-          shortText: `${g.clubs[w]?.name ?? ''} gewinnt den Landespokal.`,
-          bodyText: `Das Finale des Landespokals ${cup.season} ist entschieden. ${g.clubs[w]?.name ?? ''} sichert sich den Titel.`,
+          date: today, category: 'cup', from: `${cupName()}-Kommission`,
+          subject: `${cupName()}sieger ${cup.season}: ${g.clubs[w]?.name ?? ''}`,
+          shortText: `${g.clubs[w]?.name ?? ''} gewinnt den ${cupName()}.`,
+          bodyText: `Das Finale des ${cupName()}s ${cup.season} ist entschieden. ${g.clubs[w]?.name ?? ''} sichert sich den Titel.`,
         }));
       }
     }

@@ -4,8 +4,8 @@
 // Kommentar. Quelle ist immer der Spielstand (Spielerverlauf, Trainerhistorie,
 // Pokalrunden, Nachrichten).
 // =============================================================================
-import { EURO_COMP_NAMES } from '../../data/europe';
-import { euroCompName } from '../../data/euroFormats';
+
+import { euroCompName, euroCompLabel } from '../../data/euroFormats';
 import { economyScale } from '../../engine/economy';
 import { hashStr } from '../../engine/leagues';
 import type { CupState, Match } from '../../types';
@@ -14,6 +14,7 @@ import { count, durationText, plural, posName, story } from './context';
 import { tableAt } from './matchStories';
 import { issueNumber } from './calendar';
 import type { PressResult, PressStory } from './types';
+import { cupName } from '../../data/competitions/overrides';
 
 const yearsBetween = (a: string, b: string) => Math.max(0, Math.round((Date.parse(b) - Date.parse(a)) / (365.25 * 864e5)));
 
@@ -174,8 +175,8 @@ function cupResults(c: PressCtx, cup: CupState, german: (id: string) => boolean)
 export function cupStories(c: PressCtx): PressStory[] {
   const g = c.g, out: PressStory[] = [];
   const german = (id: string) => !!g.clubs[id] || !!g.simClubs?.[id] || (g.cup?.participantIds ?? []).includes(id);
-  const comps: [CupState | null | undefined, string, boolean][] = [[g.cup, 'Landespokal', false]];
-  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<typeof g.euroCups>)[]) comps.push([g.euroCups[k], g.euroCups[k] ? euroCompName(k, Number(g.euroCups[k]!.season.slice(0, 4))) : EURO_COMP_NAMES[k] ?? 'Europapokal', true]);
+  const comps: [CupState | null | undefined, string, boolean][] = [[g.cup, cupName(), false]];
+  if (g.euroCups) for (const k of Object.keys(g.euroCups) as (keyof NonNullable<typeof g.euroCups>)[]) comps.push([g.euroCups[k], g.euroCups[k] ? euroCompName(k, Number(g.euroCups[k]!.season.slice(0, 4))) : euroCompLabel(k) ?? 'Europapokal', true]);
   for (const [cup, comp, euro] of comps) {
     if (!cup) continue;
     const isGer = euro ? (id: string) => !!g.clubs[id] : german;

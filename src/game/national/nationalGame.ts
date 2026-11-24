@@ -36,6 +36,7 @@ import { moraleJolt } from '../moraleJolt';
 import { activeJob, nextCycleDef, bookOwnMatch, fixedTeamsFor, jobDaily, nationalVacancies, noteExpectations, tKey, tournamentJobDay } from './nationalJob';
 import { jobSquadFor } from './nationalPick';
 import { rankingDaily } from './ranking';
+import { natTournamentName } from '../../data/competitions/overrides';
 
 export interface IntlWindow { from: string; dates: string[]; matches: NtMatch[]; label: string; squads: Record<string, string[]>; done?: boolean }
 export interface TournamentRecord { kind: TournamentKind; year: number; place: string; winner: string; runnerUp: string; home: string; topScorer?: [string, string, number] }
@@ -262,7 +263,7 @@ function maybeBuildTournament(g: Game, st: NationalState, today: string): void {
     const camp = addDaysISO(def.start, -7);
     for (const [n, s] of sq) for (const c of s) if (c.full) st.away[c.id] = `${camp}|${t.out[n]}`;
     const own = [...sq.values()].flat().filter((c) => c.full && c.clubId === g.managedClubId);
-    const name = def.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft';
+    const name = natTournamentName(def.kind, def.year);
     const home = homeNat(g);
     pushMessage(g.messages, makeMessage({
       date: today, category: 'media', from: 'Pressestelle', subject: `${name} ${def.year} ${t.place}: die Aufgebote stehen`,
@@ -285,7 +286,7 @@ function tournamentDaily(g: Game, st: NationalState, today: string): void {
     pushMessage(g.messages, makeMessage({
       date: today, category: 'media', from: 'Pressestelle', subject: title ? `${natName(home)} ist ${res}!` : `${t.kind} ${t.year}: Aus für ${natName(home)} (${res})`,
       shortText: title ? 'Das ganze Land feiert.' : 'Die Nationalspieler kehren heim.',
-      bodyText: title ? `${natName(home)} gewinnt die ${t.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${t.place}. Die Spieler kommen gefeiert, aber spät aus dem Urlaub – die Begeisterung trägt in die neue Saison.` : `${natName(home)} scheidet ${res === 'Vorrunde' ? 'in der Vorrunde' : `im ${res}`} aus. Die Nationalspieler sind ab sofort zurück bei ihren Vereinen.`,
+      bodyText: title ? `${natName(home)} gewinnt die ${natTournamentName(t.kind, t.year)} ${t.place}. Die Spieler kommen gefeiert, aber spät aus dem Urlaub – die Begeisterung trägt in die neue Saison.` : `${natName(home)} scheidet ${res === 'Vorrunde' ? 'in der Vorrunde' : `im ${res}`} aus. Die Nationalspieler sind ab sofort zurück bei ihren Vereinen.`,
     }));
   }
   if (today <= t.end) return;
@@ -388,7 +389,7 @@ export function upcoming(g: Game): { date: string; text: string; hosts?: string[
   for (const w of st.windows) if (w.dates[0] >= today) out.push({ date: w.dates[0], text: `${w.label} (${w.dates.map(fmtD).join(', ')})` });
   const y = yearOf(today);
   for (const def of [...tournamentsOfYear(y, hostPick), ...tournamentsOfYear(y + 1, hostPick), ...tournamentsOfYear(y + 2, hostPick)]) {
-    if (def.end >= today) out.push({ date: def.start, text: `${def.kind === 'WM' ? 'Weltmeisterschaft' : 'Europameisterschaft'} ${def.year} ${def.place || `in ${natName(def.hosts[0])}`}`, hosts: def.hosts });
+    if (def.end >= today) out.push({ date: def.start, text: `${natTournamentName(def.kind, def.year)} ${def.year} ${def.place || `in ${natName(def.hosts[0])}`}`, hosts: def.hosts });
   }
   return out.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
 }

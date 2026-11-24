@@ -16,6 +16,7 @@ import { lazyNamed } from './ui/lazyNamed';
 import { installClickSound } from './ui/clickSound';
 import { installEllipsisTitles } from './ui/ellipsisTitle';
 import { installStableTables } from './ui/stableTables';
+import { setCompetitionDate } from './data/competitions/overrides';
 
 // Code-Splitting (scripts/build.mjs): Das Hauptmenü startet ohne die Spiel-Shell, ohne
 // Laden-Nachrüstungen und ohne den Spielaufbau. Diese Stücke werden geladen, sobald sie
@@ -75,6 +76,7 @@ export default function App() {
     const calendar = g0.calendar;
     setDisplayYear(yearOf(calendar.currentDate));
     setCurrencyDate(calendar.currentDate);
+    setCompetitionDate(calendar.currentDate);
     gameRef.current = g0;
     setCurrentSlot(null);
     setInGame(true);

@@ -3,11 +3,12 @@
 // Spieltage, Bewertungsrunden, Transferfenster, Saisonende) und die Vorschau des
 // Trainerstabs eine Woche vor jeder Bewertungsrunde. Aufgerufen aus game/day.ts.
 // =============================================================================
+import { euroCompLabel } from '../data/euroFormats';
 import { nOf } from '../engine/textNum';
 import { noteCupAppearances, ownAmrId, ownReserveCupMessage, withOwnReserveCup } from './reserveCup';
 import { superCupMatchday } from './superCupGame';
 import { snapshotAttributes } from '../engine/history';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { staffEffectsOf } from './staffGame';
 import { CalendarEngine } from '../engine/calendar';
 import { drawRound, roundWinners, simulateCupTie } from '../engine/cup';
@@ -30,6 +31,7 @@ import { isV2 } from './euroSetup';
 import { ownCoaching } from './coachingGame';
 import type { CalendarEvent, Club } from '../types';
 import type { DayUi } from './dayUi';
+import { cupName } from '../data/competitions/overrides';
 
 /**
  * Verarbeitet die noch offenen Kalender-Ereignisse des Tages (in Kalender-Reihenfolge).
@@ -186,10 +188,10 @@ export function processDayEvents(g: Game, ui: DayUi, todaysEvents: CalendarEvent
             cup.winnerClubId = round.ties[0]?.winnerClubId ?? null;
             if (cup.winnerClubId && cup.winnerClubId !== mid) {
               pushMessage(g.messages, makeMessage({
-                date: today, category: 'cup', from: 'Landespokal-Kommission',
-                subject: `Landespokalsieger ${cup.season}: ${g.clubs[cup.winnerClubId]?.name ?? ''}`,
-                shortText: `${g.clubs[cup.winnerClubId]?.name ?? ''} gewinnt den Landespokal.`,
-                bodyText: `Das Finale des Landespokals ${cup.season} ist entschieden. ${g.clubs[cup.winnerClubId]?.name ?? ''} sichert sich den Titel.`,
+                date: today, category: 'cup', from: `${cupName()}-Kommission`,
+                subject: `${cupName()}sieger ${cup.season}: ${g.clubs[cup.winnerClubId]?.name ?? ''}`,
+                shortText: `${g.clubs[cup.winnerClubId]?.name ?? ''} gewinnt den ${cupName()}.`,
+                bodyText: `Das Finale des ${cupName()}s ${cup.season} ist entschieden. ${g.clubs[cup.winnerClubId]?.name ?? ''} sichert sich den Titel.`,
               }));
             }
           }
@@ -231,7 +233,7 @@ export function processDayEvents(g: Game, ui: DayUi, todaysEvents: CalendarEvent
               book(
                 g.clubs[tie.winnerClubId].finances, tie.date,
                 Math.round(prize * economyScale(yearOf(tie.date)) * euroMoneyFactor(comp, yearOf(tie.date))), 'prize_money',
-                `${EURO_COMP_NAMES[comp]} – Prämie (${round.name})`,
+                `${euroCompLabel(comp)} – Prämie (${round.name})`,
                 tie.winnerClubId === mid,
               );
             }

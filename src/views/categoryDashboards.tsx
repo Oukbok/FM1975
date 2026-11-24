@@ -2,14 +2,14 @@ import ClubCrest from '../components/ClubCrest';
 import { PlayerForm, PlayerFreshness } from '../components/status';
 import { ClubLink } from '../components/club/ClubLink';
 import { ClubByName } from '../ui/LinkedText';
-import { EURO_COMP_NAMES } from '../data/europe';
+
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
 import { TIMELINE } from '../data/timeline';
 import { ROUND_NAMES, nextPlayerTie } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
 import { nextPlayerEuroTie } from '../engine/euro';
 import { euroStatus, inEuroCup } from '../game/euroFixture';
-import { euroCompName } from '../data/euroFormats';
+import { euroCompName, euroCompLabel } from '../data/euroFormats';
 import { computeMonthly, expectedAttendanceRate, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../engine/finances';
 import { BalanceLine, CorporateBox, LicenseBox, useBalanceRange } from './finance/businessBoxes';
 import { priceOf, seatPriceScale } from '../engine/seating';
@@ -446,7 +446,7 @@ export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Scree
         {euro.length ? euro.map(({ k, c }) => {
           if (c!.v2) return <KV key={k} k={euroCompName(k, Number(c!.season.slice(0, 4)))} v={euroStatus(c!, myId)} />;
           const t = nextPlayerEuroTie(c!, myId);
-          return <KV key={k} k={EURO_COMP_NAMES[k]} v={t ? `${c!.rounds[t.round]?.name ?? ''}` : c!.winnerClubId === myId ? 'Sieger!' : 'ausgeschieden'} />;
+          return <KV key={k} k={euroCompLabel(k)} v={t ? `${c!.rounds[t.round]?.name ?? ''}` : c!.winnerClubId === myId ? 'Sieger!' : 'ausgeschieden'} />;
         }) : <Empty icon="international">Diese Saison nicht im Europapokal.</Empty>}
       </DashBox>
 

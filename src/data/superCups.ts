@@ -23,6 +23,8 @@
 // Namen im Spiel neutral („Supercup“, „Ligapokal“), keine Sponsorennamen.
 // =============================================================================
 
+import { compNameOr, compPeriod } from './competitions/overrides';
+
 export type SuperFormat = 'final' | 'legs2' | 'four' | 'six';
 export interface SuperEra {
   from: number;
@@ -71,13 +73,36 @@ export const SUPER_CUPS: Record<string, SuperEra[]> = {
   Zypern: [{ from: 1975, to: 9999, name: 'Gipfelpokal', format: 'final', double: 'runnerUp', host: 'neutral', month: 8 }],
 };
 
-/** Epoche des Supercups eines Landes in der Saison (Startjahr); null = keiner. */
-export function superEra(country: string, startYear: number): SuperEra | null {
+/** Eingebaute Epoche (ohne Datensatz); null = keiner. */
+export function superEraBase(country: string, startYear: number): SuperEra | null {
   return SUPER_CUPS[country]?.find((e) => startYear >= e.from && startYear <= e.to) ?? null;
+}
+
+/**
+ * Epoche des Supercups eines Landes in der Saison (Startjahr) inkl. Datensatz
+ * (Editor › Wettbewerbe, Schlüssel `super:<Land>`); null = keiner.
+ */
+export function superEra(country: string, startYear: number): SuperEra | null {
+  const base = superEraBase(country, startYear);
+  const p = compPeriod(`super:${country}`, startYear);
+  if (!p) return base;
+  if (p.held === false || (!base && p.held !== true)) return null;
+  return {
+    from: base?.from ?? p.from, to: base?.to ?? p.to,
+    name: p.name ?? base?.name ?? 'Gipfelpokal',
+    format: p.superFormat ?? base?.format ?? 'final',
+    double: p.double ?? base?.double ?? 'runnerUp',
+    host: p.host ?? base?.host ?? 'neutral',
+    month: p.month ?? base?.month ?? 8,
+    directPens: p.directPens ?? base?.directPens,
+    shared: p.shared ?? base?.shared,
+  };
 }
 
 /** UEFA-Supercup (vereinfacht: ein Spiel Ende August). */
 export const UEFA_SUPER = { from: 1975, name: 'Europäischer Gipfelpokal' };
+/** Name des Europäischen Gipfelpokals in der Saison (Datensatz `uefasuper`). */
+export const uefaSuperName = (startYear: number): string => compNameOr('uefasuper', startYear, UEFA_SUPER.name);
 
 /** Prämien (1975-Basis, × economyScale): Teilnahme / Sieg; Ligapokal je Runde. */
 export const SUPER_PRIZE = { start: 15000, win: 25000, ligapokal: 40000, uefa: 60000 };

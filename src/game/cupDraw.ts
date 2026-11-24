@@ -6,7 +6,7 @@
 // Vorrunde gelost (day.ts), laufende Wettbewerbe bleiben unverändert.
 // Termine/Regeln: data/drawHistory.ts, Ziehung: engine/cupDrawRules.ts.
 // =============================================================================
-import { EURO_COMP_NAMES, EuroCompId } from '../data/europe';
+import { EuroCompId } from '../data/europe';
 import { drawDateFor, drawRulesFor, drawVenue, roundArticle, seasonStartYearOf } from '../data/drawHistory';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -19,9 +19,10 @@ import type { DrawComp, DrawRecord } from '../types/draw';
 import { hashSeed, homeCountryKey, type Game } from './state';
 import { drawMessageV2, performDrawV2 } from './euroDraw';
 import { isV2 } from './euroSetup';
-import { euroCompName } from '../data/euroFormats';
+import { euroCompName, euroCompLabel } from '../data/euroFormats';
 import { ctClub, isContinentalId } from '../data/world/continents';
 import { continentalStrength } from './continents';
+import { cupName } from '../data/competitions/overrides';
 
 export const DRAW_COMPS: DrawComp[] = ['cup', 'ec', 'cwc', 'uefa'];
 
@@ -29,11 +30,11 @@ export function compCup(g: Game, comp: DrawComp): CupState | null {
   return comp === 'cup' ? g.cup ?? null : g.euroCups?.[comp] ?? null;
 }
 export function drawCompName(comp: DrawComp): string {
-  return comp === 'cup' ? 'Landespokal' : EURO_COMP_NAMES[comp as EuroCompId];
+  return comp === 'cup' ? cupName() : euroCompLabel(comp as EuroCompId);
 }
 /** Name je Saison (Meisterliga, Kontinental-Liga, Europa-Trophäe …). */
 export function drawCompLabel(comp: DrawComp, cup: CupState): string {
-  return comp === 'cup' ? 'Landespokal' : euroCompName(comp, Number(cup.season.slice(0, 4)));
+  return comp === 'cup' ? cupName(Number(cup.season.slice(0, 4))) : euroCompName(comp, Number(cup.season.slice(0, 4)));
 }
 
 /** Setzt die Auslosungstermine aller Runden und trägt sie in den Kalender ein. */

@@ -93,6 +93,7 @@ import type { DayUi } from './dayUi';
 import { processDayEvents, ratingPreview } from './dayEvents';
 import { youthIntakeDaily } from './dayYouthIntake';
 import { finishActivities, monthlyFinanceClose } from './dayFinance';
+import { setCompetitionDate } from '../data/competitions/overrides';
 
 export type { DayUi } from './dayUi';
 export { HEADLESS_UI } from './dayUi';
@@ -139,6 +140,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
     applyEuphoria(g);
   }
   setDisplayYear(yearOf(today));
+  setCompetitionDate(today); // Namen der Wettbewerbe (Datensatz) zur laufenden Saison
   setCurrencyDate(today); // Währungsumstellung taggenau (engine/economy.ts currencyAt)
   setEraYear(yearOf(today));
   // Terminwart: Platzbegehung für morgen, Wochenend-Verlegungen (game/fixtureWatch.ts).

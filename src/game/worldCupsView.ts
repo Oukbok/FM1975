@@ -9,7 +9,7 @@ import type { RoundLite, TieLite } from './competitionView';
 import type { GroupTable } from '../components/competition/GroupTables';
 import { seasonLabel } from '../engine/calendar';
 import { CONTINENTS, CONTINENT_KEYS, cupEraOf, type ContinentKey } from '../data/world/continents';
-import { IC_FORMAT_DE, IC_NAMES, icPlansFor, type IcFormat, type IcKey } from '../data/world/continents/intercontinental';
+import { IC_FORMAT_DE, icName, icPlansFor, type IcFormat, type IcKey } from '../data/world/continents/intercontinental';
 import { continentalRecord, continentalWinners, continentsState } from './continents';
 import { icStateOf, type IcArcMatch, type IcArchive, type IcEvent } from './intercontinental';
 import { groupTable, IC_STAGE_DE, type IcMatch, type IcStage } from './intercontinentalPlay';
@@ -156,6 +156,6 @@ export function worldCompAbout(key: WorldCompKey): string {
 /** Was steht in dieser Saison an (Hinweis für Saisons ohne Daten)? */
 export function worldPlanText(year: number): string {
   const plans = icPlansFor(year);
-  return plans.length ? plans.map((p) => `${IC_NAMES[p.key]}: ${IC_FORMAT_DE[p.format]}`).join(' · ') : 'In dieser Saison gibt es keinen interkontinentalen Wettbewerb.';
+  return plans.length ? plans.map((p) => `${icName(p.key, year)}: ${IC_FORMAT_DE[p.format]}`).join(' · ') : 'In dieser Saison gibt es keinen interkontinentalen Wettbewerb.';
 }
 export const IC_STAGE_LABEL = IC_STAGE_DE;

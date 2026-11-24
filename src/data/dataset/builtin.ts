@@ -65,6 +65,7 @@ export function snapshotCurrent(id: string, name: string): Dataset {
     history: HISTORY,
     legendsV2: LEGENDS,
     playerPhotos: [],
+    competitions: {},
     worldData: builtinWorldData(),
     poolTowns: POOL_TOWNS,
   } as Dataset);

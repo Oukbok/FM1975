@@ -48,6 +48,7 @@
 // =============================================================================
 
 import type { YcLowCls, YcLowKey } from './youthLowerLeagues';
+import { compPeriod } from './competitions/overrides';
 
 /** Wettbewerbe; C- bis G-Jugend (u15 … u7) siehe data/youthLowerLeagues.ts. */
 export type YcKey = 'u19' | 'u17' | 'pokal' | 'ddr' | 'uyl' | YcLowKey;
@@ -168,6 +169,15 @@ export function ddrYouthName(y0: number): string {
 }
 
 export function compLabel(key: YcKey, y0: number): string {
+  // Umbenennung im Datensatz (Editor › Wettbewerbe, `youth:<schlüssel>`).
+  if (key === 'u19' || key === 'u17' || key === 'pokal' || key === 'ddr' || key === 'uyl') {
+    const p = compPeriod(`youth:${key}`, y0);
+    if (p?.name) return p.name;
+  }
+  return compLabelBase(key, y0);
+}
+/** Eingebauter Name (ohne Datensatz). */
+export function compLabelBase(key: YcKey, y0: number): string {
   switch (key) {
     case 'u19': return y0 < 2003 ? 'Deutsche A-Jugendmeisterschaft' : y0 < 2024 ? 'A-Junioren-Liga' : 'Nachwuchsliga U19';
     case 'u17': return y0 < 2007 ? 'Deutsche B-Jugendmeisterschaft' : y0 < 2024 ? 'B-Junioren-Liga' : 'Nachwuchsliga U17';
