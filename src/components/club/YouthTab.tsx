@@ -7,7 +7,7 @@
 //   Weltvereine: die drei Jugendspieler aus dem Weltpool (game/worldPool.ts).
 // Name/Alter/Position sind sichtbar; Stärke/Potenzial erst ab einer Bekanntheit
 // von KNOWN_MIN (game/playerPool.ts `knowledge`/`estimate`), sonst „?“.
-// „Scouten“ legt einen Auftrag an (game/scoutingGame.ts) → Transfers › Scouting
+// „Scouten“ legt einen Auftrag an (game/scoutingGame.ts) → Transfermarkt › Scouting
 // und Spielerpool-Reiter „Gescoutet“.
 // =============================================================================
 import Short from '../../ui/Short';
@@ -143,7 +143,7 @@ export default function YouthTab({ g, d, onChange }: ClubTabProps & { onChange: 
                   {!own && (
                     <td className="num">
                       <button className="dchip" disabled={!!job || waiting || done}
-                        title={done ? 'Bericht liegt vor – siehe Transfers › Scouting' : `${terms.days} Tage · Reisekosten ${fmtPrice(jobTerms(g, abroad(r), true).cost)}${full ? ' · alle Scouts unterwegs: wird vorgemerkt' : ''}`}
+                        title={done ? 'Bericht liegt vor – siehe Transfermarkt › Scouting' : `${terms.days} Tage · Reisekosten ${fmtPrice(jobTerms(g, abroad(r), true).cost)}${full ? ' · alle Scouts unterwegs: wird vorgemerkt' : ''}`}
                         onClick={() => scout(x)}>
                         {job ? `Scout ${Math.round(jobProgress(g, job) * 100)} %` : waiting ? 'Vorgemerkt' : done ? 'Gescoutet' : full ? 'Vormerken' : 'Scouten'}
                       </button>
@@ -164,7 +164,7 @@ export default function YouthTab({ g, d, onChange }: ClubTabProps & { onChange: 
               const n = rows.filter((x) => x.cls === c).length;
               return n ? <KV key={c} k={YOUTH_AGE_CLASS_LABEL[c]} v={n} /> : null;
             })}
-            <div className="dnote mt8">Deine eigenen Jugendspieler kennst du genau. Aufstellung, Training und Hochziehen findest du unter Jugend › Mannschaften.</div>
+            <div className="dnote mt8">Deine eigenen Jugendspieler kennst du genau. Aufstellung, Training und Hochziehen findest du unter Jugend › Jugend.</div>
           </>
         ) : (
           <>
@@ -173,7 +173,7 @@ export default function YouthTab({ g, d, onChange }: ClubTabProps & { onChange: 
             <KV k="Scout unterwegs/vorgemerkt" v={busy} />
             <KV k="Auftrag" v={`${terms.days} Tage · ${fmtPrice(terms.cost)}`} />
             <KV k="Scouts frei" v={`${Math.max(0, scoutSlots(g) - (g.scouting?.jobs.length ?? 0))} von ${scoutSlots(g)}`} />
-            <div className="dnote mt8">Über fremde Jugendspieler weißt du kaum etwas: Name, Alter und Position sind bekannt, Stärke und Potenzial meist nicht. Schick einen Scout – nach dem Bericht siehst du die Werte hier, unter Transfers › Scouting und im Spielerpool unter „Gescoutet“.</div>
+            <div className="dnote mt8">Über fremde Jugendspieler weißt du kaum etwas: Name, Alter und Position sind bekannt, Stärke und Potenzial meist nicht. Schick einen Scout – nach dem Bericht siehst du die Werte hier, unter Transfermarkt › Scouting und im Spielerpool unter „Gescoutet“.</div>
             {msg && <div className="dnote mt8 cmx-ymsg">{msg}</div>}
           </>
         )}

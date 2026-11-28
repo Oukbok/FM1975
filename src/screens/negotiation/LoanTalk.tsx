@@ -174,7 +174,7 @@ export function LoanTalk({ g, talkId, onClose, onChange }: { g: Game; talkId: st
       text: t.phase === 'done' ? `${p.fullName} spielt ab sofort für dich. ${t.playerNote ?? ''}` : `${lender.name} und ${p.lastName} sind einverstanden. Die Leihe beginnt mit dem nächsten Transferfenster.`,
       terms: termsLines(t.terms, fmtPrice, utcDate, fmtWage(p.contract.weeklyWage * t.terms.share)),
       recap: [{ k: 'Runden', v: String(t.round) }, { k: 'Rolle bei dir', v: ROLE_DE[role] }, { k: 'Vertrag beim Stammverein bis', v: utcDate(p.contract.expiryDate) }],
-      next: ['Einsätze, Minuten und Entwicklung siehst du unter Transfers › Leihen.', t.terms.optionFee ? 'Am Saisonende entscheidest du über die Kaufoption.' : t.terms.obligation ? 'Ist die Bedingung erfüllt, wechselt er am Saisonende fest zu dir.' : 'Am Leihende kehrt er zu seinem Verein zurück.'],
+      next: ['Einsätze, Minuten und Entwicklung siehst du unter Transfermarkt › Leihen.', t.terms.optionFee ? 'Am Saisonende entscheidest du über die Kaufoption.' : t.terms.obligation ? 'Ist die Bedingung erfüllt, wechselt er am Saisonende fest zu dir.' : 'Am Leihende kehrt er zu seinem Verein zurück.'],
     };
   } else if (failed) {
     outcome = {

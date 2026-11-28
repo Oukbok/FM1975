@@ -1,5 +1,5 @@
 // =============================================================================
-// Eingehende Angebote für eigene Spieler (Wunsch Pascal: Transfers › Verhandlungen
+// Eingehende Angebote für eigene Spieler (Wunsch Pascal: Transfermarkt › Verhandlungen
 // zeigt sie, solange eine Entscheidung offen ist; Newscenter-Knopf führt dorthin).
 // -----------------------------------------------------------------------------
 // Quelle sind die Entscheidungs-Nachrichten selbst – KI-Kaufangebote (`ai_offer`,

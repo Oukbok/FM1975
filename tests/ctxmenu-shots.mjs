@@ -46,7 +46,7 @@ const nav = async (main, sub) => {
 // Rechtsklick-Menü für Spieler + farbige Startelf/Bank (Kader-Übersicht, Aufstellung)
 const errs2 = [];
 page.on('pageerror', (e) => errs2.push(e.message));
-await nav('Kader', 'Übersicht');
+await nav('Kader', 'Kader');
 await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' });
 await page.waitForTimeout(300);
 await shot('kader_rechtsklick');

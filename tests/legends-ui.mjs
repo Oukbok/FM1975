@@ -93,13 +93,13 @@ for (const view of (process.env.VIEW ? [process.env.VIEW] : ['1920x1080', '1366x
     if (await page.locator('.pp-modal').count()) { await page.locator('.pp-modal .pp2-close, .pp-modal .modal-close').first().click(); await page.waitForTimeout(200); }
   };
   try {
-    await nav('Kader', 'Übersicht');
+    await nav('Kader', 'Kader');
     checkText(`${tag} Kader`, await page.locator('.app-main').innerText());
     await page.screenshot({ path: `${outDir}/${tag}_kader.png` });
     await profile(info.pro, 'profi');
   } catch (e) { errors.push(`${tag} Profi: ${e.message.split('\n')[0]}`); }
   if (info.youth) try {
-    await nav('Jugend', 'Mannschaften');
+    await nav('Jugend', 'Jugend');
     checkText(`${tag} Jugend`, await page.locator('.app-main').innerText());
     await page.screenshot({ path: `${outDir}/${tag}_jugend.png` });
     const hit = page.locator(`text=${info.youth}`).filter({ visible: true }).first();

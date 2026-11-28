@@ -1,5 +1,5 @@
 // =============================================================================
-// SCOUTING-SOFTWARE & ABOS (Wunsch Pascal, Transfers › Scouting › Software & Abos)
+// SCOUTING-SOFTWARE & ABOS (Wunsch Pascal, Transfermarkt › Scouting › Software & Abos)
 // -----------------------------------------------------------------------------
 // „Kaufen ist einmalig und ggf. etwas veraltet, Abonnements sind up-to-date und
 // werden immer genauer.“ Produkte je Epoche in data/scoutingProducts.ts.

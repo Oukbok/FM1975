@@ -114,7 +114,7 @@ const step = async (n, fn) => { try { await fn(); } catch (e) { errors.push(`${n
 await step('profil', async () => {
   await page.locator('.hd-nav-item:has-text("Kader")').first().click();
   await page.waitForTimeout(300);
-  await page.locator('.tn-sub-item:has-text("Übersicht")').first().click();
+  await page.locator('.tn-sub-item:has-text("Kader")').first().click();
   await page.waitForTimeout(400);
   await page.locator('.dtable tbody tr').nth(4).click();
   await page.waitForSelector('.pp2-tabs', { timeout: 5000 });

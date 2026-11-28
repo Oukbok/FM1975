@@ -92,7 +92,7 @@ await page.keyboard.press('Escape'); await page.waitForTimeout(600);
 // Spielerprofil › Entwicklung
 for (let k = 0; k < 4 && await page.locator('.modal-overlay').count(); k++) { await page.locator('.modal-overlay .modal-close, .modal-overlay button:has-text("Schließen")').first().click().catch(() => {}); await page.waitForTimeout(300); }
 await page.locator('.hd-nav-item:has-text("Kader")').first().click(); await page.waitForTimeout(300);
-await page.locator('.tn-sub-item:has-text("Übersicht")').first().click().catch(() => {}); await page.waitForTimeout(500);
+await page.locator('.tn-sub-item:has-text("Kader")').first().click().catch(() => {}); await page.waitForTimeout(500);
 await page.locator('.app-main tbody tr').nth(4).click().catch(() => {});
 await page.waitForTimeout(500);
 if (await page.locator('.pp-modal').count()) {

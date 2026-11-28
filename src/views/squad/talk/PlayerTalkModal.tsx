@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 // Links der Spieler (TalkLeft), rechts Themenwahl → Antwort des Spielers.
 // Logik: game/playerTalk.ts (nutzt das Kabinen-Gespräch `talkTo`).
-// Einstiege: Kader › Kabine (Spieler im Fokus), Kader › Übersicht (Knopf je Zeile).
+// Einstiege: Kader › Kabine (Spieler im Fokus), Kader › Kader (Knopf je Zeile).
 // =============================================================================
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';

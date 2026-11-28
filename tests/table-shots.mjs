@@ -19,12 +19,12 @@ const countryTab = (name) => async (p) => { await p.locator('.app-main .cflag[da
 /** Ziel: Menü › Unterpunkt, optional Reiter (Text) und ein Fenster (open). */
 const TARGETS = [
   { id: '01-aufstellung-kaderliste', nav: ['Aufstellung', 'Aufstellung'] },
-  { id: '02-kader-uebersicht', nav: ['Kader', 'Übersicht'] },
+  { id: '02-kader-uebersicht', nav: ['Kader', 'Kader'] },
   { id: '03-kader-kabine', nav: ['Kader', 'Kabine'] },
   { id: '04-kader-vertraege', nav: ['Kader', 'Verträge'] },
   { id: '05-finanzen-budget', nav: ['Finanzen', 'Budget'] },
-  { id: '06-transfers-beobachtung', nav: ['Transfers', 'Beobachtung'] },
-  { id: '07-transfers-transfermarkt', nav: ['Transfers', 'Transfermarkt'] },
+  { id: '06-transfers-beobachtung', nav: ['Transfermarkt', 'Beobachtung'] },
+  { id: '07-transfers-transfermarkt', nav: ['Transfermarkt', 'Transfermarkt'] },
   { id: '08-verein-mitarbeiter-markt', nav: ['Verein', 'Mitarbeiter'] },
   { id: '09-verein-kartenverkauf', nav: ['Verein', 'Kartenverkauf'] },
   { id: '10-jugend-2-mannschaft', nav: ['Jugend', '2. Mannschaft'] },
@@ -43,7 +43,7 @@ const TARGETS = [
   { id: '23-jugendwettbewerbe', nav: ['Jugend', 'Jugendwettbewerbe'] },
   { id: '24-finanzen-sponsoring', nav: ['Finanzen', 'Sponsoring'] },
   { id: '25-verhandlungstisch', nav: ['Kader', 'Verträge'], open: async (p) => { const pid = await p.locator('.app-main tbody tr[data-pid]').nth(2).getAttribute('data-pid'); await p.evaluate((id) => window.dispatchEvent(new CustomEvent('fm:contract-screen', { detail: { kind: 'renew', pid: id } })), pid); await p.waitForSelector('.vt-root'); } },
-  { id: '26-transfers-verhandlungen', nav: ['Transfers', 'Verhandlungen'] },
+  { id: '26-transfers-verhandlungen', nav: ['Transfermarkt', 'Verhandlungen'] },
   { id: '27-training-trainerteam', nav: ['Training', 'Trainerteam'] },
 ];
 

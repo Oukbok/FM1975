@@ -66,7 +66,7 @@ async function shoot(name, clip) {
 }
 
 if (process.env.ONLY !== 'text') try {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr').nth(3).click();
   await shoot('profil', '.pp2-face');
   await page.locator('.pp-modal .pp2-nav-next').first().click().catch(() => {});

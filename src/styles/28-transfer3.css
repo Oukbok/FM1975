@@ -207,7 +207,7 @@
 .tm-name { display: inline-flex; align-items: center; gap: 10px; }
 .tm-name > .fthumb { margin: -4px 0; }
 
-/* ---- Transfers › Verhandlungen: Angebote für deine Spieler (IncomingOffers.tsx) ---- */
+/* ---- Transfermarkt › Verhandlungen: Angebote für deine Spieler (IncomingOffers.tsx) ---- */
 .ioff-sec { padding: 0 14px; margin: 12px 0 4px; }
 .ioff-sec:first-child { margin-top: 10px; }
 .ioff-none { padding: 4px 14px 10px; }

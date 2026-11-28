@@ -131,7 +131,7 @@ await sweep(1);
 await sweep(2);
 await popup('Vereinsprofil', 'Statistiken', 'Liga', '.app-main .club-link', '.cmx-modal', '.cmx-modal .cmx-tabs .tab');
 await popup('Vereinsprofil Ausland', 'Statistiken', 'International', '.app-main .club-link >> nth=-1', '.cmx-modal', '.cmx-modal .cmx-tabs .tab');
-await popup('Spielerprofil', 'Kader', 'Übersicht', '.app-main tbody tr[data-pid]', '.modal', '.modal .pp-tabs .tab, .modal [role="tab"]');
+await popup('Spielerprofil', 'Kader', 'Kader', '.app-main tbody tr[data-pid]', '.modal', '.modal .pp-tabs .tab, .modal [role="tab"]');
 await popup('Länderprofil', 'Statistiken', 'Nationalteams', '.app-main .cflag[data-country]', '.cnx-modal', '.cnx-modal .cmx-tabs .tab');
 
 const lines = [];

@@ -20,8 +20,9 @@ type Focus = { kind: 'all' } | { kind: 'item'; id: MerchItemId } | { kind: 'play
 
 export function MerchStats(p: Props) {
   const [focus, setFocus] = useState<Focus>({ kind: 'all' });
-  // Zeitraum-Wahl (Wunsch Pascal): 1 J. = Wochen der laufenden Saison, länger = je Saison.
-  const [range, setRange] = useChartRange('fanartikel', '1');
+  // Zeitraum-Wahl (Wunsch Pascal): 1 J. = Wochen der laufenden Saison, länger = je Saison;
+  // Standard 3 J. wie alle Finanz-Verläufe (eine gemerkte Wahl gilt weiter).
+  const [range, setRange] = useChartRange('fanartikel', '3');
   const span = seasonSpan(p.shop.archive, (a) => a.season, p.shop.season);
   const eff = effectiveRange(range, span);
   return (

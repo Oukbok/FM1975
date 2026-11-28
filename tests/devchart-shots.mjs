@@ -43,7 +43,7 @@ for (const [w, h] of VIEWS) {
   for (const name of PLAYERS) {
     const slug = name.split(' ').pop().toLowerCase();
     await page.locator('.hd-nav-item:has-text("Kader")').first().click(); await page.waitForTimeout(300);
-    await page.locator('.tn-sub-item:has-text("Übersicht")').first().click(); await page.waitForTimeout(400);
+    await page.locator('.tn-sub-item:has-text("Kader")').first().click(); await page.waitForTimeout(400);
     const row = page.locator(`.dtable tbody tr:has-text("${name.split(' ').pop()}")`).first();
     if (!await row.count()) { errors.push(`${w}: ${name} nicht im Kader`); continue; }
     await row.click(); await page.waitForTimeout(500);

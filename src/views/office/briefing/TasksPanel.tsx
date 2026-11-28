@@ -9,9 +9,15 @@ import { SeasonTask, TASK_LEVEL_LABEL, TaskLevel } from '../../../game/seasonTas
 import { MENU_STRUCTURE, Screen } from '../../../shell/navigation';
 
 /** „Kader › Verträge“ → Screen (null, wenn es die Seite nicht gibt). */
+/** Frühere Beschriftungen (Menü-Umbau, Wunsch Pascal) – ältere Spielstände speichern Briefing-Pfade. */
+const OLD_CAT: Record<string, string> = { Transfers: 'Transfermarkt' };
+const OLD_SUB: Record<string, string> = { 'Kader › Übersicht': 'Kader', 'Jugend › Mannschaften': 'Jugend', 'Statistiken › Statistiken': 'Liga', 'Privat › Privat': 'Karriere', 'Transfermarkt › Transfers': 'Transfermarkt' };
+
 export function screenOfWhere(where?: string): Screen | null {
   if (!where) return null;
-  const [cat, sub] = where.split('›').map((s) => s.trim());
+  const parts = where.split('›').map((s) => s.trim());
+  const cat = OLD_CAT[parts[0]] ?? parts[0];
+  const sub = parts[1] == null ? undefined : OLD_SUB[`${cat} › ${parts[1]}`] ?? parts[1];
   const c = MENU_STRUCTURE.find((x) => x.label === cat);
   if (c && !sub) return c.dash;
   // Unterpunkt auch in anderer Kategorie suchen (ältere Pfade nach Menü-Umbau, z. B. „Kader › Akademie“).

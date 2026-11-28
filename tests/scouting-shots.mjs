@@ -41,7 +41,7 @@ const overflow = async (name) => {
   if (r) errors.push(`${name}: ${r}`);
 };
 
-await nav('Transfers', 'Scouting');
+await nav('Transfermarkt', 'Scouting');
 await tab('Software');
 await shot('1-software');
 await overflow('software');

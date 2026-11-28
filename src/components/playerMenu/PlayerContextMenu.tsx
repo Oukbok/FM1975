@@ -202,7 +202,7 @@ export function PlayerMenuProvider({ g, onChange, onGoto, children }: {
     items.push({
       label: job ? 'Scout ist unterwegs' : waiting ? 'Scouting vorgemerkt' : 'Scout schicken', icon: 'watchlist', sep: true,
       run: () => {
-        if (job || waiting) { setNote(job ? 'Ein Scout beobachtet ihn bereits (Transfers › Scouting).' : 'Er ist vorgemerkt – ein Scout fährt los, sobald einer frei ist.'); return; }
+        if (job || waiting) { setNote(job ? 'Ein Scout beobachtet ihn bereits (Transfermarkt › Scouting).' : 'Er ist vorgemerkt – ein Scout fährt los, sobald einer frei ist.'); return; }
         const r = queueScouting(g, { id, name, clubName, abroad, youth });
         onChange();
         if (r === 'queued') { setNote('Alle Scouts sind unterwegs – vorgemerkt, der nächste freie Scout fährt los.'); return; }

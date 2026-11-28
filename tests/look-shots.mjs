@@ -43,7 +43,7 @@ await page.locator('.bf-continue').click();
 await page.waitForTimeout(400);
 await shot('02_zentrale');
 await nav('Kader'); await shot('03_kader_dashboard');
-await nav('Kader', 'Übersicht'); await shot('04_kader');
+await nav('Kader', 'Kader'); await shot('04_kader');
 await nav('Statistiken', 'Liga'); await shot('05_tabelle');
 await nav('Finanzen', 'Bilanz'); await shot('06_finanzen');
 await nav('Aufstellung', 'Aufstellung'); await shot('07_aufstellung');
@@ -60,7 +60,7 @@ if (await page.locator('.cmx-modal').count()) {
 
 // Spielerprofil: Torwart (erste Zeile) + ein Feldspieler mit Nebenpositionen
 async function profile(rowIdx, tag) {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr.clickable').nth(rowIdx).click();
   await page.waitForSelector('.pp-modal');
   const tabs = page.locator('.pp-tabs .tab');

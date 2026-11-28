@@ -115,7 +115,7 @@ await page.waitForTimeout(300);
 await page.locator('.hd-nav-item:has-text("Jugend")').click();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_8_jugend.png` });
-await noScroll('Jugend-Übersicht');
+await noScroll('Jugend');
 await page.locator('.tn-sub-item:has-text("Jugendwettbewerbe")').click();
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/${tag}_9_wettbewerbe.png` });

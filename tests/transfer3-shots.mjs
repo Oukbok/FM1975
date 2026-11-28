@@ -90,7 +90,7 @@ for (const [w, h] of [[1920, 1080], [1366, 768]]) {
 
   // 2) Transfermarkt: Spielersuche + Bilanz nachträglich
   try {
-  await page.locator('.hd-nav-item:has-text("Transfers")').first().click();
+  await page.locator('.hd-nav-item:has-text("Transfermarkt")').first().click();
   await page.waitForTimeout(250);
   await page.locator('.tn-sub-item:has-text("Transfermarkt")').first().click();
   await page.waitForTimeout(400);

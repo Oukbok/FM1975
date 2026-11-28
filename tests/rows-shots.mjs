@@ -46,11 +46,11 @@ const nav = async (main, sub) => {
 const PAGES = [
   ['Zentrale', null, 'zentrale'], ['Zentrale', 'Presse', 'presse'],
   ['Aufstellung', 'Gegner', 'gegner'], ['Aufstellung', 'Aufstellung', 'aufstellung'], ['Aufstellung', 'Spielplan', 'spielplan'],
-  ['Kader', null, 'kader'], ['Kader', 'Übersicht', 'kader_uebersicht'], ['Kader', 'Verträge', 'vertraege'], ['Kader', 'Kabine', 'kabine'],
+  ['Kader', null, 'kader'], ['Kader', 'Kader', 'kader_uebersicht'], ['Kader', 'Verträge', 'vertraege'], ['Kader', 'Kabine', 'kabine'],
   ['Training', 'Trainerteam', 'trainerteam'],
-  ['Jugend', null, 'jugend'], ['Jugend', 'Mannschaften', 'jugend_mannschaften'], ['Jugend', 'Jugendwettbewerbe', 'jugendwettbewerbe'],
-  ['Transfers', null, 'transfers'], ['Transfers', 'Transfermarkt', 'transfermarkt'], ['Transfers', 'Beobachtung', 'beobachtung'],
-  ['Transfers', 'Spielerpool', 'spielerpool'],
+  ['Jugend', null, 'jugend'], ['Jugend', 'Jugend', 'jugend_mannschaften'], ['Jugend', 'Jugendwettbewerbe', 'jugendwettbewerbe'],
+  ['Transfers', null, 'transfers'], ['Transfermarkt', 'Transfermarkt', 'transfermarkt'], ['Transfermarkt', 'Beobachtung', 'beobachtung'],
+  ['Transfermarkt', 'Spielerpool', 'spielerpool'],
   ['Verein', 'Erfolge', 'erfolge'], ['Verein', 'Mitarbeiter', 'mitarbeiter'],
   ['Statistiken', null, 'statistiken'], ['Statistiken', 'Liga', 'liga'], ['Statistiken', 'Pokal', 'pokal'],
   ['Statistiken', 'International', 'international'], ['Statistiken', 'Halle', 'halle'],
@@ -80,7 +80,7 @@ try {
 } catch (e) { errors.push('verein: ' + e.message.split('\n')[0]); }
 // Spielerprofil Statistik
 try {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr').first().click();
   await page.waitForTimeout(500);
   for (const t of ['Saison', 'Entwicklung']) {

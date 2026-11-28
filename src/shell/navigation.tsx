@@ -2,7 +2,8 @@ import Icon, { type IconName } from '../components/Icon';
 
 export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | 'training' | 'transfers' | 'finances' | 'youth' | 'facilities' | 'cup' | 'chronicle' | 'wiki' | 'staff' | 'marketing' | 'calendar'
   // Kategorie-Dashboards (Übersichtsseiten je Hauptkategorie)
-  | 'cat-spieltag' | 'cat-kader' | 'cat-transfers' | 'cat-finanzen' | 'cat-verein' | 'cat-statistiken'
+  // (Kader/Transfers/Statistiken/Jugend/Privat ohne eigene Übersicht, Wunsch Pascal: Klick öffnet direkt die erste Unterseite)
+  | 'cat-spieltag' | 'cat-finanzen' | 'cat-verein'
   // Neue Einzelseiten
   | 'tactics' | 'stadium' | 'presse' | 'vertraege' | 'meldung' | 'reserve' | 'beobachtung' | 'spielerpool' | 'scouting' | 'verhandlungen' | 'leihen' | 'sponsoring' | 'fans' | 'international' | 'nationalteams' | 'supercup' | 'vorstand' | 'ruhmeshalle' | 'akademie'
   // Winter: Hallenfußball + Trainingslager
@@ -12,7 +13,7 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   // Kabine (Kader › Kabine)
   | 'kabine'
   // Training (Kategorie) + Jugend (Kategorie)
-  | 'cat-training' | 'trainerteam' | 'cat-jugend' | 'jugendwettbewerbe' | 'jugendcamps'
+  | 'cat-training' | 'trainerteam' | 'jugendwettbewerbe' | 'jugendcamps'
   // Die Besten der Saison (Statistiken › Auszeichnungen)
   | 'auszeichnungen'
   // Fanartikel (Finanzen › Fanartikel)
@@ -25,24 +26,25 @@ export type Screen = 'dashboard' | 'table' | 'fixtures' | 'squad' | 'lineup' | '
   | 'ligensystem'
   // Managerkarriere (Privat › Karriere)
   | 'karriere'
-  // Privatleben (Privat): Übersicht, Familie, Freizeit, Vermögen
-  | 'privat' | 'familie' | 'freizeit' | 'vermoegen'
+  // Privatleben (Privat): Familie, Freizeit, Vermögen (keine eigene Übersicht mehr: Privat öffnet Karriere)
+  | 'familie' | 'freizeit' | 'vermoegen'
   // Nationaltrainer (Ansicht Nationalteam): Übersicht/Aufgebot/Spiele & Turniere (views/national/)
   | 'nationalteam';
 
 // =============================================================================
 // MENÜ-STRUKTUR (zweistufige Top-Navigation)
 // =============================================================================
-// Reihe 1 = 9 Hauptkategorien (Klick öffnet das jeweilige Kategorie-Dashboard),
-// Reihe 2 = Unterpunkte der aktiven Kategorie. Alle Symbole im Set-C-Stil.
+// Reihe 1 = 10 Hauptkategorien (Klick öffnet `dash`), Reihe 2 = Unterpunkte der aktiven
+// Kategorie. Alle Symbole im Set-C-Stil.
 export interface SubItem { screen: Screen; label: string; icon: IconName; /** lange Beschriftung: bei kleinen Auflösungen enger gesetzt (CSS .tn-sub-item.tight) */ tight?: boolean }
 
 export interface MainCat { key: string; label: string; icon: IconName; dash: Screen; subs: SubItem[] }
 
-// Jede Kategorie bekommt als ERSTEN Unterpunkt einen gleichnamigen Eintrag, der auf das
-// Kategorie-Dashboard (`dash`) zeigt. Dadurch ist er automatisch aktiv, sobald man im
-// Obermenue auf die Kategorie klickt (Header navigiert auf `dash`, TopNav markiert den
-// Unterpunkt mit `screen === s.screen`). Reihenfolge: Selbst-Eintrag zuerst, dann die Views.
+// `dash` = Ziel beim Klick auf die Hauptkategorie und ist immer der ERSTE Unterpunkt; dadurch
+// ist er automatisch aktiv (Header navigiert auf `dash`, TopNav markiert `screen === s.screen`).
+// Kategorie-Übersichten gibt es nur noch für Training, Finanzen und Verein; Kader, Jugend,
+// Transfermarkt, Statistiken und Privat führen direkt auf eine Unterseite (Wunsch Pascal).
+// Ausnahme: Privat zeigt auf Karriere (erster Unterpunkt).
 export const MENU_STRUCTURE: MainCat[] = [
   { key: 'zentrale', label: 'Zentrale', icon: 'zentrale', dash: 'dashboard', subs: [
     { screen: 'dashboard', label: 'Zentrale', icon: 'zentrale' },
@@ -57,9 +59,8 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'cat-spieltag', label: 'Gegner', icon: 'watchlist' },
     { screen: 'fixtures', label: 'Spielplan', icon: 'schedule' },
   ] },
-  { key: 'kader', label: 'Kader', icon: 'squad', dash: 'cat-kader', subs: [
-    { screen: 'cat-kader', label: 'Kader', icon: 'squad' },
-    { screen: 'squad', label: 'Übersicht', icon: 'squad' },
+  { key: 'kader', label: 'Kader', icon: 'squad', dash: 'squad', subs: [
+    { screen: 'squad', label: 'Kader', icon: 'squad' },
     { screen: 'vertraege', label: 'Verträge', icon: 'contracts' },
     { screen: 'meldung', label: 'Spielermeldung', icon: 'contracts' },
     { screen: 'kabine', label: 'Kabine', icon: 'squad' },
@@ -70,16 +71,14 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'trainingslager', label: 'Trainingslager', icon: 'weather' },
     { screen: 'trainerteam', label: 'Trainerteam', icon: 'whistle' },
   ] },
-  { key: 'jugend', label: 'Jugend', icon: 'youth', dash: 'cat-jugend', subs: [
-    { screen: 'cat-jugend', label: 'Jugend', icon: 'youth' },
+  { key: 'jugend', label: 'Jugend', icon: 'youth', dash: 'youth', subs: [
+    { screen: 'youth', label: 'Jugend', icon: 'youth' },
     { screen: 'akademie', label: 'Akademie', icon: 'facilities' },
-    { screen: 'youth', label: 'Mannschaften', icon: 'youth' },
     { screen: 'reserve', label: '2. Mannschaft', icon: 'squad' },
     { screen: 'jugendwettbewerbe', label: 'Jugendwettbewerbe', icon: 'trophy' },
     { screen: 'jugendcamps', label: 'Jugendcamps', icon: 'international' },
   ] },
-  { key: 'transfers', label: 'Transfers', icon: 'transfers', dash: 'cat-transfers', subs: [
-    { screen: 'cat-transfers', label: 'Transfers', icon: 'transfers' },
+  { key: 'transfers', label: 'Transfermarkt', icon: 'transfers', dash: 'transfers', subs: [
     { screen: 'transfers', label: 'Transfermarkt', icon: 'transfers' },
     { screen: 'spielerpool', label: 'Spielerpool', icon: 'international' },
     { screen: 'beobachtung', label: 'Beobachtung', icon: 'watchlist' },
@@ -104,8 +103,7 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'fans', label: 'Fans', icon: 'fans' },
     { screen: 'ruhmeshalle', label: 'Erfolge', icon: 'trophy' },
   ] },
-  { key: 'statistiken', label: 'Statistiken', icon: 'stats', dash: 'cat-statistiken', subs: [
-    { screen: 'cat-statistiken', label: 'Statistiken', icon: 'stats' },
+  { key: 'statistiken', label: 'Statistiken', icon: 'stats', dash: 'table', subs: [
     { screen: 'table', label: 'Liga', icon: 'stats' },
     { screen: 'ligensystem', label: 'Ligensystem', icon: 'stats' },
     // Nationale Pokale (Wunsch Pascal): drittes Menü Landespokal | Gipfelpokal; 'supercup' ist nur
@@ -117,8 +115,8 @@ export const MENU_STRUCTURE: MainCat[] = [
     { screen: 'auszeichnungen', label: 'Auszeichnungen', icon: 'trophy' },
   ] },
   // Privatleben (Wunsch Pascal #47): dein Leben neben dem Verein, Karriere, Familie über Generationen.
-  { key: 'privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
-    { screen: 'privat', label: 'Privat', icon: 'home' },
+  // Privat öffnet direkt Karriere; die frühere Übersicht steckt im Karriere-Reiter „Lebenslauf“.
+  { key: 'privat', label: 'Privat', icon: 'home', dash: 'karriere', subs: [
     { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
     { screen: 'familie', label: 'Familie', icon: 'fans' },
     { screen: 'freizeit', label: 'Freizeit', icon: 'music' },
@@ -148,8 +146,7 @@ export const NATIONAL_MENU: MainCat[] = [
     { screen: 'international', label: 'International', icon: 'international' },
     { screen: 'auszeichnungen', label: 'Auszeichnungen', icon: 'trophy' },
   ] },
-  { key: 'nt-privat', label: 'Privat', icon: 'home', dash: 'privat', subs: [
-    { screen: 'privat', label: 'Privat', icon: 'home' },
+  { key: 'nt-privat', label: 'Privat', icon: 'home', dash: 'karriere', subs: [
     { screen: 'karriere', label: 'Karriere', icon: 'whistle' },
   ] },
 ];

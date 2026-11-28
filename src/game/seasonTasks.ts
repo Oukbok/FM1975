@@ -77,24 +77,24 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   const byGroup = (gr: PositionGroup) => squad.filter((p) => POSITION_GROUPS[p.naturalPosition] === gr);
   const gk = byGroup('GK');
   if (gk.length < 2) {
-    add({ id: 'gk', level: 'dringend', icon: 'squad', where: 'Transfers › Transfermarkt',
+    add({ id: 'gk', level: 'dringend', icon: 'squad', where: 'Transfermarkt › Transfermarkt',
       title: gk.length === 0 ? 'Kein Torwart im Kader' : 'Nur ein Torwart im Kader',
       text: gk.length === 0 ? 'Ohne Torwart kannst du kein Spiel bestreiten – hol sofort zwei Keeper.'
         : `Fällt ${nameOf(gk[0])} aus, steht ein Feldspieler im Tor. Hol einen zweiten Torwart.` });
   }
   if (squad.length < 18) {
-    add({ id: 'squad-small', level: 'dringend', icon: 'squad', where: 'Transfers › Transfermarkt',
+    add({ id: 'squad-small', level: 'dringend', icon: 'squad', where: 'Transfermarkt › Transfermarkt',
       title: `Kader zu klein (${squad.length} Spieler)`,
       text: 'Mit Verletzungen und Sperren reicht das nicht durch die Saison. Ziel: mindestens 20 Profis.' });
   } else if (squad.length > 28) {
-    add({ id: 'squad-big', level: 'tipp', icon: 'finances', where: 'Kader › Übersicht',
+    add({ id: 'squad-big', level: 'tipp', icon: 'finances', where: 'Kader › Kader',
       title: `Großer Kader (${squad.length} Spieler)`,
       text: 'Viele Spieler kommen kaum zum Einsatz und kosten Gehalt. Gib Ergänzungsspieler ab.' });
   }
   for (const gr of ['DEF', 'MID', 'ATT'] as PositionGroup[]) {
     const n = byGroup(gr).length;
     if (n < GROUP_MIN[gr]) {
-      add({ id: `thin-${gr}`, level: 'wichtig', icon: 'lineup', where: 'Transfers › Transfermarkt',
+      add({ id: `thin-${gr}`, level: 'wichtig', icon: 'lineup', where: 'Transfermarkt › Transfermarkt',
         title: `${GROUP_LABEL[gr]} dünn besetzt`,
         text: `Nur ${n} gelernte Spieler für ${GROUP_LABEL[gr] === 'Angriff' ? 'den Angriff' : `${gr === 'DEF' ? 'die' : 'das'} ${GROUP_LABEL[gr]}`} – eine Verletzung, und du musst umstellen.` });
     }
@@ -133,11 +133,11 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   const median = values.length ? values[Math.floor(values.length / 2)] : 0;
   if (median > 0 && budget >= median * 0.6) {
     const gap = weakest && teamAvg - weakest.v >= 3 ? ` Am schwächsten: ${GROUP_LABEL[weakest.gr]}.` : '';
-    add({ id: 'budget', level: 'wichtig', icon: 'transfers', where: 'Transfers › Transfermarkt',
+    add({ id: 'budget', level: 'wichtig', icon: 'transfers', where: 'Transfermarkt › Transfermarkt',
       title: 'Transferbudget einsetzen',
       text: `Dein Budget reicht für mindestens einen Stammspieler.${gap} Schau dich auf dem Markt um, bevor die Konkurrenz zugreift.` });
   } else if (weakest && teamAvg - weakest.v >= 5) {
-    add({ id: 'weak-group', level: 'tipp', icon: 'lineup', where: 'Transfers › Beobachtung',
+    add({ id: 'weak-group', level: 'tipp', icon: 'lineup', where: 'Transfermarkt › Beobachtung',
       title: `Baustelle: ${GROUP_LABEL[weakest.gr]}`,
       text: `Deine Stammkräfte im ${GROUP_LABEL[weakest.gr] === 'Abwehr' ? 'Abwehrbereich' : GROUP_LABEL[weakest.gr]} fallen ab. Beobachte günstige Alternativen.` });
   }
@@ -207,7 +207,7 @@ export function seasonTasks(g: Game, sit?: BriefingSituation, changes: GameChang
   }
   const talents = club.youthPlayerIds.map((id) => g.players[id]).filter((p): p is Player => !!p && p.age >= 17 && p.potentialStars >= 4);
   if (talents.length) {
-    add({ id: 'talents', level: 'tipp', icon: 'youth', where: 'Jugend › Mannschaften',
+    add({ id: 'talents', level: 'tipp', icon: 'youth', where: 'Jugend › Jugend',
       title: talents.length === 1 ? `Talent ${nameOf(talents[0])} ist so weit` : `${talents.length} Talente drängen nach oben`,
       text: `${listNames(talents)} – hochziehen und Einsatzzeit geben, sonst stagniert die Entwicklung.` });
   } else if (inv.quality < 30) {

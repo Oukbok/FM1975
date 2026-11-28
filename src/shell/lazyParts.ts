@@ -69,14 +69,12 @@ export const ReserveTeamView = lz(() => import('../views/youth/ReserveTeamView')
 export const YouthCampsView = lz(() => import('../views/youth/YouthCampsView'), 'YouthCampsView');
 export const NationalView = lz(() => import('../views/stats/NationalView'), 'NationalView');
 export const NationalTeamView = lz(() => import('../views/national/NationalTeamView'), 'NationalTeamView');
-export const PrivateView = lz(() => import('../views/private/PrivateView'), 'PrivateView');
 export const FamilyView = lz(() => import('../views/private/FamilyView'), 'FamilyView');
 export const LeisureView = lz(() => import('../views/private/LeisureView'), 'LeisureView');
 export const WealthView = lz(() => import('../views/private/WealthView'), 'WealthView');
 export const RegistrationView = lz(() => import('../views/squad/RegistrationView'), 'RegistrationView');
 export const TrainingCampView = lz(() => import('../views/squad/TrainingCampView'), 'TrainingCampView');
 export const DressingRoomView = lz(() => import('../views/squad/DressingRoomView'), 'DressingRoomView');
-export const YouthDashboard = lz(() => import('../views/youth/YouthDashboard'), 'YouthDashboard');
 export const YouthCompetitionsView = lz(() => import('../views/youth/YouthCompetitionsView'), 'YouthCompetitionsView');
 export const FacilitiesView = lz(() => import('../views/club/FacilitiesView'), 'FacilitiesView');
 export const FansView = lz(() => import('../views/club/FansView'), 'FansView');
@@ -96,11 +94,8 @@ export const BriefingView = lz(() => import('../views/office/BriefingView'), 'Br
 export const PressView = lz(() => import('../views/office/PressView'), 'PressView');
 export const SpieltagDashboard = lz(() => import('../views/categoryDashboards'), 'SpieltagDashboard');
 export const OpponentView = lz(() => import('../views/matchday/OpponentView'), 'OpponentView');
-export const KaderDashboard = lz(() => import('../views/categoryDashboards'), 'KaderDashboard');
-export const TransfersDashboard = lz(() => import('../views/categoryDashboards'), 'TransfersDashboard');
 export const FinanzenDashboard = lz(() => import('../views/categoryDashboards'), 'FinanzenDashboard');
 export const VereinDashboard = lz(() => import('../views/categoryDashboards'), 'VereinDashboard');
-export const StatistikenDashboard = lz(() => import('../views/categoryDashboards'), 'StatistikenDashboard');
 
 // --- Fenster & Shows ------------------------------------------------------
 export const MatchScreen = lz(() => import('../screens/match/MatchScreen'), 'MatchScreen');

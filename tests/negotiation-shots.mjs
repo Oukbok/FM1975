@@ -154,7 +154,7 @@ if (!only || only === 'renew') {
 // ---------------------------------------------------------------- Transfer: Verein → Spieler → Abschluss
 if (!only || only === 'transfer') {
   const page = await open();
-  await nav(page, 'Transfers', 'Transfermarkt');
+  await nav(page, 'Transfermarkt', 'Transfermarkt');
   const rows = page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]');
   let done = false, failedShot = false;
   for (let i = 1; i < Math.min(14, await rows.count()) && !(done && failedShot); i++) {

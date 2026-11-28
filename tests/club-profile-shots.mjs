@@ -193,7 +193,7 @@ await closeProfile();
 
 // 3b) Gescouteter Jugendspieler erscheint unter Transfers › Scouting
 if (scoutedName) {
-  await page.locator('.hd-nav-item:has-text("Transfers")').click();
+  await page.locator('.hd-nav-item:has-text("Transfermarkt")').click();
   await page.waitForTimeout(250);
   await page.locator('.tn-sub-item:has-text("Scouting")').first().click();
   await page.waitForTimeout(400);

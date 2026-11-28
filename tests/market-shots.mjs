@@ -33,7 +33,7 @@ const nav = async (main, sub) => {
   await page.waitForTimeout(250);
   if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(500); }
 };
-await nav('Transfers', 'Transfermarkt');
+await nav('Transfermarkt', 'Transfermarkt');
 await page.screenshot({ path: `${outDir}/transfermarkt.png` });
 const star = page.locator('.mk-stars').nth(3);
 if (await star.count()) { await star.hover(); await page.waitForTimeout(250); await page.screenshot({ path: `${outDir}/transfermarkt_hover.png` }); }
@@ -58,13 +58,13 @@ if (await fb.count()) {
 }
 const tg = page.locator('.mk-only');
 if (await tg.count()) { await tg.click(); await page.waitForTimeout(300); await page.screenshot({ path: `${outDir}/transfermarkt_gescoutet.png` }); }
-await nav('Transfers', 'Spielerpool');
+await nav('Transfermarkt', 'Spielerpool');
 await page.waitForTimeout(800);
 await page.screenshot({ path: `${outDir}/spielerpool.png` });
 await page.locator('.mk-filter-btn').click(); await page.waitForTimeout(300);
 await page.screenshot({ path: `${outDir}/spielerpool_filter.png` });
 await page.keyboard.press('Escape');
-await nav('Transfers', 'Beobachtung');
+await nav('Transfermarkt', 'Beobachtung');
 await page.screenshot({ path: `${outDir}/beobachtung.png` });
 console.log(errors.length ? errors.join('\n') : 'Keine JS-Fehler.');
 await browser.close(); server.close();

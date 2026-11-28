@@ -95,7 +95,7 @@ for (const [w, h] of VIEWS) {
     await cycle('verein', '.cmx-modal');
     await page.locator('.cmx-modal > .mx-head > .modal-close').click().catch(() => page.keyboard.press('Escape')); await page.waitForTimeout(250);
   } else errors.push(`${w}: eigener Verein in der Zentrale nicht gefunden`);
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr').nth(3).click(); await page.waitForTimeout(500);
   await page.locator('.pp-modal .pp-tabs button:has-text("Statistik")').first().click(); await page.waitForTimeout(300);
   await cycle('spieler', '.pp-modal');

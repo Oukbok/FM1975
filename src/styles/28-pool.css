@@ -1,4 +1,4 @@
-/* Transfers › Spielerpool / Scouting (views/transfers/pool/) */
+/* Transfermarkt › Spielerpool / Scouting (views/transfers/pool/) */
 .pool-table th.clickable { cursor: pointer; }
 .pool-table th.sorted { color: var(--text); }
 .pool-table tr.sel td { background: var(--sel-bg); }

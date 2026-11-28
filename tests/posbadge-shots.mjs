@@ -42,7 +42,7 @@ for (const [w, h] of views) {
   const step = async (n, fn) => { try { await fn(); } catch (e) { errors.push(`${pre} ${n}: ${e.message.split('\n')[0]}`); } };
 
   await step('kader', async () => {
-    await nav('Kader', 'Übersicht'); await shot('01_kader');
+    await nav('Kader', 'Kader'); await shot('01_kader');
     const plus = page.locator('.posb:has(.pb-more)').first();
     await plus.hover(); await page.waitForTimeout(250); await shot('02_kader_hover');
     await page.mouse.move(5, 5);
@@ -55,7 +55,7 @@ for (const [w, h] of views) {
   await step('vertraege', async () => { await nav('Kader', 'Verträge'); await shot('04_vertraege'); });
   await step('kabine', async () => { await nav('Kader', 'Kabine'); await shot('05_kabine'); });
   await step('aufstellung', async () => { await nav('Aufstellung', 'Aufstellung'); await shot('06_aufstellung'); });
-  await step('transfermarkt', async () => { await nav('Transfers', 'Transfermarkt'); await shot('07_transfermarkt'); });
+  await step('transfermarkt', async () => { await nav('Transfermarkt', 'Transfermarkt'); await shot('07_transfermarkt'); });
   await step('suche', async () => {
     await page.locator('.dchip:has-text("Spieler suchen")').first().click(); await page.waitForTimeout(400);
     await shot('08_suche');

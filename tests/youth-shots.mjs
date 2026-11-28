@@ -45,7 +45,7 @@ await page.screenshot({ path: `${outDir}/${tag}_2_ausbau.png` });
 // Seitenscroll prüfen (die Seite selbst darf nie scrollen).
 const scroll = await page.evaluate(() => { const m = document.querySelector('.app-main'); return m ? m.scrollHeight - m.clientHeight : 0; });
 if (scroll > 2) errors.push(`Akademie-Seite scrollt (${scroll}px)`);
-await page.locator('.tn-sub-item:has-text("Mannschaften")').click();
+await page.locator('.tn-sub-item:has-text("Jugend")').first().click();
 await page.waitForTimeout(400);
 await page.screenshot({ path: `${outDir}/${tag}_3_jugend.png` });
 console.log(errors.length ? 'FEHLER:\n' + errors.join('\n') : 'ok, keine JS-Fehler');

@@ -78,7 +78,7 @@ Deutsche Retro-Fußballmanager-Simulation. Der Spielstand startet in der **Saiso
 - An wichtigen Ereignissen (**dein Spiel** – hier hält der Vorlauf unmittelbar vor dem Anpfiff an und öffnet das Match-Fenster im Vor-Anpfiff-Zustand –, **große Saison-Bewertung**, Saisonende) hält das Spiel automatisch an. Die Pause landet dabei **genau auf dem betreffenden Tag** (also z.B. **am Spieltag selbst**, nicht am Folgetag): Das angezeigte Datum in der Zentrale bleibt auf diesem Tag stehen, der Tageswechsel wird erst nachgeholt, sobald du den Vorlauf fortsetzt. Auch die drei Bewertungsrunden (Herbst, Winter, Saisonende) halten an und zeigen die Bewertungs-Show. Am Saisonende wird der **Weiter**-Button zu **„▶ Neue Saison"** und startet die Folgesaison samt fälliger Chronik-Meilensteine.
 
 ## Menüs: Kategorie › Unterpunkt › Reiter
-- Oben wählst du die **Kategorie** (Zentrale, Spieltag, Kader …), darunter den **Unterpunkt**. Hat eine Seite mehrere gleichrangige Ansichten, steht direkt darunter eine **Reiterleiste** (das „dritte Menü“), z. B. Training › Trainingsplan (Mannschaftstraining, Individuelle Spieler, Trainingsgruppen, Langfristig), Jugend › Mannschaften (A- bis G-Jugend und Alle), Kader › Übersicht und Transfers › Transfermarkt (Mannschaftsteile), Transfers › Beobachtung, Finanzen › Sponsoring und Fanartikel, Verein › Erfolge, Zentrale › Presse (Ausgaben) sowie Jugend › Jugendwettbewerbe (Altersklassen).
+- Oben wählst du die **Kategorie** (Zentrale, Aufstellung, Kader …), darunter den **Unterpunkt**. Ein Klick auf die Kategorie öffnet ihren ersten Unterpunkt: Kader › Kader, Jugend › Jugend, Transfermarkt › Transfermarkt, Statistiken › Liga, Privat › Karriere; Training, Finanzen und Verein beginnen mit einer Übersicht aus sechs Boxen. Hat eine Seite mehrere gleichrangige Ansichten, steht direkt darunter eine **Reiterleiste** (das „dritte Menü“), z. B. Training › Trainingsplan (Mannschaftstraining, Individuelle Spieler, Trainingsgruppen, Langfristig), Jugend › Jugend (A- bis G-Jugend und Alle), Kader › Kader und Transfermarkt › Transfermarkt (Mannschaftsteile), Transfermarkt › Beobachtung, Finanzen › Sponsoring und Fanartikel, Verein › Erfolge, Zentrale › Presse (Ausgaben) sowie Jugend › Jugendwettbewerbe (Altersklassen).
 - Die kleine Zahl im Reiter zählt, was dahinter steckt (Spieler, Angebote). Der zuletzt gewählte Reiter bleibt beim Seitenwechsel erhalten.
 - Umschalter, die nur den Inhalt **einer Box** ändern (z. B. Kabine › Maßnahmen/Vorfälle, Budget › Aufteilung/Vorjahre), bleiben im Kopf dieser Box.
 
@@ -552,7 +552,7 @@ Fast jeder **Vereinsname und jedes Wappen** ist anklickbar und öffnet das Verei
 ## Reiter
 - **Übersicht**: Stadt, Gründung, Liga und Tabellenplatz, Form, Ansehen. Kräftevergleich und Duelle mit deinem Verein (nächstes, letztes, Bilanz über alle Jahre). Trainer. **Kurzbewertung**: Ø der Stammkräfte je Mannschaftsteil (1 Torwart, je 4 Abwehr/Mittelfeld, 2 Angriff) als Spiegelbalken gegen dein Team; der stärkere Wert ist hervorgehoben. Stärkste Spieler und die letzten/nächsten Spiele.
 - **Kader**: alle Spieler, sortierbar. Die Stärke siehst du wie auf dem Transfermarkt genau, das **Potenzial nur als Scouting-Spanne** (Sterne von–bis, je nach Scout-Qualität). Klick öffnet das Spielerprofil, **Verhandeln** startet direkt eine Transferverhandlung. Rechts Kaderstruktur und Vertragslage (auslaufende Verträge, wechselwillige Spieler).
-- **Jugend**: die Jugendspieler des Vereins (dein Verein: alle Jugendmannschaften; andere Vereine: ihre Akademie bzw. die drei Jugendspieler der Weltvereine) mit Name, Nation, Position, Alter und Mannschaft, sortierbar. Bei **fremden Vereinen** sind die meisten Jugendlichen **unbekannt**: Stärke und Potenzial stehen als „?“, erst ab genug Kenntnissen (eigene Liga, häufige Duelle, Medien, Scouting-Mitarbeiter) als Spanne. **Scouten** schickt einen Scout los (Jugend: vier Tage länger, Reisegeld wie im Spielerpool; sind alle Scouts unterwegs, wird vorgemerkt). Nach dem Bericht stehen die Werte im Profil, unter **Transfers › Scouting** und im Spielerpool unter **Gescoutet**.
+- **Jugend**: die Jugendspieler des Vereins (dein Verein: alle Jugendmannschaften; andere Vereine: ihre Akademie bzw. die drei Jugendspieler der Weltvereine) mit Name, Nation, Position, Alter und Mannschaft, sortierbar. Bei **fremden Vereinen** sind die meisten Jugendlichen **unbekannt**: Stärke und Potenzial stehen als „?“, erst ab genug Kenntnissen (eigene Liga, häufige Duelle, Medien, Scouting-Mitarbeiter) als Spanne. **Scouten** schickt einen Scout los (Jugend: vier Tage länger, Reisegeld wie im Spielerpool; sind alle Scouts unterwegs, wird vorgemerkt). Nach dem Bericht stehen die Werte im Profil, unter **Transfermarkt › Scouting** und im Spielerpool unter **Gescoutet**.
 - **Verein**: Stadion, Finanzen aus **Außensicht** (Umsatzklasse in der Liga, Umsatz der Vorsaison gerundet, Transferbudget als geschätzte Spanne, Kaderwert, Gehälter – Kontostand und Schulden bleiben geheim), Trikots, Ausbaustufen des Geländes, Marke/Bekanntheit, Nachwuchs.
 - **Transfers**: alle Wechsel einer Saison in vier Listen – **Zugänge**, **Abgänge**, **Verliehen**, **Geliehen** – mit Ablöse und Saisonbilanz. Ein Wechsel zählt zur Saison des Tages, an dem der Spieler wechselt bzw. sein Vertrag beginnt (ab 1. Juli = neue Saison). Mit den Pfeilen blätterst du Saison für Saison, über die Auswahlliste springst du direkt zu einem weiter entfernten Jahr.
 - **Historie**: Platzierungsverlauf über alle Ligaebenen (goldener Punkt = Meister, offener Punkt = laufende Saison; Hover zeigt Saison, Platz und Liga, eine gestrichelte Linie trennt die Ligaebenen nach Auf- oder Abstiegen), Titel, beste Platzierung, Auf-/Abstiege, direkter Vergleich Spiel für Spiel, Rekordspieler (Einsätze/Tore für den Verein) und Rekordtransfers.
@@ -788,7 +788,7 @@ Jeder Spieler gehört einer Gruppe an: **Führungskreis**, **Sprachgruppen** (ab
 **Teamstimmung** folgt den letzten fünf Ligaergebnissen, dem **Saisonziel** (siehe unten), der Laune der Führungsspieler (nach Einfluss gewichtet), dem Zusammenhalt, Außenseitern, Konflikten und deinen Maßnahmen. Sie fließt in die Moral aller Spieler ein.
 
 ## Was du tun kannst
-- **Spielergespräch** (Knopf „Gespräch führen“ beim Spieler im Fokus oder das Sprechblasen-Symbol in Kader › Übersicht): Es öffnet sich ein Buch – links der Spieler mit Form, Fitness, Frische, Saisonwerten, Status und Moral, rechts die **Gesprächsthemen, die gerade passen**. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung des Trainerteams neben dem Thema). Nach dem Gespräch antwortet der Spieler, links siehst du die Veränderung der Moral. Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). **Pro Woche (Montag bis Sonntag) hast du Zeit für drei Treffen.**
+- **Spielergespräch** (Knopf „Gespräch führen“ beim Spieler im Fokus oder das Sprechblasen-Symbol in Kader › Kader): Es öffnet sich ein Buch – links der Spieler mit Form, Fitness, Frische, Saisonwerten, Status und Moral, rechts die **Gesprächsthemen, die gerade passen**. Ob es ankommt, hängt von Persönlichkeit, Form und Lage ab (Einschätzung des Trainerteams neben dem Thema). Nach dem Gespräch antwortet der Spieler, links siehst du die Veränderung der Moral. Mit demselben Spieler frühestens nach 10 Tagen wieder; jedes weitere Gespräch innerhalb von 60 Tagen wirkt schwächer (×0,65). **Pro Woche (Montag bis Sonntag) hast du Zeit für drei Treffen.**
   - **Du hast gut trainiert!** – kleines Lob bei guter Form (Moral +3 bis +5, Form +1).
   - **Starke Leistung zuletzt** – nach einer guten Note oder in Topform; wer ohnehin sehr zufrieden ist, nickt nur.
   - **Gib im Training alles!** – Profis und Ehrgeizige ziehen an (Form +3), Unprofessionelle fühlen sich gegängelt (Moral −4).
@@ -1871,7 +1871,7 @@ Fehlen nach dem Sommerfenster immer noch Spieler (unter 20), rücken neue Spiele
 Dein Kader wird nie automatisch verändert. Angebote für deine Spieler kommen bevorzugt von Vereinen, die auf der Position Bedarf haben.
 
 ### Angebote für deine Spieler
-Ein Kaufangebot oder eine Leihanfrage kommt als Nachricht mit Entscheidung (Frist fünf Tage, danach wird abgelehnt). Du antwortest direkt in der Nachricht oder unter **Transfers › Verhandlungen** im Abschnitt „Angebote für deine Spieler“ – dorthin führt auch der Knopf „Angebot verhandeln“. Dort kannst du annehmen, ablehnen oder **mehr fordern**: +10 %, +25 % oder +50 %. Liegt die Forderung im Rahmen des Käufers, ist der Wechsel perfekt; sonst bessert er manchmal bis an seine Grenze nach – je dreister die Forderung, desto eher springt er ab. Will der Spieler wechseln, enttäuscht ihn ein Nein.`,
+Ein Kaufangebot oder eine Leihanfrage kommt als Nachricht mit Entscheidung (Frist fünf Tage, danach wird abgelehnt). Du antwortest direkt in der Nachricht oder unter **Transfermarkt › Verhandlungen** im Abschnitt „Angebote für deine Spieler“ – dorthin führt auch der Knopf „Angebot verhandeln“. Dort kannst du annehmen, ablehnen oder **mehr fordern**: +10 %, +25 % oder +50 %. Liegt die Forderung im Rahmen des Käufers, ist der Wechsel perfekt; sonst bessert er manchmal bis an seine Grenze nach – je dreister die Forderung, desto eher springt er ab. Will der Spieler wechseln, enttäuscht ihn ein Nein.`,
   },
   {
     id: 'ai-contracts-loans',
@@ -2717,14 +2717,14 @@ Jede deiner Jugendmannschaften hat ihren eigenen Wettbewerb; in der Auswahl sind
 Je Altersklasse gibt es zwei Spielklassen: Wird deine Mannschaft in der unteren Erster, steigt sie auf; landet sie in der oberen auf einem Abstiegsplatz, steigt sie ab. Die Stärke deiner Mannschaft ist die deiner echten Spieler; die Gegner liegen je nach Ausbildungsqualität und Ruf darüber oder darunter – je jünger, desto größer der Abstand zwischen Nachwuchsleistungszentrum und Dorfverein. In E- und F-Jugend gibt es keine Karten.
 
 ## Wie gespielt wird
-Jugendspiele sind sonntags (Europapokal mittwochs), mit Winterpause wie bei den Profis; alles ist vor dem Saisonende entschieden. Die Ergebnisse folgen der **Stärke der A- bzw. B-Jugend**: Bei dir zählt die beste Elf deiner echten Mannschaft (Jugend › Mannschaften). Bei anderen Vereinen ergibt sie sich aus Ausbildungsqualität und Ruf der Akademie (Jugend › Akademie) bzw. der Vereinsgröße; ihre bekannten Talente spielen mit, die übrigen Spieler werden erzeugt.
+Jugendspiele sind sonntags (Europapokal mittwochs), mit Winterpause wie bei den Profis; alles ist vor dem Saisonende entschieden. Die Ergebnisse folgen der **Stärke der A- bzw. B-Jugend**: Bei dir zählt die beste Elf deiner echten Mannschaft (Jugend › Jugend). Bei anderen Vereinen ergibt sie sich aus Ausbildungsqualität und Ruf der Akademie (Jugend › Akademie) bzw. der Vereinsgröße; ihre bekannten Talente spielen mit, die übrigen Spieler werden erzeugt.
 
 ## Was es bringt
 - Titel (und ein Endspiel) heben den **Ruf der Akademie** – und damit die Anziehungskraft im Wettbewerb um Talente.
 - Siege geben deinen eingesetzten Jugendspielern einen kleinen **Entwicklungsschub**, ein Titel zusätzlich Moral.
 - Meistertitel stehen in der **Vereins-Historie** (Vereinsprofil › Historie), auch Staffelsiege deiner C- bis F-Jugend; vergangene Saisons bleiben im Archiv (Tabellen, Runden, die besten Spieler je Kategorie).
 - C- bis F-Jugend: Siege geben einen etwas kleineren Entwicklungsschub, Spielfeste einen ganz kleinen – plus etwas Moral für alle Kinder, die dabei sind.
-- Jugend › Übersicht und Jugend › Mannschaften zeigen je Mannschaft Liga und Tabellenplatz.
+- Jugend › Jugend zeigt je Mannschaft Liga und Tabellenplatz.
 Alte Spielstände starten sofort mit der laufenden Saison; bereits vergangene Spieltage werden beim Laden nachgespielt (auch für die C- bis G-Jugend, wenn ein Spielstand sie noch nicht kennt).`,
   },
   {
@@ -2738,7 +2738,7 @@ Jeder Verein besitzt eine **Jugendakademie**. Ihre **Nachwuchs-Investitionen** (
 
 Die Jugendakademie ist ein **eigenständiger Bildschirm** (Bereich **Jugend**, Symbol in der unteren Navigation).
 Dort sind alle Talente **nach Altersklassen** (Jahrgängen) gruppiert — von der G-Jugend (Bambini) bis zur A-Jugend:
-- Reiterleiste unter dem Menü (**Jugend › Mannschaften**): **A-Jugend** bis **Bambini** (G-Jugend) und **Alle**, jeweils mit Anzahl der Spieler.
+- Reiterleiste unter dem Menü (**Jugend › Jugend**): **A-Jugend** bis **Bambini** (G-Jugend) und **Alle**, jeweils mit Anzahl der Spieler.
 - Je Altersklasse eine eigene Tabelle mit Position, Alter, Gesamtstärke (OVR) und Attributen (farbcodiert).
 - Das **geschätzte Potenzial** wird als **goldene Sterne-Spanne** angezeigt (nicht als exakter Wert!).
 - Klick auf ein Talent öffnet die Detailansicht mit Altersklasse, allen Attributen und der Schaltfläche **Hochziehen in den Profikader**.
@@ -2929,7 +2929,7 @@ Die Chronik markiert diese Ereignisse als **fiktive Zukunft**, z. B. halbautomat
 Im **Transfermarkt**, im **Spielerpool** und in der **Beobachtung** zeigt jede Zeile, was dein Stab über den Spieler weiß: **Stärke** als Zahl (sicher) bzw. als Spanne (geschätzt), **Potenzial** als Sterne – **gelb** ist sicher, **weiß** zeigt, wie weit die Einschätzung noch reichen kann (Viertelsterne; fahr über die Sterne für die genaue Spanne). Über **Filter** in der Reiterleiste grenzt du nach Alter, Stärke, Potenzial, Transferwert, Herkunft, Kenntnissen, Vertragsende und Abgabe ein (im Spielerpool zusätzlich Name, Position, Land und Liga); die Einstellungen gelten, sobald du unten auf **Anwenden** klickst. Auf dem Transfermarkt stehen nicht nur Spieler der **Transferliste**, sondern auch **wechselwillige** – unzufrieden (Zufriedenheit unter 60) und deshalb abwerbbar; der Filter „Abgabe“ trennt beide. **Transferwert** und **Gehalt** stehen als Spanne, die mit wachsenden **Kenntnissen** enger wird. Kenntnisse siehst du als Balken, der sich von unten füllt und von Rot nach Grün wechselt. Die **Empfehlung** vergleicht den geschätzten Spieler mit deinen Spielern im selben Mannschaftsteil (1 = Leistungsträger … 4 = keine Verstärkung; ohne genug Kenntnisse: Scouting erforderlich). **Info** zeigt Besonderheiten (Frei = Vertrag endet in höchstens 6 Monaten, Vtr = in höchstens 12, Liste = Transferliste, Will weg = wechselwillig, Nat = Nationalspieler). „Nur gescoutete Spieler“ blendet alle aus, die du nicht gut kennst; Spaltenköpfe sortieren.
 
 ## Spielerpool
-Unter **Transfers › Spielerpool** stehen alle Spieler der Welt: die Kader der Liga mit vollen Kadern, deren Jugend und die **Weltspieler** – jeder Auslandsverein und jeder deutsche Verein ab der 2. Liga hat einen eigenen Kader mit rund 22 Spielern und drei Jugendlichen. Weltspieler werden älter, entwickeln sich, beenden ihre Karriere, Talente rücken nach, und herausragende Spieler wechseln zu stärkeren Vereinen. **Steigt ein Verein in deine Liga auf, bringt er genau diese Spieler mit** (die Stärksten bis zur üblichen Kadergröße); steigt ein Verein aus deiner Liga ab, läuft sein Kader als Weltspieler weiter. So bleiben Namen, Alter, Stärke und Potenzial erhalten – nur die Einzelwerte und die Karrierestatistik beginnen beim Wechsel in einen vollen Kader neu. Auch für sie gilt der Maßstab der Weltspitze: Die besten Vereine der Welt haben eine Stärke um 85, ihre Stars liegen selten über 91, junge Spieler nie über der Höchststärke ihres Alters.
+Unter **Transfermarkt › Spielerpool** stehen alle Spieler der Welt: die Kader der Liga mit vollen Kadern, deren Jugend und die **Weltspieler** – jeder Auslandsverein und jeder deutsche Verein ab der 2. Liga hat einen eigenen Kader mit rund 22 Spielern und drei Jugendlichen. Weltspieler werden älter, entwickeln sich, beenden ihre Karriere, Talente rücken nach, und herausragende Spieler wechseln zu stärkeren Vereinen. **Steigt ein Verein in deine Liga auf, bringt er genau diese Spieler mit** (die Stärksten bis zur üblichen Kadergröße); steigt ein Verein aus deiner Liga ab, läuft sein Kader als Weltspieler weiter. So bleiben Namen, Alter, Stärke und Potenzial erhalten – nur die Einzelwerte und die Karrierestatistik beginnen beim Wechsel in einen vollen Kader neu. Auch für sie gilt der Maßstab der Weltspitze: Die besten Vereine der Welt haben eine Stärke um 85, ihre Stars liegen selten über 91, junge Spieler nie über der Höchststärke ihres Alters.
 - Voreinstellung **Weltbeste** nach geschätzter Stärke; weitere Reiter: Talente bis 21, Jugend bis 18, Deutschland, Ausland, Gescoutet.
 - Je Seite 100 Spieler. Filter rechts: Name, Position, Alter, Land, Liga, Stärke, Potenzial, Bekanntheit.
 - Klick zeigt den **Steckbrief** mit Scouting und Verhandlung, Doppelklick das Profil (nur Spieler der Liga mit vollen Kadern).
@@ -2944,7 +2944,7 @@ Wie gut dein Stab einen Spieler kennt, entscheidet, wie genau du seine Werte sie
 - Gute **Scouting-Mitarbeiter** heben das Grundwissen über alle Spieler.
 
 ## Scouting
-Im Steckbrief schickst du einen Scout los. Er braucht im Inland etwa 10 Tage, im Ausland drei bis vier Wochen (mit internationalem Scout weniger), bei Jugendlichen länger, und kostet Reisegeld. Danach ist der Spieler fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag gleichzeitig. Sind alle Scouts unterwegs, wird der Spieler **vorgemerkt** (bis zu 40): Der nächste freie Scout fährt los, das Reisegeld wird erst dann gebucht. Die Warteschlange siehst du unter Transfers › Scouting. Jugendspieler anderer Vereine scoutest du auch direkt im **Vereinsprofil** (Reiter **Jugend**). Berichte veralten mit den Jahren – Spieler verändern sich.
+Im Steckbrief schickst du einen Scout los. Er braucht im Inland etwa 10 Tage, im Ausland drei bis vier Wochen (mit internationalem Scout weniger), bei Jugendlichen länger, und kostet Reisegeld. Danach ist der Spieler fast genau bekannt. Jeder Scouting-Mitarbeiter übernimmt einen weiteren Auftrag gleichzeitig. Sind alle Scouts unterwegs, wird der Spieler **vorgemerkt** (bis zu 40): Der nächste freie Scout fährt los, das Reisegeld wird erst dann gebucht. Die Warteschlange siehst du unter Transfermarkt › Scouting. Jugendspieler anderer Vereine scoutest du auch direkt im **Vereinsprofil** (Reiter **Jugend**). Berichte veralten mit den Jahren – Spieler verändern sich.
 
 ## Weltspieler kaufen
 Auch über Weltspieler kannst du verhandeln: Ablöse mit dem Verein, dann Gehalt mit dem Spieler. Auslandsvereine nehmen keinen Tauschspieler. Spieler aus dem Ostblock dürfen vor 1989 nicht in den Westen wechseln. Ohne Scoutingbericht kaufst du die Katze im Sack.`,
@@ -2955,7 +2955,7 @@ Auch über Weltspieler kannst du verhandeln: Ablöse mit dem Verein, dann Gehalt
     title: 'Transfers: Ablösen, Verhandlungen & Versprechen',
     keywords: ['transfer', 'ablöse', 'rekord', 'verhandlung', 'forderung', 'berater', 'handgeld', 'versprechen', 'stammplatz', 'ausstiegsklausel', 'raten', 'weiterverkauf', 'ausland', 'leihe', 'leihspieler', 'vorvertrag', 'fest verpflichtet'],
     body: `## Verhandlungen im Überblick
-Unter **Transfers › Verhandlungen › Übersicht** stehen alle **laufenden Verhandlungen** als Tabelle (Spieler, Verein, Gesprächsphase, aktueller Stand, Beginn und das Datum, an dem das Gespräch ohne neues Angebot einschläft). Daneben **Fest verpflichtet**: Spieler, die schon unterschrieben haben, aber erst später kommen (Einigung außerhalb des Transferfensters → Wechsel beim Öffnen; Vorvertrag → Tag nach Vertragsende), dazu eigene Spieler, die per Vorvertrag gehen, und der Stand des Transferfensters. Unten die **Leihspieler** in beide Richtungen mit Einsätzen, Minuten, Toren, Vorlagen und Note der Saison. Der Reiter **Meldungen & Bilanz** zeigt Meldungen, Wechselkandidaten, Transferbilanz und die Wechsel des Vereins.
+Unter **Transfermarkt › Verhandlungen › Übersicht** stehen alle **laufenden Verhandlungen** als Tabelle (Spieler, Verein, Gesprächsphase, aktueller Stand, Beginn und das Datum, an dem das Gespräch ohne neues Angebot einschläft). Daneben **Fest verpflichtet**: Spieler, die schon unterschrieben haben, aber erst später kommen (Einigung außerhalb des Transferfensters → Wechsel beim Öffnen; Vorvertrag → Tag nach Vertragsende), dazu eigene Spieler, die per Vorvertrag gehen, und der Stand des Transferfensters. Unten die **Leihspieler** in beide Richtungen mit Einsätzen, Minuten, Toren, Vorlagen und Note der Saison. Der Reiter **Meldungen & Bilanz** zeigt Meldungen, Wechselkandidaten, Transferbilanz und die Wechsel des Vereins.
 
 ## Die Rekordkurve
 Ablösen folgen einer **Kurve der Spitzenablösen** je Jahr, recherchiert aus echten Rekordtransfers von 1975 bis heute (geglättet; ab 2027 fiktiv fortgeschrieben). Es gibt zwei Linien: **deutsche Vereine** (1976 etwa 1 Mio. DM, 2023 rund 95 Mio. €) und **international** (1975 etwa 3,6 Mio. €, 2017 Ausreißer 222 Mio. €).
@@ -3010,7 +3010,7 @@ Für deine Spieler bieten vor allem KI-Vereine, die auf seiner Position **Bedarf
     title: 'Leihen: ausleihen, verleihen, Bedingungen',
     keywords: ['leihe', 'leihen', 'ausleihen', 'verleihen', 'leihspieler', 'leihgebühr', 'kaufoption', 'kaufpflicht', 'einsatzgarantie', 'rückruf', 'stammverein', 'weiterverleihung', 'leihliste', 'fifa', 'leihgrenze'],
     body: `## Wo finde ich Leihen?
-Unter **Transfers › Leihen** mit drei Reitern: **Ausgeliehen** (deine Leihspieler mit Einsätzen, Minuten, Toren und Stärke seit Beginn, laufende Leihgespräche, Leihkandidaten anderer Vereine und die Regeln der Saison), **Verliehen** (deine verliehenen Spieler mit ihrer Entwicklung beim Leihverein, Einsatzgarantie, Kaufoption/Kaufpflicht und Rückruf; dazu die Leihliste) und **Angebote** (Leihangebote anderer Vereine). Einzelne Spieler erreichst du auch über das **Spielerprofil** (runder Knopf mit den zwei Pfeilen) und das **Rechtsklick-Menü**: „Leihe anfragen“ bei fremden, „Zur Leihe anbieten“ bei eigenen Spielern.
+Unter **Transfermarkt › Leihen** mit drei Reitern: **Ausgeliehen** (deine Leihspieler mit Einsätzen, Minuten, Toren und Stärke seit Beginn, laufende Leihgespräche, Leihkandidaten anderer Vereine und die Regeln der Saison), **Verliehen** (deine verliehenen Spieler mit ihrer Entwicklung beim Leihverein, Einsatzgarantie, Kaufoption/Kaufpflicht und Rückruf; dazu die Leihliste) und **Angebote** (Leihangebote anderer Vereine). Einzelne Spieler erreichst du auch über das **Spielerprofil** (runder Knopf mit den zwei Pfeilen) und das **Rechtsklick-Menü**: „Leihe anfragen“ bei fremden, „Zur Leihe anbieten“ bei eigenen Spielern.
 
 ## Ausleihen
 „Leihe anfragen“ öffnet den **Verhandlungstisch** mit drei Schritten: Verein → Spieler → Abschluss. Die Punkte:
@@ -3139,7 +3139,7 @@ KI-Vereine kaufen nur Spieler, die auch wollen. Deshalb sammeln sich die Stars b
     title: 'Privatleben und Generationen',
     keywords: ['privat', 'privatleben', 'familie', 'partner', 'hochzeit', 'kinder', 'sohn', 'tochter', 'nachfolger', 'generation', 'erbe', 'junger manager', 'hintergrundgeschichte', 'freizeit', 'hobby', 'golf', 'energie', 'urlaub', 'weiterbildung', 'vermögen', 'haus', 'villa', 'auto', 'aktien', 'sparbuch', 'spende'],
     body: `## Wo
-Der Menüpunkt **Privat** bündelt dein Leben neben dem Verein: **Privat** (Übersicht), **Karriere** (Managerbilanz, früher unter Zentrale), **Familie**, **Freizeit** und **Vermögen**. Das Privatleben lässt sich beim Spielstart abschalten (Spielmodus › Einstellungen).
+Der Menüpunkt **Privat** bündelt dein Leben neben dem Verein: **Karriere** (Managerbilanz, früher unter Zentrale – ein Klick auf Privat öffnet sie direkt), **Familie**, **Freizeit** und **Vermögen**. Im Karriere-Reiter **Lebenslauf** stehen dein Steckbrief, die **Wirkung auf den Verein** (Training, Gespräche, Kontakte, Spenden) und alle Stationen deines Lebens; Energie, Laune und die Bilanz der letzten Woche zeigt Freizeit › Zustand. Das Privatleben lässt sich beim Spielstart abschalten (Spielmodus › Einstellungen).
 
 ## Junger Manager (alte Spielstände)
 Den eigenen Spielmodus „Junger Manager“ gibt es nicht mehr: Wer jung anfangen will, wählt im Teammanager ein Geburtsjahr ab 18 Jahren. Ältere Spielstände mit Hintergrundgeschichte (Das Erbe, Das Knie, Das Wunderkind, Der Notnagel) laufen unverändert weiter.
@@ -3186,7 +3186,7 @@ Hinter dem **Namen** jedes Führungsspielers steht ein kleines **Wappenschild mi
 - **Silber**, zwei Winkel: +1 %
 - **Gold**, drei Winkel: +2 %
 
-Die Zahl der Winkel zeigt die Stufe auch ohne Farbe. Zeigst du auf das Schild (oder tippst darauf), erscheint die Erklärung mit dem Bonus. Wird ein langer Name gekürzt, bleibt das Schild sichtbar. Unter Kader › Übersicht erklärt eine kleine Legende die drei Stufen, wenn dein Kader einen Führungsspieler hat. Im Spielerprofil steht der Teambonus zusätzlich unter dem Charakter. Weltspieler ohne vollen Datensatz (Spielerpool im Ausland) haben nie einen Teambonus.
+Die Zahl der Winkel zeigt die Stufe auch ohne Farbe. Zeigst du auf das Schild (oder tippst darauf), erscheint die Erklärung mit dem Bonus. Wird ein langer Name gekürzt, bleibt das Schild sichtbar. Unter Kader › Kader erklärt eine kleine Legende die drei Stufen, wenn dein Kader einen Führungsspieler hat. Im Spielerprofil steht der Teambonus zusätzlich unter dem Charakter. Weltspieler ohne vollen Datensatz (Spielerpool im Ausland) haben nie einen Teambonus.
 
 ## Wie bekommt man ihn?
 Nur in der **Auf- und Abwertungsrunde**: Infrage kommt, wer mindestens 25 ist, als **höchste jemals erreichte Stärke** mindestens 66 hat und bei Führungsstärke und Erfahrung ganz oben steht. Maßgeblich ist immer die Höchststärke der Karriere, nicht die aktuelle Form. Meist geht es mit Bronze oder Silber los; Gold gibt es fast nur über spätere Aufwertungen. Im ganzen Spiel gibt es selten mehr als eine Handvoll bis etwa zwanzig solcher Spieler – Erfahrung sammeln vor allem frühe Stammspieler, Nationalspieler, Europapokal-Spieler und Titelträger – deshalb sind es meist gestandene Leistungsträger.
@@ -3855,7 +3855,7 @@ Etwa **einmal pro Jahr** (Einstellung „Ereignisse“ wirkt mit) bietet sich ei
 - Erst danach korrigieren die Scouts ihre Einschätzung. Wer einem unscheinbaren Talent Spielzeit und Geduld schenkt, wird manchmal belohnt – sicher erkennen kann ein Juwel niemand.
 
 ## Talente anderer Vereine
-- Unter **Transfers → Beobachtungsliste** zeigen deine Scouts Talente aus fremden Akademien. Wie viele Akademien sie im Blick haben, hängt vom **Scouting-Personal** (und später vom Datenzentrum) ab; die Sichtungen wechseln monatlich.
+- Unter **Transfermarkt › Beobachtung** zeigen deine Scouts Talente aus fremden Akademien. Wie viele Akademien sie im Blick haben, hängt vom **Scouting-Personal** (und später vom Datenzentrum) ab; die Sichtungen wechseln monatlich.
 - **Mindestalter** für einen Wechsel: bis 1990 16 Jahre, bis 2010 15, danach 14.
 - Pro Talent und Saison hast du **einen Versuch**. Hürden:
   - **Blockade:** Vereine geben ihre zwei größten Talente nicht frei, wenn sie nicht deutlich kleiner sind als du. Ab 1990 binden sie Talente mit **Förderverträgen**.
@@ -4990,7 +4990,7 @@ Interne Beträge bleiben **nominal in DM**; die Anzeige rechnet in die Währung 
     title: 'Scouting-Software & Abos',
     keywords: ['software', 'abo', 'abonnement', 'datenbank', 'cd-rom', 'videokassette', 'karteikarte', 'videoplattform', 'datenanalyse', 'kündigen', 'neuauflage', 'scouting', 'region'],
     body: `## Kaufen oder abonnieren
-Unter **Transfers › Scouting › Software & Abos** kaufst du Wissen über Spieler, ohne einen Scout loszuschicken. Was es gibt, hängt von der Zeit ab:
+Unter **Transfermarkt › Scouting › Software & Abos** kaufst du Wissen über Spieler, ohne einen Scout loszuschicken. Was es gibt, hängt von der Zeit ab:
 - **ab 1975 – Karteikarten** eines Sportverlags: nur das Heimatland, keine Jugend.
 - **ab 1983 – Videokassetten-Archive** mit den Erstligaspielen einer Region; Osteuropa fehlt.
 - **ab 1993 – Datenbanken auf CD-ROM**, ab 1998 die Profi-Ausgabe mit Spielszenen und Jugendauswahlen.
@@ -5013,13 +5013,13 @@ Große Vereine nutzen ab den 1990ern ebenfalls Datenbanken und Camps; im Spiel b
     title: 'Scouts im Ausland',
     keywords: ['ausland', 'scout', 'reise', 'länderwissen', 'talente', 'funde', 'scouting', 'mitarbeiter', 'ostblock'],
     body: `## Reise planen
-Unter **Transfers › Scouting › Scouts im Ausland** schickst du einen **Scouting-Mitarbeiter** (Scout, Chefscout, internationaler Scout, Nachwuchskoordinator) für **4, 8 oder 12 Wochen** in ein Land. Er belegt so lange einen Scouting-Platz wie ein Einzelauftrag. Das Reisegeld je Woche folgt den Verbraucherpreisen; Reisen hinter den Eisernen Vorhang sind vor 1990 teurer, ferne Länder ebenfalls, ein internationaler Scout reist günstiger.
+Unter **Transfermarkt › Scouting › Scouts im Ausland** schickst du einen **Scouting-Mitarbeiter** (Scout, Chefscout, internationaler Scout, Nachwuchskoordinator) für **4, 8 oder 12 Wochen** in ein Land. Er belegt so lange einen Scouting-Platz wie ein Einzelauftrag. Das Reisegeld je Woche folgt den Verbraucherpreisen; Reisen hinter den Eisernen Vorhang sind vor 1990 teurer, ferne Länder ebenfalls, ein internationaler Scout reist günstiger.
 
 ## Länderwissen
 Während der Reise wächst das **Länderwissen**, nach der Rückkehr gilt es voll: 0,10 plus 0,03 je Woche plus etwas für gute Scouts, höchstens 0,45. Es schließt diesen Teil der Lücke bis „genau bekannt“ – bei Profis **und Jugendlichen** des Landes. Danach verblasst es um 0,15 im Jahr. Holst du einen Scout früher zurück, bleibt das bis dahin Gesehene.
 
 ## Funde
-Bei der Rückkehr liegen **Berichte** über die drei größten Jugendtalente des Landes und zwei unterschätzte junge Profis vor (Nachricht, Transfers › Scouting, Spielerpool „Gescoutet“). Die Einzelaufträge für einzelne Spieler gibt es weiterhin.`,
+Bei der Rückkehr liegen **Berichte** über die drei größten Jugendtalente des Landes und zwei unterschätzte junge Profis vor (Nachricht, Transfermarkt › Scouting, Spielerpool „Gescoutet“). Die Einzelaufträge für einzelne Spieler gibt es weiterhin.`,
   },
   {
     id: 'youth-camps',

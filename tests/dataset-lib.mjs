@@ -203,7 +203,7 @@ await step('Spielstand laden', async () => {
 await step('Kader + Spielerprofil', async () => {
   await game.locator('.hd-nav-item:has-text("Kader")').first().click();
   await game.waitForTimeout(300);
-  await game.locator('.tn-sub-item:has-text("Übersicht")').first().click();
+  await game.locator('.tn-sub-item:has-text("Kader")').first().click();
   await game.waitForTimeout(600);
   const row = game.locator(`.dtable tbody tr:has-text("${prep.player}")`).first();
   await row.scrollIntoViewIfNeeded();

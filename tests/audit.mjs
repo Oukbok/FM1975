@@ -171,7 +171,7 @@ async function session(saveName, view) {
       await closeAll(page).catch(() => {});
     };
     const click = (sel) => async () => { const l = page.locator(sel).first(); if (!(await l.count())) return false; await l.click(); return true; };
-    await popup('Spielerprofil', 'Kader', 'Übersicht', click('.app-main tbody tr[data-pid]'), '.modal', '.modal .pp-tabs .tab, .modal [role="tab"]');
+    await popup('Spielerprofil', 'Kader', 'Kader', click('.app-main tbody tr[data-pid]'), '.modal', '.modal .pp-tabs .tab, .modal [role="tab"]');
     await popup('Vereinsprofil', 'Statistiken', 'Liga', click('.app-main .club-link >> nth=3'), '.cmx-modal', '.cmx-modal .cmx-tabs .tab');
     // Ohne Europapokal-Teilnehmer auf der Seite (z. B. DDR-Stand) gibt es keinen Auslöser – kein Fehler.
     await popup('Vereinsprofil Ausland', 'Statistiken', 'International', async () => (await click('.app-main .club-link >> nth=-1')()) || 'skip', '.cmx-modal', null);
@@ -187,7 +187,7 @@ async function session(saveName, view) {
       await page.evaluate((id) => window.dispatchEvent(new CustomEvent('fm:contract-screen', { detail: { kind: 'renew', pid: id } })), pid);
       return true;
     }, '.vt-root', null);
-    await popup('Verhandlungstisch Transfer', 'Transfers', 'Transfermarkt', async () => {
+    await popup('Verhandlungstisch Transfer', 'Transfermarkt', 'Transfermarkt', async () => {
       const rows = page.locator('.app-main tr[data-pid]');
       for (let i = 1; i < Math.min(8, await rows.count()); i++) {
         await rows.nth(i).click({ button: 'right' });

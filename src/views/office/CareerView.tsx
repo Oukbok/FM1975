@@ -1,6 +1,7 @@
 // =============================================================================
-// ZENTRALE › KARRIERE — deine Managerbilanz über alle Jahrzehnte beim Verein
-//   Reiter (drittes Menü, ui/SubTabs): Bilanz | Saisons | Trainer & Spieler | Nationalteam (nur als Nationaltrainer).
+// PRIVAT › KARRIERE — deine Managerbilanz über alle Jahrzehnte beim Verein (Ziel des
+//   Menüpunkts Privat). Reiter (drittes Menü, ui/SubTabs): Bilanz | Saisons | Trainer & Spieler |
+//   Nationalteam (nur als Nationaltrainer) | Lebenslauf (nur mit Privatleben, frühere Seite Privat).
 //   Keine Jobangebote/Stationen mehr (Wunsch Pascal): Du bleibst Manager deines
 //   Vereins, Cheftrainer sind Angestellte. Daten: game/managerView.ts (nur lesen,
 //   gespeichert in game/managerLog.ts), Trainer game/headCoaches.ts.
@@ -16,8 +17,10 @@ import { PeopleTab } from './career/PeopleTab';
 import { SeasonsTab } from './career/SeasonsTab';
 import { NtCareerTab } from '../national/NtCareerTab';
 import { nationalJob } from '../../game/national/nationalJob';
+import { privOn } from '../../game/private/privateState';
+import { LifeTab } from '../private/LifeTab';
 
-type CarTab = 'bilanz' | 'saisons' | 'personen' | 'national';
+type CarTab = 'bilanz' | 'saisons' | 'personen' | 'national' | 'leben';
 
 export function CareerView({ g }: { g: Game; onChange?: () => void }) {
   const [tab, setTab] = useSubTab<CarTab>('karriere', 'bilanz');
@@ -31,13 +34,17 @@ export function CareerView({ g }: { g: Game; onChange?: () => void }) {
     { id: 'saisons', label: 'Saisons', count: d.seasons.length },
     { id: 'personen', label: 'Trainer & Spieler', count: headCoachRows(g).length || undefined },
     ...(nationalJob(g) ? [{ id: 'national' as const, label: 'Nationalteam' }] : []),
+    ...(privOn(g) ? [{ id: 'leben' as const, label: 'Lebenslauf' }] : []),
   ];
+  // Gespeicherter Reiter, den es hier nicht gibt (z. B. Lebenslauf ohne Privatleben) → Bilanz.
+  const cur: CarTab = tabs.some((t) => t.id === tab) ? tab : 'bilanz';
   return (
-    <SubTabsPage tabs={tabs} active={tab} onSelect={setTab}>
-      {tab === 'bilanz' && <BalanceTab g={g} d={d} rep={c.rep} onTab={setTab} />}
-      {tab === 'saisons' && <SeasonsTab g={g} d={d} />}
-      {tab === 'personen' && <PeopleTab g={g} d={d} />}
-      {tab === 'national' && nationalJob(g) && <NtCareerTab g={g} />}
+    <SubTabsPage tabs={tabs} active={cur} onSelect={setTab}>
+      {cur === 'bilanz' && <BalanceTab g={g} d={d} rep={c.rep} onTab={setTab} />}
+      {cur === 'saisons' && <SeasonsTab g={g} d={d} />}
+      {cur === 'personen' && <PeopleTab g={g} d={d} />}
+      {cur === 'national' && nationalJob(g) && <NtCareerTab g={g} />}
+      {cur === 'leben' && privOn(g) && <LifeTab g={g} />}
     </SubTabsPage>
   );
 }

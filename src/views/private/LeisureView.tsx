@@ -13,6 +13,8 @@ import { DashBox, DashPage } from '../../ui/DashPage';
 import { fmtDM } from '../../ui/format';
 import { Bar, Feedback, MeterRow, Steps, useFeedback } from './parts';
 
+const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
 export function LeisureView({ g, onChange }: { g: Game; onChange: () => void }) {
   const st = ensurePrivate(g);
   const [fb, setFb] = useFeedback();
@@ -53,6 +55,7 @@ export function LeisureView({ g, onChange }: { g: Game; onChange: () => void }) 
         <MeterRow k="Gesundheit" v={st.health} />
         <MeterRow k="Kontakte" v={st.net} />
         {partner && <MeterRow k="Beziehung" v={st.rel} />}
+        {st.last && <div className="pv-deltas">Letzte Woche: Energie {signed(st.last.energy)} · Laune {signed(st.last.mood)}{partner ? ` · Beziehung ${signed(st.last.rel)}` : ''} · Kontakte {signed(st.last.net)}</div>}
         <div className="dnote">Spiele kosten Energie, Niederlagen etwas mehr. Erholung, Hobby und Urlaub geben sie zurück. Ab 50 kostet das Alter langsam Gesundheit – Bewegung hält dagegen.</div>
       </DashBox>
 

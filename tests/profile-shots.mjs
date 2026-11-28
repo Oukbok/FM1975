@@ -90,7 +90,7 @@ const close = async () => { await page.keyboard.press('Escape'); await page.wait
 
 // 1) Feldspieler + Torwart aus dem eigenen Kader (Übersicht, mit Vertragsverhandlung)
 if (want('kader')) try {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   const rows = page.locator('.dtable tbody tr');
   const cnt = await rows.count();
   let gk = -1, field = -1;
@@ -116,7 +116,7 @@ if (want('kader')) try {
 
 // 1b) Aktionsleiste: Tooltip + Spielergespräch aus dem Profil
 if (want('kader')) try {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr').nth(4).click(); await page.waitForTimeout(300);
   await page.locator('.pp3-actwrap').nth(3).hover(); await page.waitForTimeout(150);
   await page.screenshot({ path: `${outDir}/aktionen_tooltip.png` });
@@ -137,7 +137,7 @@ if (want('vertrag')) try {
 
 // 3) Jugendspieler (Jugend › Mannschaften)
 if (want('jugend')) try {
-  await nav('Jugend', 'Mannschaften');
+  await nav('Jugend', 'Jugend');
   await page.locator('.dtable tbody tr.clickable').first().click();
   await page.waitForTimeout(400);
   await shoot('jugend'); await close();
@@ -145,7 +145,7 @@ if (want('jugend')) try {
 
 // 4) Fremder Spieler (Transfermarkt)
 if (want('fremd')) try {
-  await nav('Transfers', 'Transfermarkt');
+  await nav('Transfermarkt', 'Transfermarkt');
   await page.locator('.dtable tbody tr.clickable, .dtable tbody tr').first().click();
   await page.waitForTimeout(400);
   if (await page.locator('.pp-modal').count()) { await shoot('fremd'); await close(); }

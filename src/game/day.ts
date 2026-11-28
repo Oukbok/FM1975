@@ -270,7 +270,7 @@ export function processDay(g: Game, ui: DayUi): boolean {
   { const mc = g.clubs[g.managedClubId]; if (mc) assignShirtNumbers(mc, g.players, shirtSeasonOf(today)); }
   buyBackDaily(g, today, (p, from, to, fee) => { transferPlayer(g, p, from, to, fee, today); repairSquadLists(g); });
   transferTalkDaily(g, today);
-  scoutingDaily(g, today); // Einzel-Scouting (Transfers › Scouting)
+  scoutingDaily(g, today); // Einzel-Scouting (Transfermarkt › Scouting)
   abroadDaily(g, today); // Scouts im Ausland: Rückkehr, Länderwissen, Funde (game/scoutAbroad.ts)
   softwareMonthly(g, today); // Scouting-Abos am 1. abbuchen, Kündigungen (game/scoutSoftware.ts)
   bindRegistration(g); registrationDaily(g, today); // Spielermeldung & Ausländerregeln (game/registrationGame.ts)

@@ -40,7 +40,7 @@ export function balanceSeries(club: Club, today: string): { date: string; value:
   return out;
 }
 
-/** Zeitraum-Wahl des Kontostand-Verlaufs (gemeinsam für Übersicht und Bilanz). */
+/** Zeitraum-Wahl des Kontostand-Verlaufs (gemeinsam für Übersicht und Bilanz; Standard 3 J. wie alle Finanz-Verläufe). */
 export function useBalanceRange(g: Game) {
   const [range, setRange] = useChartRange('kontostand', '3');
   const all = balanceSeries(g.clubs[g.managedClubId], g.calendar.currentDate);

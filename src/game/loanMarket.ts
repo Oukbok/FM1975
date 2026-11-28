@@ -2,12 +2,12 @@
 // VERLEIHEN — eigene Spieler an andere Vereine (Wunsch Pascal)
 // -----------------------------------------------------------------------------
 // • „Zur Leihe anbieten“ (`Player.loanListed`, Spielerprofil/Rechtsklick/Seite
-//   Transfers › Leihen): Im Transferfenster melden sich KI-Vereine mit Bedarf auf
+//   Transfermarkt › Leihen): Im Transferfenster melden sich KI-Vereine mit Bedarf auf
 //   seiner Position, bei denen er spielen würde, montags und donnerstags mit einem
 //   Leihangebot (Laufzeit, Gebühr, Gehaltsanteil, je nach Epoche Kaufoption/Kaufpflicht,
 //   Einsatzgarantie, Rückrufklausel).
 // • Auch ohne Angebot fragen Vereine nach jungen Ergänzungsspielern (25.7., 17.1.).
-// • Antwort in der Nachricht oder unter Transfers › Leihen › Angebote: Annehmen,
+// • Antwort in der Nachricht oder unter Transfermarkt › Leihen › Angebote: Annehmen,
 //   Bessere Bedingungen fordern (volles Gehalt + Leihgebühr; die KI geht mit oder
 //   springt ab), Ablehnen. Frist fünf Tage.
 // Nachrichten-Typ `ai_loan_request` (alte Anfragen ohne Bedingungen bleiben gültig).

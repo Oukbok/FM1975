@@ -35,7 +35,7 @@ const nav = async (main, sub) => {
 };
 
 await startNewGame(page);
-await nav('Kader', 'Übersicht');
+await nav('Kader', 'Kader');
 await shot('01_kader');
 await page.locator('.dtable .st-form').first().hover(); await page.waitForTimeout(150); await shot('02_hover_form');
 await page.locator('.dtable .st-fitness').first().hover(); await page.waitForTimeout(150); await shot('03_hover_fitness');

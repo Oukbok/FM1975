@@ -240,7 +240,7 @@ export function youthInvestSeasonStart(g: Game, today: string): void {
           date: today, category: 'board', from: 'Lizenzierungsausschuss',
           subject: 'Lizenzauflage: Leistungszentrum unvollständig',
           shortText: `Geldstrafe ${fmtPrice(fine)} – das Nachwuchsleistungszentrum fehlt.`,
-          bodyText: `Seit ${duty}/${String((duty + 1) % 100).padStart(2, '0')} ist ein Leistungszentrum Lizenzbedingung für deine Liga. Es fehlt noch:\n• ${miss.join('\n• ')}\n\nBis das erfüllt ist, gibt es jedes Jahr eine Geldstrafe und der Ruf der Akademie leidet. (Kader → Akademie)`,
+          bodyText: `Seit ${duty}/${String((duty + 1) % 100).padStart(2, '0')} ist ein Leistungszentrum Lizenzbedingung für deine Liga. Es fehlt noch:\n• ${miss.join('\n• ')}\n\nBis das erfüllt ist, gibt es jedes Jahr eine Geldstrafe und der Ruf der Akademie leidet. (Jugend › Akademie)`,
           actionRequired: true,
         }));
       }

@@ -29,10 +29,10 @@ const EURO_RE = /Europa|UEFA|Landesmeister|Pokal der Pokalsieger|Meisterliga|Kon
 function transferLinks(g: Game, m: InboxMessage, faces: Player[]): MsgLink[] {
   const mine = g.managedClubId;
   if (isOpenIncoming(m) && m.eventRef?.type === 'ai_loan_request') {
-    return [{ label: 'Leihangebot ansehen', screen: 'leihen', tab: ['transfers.leihen', 'angebote'], title: 'Transfers › Leihen › Angebote: annehmen, bessere Bedingungen fordern oder ablehnen' }];
+    return [{ label: 'Leihangebot ansehen', screen: 'leihen', tab: ['transfers.leihen', 'angebote'], title: 'Transfermarkt › Leihen › Angebote: annehmen, bessere Bedingungen fordern oder ablehnen' }];
   }
   if (isOpenIncoming(m)) {
-    return [{ label: 'Angebot verhandeln', screen: 'verhandlungen', tab: NEG_TAB, title: 'Transfers › Verhandlungen: Angebote für deine Spieler – annehmen, mehr fordern oder ablehnen' }];
+    return [{ label: 'Angebot verhandeln', screen: 'verhandlungen', tab: NEG_TAB, title: 'Transfermarkt › Verhandlungen: Angebote für deine Spieler – annehmen, mehr fordern oder ablehnen' }];
   }
   if (m.from === 'Scouting') return [{ label: 'Scouting', screen: 'scouting' }];
   if (m.from === 'Leiter Jugendakademie') return [{ label: 'Akademie', screen: 'akademie' }];

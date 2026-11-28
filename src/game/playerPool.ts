@@ -1,5 +1,5 @@
 // =============================================================================
-// SPIELERPOOL (Transfers › Spielerpool, Wunsch Pascal): alle Spieler der Welt
+// SPIELERPOOL (Transfermarkt › Spielerpool, Wunsch Pascal): alle Spieler der Welt
 // -----------------------------------------------------------------------------
 // Eine Zeile je Spieler aus drei Quellen: volle Kader (`g.players`), Jugend der
 // Vereine mit vollem Kader (`g.youthPlayers`) und Weltspieler (game/worldPool.ts).

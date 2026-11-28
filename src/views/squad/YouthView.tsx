@@ -146,7 +146,7 @@ export function YouthView({ g, onChange }: { g: Game; onChange: () => void }) {
           <Meter key={cls} label={teams[cls] ? `${cls === 'G' ? 'Bambini' : `${cls}-Jugend`}${placeOf(teams[cls])}` : `${YOUTH_AGE_CLASS_LABEL[cls]} · ${YOUTH_AGE_CLASS_RANGE[cls].split(' · ')[0]}`} value={byClass[cls].length} max={Math.max(YOUTH_TEAM_SIZE[cls], maxClass)}
             text={`${byClass[cls].length} / ${YOUTH_TEAM_SIZE[cls]}`} />
         ))}
-        <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt. Investitionen steuerst du unter Kader → Akademie.</div>
+        <div className="dnote mt8">Jede Altersklasse hat eine volle Mannschaft. Die meisten spielen aus Freude am Fußball – Profi wird nur, wer genug Potenzial hat. Zum 1. Juli rücken alle auf, einige hören auf, Lücken werden aufgefüllt. Investitionen steuerst du unter Jugend › Akademie.</div>
       </DashBox>
 
       <DashBox title="Größte Talente">

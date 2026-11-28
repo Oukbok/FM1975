@@ -4,8 +4,6 @@
 .yc-groups .gt-grid { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); overflow: visible; }
 .yc-groups .gt-head, .yc-groups .gt-row { padding: 4px 10px; }
 .yc-info .dnote { line-height: 1.4; }
-.yc-dash-row { padding: 2px 0 6px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
-.yc-dash-row:last-child { border-bottom: 0; margin-bottom: 0; }
 .yc-card { max-width: 440px; width: 100%; }
 .yc-card .mx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .yc-card-name { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-family: var(--font-display); font-weight: 500; font-size: 24px; }
@@ -23,11 +21,6 @@
 .yc-fest-date { color: var(--text-2); }
 .yc-fest-host { display: flex; align-items: center; gap: 6px; min-width: 0; color: var(--text-3); }
 .yc-fest-state { text-align: right; color: var(--text-3); font-size: 13px; }
-/* Jugendmannschaften mit Liga + Platz (Jugend-Übersicht) */
-.yc-team-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; }
-.yc-team-row:last-child { border-bottom: 0; }
-.yc-team-cls { color: var(--text-2); }
-.yc-team-league { color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.yc-team-pos { color: var(--text); font-variant-numeric: tabular-nums; }
+/* Jugendmannschaften mit Liga + Platz (Jugend › Jugend) */
 .yc-team-strip { padding: 8px 12px; border-bottom: 1px solid var(--border-soft); color: var(--text-2); font-size: 13.5px; }
 .yc-main .dxh-title { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

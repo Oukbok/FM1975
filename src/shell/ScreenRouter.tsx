@@ -47,7 +47,6 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'marketing': return <P.MarketingView g={g} onChange={ch} />;
     case 'calendar': return <P.CalendarView g={g} onChange={ch} onGoto={setScreen} />;
     case 'karriere': return <P.CareerView g={g} onChange={ch} />;
-    case 'privat': return <P.PrivateView g={g} onChange={ch} onGoto={setScreen} />;
     case 'familie': return <P.FamilyView g={g} onChange={ch} />;
     case 'freizeit': return <P.LeisureView g={g} onChange={ch} />;
     case 'vermoegen': return <P.WealthView g={g} onChange={ch} />;
@@ -58,15 +57,11 @@ function page({ screen, g, rerender, setScreen, onWatch, onReplayDraw, onOpenEdi
     case 'wiki': return <P.WikiView key={wikiArticle?.n ?? 0} g={g} openArticle={wikiArticle?.id} onGoto={setScreen} />;
     case 'tactics': return <P.TacticsView g={g as never} onChange={ch} />;
     case 'stadium': return <P.StadiumView g={g} onChange={ch} onGoto={setScreen} />;
-    // Kategorie-Dashboards
+    // Kategorie-Dashboards (nur noch Training/Finanzen/Verein; Gegner = Aufstellung › Gegner)
     case 'cat-spieltag': return <P.OpponentView g={g} onGoto={setScreen} onWatch={onWatch} />;
-    case 'cat-kader': return <P.KaderDashboard g={g} onGoto={setScreen} />;
-    case 'cat-transfers': return <P.TransfersDashboard g={g} onGoto={setScreen} />;
     case 'cat-finanzen': return <P.FinanzenDashboard g={g} onGoto={setScreen} />;
     case 'cat-verein': return <P.VereinDashboard g={g} onGoto={setScreen} onChange={ch} />;
-    case 'cat-statistiken': return <P.StatistikenDashboard g={g} onGoto={setScreen} />;
     case 'cat-training': return <P.TrainingDashboard g={g} onGoto={setScreen} />;
-    case 'cat-jugend': return <P.YouthDashboard g={g} onGoto={setScreen} />;
     // Einzelseiten
     case 'presse': return <P.PressView g={g} onWatch={onWatch} onGoto={setScreen} />;
     case 'vertraege': return <P.ContractsView g={g} onChange={ch} />;

@@ -141,7 +141,7 @@ for (const vp of [{ width: 1920, height: 1080 }, { width: 1366, height: 768 }, {
   }
 
   // 4) Kader › Übersicht
-  await goto(page, 'Kader', 'Übersicht');
+  await goto(page, 'Kader', 'Kader');
   const kb = page.locator('tr[data-pid] .pc-ibtn').nth(3);
   await kb.hover();
   await page.waitForTimeout(350);

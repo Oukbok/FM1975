@@ -47,8 +47,8 @@ const nav = async (main, sub) => {
 const PAGES = [
   ['Zentrale', null, 'zentrale'], ['Zentrale', 'Nachrichten', 'nachrichten'], ['Zentrale', 'Kalender', 'kalender'],
   ['Zentrale', 'Presse', 'presse'], ['Aufstellung', 'Aufstellung', 'aufstellung'], ['Aufstellung', 'Taktik', 'taktik'],
-  ['Kader', 'Übersicht', 'kader'], ['Kader', 'Kabine', 'kabine'], ['Training', 'Trainingsplan', 'training'],
-  ['Transfers', 'Transfermarkt', 'transfermarkt'], ['Finanzen', 'Bilanz', 'bilanz'], ['Finanzen', 'Fanartikel', 'fanartikel'],
+  ['Kader', 'Kader', 'kader'], ['Kader', 'Kabine', 'kabine'], ['Training', 'Trainingsplan', 'training'],
+  ['Transfermarkt', 'Transfermarkt', 'transfermarkt'], ['Finanzen', 'Bilanz', 'bilanz'], ['Finanzen', 'Fanartikel', 'fanartikel'],
   ['Verein', 'Vereinsgelände', 'gelaende'], ['Verein', 'Stadion', 'stadion'], ['Verein', 'Kartenverkauf', 'karten'],
   ['Statistiken', 'Liga', 'liga'], ['Statistiken', 'Pokal', 'pokal'],
 ];
@@ -76,7 +76,7 @@ try {
 } catch (e) { errors.push('entscheidung: ' + e.message.split('\n')[0]); }
 // Zurück/Vorwärts in der Kopfzeile
 try {
-  await nav('Kader', 'Übersicht'); await nav('Finanzen', 'Bilanz');
+  await nav('Kader', 'Kader'); await nav('Finanzen', 'Bilanz');
   await page.locator('.tn-back').first().click(); await page.waitForTimeout(300);
   await shot('zurueck_vorwaerts');
   await page.screenshot({ path: `${outDir}/${pre}kopf_ausschnitt.png`, clip: { x: 0, y: 0, width: Math.min(vw, 900), height: 170 } });

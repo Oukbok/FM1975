@@ -144,6 +144,6 @@
 .ptk-act:disabled { cursor: default; color: var(--text-4); }
 .ptk-act:disabled .ptk-act-ico { color: var(--text-4); }
 
-/* Knopf „Gespräch“ in Listen (Kader › Übersicht) */
+/* Knopf „Gespräch“ in Listen (Kader › Kader) */
 .ptk-open { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 26px; padding: 0; border: 1px solid var(--border-soft); border-radius: 4px; background: transparent; cursor: pointer; opacity: 0.75; }
 .ptk-open:hover { opacity: 1; border-color: var(--border); background: var(--panel-hover); }

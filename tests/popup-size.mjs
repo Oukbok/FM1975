@@ -54,9 +54,9 @@ for (const view of VIEWS) {
   let switched = false; // Fall hat einen anderen Spielstand geladen → danach SAVE neu laden
   /** [kürzel, Rahmen, Öffnen, Optionen] */
   const CASES = [
-    ['profil', '.pp2', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click(); await page.waitForSelector('.pp2', { timeout: 5000 }); }],
-    ['profil-fremd', '.pp2', async () => { await nav('Transfers', 'Transfermarkt'); await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click(); }],
-    ['kontextmenue', '.pcm', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' }); }, { max: 0 }],
+    ['profil', '.pp2', async () => { await nav('Kader', 'Kader'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click(); await page.waitForSelector('.pp2', { timeout: 5000 }); }],
+    ['profil-fremd', '.pp2', async () => { await nav('Transfermarkt', 'Transfermarkt'); await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click(); }],
+    ['kontextmenue', '.pcm', async () => { await nav('Kader', 'Kader'); await page.locator('.app-main tbody tr[data-pid]').nth(3).click({ button: 'right' }); }, { max: 0 }],
     ['verein', '.cmx-modal', async () => { await nav('Statistiken', 'Liga'); await page.locator('.app-main .club-link').nth(2).click(); }],
     // Länderprofil (components/country/): Flagge in der Rangliste der Nationalteams.
     ['land', '.cnx-modal', async () => {
@@ -64,10 +64,10 @@ for (const view of VIEWS) {
       await click('.app-main .dchip:has-text("Rangliste")');
       await page.locator('.app-main .nt-prow .cflag[data-country]').nth(4).click({ timeout: 3000 });
     }],
-    ['gespraech', '.ptk-book', async () => { await nav('Kader', 'Übersicht'); await page.locator('.app-main tbody tr .ptk-open').nth(2).click(); }],
+    ['gespraech', '.ptk-book', async () => { await nav('Kader', 'Kader'); await page.locator('.app-main tbody tr .ptk-open').nth(2).click(); }],
     // Verhandlungstisch (screens/negotiation/): Transfer – Vereinsgespräch; Regler/Umschalter + eine Runde.
     ['verhandlung', '.vt-root', async () => {
-      await nav('Transfers', 'Transfermarkt');
+      await nav('Transfermarkt', 'Transfermarkt');
       await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(2).click({ button: 'right' });
       await page.locator('.pcm-item:has-text("Verhandl"), .pcm-item:has-text("Transfer")').first().click();
       await page.waitForSelector('.vt-root', { timeout: 4000 });
@@ -80,11 +80,11 @@ for (const view of VIEWS) {
     // Leihe am Verhandlungstisch (screens/negotiation/LoanTalk.tsx): Transfers › Leihen › „Leihe anfragen“ bei einem Kandidaten,
     // sonst Rechtsklick im Transfermarkt. Umschalter (zusätzliche Zeilen) + eine Runde.
     ['leihtisch', '.vt-root', async () => {
-      await nav('Transfers', 'Leihen');
+      await nav('Transfermarkt', 'Leihen');
       const btn = page.locator('.app-main button:has-text("Leihe anfragen"):not([disabled])');
       if (await btn.count()) await btn.first().click();
       else {
-        await nav('Transfers', 'Transfermarkt');
+        await nav('Transfermarkt', 'Transfermarkt');
         await page.locator('.app-main tr[data-pid], .app-main .rl-row[data-pid]').nth(14).click({ button: 'right' });
         await click('.pcm-item:has-text("Leihe anfragen")');
       }
@@ -98,7 +98,7 @@ for (const view of VIEWS) {
     ] }],
     // Vertragsverlängerung: Rechtsklick › „Vertrag verlängern“.
     ['verhandlungstisch', '.vt-root', async () => {
-      await nav('Kader', 'Übersicht');
+      await nav('Kader', 'Kader');
       await page.locator('.app-main tbody tr[data-pid]').nth(4).click({ button: 'right' });
       await click('.pcm-item:has-text("Vertrag verlängern")');
       await page.waitForSelector('.vt-root', { timeout: 4000 });
@@ -109,8 +109,8 @@ for (const view of VIEWS) {
       ['Forderung übernehmen', () => soft('.vt-root button:has-text("Forderung übernehmen")')],
       ['Angebot machen 2', () => soft('.vt-root .vt-send')],
     ] }],
-    ['spielersuche', '.ps-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
-    ['transferbilanz', '.tw-panel', async () => { await nav('Transfers', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
+    ['spielersuche', '.ps-panel', async () => { await nav('Transfermarkt', 'Transfermarkt'); await click('.dchip:has-text("Spieler suchen")'); }],
+    ['transferbilanz', '.tw-panel', async () => { await nav('Transfermarkt', 'Transfermarkt'); await click('.dchip:has-text("Transferbilanz")'); }],
     ['budget', '.bud-modal', async () => { await nav('Finanzen', 'Budget'); await click('.dchip:has-text("Budget anpassen")'); }],
     ['briefing', '.si-window', async () => { await nav('Zentrale', 'Briefing'); await click('.bf2-link:has-text("Ganzes Briefing")'); }],
     ['chronik', '.chm-modal', async () => { await closeAll(page); await click('.dashx-foot-link'); }],
@@ -237,8 +237,8 @@ for (const view of VIEWS) {
   ];
 
   // Seiten-Boxen: Chips/Reiter in DashBoxen dürfen die Box nicht wachsen lassen.
-  const PAGES = [['Kader', 'Übersicht'], ['Kader', 'Kabine'], ['Finanzen', 'Budget'], ['Finanzen', 'Sponsoring'], ['Statistiken', 'Liga'], ['Statistiken', 'Pokal'],
-    ['Transfers', 'Transfermarkt'], ['Training', 'Trainingsplan'], ['Jugend', 'Jugendwettbewerbe'], ['Verein', 'Kartenverkauf'], ['Finanzen', 'Fanartikel'], ['Verein', 'Erfolge'], ['Training', 'Trainerteam'], ['Verein', 'Mitarbeiter'], ['Aufstellung', 'Taktik']];
+  const PAGES = [['Kader', 'Kader'], ['Kader', 'Kabine'], ['Finanzen', 'Budget'], ['Finanzen', 'Sponsoring'], ['Statistiken', 'Liga'], ['Statistiken', 'Pokal'],
+    ['Transfermarkt', 'Transfermarkt'], ['Training', 'Trainingsplan'], ['Jugend', 'Jugendwettbewerbe'], ['Verein', 'Kartenverkauf'], ['Finanzen', 'Fanartikel'], ['Verein', 'Erfolge'], ['Training', 'Trainerteam'], ['Verein', 'Mitarbeiter'], ['Aufstellung', 'Taktik']];
   if (!ONLY || ONLY.includes('seiten')) for (const [m, s] of PAGES) {
     const issues = [];
     try {

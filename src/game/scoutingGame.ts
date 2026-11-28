@@ -1,5 +1,5 @@
 // =============================================================================
-// EINZEL-SCOUTING (Transfers › Scouting, Wunsch Pascal)
+// EINZEL-SCOUTING (Transfermarkt › Scouting, Wunsch Pascal)
 // -----------------------------------------------------------------------------
 // Aus dem Spielerpool schickst du einen Scout zu einem Spieler. Ein Auftrag dauert
 // je nach Entfernung und Abteilung Tage bis Wochen und kostet Reisegeld (1975-Basis,
@@ -184,7 +184,7 @@ export function scoutingDaily(g: Game, today: string): void {
       date: today, category: 'transfer', from: 'Scouting', relatedId: j.id,
       subject: `Scoutingbericht: ${j.name}`,
       shortText: `Dein Scout hat ${j.name} (${j.clubName}) beobachtet.`,
-      bodyText: `Dein Scout ist von ${j.clubName} zurück und hat ${j.name} mehrfach gesehen. Stärke, Potenzial und Marktwert sind jetzt deutlich genauer eingeschätzt – du findest ihn unter Transfers › Spielerpool (Filter „Gescoutet“) und unter Transfers › Scouting.`,
+      bodyText: `Dein Scout ist von ${j.clubName} zurück und hat ${j.name} mehrfach gesehen. Stärke, Potenzial und Marktwert sind jetzt deutlich genauer eingeschätzt – du findest ihn unter Transfermarkt › Spielerpool (Filter „Gescoutet“) und unter Transfermarkt › Scouting.`,
     }));
   }
   startQueued(g);

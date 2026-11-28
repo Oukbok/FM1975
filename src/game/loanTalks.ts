@@ -1,7 +1,7 @@
 // =============================================================================
 // AUSLEIHEN — du leihst einen Spieler eines anderen Vereins aus (Wunsch Pascal)
 // -----------------------------------------------------------------------------
-// Einstieg „Leihe anfragen“ (Spielerprofil, Rechtsklick, Transfers › Leihen) →
+// Einstieg „Leihe anfragen“ (Spielerprofil, Rechtsklick, Transfermarkt › Leihen) →
 // Verhandlungstisch (screens/negotiation/LoanTalk.tsx). Ablauf:
 //   1. Verein: Laufzeit, Leihgebühr, Gehaltsanteil, je nach Epoche Kaufoption,
 //      Kaufpflicht, Einsatzgarantie, Rückrufklausel, Einsatz gegen den Stammverein,

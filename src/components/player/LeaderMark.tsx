@@ -62,7 +62,7 @@ export function LeaderName({ p, tier, children, className = '' }: {
 
 const TIERS: TeamBoost[] = ['gold', 'silver', 'bronze'];
 
-/** Kleine Legende: je vorhandener Stufe Schild + Anzahl (Kader › Übersicht). */
+/** Kleine Legende: je vorhandener Stufe Schild + Anzahl (Kader › Kader). */
 export function LeaderLegend({ players }: { players: { teamBoost?: TeamBoost }[] }) {
   const n = (t: TeamBoost) => players.filter((p) => p.teamBoost === t).length;
   return (

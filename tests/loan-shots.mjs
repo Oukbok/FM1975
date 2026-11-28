@@ -24,7 +24,7 @@ const nav = async (main, sub) => {
   await page.waitForTimeout(250);
   if (sub) { await page.locator(`.tn-sub-item:has-text("${sub}")`).first().click(); await page.waitForTimeout(500); }
 };
-await nav('Transfers', 'Leihen');
+await nav('Transfermarkt', 'Leihen');
 await shot('1-ausgeliehen');
 await page.locator('.app-main button:has-text("Leihe anfragen"):not([disabled])').first().click();
 await page.waitForSelector('.vt-root', { timeout: 4000 });
@@ -42,12 +42,12 @@ for (let i = 0; i < 6; i++) {
 await shot('4-tisch-ende');
 await closeAll(page);
 // eigenen Spieler zur Leihe anbieten (Rechtsklick)
-await nav('Kader', 'Übersicht');
+await nav('Kader', 'Kader');
 await page.locator('.app-main tbody tr[data-pid]').nth(18).click({ button: 'right' });
 await page.waitForTimeout(300);
 await shot('5-kontextmenue');
 await page.locator('.pcm-item:has-text("Zur Leihe anbieten")').first().click().catch(() => {});
-await nav('Transfers', 'Leihen');
+await nav('Transfermarkt', 'Leihen');
 await page.locator('.sub3-tabs button:has-text("Verliehen"), .sub3 button:has-text("Verliehen")').first().click().catch(() => {});
 await page.waitForTimeout(400);
 await shot('6-verliehen');
@@ -55,7 +55,7 @@ await page.locator('.sub3-tabs button:has-text("Angebote"), .sub3 button:has-tex
 await page.waitForTimeout(400);
 await shot('7-angebote');
 // Profil eines fremden Spielers mit Leihknopf
-await nav('Transfers', 'Leihen');
+await nav('Transfermarkt', 'Leihen');
 await page.locator('.sub3-tabs button:has-text("Ausgeliehen"), .sub3 button:has-text("Ausgeliehen")').first().click().catch(() => {});
 await page.waitForTimeout(300);
 await page.locator('.app-main .player-link').nth(2).click().catch(() => {});

@@ -39,7 +39,7 @@ async function open(w, h) {
   }
   await page.locator('.hd-nav-item:has-text("Kader")').first().click();
   await page.waitForTimeout(250);
-  await page.locator('.tn-sub-item:has-text("Übersicht")').first().click();
+  await page.locator('.tn-sub-item:has-text("Kader")').first().click();
   await page.waitForTimeout(400);
   return page;
 }

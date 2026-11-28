@@ -34,8 +34,8 @@ import './28-draw.css';
 import './28-indoor.css';
 import './28-transfer2.css';
 import './28-subtabs.css'; // drittes Menü (ui/SubTabs.tsx)
-import './28-pool.css'; // Transfers › Spielerpool/Scouting
-import './28-market.css'; // Transfers › Transfermarkt (Spielertabelle)
+import './28-pool.css'; // Transfermarkt › Spielerpool/Scouting
+import './28-market.css'; // Transfermarkt › Transfermarkt (Spielertabelle)
 import './28-national.css'; // Statistiken › Nationalteams
 import './28-ranking.css'; // Weltrangliste (Länderprofil + Statistiken › Nationalteams)
 import './28-private.css'; // Privat (Familie, Freizeit, Vermögen)
@@ -89,7 +89,7 @@ import './28-linechart.css';
 import './28-honours.css';
 import './28-leadermark.css';
 import './28-negotiation.css'; // Verhandlungstisch: Spieler, Vereine, Mitarbeiter (screens/negotiation/)
-import './28-loans.css'; // Transfers › Leihen
+import './28-loans.css'; // Transfermarkt › Leihen
 import './28-scoutx.css'; // Scouting 2.0: Software & Abos, Scouts im Ausland, Jugendcamps
 import './28-gameover.css'; // Spielende nach dem Abstieg aus der untersten Liga (screens/GameOverScreen.tsx)
 import './28-lazy.css';

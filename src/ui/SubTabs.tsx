@@ -1,7 +1,7 @@
 // =============================================================================
 // SubTabs — das „dritte Menü“ (Reiterleiste unter dem Untermenü).
 // Vorbild Training › Trainingsplan (Wunsch Pascal). Für Seiten mit mehreren
-// gleichrangigen Ansichten (z. B. Jugend › Mannschaften A- bis G-Jugend).
+// gleichrangigen Ansichten (z. B. Jugend › Jugend A- bis G-Jugend).
 //   <SubTabsPage tabs={…} active={tab} onSelect={setTab}> …DashPage… </SubTabsPage>
 // Regel: Die Boxen darunter enden bündig mit der Leiste (gleiche Außenkanten,
 // CSS `.sub3-page > .dpage` in 28-subtabs.css) – keine Box ragt seitlich hinaus.

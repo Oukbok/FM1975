@@ -182,7 +182,7 @@ export function LoansBox({ g }: { g: Game }) {
             })}
           </tbody>
         </table>
-      ) : <Empty icon="transfers">Keine Leihspieler. Ausleihen („Leihe anfragen“) und Verleihen („Zur Leihe anbieten“) geht über Spielerprofil, Rechtsklick und Transfers › Leihen.</Empty>}
+      ) : <Empty icon="transfers">Keine Leihspieler. Ausleihen („Leihe anfragen“) und Verleihen („Zur Leihe anbieten“) geht über Spielerprofil, Rechtsklick und Transfermarkt › Leihen.</Empty>}
     </DashBox>
   );
 }

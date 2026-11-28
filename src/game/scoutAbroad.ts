@@ -1,5 +1,5 @@
 // =============================================================================
-// SCOUTS INS AUSLAND (Wunsch Pascal, Transfers › Scouting › Scouts im Ausland)
+// SCOUTS INS AUSLAND (Wunsch Pascal, Transfermarkt › Scouting › Scouts im Ausland)
 // -----------------------------------------------------------------------------
 // Ein Scouting-Mitarbeiter (Scout, Chefscout, internationaler Scout, Nachwuchs-
 // koordinator) oder der nebenberufliche Vereinsscout des Grundplatzes (Qualität 7)
@@ -169,7 +169,7 @@ export function abroadDaily(g: Game, today: string): void {
       bodyText: `${j.staffName} ist nach ${Math.round(j.days / 7)} Wochen aus ${land} zurück. Über die Spieler des Landes wissen wir jetzt deutlich mehr – das Wissen verblasst über die Jahre wieder.\n\n`
         + (youth.length ? `Die größten Talente der Jugend dort:\n${youth.map(line).join('\n')}\n\n` : '')
         + (gems.length ? `Unterschätzte junge Spieler:\n${gems.map(line).join('\n')}\n\n` : '')
-        + 'Alle Berichte findest du unter Transfers › Scouting und im Spielerpool (Filter „Gescoutet“).',
+        + 'Alle Berichte findest du unter Transfermarkt › Scouting und im Spielerpool (Filter „Gescoutet“).',
     }));
   }
 }

@@ -18,12 +18,12 @@ const server = createServer(async (req, res) => {
 
 const PAGES = [
   ['Zentrale', 'Presse', 'presse'],
-  ['Kader', 'Übersicht', 'kader'],
+  ['Kader', 'Kader', 'kader'],
   ['Training', 'Trainingsplan', 'trainingsplan'],
-  ['Jugend', 'Mannschaften', 'jugend'],
+  ['Jugend', 'Jugend', 'jugend'],
   ['Jugend', 'Jugendwettbewerbe', 'jugendwettbewerbe'],
-  ['Transfers', 'Transfermarkt', 'transfermarkt'],
-  ['Transfers', 'Beobachtung', 'beobachtung'],
+  ['Transfermarkt', 'Transfermarkt', 'transfermarkt'],
+  ['Transfermarkt', 'Beobachtung', 'beobachtung'],
   ['Finanzen', 'Sponsoring', 'sponsoring'],
   ['Finanzen', 'Fanartikel', 'fanartikel'],
   ['Verein', 'Erfolge', 'erfolge'],

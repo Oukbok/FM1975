@@ -24,7 +24,7 @@
 .ldm-tip-row { display: flex; align-items: flex-start; gap: 8px; line-height: 1.35; }
 .ldm-tip-row .ldm-svg { width: 14px; height: 16px; margin-top: 1px; }
 
-/* Legende (Kader › Übersicht, Wiki) */
+/* Legende (Kader › Kader, Wiki) */
 .ldm-legend { display: inline-flex; align-items: center; gap: 12px; color: var(--text-2); font-weight: 600; white-space: nowrap; }
 .ldm-legend > span { display: inline-flex; align-items: center; gap: 4px; }
 .ldm-legend .ldm-svg { width: 12px; height: 14px; }

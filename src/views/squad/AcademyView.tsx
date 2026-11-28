@@ -1,5 +1,5 @@
 // =============================================================================
-// AKADEMIE — Nachwuchs-Investitionen (Kader → Akademie)
+// AKADEMIE — Nachwuchs-Investitionen (Jugend › Akademie)
 // Bausteine ausbauen, Jugendetat, Wirkung mit Verzögerung, Kosten, Wettbewerb
 // um Talente, Akademien der Liga. Rechnung: engine/youthAcademy.ts,
 // Spielablauf: game/youthInvest.ts.
@@ -20,6 +20,8 @@ import { DashBox, DashPage, Empty, Kpi, KV, Meter } from '../../ui/DashPage';
 import { fmtDay, fmtPrice } from '../../ui/format';
 import { attraction } from '../../engine/youthAcademy';
 import PosBadge from '../../components/PosBadge';
+import { originClubOf } from '../../engine/persona';
+import { squadOf } from '../shared';
 
 const MILESTONES: { year: number; text: string }[] = [
   { year: 1985, text: 'Partnerschulen, nationales Sichtungsnetz, Kunstrasen & Halle' },
@@ -57,6 +59,8 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
   const ranked = [...clubs].sort((a, b) => (b.youthInvest?.reputation ?? 0) - (a.youthInvest?.reputation ?? 0));
   const attrRank = [...clubs].sort((a, b) => attraction(b) - attraction(a)).findIndex((c) => c.id === club.id) + 1;
   const race = g.youthRace;
+  // Eigengewächse im Profikader (früher Box der Seite Jugend-Übersicht).
+  const homegrown = squadOf(g).filter((p) => { const o = originClubOf(p.id); return o.homegrown && o.clubId === club.id; }).sort((a, b) => b.overall - a.overall);
   const raceRows = race ? race.entries.filter((e) => e.known || e.to === club.id).sort((a, b) => Number(b.to === club.id) - Number(a.to === club.id) || b.stars - a.stars) : [];
 
   const blockRow = (key: YouthBlockKey) => {
@@ -125,6 +129,7 @@ export function AcademyView({ g, onChange }: { g: Game; onChange: () => void }) 
         <KV k="Lernrate der Talente" info="akaLernrate" v={`× ${academyGrowthOf(club).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
         <KV k="Reife mit 19 Jahren" info="akaReife" v={`+${Math.round(ageCapBonus(club, 19) * 100)} % Spielstärke`} />
         <KV k="Zweite Mannschaft" info="akaZweite" v={BLOCK_BY_KEY.reserve.levels[inv.levels.reserve ?? 0].name} />
+        <KV k={<span title={homegrown.length ? homegrown.map((p) => `${p.fullName} (${p.age} J., ${p.overall})`).join('\n') : undefined}>Eigengewächse im Profikader</span>} v={homegrown.length || '–'} />
         <div className="dnote mt8">Die Ausbildung folgt dem Ziel um etwa ein Fünftel pro Jahr, der Ruf noch langsamer – er wächst mit erfolgreichen eigenen Talenten. Kürzungen wirken schneller.</div>
       </DashBox>
 

@@ -1106,7 +1106,7 @@ export const INFO_TEXTS = {
   },
   leihRueckruf: {
     title: 'Rückrufklausel',
-    text: 'Der Stammverein darf den Spieler im Januar zurückholen – die KI tut das, wenn er beim Leihverein kaum spielt. Für deine verliehenen Spieler gibt es dafür einen Knopf unter Transfers › Leihen (ab 1995).',
+    text: 'Der Stammverein darf den Spieler im Januar zurückholen – die KI tut das, wenn er beim Leihverein kaum spielt. Für deine verliehenen Spieler gibt es dafür einen Knopf unter Transfermarkt › Leihen (ab 1995).',
     wiki: 'loans',
   },
   leihStammverein: {
@@ -1156,7 +1156,7 @@ export const INFO_TEXTS = {
   },
   leihspieler: {
     title: 'Leihspieler',
-    text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen. Alles Weitere unter Transfers › Leihen.',
+    text: 'Eigene Spieler, die du verliehen hast, und Spieler, die du ausgeliehen hast – mit Einsätzen, Minuten, Toren, Vorlagen und Durchschnittsnote der laufenden Saison. Die Leihe endet zum angegebenen Datum; mit Kaufoption kannst du den Spieler dann fest übernehmen. Alles Weitere unter Transfermarkt › Leihen.',
     wiki: 'loans',
   },
   scoutSoftware: {
@@ -1196,7 +1196,7 @@ export const INFO_TEXTS = {
   },
   clubJugend: {
     title: 'Jugend eines Vereins',
-    text: 'Die Jugendspieler des Vereins mit Name, Alter und Position. Stärke und Potenzial fremder Jugendlicher kennst du meist nicht („?“) – erst wenn du genug über sie weißt, erscheint eine Spanne. „Scouten“ schickt einen Scout los; der Bericht steht danach unter Transfers › Scouting und im Spielerpool unter „Gescoutet“.',
+    text: 'Die Jugendspieler des Vereins mit Name, Alter und Position. Stärke und Potenzial fremder Jugendlicher kennst du meist nicht („?“) – erst wenn du genug über sie weißt, erscheint eine Spanne. „Scouten“ schickt einen Scout los; der Bericht steht danach unter Transfermarkt › Scouting und im Spielerpool unter „Gescoutet“.',
     wiki: 'club-profile',
   },
   beobachtung: {

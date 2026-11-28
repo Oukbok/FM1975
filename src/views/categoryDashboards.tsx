@@ -1,35 +1,27 @@
 import ClubCrest from '../components/ClubCrest';
-import { PlayerForm, PlayerFreshness } from '../components/status';
 import { ClubLink } from '../components/club/ClubLink';
-import { ClubByName } from '../ui/LinkedText';
 
 import { STAFF_BY_ID, staffMonthlyTotal } from '../data/staff';
-import { TIMELINE } from '../data/timeline';
-import { ROUND_NAMES, nextPlayerTie } from '../engine/cup';
 import { economyScale, yearOf } from '../engine/economy';
-import { nextPlayerEuroTie } from '../engine/euro';
-import { euroStatus, inEuroCup } from '../game/euroFixture';
-import { euroCompName, euroCompLabel } from '../data/euroFormats';
 import { computeMonthly, expectedAttendanceRate, forecastSeasonEnd, totalExpense, totalIncome, weeklyWageBill } from '../engine/finances';
 import { BalanceLine, CorporateBox, LicenseBox, useBalanceRange } from './finance/businessBoxes';
 import { priceOf, seatPriceScale } from '../engine/seating';
 import { FACILITIES, facilityAvailable, MAX_LEVEL } from '../engine/infrastructure';
-import { getAvailablePlayers } from '../engine/transfers';
 import { getFormation } from '../data/formations';
 import { Game } from '../game/state';
 import { Screen } from '../shell/navigation';
 import { BoxLink, DashBox, DashPage, Empty, KV, Kpi, Meter } from '../ui/DashPage';
-import { fmtDM, fmtDMfull, fmtDateShort, vColor, condColor, condBar, fmtPrice, fmtWage, wageUnit } from '../ui/format';
+import { fmtDM, fmtDMfull, fmtDateShort, condBar, fmtPrice, fmtWage } from '../ui/format';
 import {
-  FormDots, GROUP_DE, MatchRow, PlayerRow, avg, groupOf, monthsUntil, ownLeagueMatches, squadOf, tableRow,
+  FormDots, MatchRow, PlayerRow, avg, ownLeagueMatches, squadOf, tableRow,
 } from './shared';
-import { ScoutStars, scoutMid } from './shared';
 import { smoothArea, smoothPath, type Pt } from '../ui/smoothPath';
 
 // =============================================================================
-// KATEGORIE-ÜBERSICHTEN (Reihe-1-Klick im Hauptmenü)
-// Jede Kategorie zeigt sechs Boxen im Raster der Zentrale; ein Klick auf eine
-// Box führt zur passenden Unterseite.
+// KATEGORIE-ÜBERSICHTEN (Finanzen, Verein; Spieltag nur noch als Altbestand)
+// Sechs Boxen im Raster der Zentrale; ein Klick auf eine Box führt zur passenden
+// Unterseite. Kader, Jugend, Transfermarkt, Statistiken und Privat haben keine
+// eigene Übersicht mehr (Wunsch Pascal), ihr Hauptpunkt öffnet die erste Unterseite.
 // =============================================================================
 export const TAC_STYLE_DE: Record<string, string> = {
   defensive: 'Defensiv', balanced: 'Ausgewogen', attacking: 'Offensiv', counter: 'Konter',
@@ -109,139 +101,6 @@ export function SpieltagDashboard({ g, onGoto, onWatch }: {
 
       <DashBox title="Spielplan" icon="schedule" onClick={() => onGoto('fixtures')} right={`${upcoming.length} offen`}>
         {upcoming.length ? upcoming.slice(0, 7).map((m) => <MatchRow key={m.id} g={g} m={m} />) : <Empty icon="schedule">Saison beendet.</Empty>}
-      </DashBox>
-    </DashPage>
-  );
-}
-
-// --- KADER ------------------------------------------------------------------
-export function KaderDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
-  const myClub = g.clubs[g.managedClubId];
-  const squad = squadOf(g);
-  const today = g.calendar.currentDate;
-  const injured = squad.filter((p) => p.availability === 'injured');
-  const suspended = squad.filter((p) => p.suspensionMatches > 0);
-  const groups = ['GK', 'DEF', 'MID', 'ATT'];
-  const tired = [...squad].sort((a, b) => (a.frische ?? 100) - (b.frische ?? 100)).slice(0, 6);
-  const expiring = [...squad].sort((a, b) => a.contract.expiryDate.localeCompare(b.contract.expiryDate)).slice(0, 6);
-  const talents = squad.filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a)).slice(0, 6);
-  const youth = myClub.youthPlayerIds.map((id) => g.youthPlayers[id]).filter(Boolean);
-  const topYouth = [...youth].sort((a, b) => (b.scoutedPotentialMax ?? 0) - (a.scoutedPotentialMax ?? 0)).slice(0, 5);
-  const wages = squad.reduce((s, p) => s + p.contract.weeklyWage, 0);
-  return (
-    <DashPage>
-      <DashBox title="Kader" icon="squad" onClick={() => onGoto('squad')} right={`${squad.length} Spieler`}>
-        <div className="dkpis">
-          <Kpi value={Math.round(avg(squad.map((p) => p.overall)))} label="Ø Stärke" />
-          <Kpi value={avg(squad.map((p) => p.age)).toFixed(1)} label="Ø Alter" />
-          <Kpi value={injured.length} label="Verletzt" color={injured.length ? 'var(--red)' : undefined} />
-          <Kpi value={suspended.length} label="Gesperrt" color={suspended.length ? 'var(--red)' : undefined} />
-        </div>
-        {[...squad].sort((a, b) => b.overall - a.overall).slice(0, 4).map((p) => <PlayerRow key={p.id} p={p} value={p.overall} />)}
-      </DashBox>
-
-      <DashBox title="Positionen" info="vertrautheit" icon="tactics" onClick={() => onGoto('squad')}>
-        {groups.map((gr) => {
-          const ps = squad.filter((p) => groupOf(p) === gr).sort((a, b) => b.overall - a.overall);
-          return (
-            <div key={gr} className="dlist-row">
-              <span className="grow"><b>{GROUP_DE[gr]}</b> <span className="muted">· {ps.length} Spieler</span></span>
-              <span className="meta">{ps.slice(0, 3).map((p) => p.lastName).join(', ')}</span>
-              <span className="val" style={{ color: vColor(Math.round(avg(ps.slice(0, 3).map((p) => p.overall)))) }}>{Math.round(avg(ps.slice(0, 3).map((p) => p.overall))) || '–'}</span>
-            </div>
-          );
-        })}
-        <div className="dnote mt8">Wert = Ø der drei Besten je Mannschaftsteil.</div>
-      </DashBox>
-
-      <DashBox title="Belastung" icon="training" info="frische" onClick={() => onGoto('training')} right="niedrigste Frische">
-        {tired.map((p) => <PlayerRow key={p.id} p={p} value={<PlayerFreshness p={p} showValue />} sub={<PlayerForm p={p} size={14} />} />)}
-      </DashBox>
-
-      <DashBox title="Verträge" icon="contracts" onClick={() => onGoto('vertraege')} right={fmtWage(wages)}>
-        {expiring.map((p) => {
-          const left = monthsUntil(today, p.contract.expiryDate);
-          return <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={left <= 12 ? `${left} Mon.` : new Date(p.contract.expiryDate).getUTCFullYear()} color={left <= 6 ? 'var(--orange)' : 'var(--text)'} />;
-        })}
-      </DashBox>
-
-      <DashBox title="Talente" info="potenzial" icon="youth" onClick={() => onGoto('squad')} right="bis 21 Jahre">
-        {talents.length ? talents.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} />
-        )) : <Empty icon="youth">Keine jungen Spieler im Profikader.</Empty>}
-      </DashBox>
-
-      <DashBox title="Jugendakademie" info="ausbildung" icon="youth" onClick={() => onGoto('youth')} right={`${youth.length} Talente`}>
-        {topYouth.length ? topYouth.map((p) => (
-          <PlayerRow key={p.id} p={p} sub={`${p.age} J.`} value={<ScoutStars p={p} />} color="var(--text-2)" />
-        )) : <Empty icon="youth">Noch keine Talente in der Akademie.</Empty>}
-        <div className="dnote mt8">Wert = geschätzte Potenzial-Spanne der Scouts.</div>
-      </DashBox>
-    </DashPage>
-  );
-}
-
-// --- TRANSFERS --------------------------------------------------------------
-export function TransfersDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
-  const myClub = g.clubs[g.managedClubId];
-  const fin = myClub.finances;
-  const squad = squadOf(g);
-  const market = getAvailablePlayers(g.players, g.managedClubId);
-  const best = [...market].sort((a, b) => b.overall - a.overall).slice(0, 6);
-  const young = [...market].filter((p) => p.age <= 21).sort((a, b) => scoutMid(b) - scoutMid(a)).slice(0, 6);
-  const listed = squad.filter((p) => p.transferListed);
-  const moves = Object.values(g.players)
-    .flatMap((p) => (p.history?.transfers ?? []).map((t) => ({ p, t })))
-    .sort((a, b) => b.t.date.localeCompare(a.t.date))
-    .slice(0, 7);
-  const wageBill = squad.reduce((s, p) => s + p.contract.weeklyWage, 0);
-  const groups = ['GK', 'DEF', 'MID', 'ATT'];
-  const needs = groups.map((gr) => {
-    const ps = squad.filter((p) => groupOf(p) === gr).sort((a, b) => b.overall - a.overall);
-    return { gr, n: ps.length, top: Math.round(avg(ps.slice(0, 2).map((p) => p.overall))) };
-  }).sort((a, b) => a.top - b.top);
-  return (
-    <DashPage>
-      <DashBox title="Budget" info="transferbudget" icon="finances" onClick={() => onGoto('transfers')}>
-        <div className="dkpis">
-          <Kpi value={fmtPrice(fin.transferBudget)} label="Transferbudget" color="var(--green)" />
-          <Kpi value={fmtDM(fin.balance)} label="Kontostand" color={fin.balance >= 0 ? 'var(--text)' : 'var(--red)'} />
-        </div>
-        <KV k={`Gehälter / ${wageUnit()}`} v={fmtWage(wageBill, { unit: false })} />
-        {fin.wageBudget > 0 && <Meter label="Gehaltsbudget genutzt" value={wageBill} max={fin.wageBudget} text={`${Math.round((wageBill / fin.wageBudget) * 100)} %`} color={wageBill > fin.wageBudget ? 'var(--red)' : 'var(--accent)'} />}
-      </DashBox>
-
-      <DashBox title="Bedarf" info="kaderbedarf" icon="squad" onClick={() => onGoto('squad')}>
-        {needs.map((n, i) => (
-          <div key={n.gr} className="dlist-row">
-            <span className="grow"><b>{GROUP_DE[n.gr]}</b> <span className="muted">· {n.n} Spieler</span></span>
-            <span className="val" style={{ color: vColor(n.top) }}>{n.top || '–'}</span>
-            {i === 0 && <span className="dchip on">Priorität</span>}
-          </div>
-        ))}
-        <div className="dnote mt8">Wert = Ø der zwei Besten je Mannschaftsteil. Der schwächste Teil ist markiert.</div>
-      </DashBox>
-
-      <DashBox title="Top auf dem Markt" icon="transfers" onClick={() => onGoto('transfers')} right={`${market.length} verfügbar`}>
-        {best.length ? best.map((p) => <PlayerRow key={p.id} p={p} sub={<>{p.age} J. · <ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName ?? '—'}</ClubLink></>} value={p.overall} />) : <Empty icon="transfers">Derzeit niemand verfügbar.</Empty>}
-      </DashBox>
-
-      <DashBox title="Junge Talente auf dem Markt" icon="youth" onClick={() => onGoto('transfers')}>
-        {young.length ? young.map((p) => <PlayerRow key={p.id} p={p} sub={`${p.age} J. · ${p.overall}`} value={<ScoutStars p={p} />} />) : <Empty icon="youth">Keine Talente verfügbar.</Empty>}
-      </DashBox>
-
-      <DashBox title="Eigene Transferliste" icon="negotiations" right={`${listed.length}`}>
-        {listed.length ? listed.map((p) => <PlayerRow key={p.id} p={p} sub={fmtPrice(p.contract.transferValue)} value={p.overall} />) : <Empty icon="negotiations">Kein Spieler steht auf der Transferliste.</Empty>}
-      </DashBox>
-
-      <DashBox title="Letzte Wechsel" icon="news">
-        {moves.length ? moves.map(({ p, t }, i) => (
-          <div key={i} className="dlist-row">
-            <span className="meta" style={{ minWidth: 64 }}>{fmtDateShort(t.date).dmy}</span>
-            <span className="grow">{p.fullName} <span className="muted">· <ClubByName g={g} name={t.fromClub} /> → <ClubByName g={g} name={t.toClub} /></span></span>
-            <span className="val">{t.fee > 0 ? fmtDM(t.fee) : 'ablösefrei'}</span>
-          </div>
-        )) : <Empty icon="news">Noch keine Wechsel in diesem Spiel.</Empty>}
       </DashBox>
     </DashPage>
   );
@@ -385,75 +244,6 @@ export function VereinDashboard({ g, onGoto, onChange }: { g: Game; onGoto: (s: 
           <Meter key={m.id} label={g.clubs[m.awayClubId]?.name ?? '—'} value={m.result!.attendance} max={myClub.stadium.capacity} text={m.result!.attendance.toLocaleString('de-DE')} />
         ))}
         {!homeGames.length && <Empty icon="fans">Noch kein Heimspiel.</Empty>}
-      </DashBox>
-    </DashPage>
-  );
-}
-
-// --- STATISTIKEN ------------------------------------------------------------
-export function StatistikenDashboard({ g, onGoto }: { g: Game; onGoto: (s: Screen) => void }) {
-  const myId = g.managedClubId;
-  const row = tableRow(g);
-  const rows = g.table.rows;
-  const idx = row ? rows.indexOf(row) : 0;
-  const around = rows.slice(Math.max(0, idx - 3), Math.max(0, idx - 3) + 7);
-  const leagueIds = new Set(rows.map((r) => r.clubId));
-  const lp = Object.values(g.players).filter((p) => leagueIds.has(p.clubId));
-  const scorers = [...lp].filter((p) => p.seasonStats.goals > 0).sort((a, b) => b.seasonStats.goals - a.seasonStats.goals).slice(0, 7);
-  const rated = [...lp].filter((p) => p.seasonStats.ratedMatches >= 3).sort((a, b) => a.seasonStats.averageRating - b.seasonStats.averageRating).slice(0, 7);
-  const cup = g.cup;
-  const myTie = cup ? nextPlayerTie(cup, myId) : null;
-  const cupOut = cup && !myTie && cup.rounds.some((r) => r.ties.some((t) => t.played && (t.homeClubId === myId || t.awayClubId === myId) && t.winnerClubId !== myId));
-  const euro = (['ec', 'cwc', 'uefa'] as const).map((k) => ({ k, c: g.euroCups?.[k] ?? null })).filter((e) => e.c && inEuroCup(e.c, myId));
-  const year = yearOf(g.calendar.currentDate);
-  const milestones = TIMELINE.filter((e) => e.year <= year).slice(-6).reverse();
-  return (
-    <DashPage>
-      <DashBox title="Liga" icon="dashTabelle" onClick={() => onGoto('table')} right={row ? `${row.position}. · ${row.points} Pkt.` : undefined}>
-        <table className="dtable rl-sm">
-          <thead><tr><th className="rl-rank">#</th><th>Verein</th><th className="num">Sp</th><th className="num">TD</th><th className="num">Pkt</th></tr></thead>
-          <tbody>
-            {around.map((r) => (
-              <tr key={r.clubId} className={r.clubId === myId ? 'me' : ''}>
-                <td className="rl-rank">{r.position}</td><td><ClubLink id={r.clubId}><span className="rl-club">{g.clubs[r.clubId] && <ClubCrest club={g.clubs[r.clubId]} size={22} />}<span className="rl-name">{g.clubs[r.clubId]?.name}</span></span></ClubLink></td><td className="num">{r.played}</td>
-                <td className="num">{r.goalDifference > 0 ? '+' : ''}{r.goalDifference}</td><td className="num rl-main rl-pts">{r.points}{r.deduction ? <sup title={`${r.deduction} Punkte Abzug (Überschuldung)`} style={{ color: 'var(--red)', marginLeft: 3 }}>−{r.deduction}</sup> : null}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </DashBox>
-
-      <DashBox title="Torjäger" icon="matchball" onClick={() => onGoto('table')}>
-        {scorers.length ? scorers.map((p) => <PlayerRow key={p.id} p={p} face sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.goals} />) : <Empty icon="matchball">Noch keine Tore gefallen.</Empty>}
-      </DashBox>
-
-      <DashBox title="Beste Noten" icon="stats" right="ab 3 Spielen">
-        {rated.length ? rated.map((p) => <PlayerRow key={p.id} p={p} face sub={<ClubLink id={p.clubId}>{g.clubs[p.clubId]?.shortName}</ClubLink>} value={p.seasonStats.averageRating.toFixed(2)} color="var(--green)" />) : <Empty icon="stats">Noch zu wenige Spiele.</Empty>}
-      </DashBox>
-
-      <DashBox title="Landespokal" icon="trophy" onClick={() => onGoto('cup')}>
-        {cup ? (
-          <>
-            <KV k="Aktuelle Runde" v={cup.rounds[cup.currentRoundIndex]?.name ?? '—'} />
-            <KV k="Dein Status" v={cup.winnerClubId === myId ? 'Pokalsieger!' : myTie ? `dabei – ${ROUND_NAMES[myTie.round] ?? ''}` : cupOut ? 'ausgeschieden' : '—'} color={cupOut ? 'var(--red)' : 'var(--green)'} />
-            {myTie && <KV k="Nächster Gegner" v={g.clubs[myTie.homeClubId === myId ? myTie.awayClubId : myTie.homeClubId]?.name ?? '—'} />}
-            {cup.winnerClubId && <KV k="Sieger" v={g.clubs[cup.winnerClubId]?.name ?? '—'} />}
-          </>
-        ) : <Empty icon="trophy">Kein Pokal in dieser Saison.</Empty>}
-      </DashBox>
-
-      <DashBox title="International" icon="international" onClick={() => onGoto('international')}>
-        {euro.length ? euro.map(({ k, c }) => {
-          if (c!.v2) return <KV key={k} k={euroCompName(k, Number(c!.season.slice(0, 4)))} v={euroStatus(c!, myId)} />;
-          const t = nextPlayerEuroTie(c!, myId);
-          return <KV key={k} k={euroCompLabel(k)} v={t ? `${c!.rounds[t.round]?.name ?? ''}` : c!.winnerClubId === myId ? 'Sieger!' : 'ausgeschieden'} />;
-        }) : <Empty icon="international">Diese Saison nicht im Europapokal.</Empty>}
-      </DashBox>
-
-      <DashBox title="Chronik" icon="chronicle" onClick={() => onGoto('chronicle')}>
-        {milestones.map((e) => (
-          <div key={e.id} className="dlist-row"><span className="meta" style={{ minWidth: 44 }}>{e.year}</span><span className="grow">{e.title}</span></div>
-        ))}
       </DashBox>
     </DashPage>
   );

@@ -75,9 +75,9 @@ if (so.length > 1) { await pickOption(page, seasonSel(), { index: so.length - 2 
 // Spielerprofil aus der Bestenliste
 const clickable = page.locator('.cmp-stat.clickable').first();
 if (await clickable.count()) { await clickable.click(); await page.waitForTimeout(400); await shot('yc_spieler'); }
-// Mannschaften (Liga + Platz je Jugend)
+// Jugend (Liga + Platz je Jugend)
 for (let i = 0; i < 3 && await page.locator('.modal-overlay').count(); i++) { await page.locator('.modal-overlay').first().click({ position: { x: 5, y: 5 } }); await page.waitForTimeout(200); }
-const mann = page.locator('.tn-sub-item:has-text("Mannschaften")');
+const mann = page.locator('.tn-sub-item:has-text("Jugend")');
 if (await mann.count()) {
   await mann.first().click(); await page.waitForTimeout(400);
   const c = page.locator('.dchip:has-text("C (")');

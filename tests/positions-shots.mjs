@@ -38,7 +38,7 @@ await startNewGame(page);
 await nav('Aufstellung', 'Taktik'); await shot('01_taktik');
 
 for (const [row, tag] of [[0, 'tw'], [9, 'b'], [16, 'c']]) {
-  await nav('Kader', 'Übersicht');
+  await nav('Kader', 'Kader');
   await page.locator('.dtable tbody tr.clickable').nth(row).click();
   await page.waitForSelector('.pp-modal');
   await page.waitForTimeout(250);

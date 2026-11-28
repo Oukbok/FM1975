@@ -47,7 +47,7 @@ if (process.env.SAVE) {
 const pre = process.env.SAVE ? 'spaet' : 'start';
 
 // 1) Fremder Spieler: Profil-Reiter „Wünsche“ (Beobachtung › Verstärkung)
-await nav('Transfers', 'Beobachtung');
+await nav('Transfermarkt', 'Beobachtung');
 await page.locator('.dtable tbody tr').first().click();
 await page.waitForSelector('.pp-modal');
 await page.locator('.pp-tabs .tab:has-text("Wünsche")').click();
@@ -74,7 +74,7 @@ await page.keyboard.press('Escape');
 await page.waitForTimeout(300);
 
 // 3) Eigener Spieler: Bindung, Klauseln
-await nav('Kader', 'Übersicht');
+await nav('Kader', 'Kader');
 const row = page.locator('.dtable tbody tr').first();
 if (!(await row.count())) errors.push('Kaderliste nicht gefunden');
 else {

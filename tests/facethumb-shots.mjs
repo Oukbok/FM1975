@@ -77,7 +77,7 @@ await shot('kader', null);
 await page.locator('.hd-nav-item:has-text("Statistiken")').first().click(); await page.waitForTimeout(300);
 await sub('Liga').click(); await page.waitForSelector('.cmp-pname', { timeout: 15000 }).catch(() => {});
 await shot('statistik', '.dbox:has(.cmp-pname)');
-await page.locator('.hd-nav-item:has-text("Transfers")').first().click(); await page.waitForTimeout(300);
+await page.locator('.hd-nav-item:has-text("Transfermarkt")').first().click(); await page.waitForTimeout(300);
 await sub('Transfermarkt').click(); await page.waitForSelector('.tm-name', { timeout: 15000 }).catch(() => {});
 await shot('transfermarkt', null);
 
